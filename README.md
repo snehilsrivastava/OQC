@@ -1,2 +1,0 @@
-# OQC
-OQC model 
