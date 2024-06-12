@@ -6,9 +6,10 @@ from .models import *
 from product.views import *
 from django.contrib import messages
 import io
+from authapp.views import login_page
 
-
-
+def main_page(request):
+    return redirect(login_page)
 
 def members(request):
   mymembers = Employee.objects.all().values()
