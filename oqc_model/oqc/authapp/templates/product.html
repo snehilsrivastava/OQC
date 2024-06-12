@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Specification Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <style>
+        .form-container {
+            width: 50%;
+            margin: auto;
+            margin-top: 50px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .form-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        @media print {
+            button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-dark text-white text-center py-4 header">
+        <h2>{{ user.username }}, Please Add Product details !!</h2>
+    </header>
+
+    <br /><br /><br />
+
+    <!-- Print Button -->
+    <div class="text-center">
+        <button onclick="window.print()" class="btn btn-primary">Print this page</button>
+    </div>
+
+    <!-- Product Specification Form -->
+    <div class="form-container">
+        <h1>Product Detail Form</h1>
+        <form method="POST" name="product_form" action="{% url 'product' %}">
+            <!-- CSRF token -->
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="ProductType">Product Type:</label>
+                <select class="form-control" id="ProductType" name="ProductType" onchange="populateModels()">
+                    <option value="TV">TV</option>
+                    <option value="AC">AC</option>
+                    <option value="Phone">Phone</option>
+                    <option value="Washing_Machine">Washing Machine</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="SerailNo">Serial Number:</label>
+                <input type="text" class="form-control" id="SerailNo" name="SerailNo" />
+            </div>
+            <div class="form-group">
+                <label for="ModelName">Model Name:</label>
+                <select class="form-control" id="ModelName" name="ModelName">
+                    <!-- Model options will be populated dynamically based on the selected product type -->
+                </select>
+            </div>
+            <div style="text-align: center">
+                <button style="text-align: center" type="submit" class="btn btn-secondary mx-auto">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <script>
+        // JavaScript object to store model data
+        const modelsByType = {
+            "TV": {{ tv_models|safe }},
+            "AC": {{ ac_models|safe }},
+            "Phone": {{ phone_models|safe }},
+            "Washing_Machine": {{ washing_machine_models|safe }}
+        };
+
+        // JavaScript function to populate the model list based on the selected product type
+        function populateModels() {
+            const productTypeDropdown = document.getElementById("ProductType");
+            const modelNameDropdown = document.getElementById("ModelName");
+            const selectedProductType = productTypeDropdown.value;
+
+            // Clear existing options
+            modelNameDropdown.innerHTML = "";
+
+            // Populate model options based on the selected product type
+            modelsByType[selectedProductType].forEach(model => {
+                const option = document.createElement("option");
+                option.text = model;
+                modelNameDropdown.appendChild(option);
+            });
+        }
+
+        // Initial population of the model dropdown
+        document.addEventListener("DOMContentLoaded", populateModels);
+
+        // Function to update the form action based on the selected product type
+        function updateFormAction() {
+            var yourproduct = $("#ProductType").val();
+            var form = $("form[name='product_form']");
+
+            if (yourproduct === "AC") {
+                form.attr("action", "/AC");
+            } else if (yourproduct === "Refrigerator") {
+                form.attr("action", "/Refrigerator");
+            } else if (yourproduct === "Washing_Machine") {
+                form.attr("action", "/WashingMachine");
+            } else if (yourproduct === "Phone") {
+                form.attr("action", "/phone");
+            } else if (yourproduct === "TV") {
+                form.attr("action", "/TV");
+            } else {
+                form.attr("action", "/submit-product-details");
+            }
+        }
+
+        // Update form action on page load and whenever the product type changes
+        $(document).ready(function() {
+            updateFormAction();
+            $("#ProductType").change(updateFormAction);
+        });
+        
+    </script>
+</body>
+</html>

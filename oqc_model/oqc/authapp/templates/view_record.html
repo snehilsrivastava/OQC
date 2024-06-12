@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .outer-box {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .inner-box {
+            border: 1px solid #000;
+            padding: 8px;
+        }
+
+        .bg {
+            background-color: #fff;
+            color: #000;
+        }
+
+        @media print {
+            button {
+                display: none;
+            }
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .image-container {
+            margin-top: 20px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #000;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg">
+        <div style="text-align: center;">
+            <b>TEST REPORT</b>
+            <p style="text-align: center;">ITR for Routine Test/Type Test</p>
+        </div>
+        <div style="color:#575757; font-size: 1rem; border-bottom: 1px solid white;">Report No: {{ record.no }}</div>
+
+        <table class="outer-box">
+            <tbody>
+                <tr>
+                    <td class="inner-box" style="width: 35%; font-weight: bold;">Name and Address of the customers</td>
+                    <td class="inner-box" style="width: 65%;">INDKAL TECHNOLOGIES PRIVATE LIMITED<br>1,C-102, Hinduja lake front estate<br>Bangalore</td>
+                </tr>
+                <tr>
+                    <td class="inner-box" style="width: 35%; font-weight: bold;">Name and Address of the Manufacture</td>
+                    <td class="inner-box" style="width: 65%;">IFB Industries Ltd, Goa<br>1,C-102, Hinduja lake front estate</td>
+                </tr>
+                <tr>
+                    <td class="inner-box" style="width: 35%; font-weight: bold;">Test Location</td>
+                    <td class="inner-box" style="width: 65%;">IFB Industries Ltd, Goa<br>1,C-102, Hinduja lake front estate</td>
+                </tr>
+                <tr>
+                    <td class="inner-box" style="width: 35%; font-weight: bold;">Test Start Date</td>
+                    <td class="inner-box" style="width: 35%;">{{ record.date }}</td>
+                </tr>
+                <tr>
+                    <td class="inner-box" style="width: 35%; font-weight: bold;">Test End Date</td>
+                    <td class="inner-box" style="width: 35%;">{{ record.date }}</td>
+                </tr>
+                <tr>
+                    <td class="inner-box" style="width: 35%; font-weight: bold;">Brand</td>
+                    <td class="inner-box" style="width: 65%; font-weight: bold;">{{ record.name }}</td>
+                </tr>
+                <tr>
+                    <td class="inner-box" style="width: 35%; font-weight: bold;">Test Result</td>
+                    <td class="inner-box" style="width: 65%; font-weight: bold;">{{ record.result }}</td>
+                </tr>
+                <tr>
+                    <td class="inner-box" style="width: 35%; font-weight: bold;">Notes</td>
+                    <td class="inner-box" style="width: 65%; font-weight: bold;">{{ record.notes }}</td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+
+        <br><br>
+
+        <table class="outer-box">
+            <tbody>
+                <tr>
+                    <td class="inner-box" style="width: 35%; font-weight: bold;">Test Procedure and Acceptance Criteria</td>
+                    <td class="inner-box" style="width: 65%;">As per test schedule</td>
+                </tr>
+                <tr>
+                    <td class="inner-box" style="width: 35%; font-weight: bold;">Signature with Date</td>
+                    <td class="inner-box" style="width: 65%;">Signature</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="image-container">
+            <h3>Uploaded Images:</h3>
+            {% for image in images %}
+                <img src="{{ MEDIA_URL }}{{ image.image.url }}" alt="Uploaded Image">
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

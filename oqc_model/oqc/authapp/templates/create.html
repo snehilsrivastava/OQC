@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Test Record</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Create Test Record</h1>
+        <form id="test-record-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ report_form.as_p }}
+
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div class="form-group">
+                    <label for="image-option-{{ forloop.counter0 }}">Select Image Option:</label>
+                    <select id="image-option-{{ forloop.counter0 }}" class="form-control" onchange="handleImageOptionChange(this, {{ forloop.counter0 }})">
+                        <option value="">Select Option</option>
+                        <option value="upload">Upload Image</option>
+                        <option value="capture">Capture Image</option>
+                    </select>
+                </div>
+                <div id="upload-div-{{ forloop.counter0 }}" class="form-group" style="display: none;">
+                    {{ form.image.label_tag }}<br>
+                    {{ form.image }}
+                    <div id="output-{{ forloop.counter0 }}" class="mt-2"></div>
+                </div> 
+
+                <div id="capture-div-{{ forloop.counter0 }}" class="form-group" style="display: none;">
+                    <video id="video-{{ forloop.counter0 }}" width="320" height="200" autoplay></video><br>
+                    <canvas id="canvas-{{ forloop.counter0 }}" width="320" height="200" style="display: none;"></canvas><br>
+                    <button type="button" class="btn btn-primary" onclick="captureImage({{ forloop.counter0 }}, 320, 200)">Capture Image</button>
+                    <div id="photos-container-{{ forloop.counter0 }}"></div>
+                </div>
+            {% endfor %}
+
+            <button type="button" class="btn btn-primary" onclick="sendData()">Save</button>
+        </form>
+    </div>
+
+    <!-- Script to handle image capturing and sending data to the server -->
+    <script>
+        function handleImageOptionChange(selectElement, index) {
+            var uploadDiv = document.getElementById('upload-div-' + index);
+            var captureDiv = document.getElementById('capture-div-' + index);
+            if (selectElement.value === 'upload') {
+                uploadDiv.style.display = 'block';
+                captureDiv.style.display = 'none';
+            } else if (selectElement.value === 'capture') {
+                uploadDiv.style.display = 'none';
+                captureDiv.style.display = 'block';
+                startVideo(index);
+            } else {
+                uploadDiv.style.display = 'none';
+                captureDiv.style.display = 'none';
+            }
+        }
+
+        function startVideo(index) {
+            var video = document.getElementById('video-' + index);
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                    video.srcObject = stream;
+                    video.play();
+                });
+            }
+        }
+
+        function captureImage(index, customWidth, customHeight) {
+            var video = document.getElementById('video-' + index);
+            var canvas = document.getElementById('canvas-' + index);
+            var photosContainer = document.getElementById('photos-container-' + index);
+            var context = canvas.getContext('2d');
+
+            if (video.videoWidth && video.videoHeight) {
+                var width = customWidth || video.videoWidth;
+                var height = customHeight || video.videoHeight;
+
+                canvas.width = width;
+                canvas.height = height;
+                context.drawImage(video, 0, 0, width, height);
+
+                var dataURL = canvas.toDataURL('image/png');
+
+                var img = document.createElement('img');
+                img.src = dataURL;
+                photosContainer.innerHTML = ''; // Clear previous images
+                photosContainer.appendChild(img);
+
+                var hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'captured_images_' + index;
+                hiddenInput.value = dataURL;
+                photosContainer.appendChild(hiddenInput);
+
+                // Debug: Log the captured image data
+                console.log('Captured image data:', dataURL);
+            }
+        }
+
+        function previewImage(event, index) {
+            var output = document.getElementById('output-' + index);
+            output.innerHTML = '';  // Clear any existing images
+            var newImg = new Image();
+            newImg.src = URL.createObjectURL(event.target.files[0]);
+            newImg.style.maxWidth = "100%";
+            newImg.style.height = "auto";
+            output.appendChild(newImg);
+        }
+
+        // Function to send captured and uploaded images to the server
+        function sendData() {
+            var formData = new FormData(document.getElementById('test-record-form'));
+            fetch('your_server_endpoint', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                // Handle successful response from the server
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+                // Handle errors
+            });
+        }
+    </script>
+</body>
+</html>

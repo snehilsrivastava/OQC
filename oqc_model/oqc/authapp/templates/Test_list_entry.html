@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Specification Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .btn-submit {
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+   
+    <div class="container">
+        <div class="form-container">
+            
+            <div class="header">
+                <h1>Product Test Detail Form</h1>
+            </div>
+
+            <form action="{% url 'test_list_entry' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label >TestStage</label>
+                    <input type="text" class="form-control" id="TestStage" name="TestStage" required>
+                </div>
+                <div class="form-group">
+                    <label >Product</label>
+                    <input type="text" class="form-control" id="Product" name="Product" required>
+                </div>
+                <div class="form-group">
+                    <label >TestName</label>
+                    <input type="text" class="form-control" id="TestName" name="TestName" required>
+                </div>
+              
+               
+                <button type="submit" class="btn btn-secondary btn-submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

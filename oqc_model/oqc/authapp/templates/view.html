@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Test Records</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1>Test Records</h1>
+      <form method="post" action="{% url 'generate_pdf' %}">
+        {% csrf_token %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Test Name</th>
+              <th>Test Date</th>
+              <th>Result</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for test_record in test_records %}
+            <tr>
+              <td>
+                <input
+                  type="checkbox"
+                  name="selected_tests"
+                  value="{{ test_record.pk }}"
+                />
+              </td>
+              <td>{{ test_record.test_name }}</td>
+              <td>{{ test_record.test_date }}</td>
+              <td>{{ test_record.result }}</td>
+              <td>{{ test_record.notes }}</td>
+              <td>
+                <a
+                  href="{% url 'edit_test_record' pk=test_record.pk %}"
+                  class="btn btn-primary"
+                  >Edit</a
+                >
+                <!-- Add a delete button if needed -->
+              </td>
+              <td>
+                <a
+                  href="{% url 'view_test_reports' pk=test_record.pk %}"
+                  class="btn btn-primary"
+                  >View</a
+                >
+                <!-- Add a delete button if needed -->
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Generate PDF</button>
+      </form>
+    </div>
+  </body>
+</html>
