@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from .models import *
 from django.http import HttpResponse
 from authapp.models import Employee
+from employee.models import TestList
 
 
 
@@ -47,6 +48,7 @@ def product_form_view(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     users = Employee.objects.all()
+    Test = list(TestList.objects.all().values())
  
     
     context = {
@@ -54,7 +56,8 @@ def product_form_view(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'users': users
+        'users': users,
+        'test':Test
     }
     
     return render(request, 'product.html', context)
@@ -96,3 +99,11 @@ def AC_spec(request):
 
     # If not a POST request, render the form
     return render(request, 'AC.html')
+
+
+
+
+
+
+
+
