@@ -354,16 +354,6 @@ def Test_list_entry(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
 def view_test_records(request):
     test_records = TestRecord.objects.all()
     return render(request, 'view.html', {'test_records': test_records})
