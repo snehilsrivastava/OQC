@@ -53,33 +53,23 @@ def testdetail(request, no):
         }
         return render(request, "test1.html", context)
     
-# def check(request, no):
-#     if request.method == 'GET':
-#         context = {
-#             'report': get_object_or_404(Test, no=no),
-#             'bill_base': "bill_base.html",
-       
-#         }
-#         return render(request, "test_report.html", context)
-    
-#     elif request.method == 'POST':
-#         no = request.POST.get('no')
-#         start_date = request.POST.get('start_date')
-#         end_date = request.POST.get('end_date')
-#         # Process the POST data as needed
-#         context = {
-#             'report': get_object_or_404(Test, no=no),
-#             'bill_base': "bill_base.html",
-#             'start_date': start_date,
-#             'end_date': end_date,
-#         }
-#         return render(request, "test_report.html", context)
 
 def check(request):
     return render(request,"test_report.html")
 
-def cooling(request):
-    return render(request,"cooling_test.html")
+def cooling(request, test_name,model_name):
+    # Fetch the specific Test_core_detail object related to the cooling test
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC,ModelName = model_name)
+
+    
+    # Pass the data to the template
+    context = {
+        'TestProtocol': Test_protocol,
+        'model' : models,
+    }
+    return render(request, "cooling_test.html", context)
+
 
 def MNF(request):
     return render(request,"productMNFdetail.html")

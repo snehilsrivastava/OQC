@@ -14,7 +14,7 @@ urlpatterns = [
     path('view/', views.view_test_records, name='view'),
     path('generate-pdf/', views.generate_pdf, name='generate_pdf'),
     path('view_test_report/<int:pk>/', views.view_test_report, name='view_test_reports'),
-    path('cooling/', views.cooling, name='cooling'),
+    path('cooling/<str:test_name>/<str:model_name>/', views.cooling, name='cooling'),
     path('mnf/', views.MNF, name='mnf'),
     path('test_list_entry/',views.Test_list_entry,name = 'test_list_entry'),
 ]
