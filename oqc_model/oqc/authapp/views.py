@@ -1,15 +1,23 @@
-from django.shortcuts import render
 from django.http import HttpResponse
-
-# Import necessary modules and models
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from .models import *
 from django.shortcuts import render, redirect, HttpResponse
+<<<<<<< HEAD
 from django.contrib.auth.hashers import make_password
 from employee.models import Employee
+=======
+from django.contrib.auth.hashers import make_password, check_password
+
+
+# Define custom authenticate function which uses Employee DB
+def authenticate(username=None, password=None):
+	login_user = Employee.objects.get(username=username)
+	if check_password(password, login_user.password):
+		return login_user
+	return None
+>>>>>>> 9f2be22f587dbf720a2bc44425cbcd63fbfd0452
 
 # Define a view function for the home page
 def home(request):
@@ -34,10 +42,10 @@ def login_page(request):
 		password = request.POST.get('password')
 		
 		# Check if a user with the provided username exists
-		if not User.objects.filter(username=username).exists():
+		if not Employee.objects.filter(username=username).exists():
 			# Display an error message if the username does not exist
 			messages.error(request, 'Invalid Username')
-			return redirect('/login/')
+			return redirect('/au/login/')
 		
 		# Authenticate the user with the provided username and password
 		user = authenticate(username=username, password=password)
@@ -49,15 +57,14 @@ def login_page(request):
 		else:
 			# Log in the user and redirect to the home page upon successful login
 			login(request, user)
-			return redirect('/create-test-record/')
-	
+			if user.user_type == 'owner':
+				return redirect('/dashboard/')
+			else: # Tester
+				return redirect('/check/')
 	# Render the login page template (GET request)
 	return render(request, 'login.html')
 
 # Define a view function for the registration page
-
-
-
 def register_page(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
