@@ -1,12 +1,22 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
-from authapp.models import Employee 
+from django.contrib.auth.decorators import login_required
+from django.forms import modelformset_factory
+from django.core.files import File
+from django.conf import settings
+from django.http import Http404
+from .forms import *
 from .models import *
+from .renderers import *
 from product.views import *
-from django.contrib import messages
-import io
+from authapp.models import Employee
 from authapp.views import login_page
+import PyPDF2
+import base64
+from tempfile import NamedTemporaryFile
+from io import BytesIO
+
 
 def main_page(request):
     return redirect(login_page)
@@ -43,33 +53,23 @@ def testdetail(request, no):
         }
         return render(request, "test1.html", context)
     
-# def check(request, no):
-#     if request.method == 'GET':
-#         context = {
-#             'report': get_object_or_404(Test, no=no),
-#             'bill_base': "bill_base.html",
-       
-#         }
-#         return render(request, "test_report.html", context)
-    
-#     elif request.method == 'POST':
-#         no = request.POST.get('no')
-#         start_date = request.POST.get('start_date')
-#         end_date = request.POST.get('end_date')
-#         # Process the POST data as needed
-#         context = {
-#             'report': get_object_or_404(Test, no=no),
-#             'bill_base': "bill_base.html",
-#             'start_date': start_date,
-#             'end_date': end_date,
-#         }
-#         return render(request, "test_report.html", context)
 
 def check(request):
     return render(request,"test_report.html")
 
-def cooling(request):
-    return render(request,"cooling_test.html")
+def cooling(request, test_name,model_name):
+    # Fetch the specific Test_core_detail object related to the cooling test
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC,ModelName = model_name)
+
+    
+    # Pass the data to the template
+    context = {
+        'TestProtocol': Test_protocol,
+        'model' : models,
+    }
+    return render(request, "cooling_test.html", context)
+
 
 def MNF(request):
     return render(request,"productMNFdetail.html")
@@ -79,20 +79,16 @@ def view_test_report(request,pk):
     images = record.images.all()  # Fetch all images related to this record
     return render(request, 'view_record.html', {'record': record, 'images': images})
 
-
 def dashboard(request):
     users = Employee.objects.all()
     context = {
         'users': users
     }
     return render(request, 'dashboard_employee.html', context)
-
- 
-
             
 def logout(request):
     if request.method == "POST":
-        logout(request)
+        # logout(request)
         context = {
             'success_message': "You have successfully logged out."
         }
@@ -101,48 +97,6 @@ def logout(request):
 
 def submit_product_details_view(request):
     return HttpResponse("Thank you for submitting product details")
-
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from .models import TestRecord
-import base64
-from django.core.files.base import ContentFile
-from .forms import TestRecordForm
-
-import datetime
-from django.http import HttpResponse, Http404
-from employee import renderers
-
-
-from django.contrib.auth.decorators import login_required
-import base64
-from django.core.files.base import ContentFile
-from django.shortcuts import render, redirect
-from django.http import Http404
-from django.forms import modelformset_factory
-from .models import TestRecord, TestImage, Employee
-from .forms import TestRecordForm, TestImageForm
-import base64
-from urllib.request import urlopen
-from django.core.files.base import ContentFile
-from django.core.files import File
-from django.shortcuts import render, redirect
-from django.forms import modelformset_factory
-from .models import TestImage, TestRecord, Employee  # Adjust import paths as needed
-from .forms import TestRecordForm, TestImageForm
-
-from tempfile import NamedTemporaryFile
-
-
-from django.core.files.base import ContentFile
-from django.forms import modelformset_factory
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-import base64
-
-from django.core.files import File
-
 
 @login_required
 def create_test_record(request):
@@ -224,19 +178,6 @@ def edit_test_record(request, pk):
         form = TestRecordForm(instance=test_record)
     return render(request, 'edit_test_record.html', {'form': form})
 
-
-
-from django.http import HttpResponse, Http404
-from .models import TestRecord
-from .renderers import render_to_pdf
-from PyPDF2 import PdfMerger
-from io import BytesIO
-
-import PyPDF2
-from io import BytesIO
-from django.conf import settings
-from django.conf.urls.static import static
-
 def merge_pdfs(pdf_files):
     merger = PyPDF2.PdfMerger()
     for pdf_file in pdf_files:
@@ -246,8 +187,6 @@ def merge_pdfs(pdf_files):
     merger.write(merged_pdf)
     merger.close()
     return merged_pdf.getvalue()
-
-
 
 def generate_pdf(request):
     if request.method == 'POST':
@@ -294,7 +233,6 @@ def generate_pdf(request):
 
 
 def MNF(request):
-    
     if request.method == 'POST':
         # Get form data from the request
         customer = request.POST.get('Customer')
@@ -351,11 +289,6 @@ def Test_list_entry(request):
     # If not a POST request, render the form
     return render(request, 'Test_list_entry.html')
 
-
-
-
 def view_test_records(request):
     test_records = TestRecord.objects.all()
     return render(request, 'view.html', {'test_records': test_records})
-
-

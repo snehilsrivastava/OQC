@@ -1,11 +1,7 @@
-from django.shortcuts import render
 from django.http import HttpResponse
-
-# Import necessary modules and models
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from .models import *
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.hashers import make_password, check_password
@@ -14,8 +10,6 @@ from django.contrib.auth.hashers import make_password, check_password
 # Define custom authenticate function which uses Employee DB
 def authenticate(username=None, password=None):
 	login_user = Employee.objects.get(username=username)
-	# if user.password == make_password(password):  # Assuming you're using password hashing
-		# return user
 	if check_password(password, login_user.password):
 		return login_user
 	return None
@@ -47,8 +41,10 @@ def login_page(request):
 		else:
 			# Log in the user and redirect to the home page upon successful login
 			login(request, user)
-			return redirect('/check/')
-	
+			if user.user_type == 'owner':
+				return redirect('/dashboard/')
+			else: # Tester
+				return redirect('/check/')
 	# Render the login page template (GET request)
 	return render(request, 'login.html')
 
