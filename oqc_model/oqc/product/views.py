@@ -2,9 +2,7 @@ from django.shortcuts import render,redirect
 from .models import *
 from django.http import HttpResponse
 from authapp.models import Employee
-
-
-
+from employee.models import TestList
 from django.shortcuts import render, HttpResponse
 from .models import Product_Detail, TV, AC, Phone, Washing_Machine
 
@@ -35,10 +33,6 @@ def product_form_view(request):
             SerailNo=serial_no
         )
         new_product_detail.save()
-
-
-
-
         return HttpResponse("Product details submitted successfully")
 
     # If GET request, prepare context with models data
@@ -47,14 +41,16 @@ def product_form_view(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     users = Employee.objects.all()
- 
+    Test = list(TestList.objects.all().values())
+
     
     context = {
         'tv_models': tv_models,
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'users': users
+        'users': users,
+        'test':Test
     }
     
     return render(request, 'product.html', context)
