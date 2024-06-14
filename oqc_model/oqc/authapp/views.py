@@ -14,8 +14,6 @@ from django.contrib.auth.hashers import make_password, check_password
 # Define custom authenticate function which uses Employee DB
 def authenticate(username=None, password=None):
 	login_user = Employee.objects.get(username=username)
-	# if user.password == make_password(password):  # Assuming you're using password hashing
-		# return user
 	if check_password(password, login_user.password):
 		return login_user
 	return None
