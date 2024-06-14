@@ -4,10 +4,6 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .models import *
 from django.shortcuts import render, redirect, HttpResponse
-<<<<<<< HEAD
-from django.contrib.auth.hashers import make_password
-from employee.models import Employee
-=======
 from django.contrib.auth.hashers import make_password, check_password
 
 
@@ -17,7 +13,6 @@ def authenticate(username=None, password=None):
 	if check_password(password, login_user.password):
 		return login_user
 	return None
->>>>>>> 9f2be22f587dbf720a2bc44425cbcd63fbfd0452
 
 # Define a view function for the home page
 def home(request):
