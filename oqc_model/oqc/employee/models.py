@@ -48,6 +48,7 @@ class TestStageDetail(models.Model):
 
     
 class TestRecord(models.Model):
+    # make serial number as foreign key
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     test_name = models.CharField(max_length=255)
     test_date = models.DateField(default=datetime.date.today)

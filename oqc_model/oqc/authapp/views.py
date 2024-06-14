@@ -9,11 +9,22 @@ from django.contrib.auth.models import User
 from .models import *
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.hashers import make_password
+from employee.models import Employee
 
 # Define a view function for the home page
-
 def home(request):
 	return render(request, 'home.html')
+
+# Define custom authenticate function which uses Employee DB
+def authenticate(username=None, password=None):
+	try:
+		user = Employee.objects.using('your_database_name').get(username=username)
+	except Employee.DoesNotExist:
+		return None
+
+	if user.check_password(password):  # Assuming you're using password hashing
+		return user
+	return None
 
 # Define a view function for the login page
 def login_page(request):
