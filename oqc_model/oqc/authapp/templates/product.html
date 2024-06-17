@@ -72,7 +72,7 @@
             <!-- Model options will be populated dynamically based on the selected product type -->
           </select>
         </div>
-    
+
         <div class="form-group">
           <label for="TestType">Test Stage</label>
           <select
@@ -83,18 +83,14 @@
           >
             <option value="DVT">DVT</option>
             <option value="PP">PP</option>
+            <option value="PDI">MP</option>
             <option value="PDI">PDI</option>
           </select>
         </div>
 
-       
         <div class="form-group">
           <label for="TestType">Test Name:</label>
-          <select class="form-control" id="TestName" name="TestName">
-         
-        
-        </select>
-        
+          <select class="form-control" id="TestName" name="TestName"></select>
         </div>
         <div style="text-align: center">
           <button
@@ -123,16 +119,16 @@
         "Phone": {{ phone_models|safe }},
         "Washing_Machine": {{ washing_machine_models|safe }}
       };
-    
+
       // JavaScript function to populate the model list based on the selected product type
       function populateModels() {
         const productTypeDropdown = document.getElementById("ProductType");
         const modelNameDropdown = document.getElementById("ModelName");
         const selectedProductType = productTypeDropdown.value;
-    
+
         // Clear existing options
         modelNameDropdown.innerHTML = "";
-    
+
         // Populate model options based on the selected product type
         modelsByType[selectedProductType].forEach(model => {
           const option = document.createElement("option");
@@ -140,7 +136,7 @@
           modelNameDropdown.appendChild(option);
         });
       }
-    
+
       // JavaScript function to populate the test names based on the selected product type and test stage
       function populateTestName() {
         const testDetail = {{ test|safe }};
@@ -149,34 +145,38 @@
         const testNameDropdown = document.getElementById("TestName");
         const selectedProductType = productTypeDropdown.value;
         const selectedTestStage = testStageDropdown.value;
-    
+
         // Clear existing options
         testNameDropdown.innerHTML = "";
-    
-        // Populate test name options based on the selected product type and test stage
+
         testDetail.forEach(item => {
-          if (item.Product === selectedProductType && item.TestStage === selectedTestStage) {
-            const option = document.createElement("option");
-            option.text = item.TestName;
-            testNameDropdown.appendChild(option);
+          if (item.Product === selectedProductType) {
+              const s = item.TestStage;
+              if (s[0] === '1' && selectedTestStage === "DVT" ||
+                  s[1] === '1' && selectedTestStage === "PP" ||
+                  s[2] === '1' && selectedTestStage === "MP" ||
+                  s[3] === '1' && selectedTestStage === "PDI") {
+                  const option = document.createElement("option");
+                  option.text = item.TestName;
+                  testNameDropdown.appendChild(option);
+              }
           }
-        });
+      });
       }
-    
+
       document.addEventListener("DOMContentLoaded", function() {
         populateModels();
         populateTestName();
-    
+
         document.getElementById("ProductType").addEventListener("change", function() {
           populateModels();
           populateTestName(); // Also populate test names when product type changes
         });
-    
+
         document.getElementById("TestStage").addEventListener("change", function() {
           populateTestName();
         });
       });
     </script>
-    
   </body>
 </html>

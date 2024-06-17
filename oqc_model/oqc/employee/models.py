@@ -21,6 +21,7 @@ class Test(models.Model):
 
 
 class Model_MNF_detail(models.Model):
+
     Customer = models.CharField(max_length=500,default='None')
     Manufature = models.CharField(max_length=500,default='None')
     Location = models.CharField(max_length=100,default='None')
