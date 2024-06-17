@@ -15,10 +15,6 @@ class Test(models.Model):
 
     def __str__(self):
         return f"Test {self.no} from {self.start_date} to {self.end_date}"
-    
-
-
-
 
 class Model_MNF_detail(models.Model):
     Customer = models.CharField(max_length=500,default='None')
@@ -84,6 +80,4 @@ class TestList(models.Model):
 
     def __str__(self):
      return f"{self.TestName}"
-
-
 

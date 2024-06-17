@@ -2,9 +2,6 @@ from django.db import models
 import datetime
 
 # Create your models here.
-
-
-    
 class AC(models.Model):
     ModelName = models.CharField(max_length=100,default='')
     BImotor = models.CharField(max_length=100,default='')
@@ -17,9 +14,6 @@ class AC(models.Model):
     RefCharge = models.CharField(max_length=100,default='')
     Capilary = models.CharField(max_length=100,default='')
     Compressor  = models.CharField(max_length=100,default='')
-
-    
-    
 
 class Washing_Machine(models.Model):
     no = models.IntegerField()
@@ -52,9 +46,3 @@ class Product_Detail(models.Model):
     def __str__(self):
         return f"{self.no}- {self.ProductType} - {self.SerailNo} - {self.ModelName} "
      
-
-
-
-    
-    
-    
