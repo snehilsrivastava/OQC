@@ -1,9 +1,2 @@
-<<<<<<< HEAD
-oqc_model/myworld/
-oqc_model/oqc/authapp/__pycache__/
-oqc_model/oqc/employee/__pycache__/
-oqc_model/oqc/product/__pycache__/
-=======
 ./oqc_model/myworld/
 */__pycache__/
->>>>>>> 1a06d5ca (added gitignore)
