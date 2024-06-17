@@ -81,9 +81,6 @@ def check(request):
 def cooling(request):
     return render(request,"cooling_test.html")
 
-def MNF(request):
-    return render(request,"productMNFdetail.html")
-
 def view_test_report(request,pk):
     record = get_object_or_404(TestRecord, pk =pk)
     images = record.images.all()  # Fetch all images related to this record
@@ -108,7 +105,6 @@ def logout(request):
 def submit_product_details_view(request):
     return HttpResponse("Thank you for submitting product details")
 
-@login_required
 def create_test_record(request):
     if request.method == 'POST':
         num_images = int(request.POST.get('num_images', 0))  # Default to 0 images
@@ -230,7 +226,6 @@ def generate_pdf(request):
             if pdf:
                 pdf_files.append(pdf)
 
-
         if pdf_files:
             merged_pdf = merge_pdfs(pdf_files)
             response = HttpResponse(merged_pdf, content_type='application/pdf')
@@ -249,10 +244,11 @@ def MNF(request):
         manufature = request.POST.get('Manufature')
         location = request.POST.get('Location')
         brand = request.POST.get('Brand')
+        product = request.POST.get('prod')
+        print(product)
         brand_model_no = request.POST.get('Brand_model_no')
         Indkal_model_no = request.POST.get('Indkal_model_no')
         ORM_model_no = request.POST.get('ORM_model_no')
-     
 
         # Create and save a new AC object
         new_mnf = Model_MNF_detail(
@@ -260,36 +256,33 @@ def MNF(request):
            Manufature = manufature,
            Location = location,
            Brand = brand,
+           Product = product,
            Brand_model_no = brand_model_no,
            Indkal_model_no = Indkal_model_no,
            ORM_model_no = ORM_model_no
-
         )
         new_mnf.save()
-
         # Redirect to a success page or render a success message
-        return redirect('/check/')  # Assuming you have a 'success' URL
-
+        # return redirect('/check/')  # Assuming you have a 'success' URL
+        if product == 'ac':
+            return render(request, 'AC.html', {'Indkal_model_no': Indkal_model_no})
+       
     # If not a POST request, render the form
     return render(request, 'productMNFdetail.html')
 
 
 def Test_list_entry(request):
-    
     if request.method == 'POST':
         # Get form data from the request
         testStage = request.POST.get('TestStage')
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
      
-
         # Create and save a new AC object
         new_test = TestList(
            TestStage = testStage,
            Product = product,
            TestName = testName,
-           
-
         )
         new_test.save()
 
