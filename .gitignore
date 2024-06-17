@@ -1,4 +1,3 @@
-oqc_model/myworld/
-oqc_model/oqc/authapp/__pycache__/
-oqc_model/oqc/employee/__pycache__/
-oqc_model/oqc/product/__pycache__/
+./oqc_model/myworld/
+*/__pycache__/
+*.sqlite3
