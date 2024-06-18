@@ -5,13 +5,15 @@ from authapp.models import Employee
 from employee.models import TestList
 from django.shortcuts import render, HttpResponse
 from .models import Product_Detail, TV, AC, Phone, Washing_Machine
+from django.urls import reverse
 
 def product_form_view(request):
     if request.method == 'POST':
         product_type = request.POST.get('ProductType')
         model_name = request.POST.get('ModelName')
         serial_no = request.POST.get('SerailNo')
-
+        test_stage = request.POST.get('TestStage')
+        test_name = request.POST.get('TestName')
         # Check if the serial number already exists in the database
         if Product_Detail.objects.filter(SerailNo=serial_no).exists():
             return HttpResponse("Serial number already exists")
@@ -30,10 +32,12 @@ def product_form_view(request):
             no=no,
             ProductType=product_type,
             ModelName=model_name,
-            SerailNo=serial_no
+            SerailNo=serial_no,
+            TestStage = test_stage,
+            TestName = test_name
         )
         new_product_detail.save()
-        return HttpResponse("Product details submitted successfully")
+        return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name}))
 
     # If GET request, prepare context with models data
     tv_models = list(TV.objects.values_list('ModelName', flat=True))

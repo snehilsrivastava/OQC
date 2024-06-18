@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include, re_path
 from . import views
 
 urlpatterns = [
@@ -14,9 +14,13 @@ urlpatterns = [
     path('view/', views.view_test_records, name='view'),
     path('generate-pdf/', views.generate_pdf, name='generate_pdf'),
     path('view_test_report/<int:pk>/', views.view_test_report, name='view_test_reports'),
-    path('cooling/', views.cooling, name='cooling'),
+    path('cooling/<str:test_name>/<str:model_name>/', views.cooling, name='cooling'),
     path('mnf/', views.MNF, name='mnf'),
     path('test_list_entry/',views.Test_list_entry,name = 'test_list_entry'),
+    path('test_protocol_entry/',views.test_protocol_entry,name = 'test_protocol_entry'),
+    # re_path('^rtf_test/', include('ckeditor_uploader.urls'), name='rtf'),
+    path('rtf_test/', views.rtf_test, name='rtf_test'),
+    path('ckeditor/', include('ckeditor_uploader.urls'))
 ]
 
 from django.conf import settings

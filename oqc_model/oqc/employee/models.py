@@ -1,6 +1,11 @@
 from django.db import models
 from authapp.models import Employee
 import datetime
+from product.models import  Product_Detail
+
+from ckeditor_uploader.fields import RichTextUploadingField
+from ckeditor.fields import RichTextField
+
 # Create your models here.
 
 class Test(models.Model):
@@ -29,13 +34,14 @@ class Model_MNF_detail(models.Model):
 
 
 class Test_core_detail(models.Model):
+    # Product = models.ForeignKey(Product_Detail,  on_delete=models.CASCADE, related_name="testdetail")
     TestName =  models.CharField(max_length=500,default='None')
-    Test_Objective = models.CharField(max_length=500,default='None')
-    Test_Standard = models.CharField(max_length=500,default='None')
-    Test_Condition = models.CharField(max_length=500,default='None')
-    Test_Procedure = models.CharField(max_length=500,default='None')
-    Judgement = models.CharField(max_length=500,default='None')
-    Instrument = models.CharField(max_length=500,default='None')
+    Test_Objective = models.TextField(max_length=500,default='None')
+    Test_Standard = models.TextField(max_length=500,default='None')
+    Test_Condition = models.TextField(max_length=500,default='None')
+    Test_Procedure = models.TextField(max_length=500,default='None')
+    Judgement = models.TextField(max_length=500,default='None')
+    Instrument = models.TextField(max_length=500,default='None')
     def __str__(self):
         return f"{self.TestName}"
 
@@ -55,8 +61,8 @@ class TestRecord(models.Model):
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
     sample_quantiy = models.IntegerField(default=0)
-    result = models.CharField(max_length=255)
-    notes = models.TextField(blank=True, null=True)
+    result = models.CharField(max_length=255,default='None') 
+    notes = models.CharField(max_length=255,default='None') 
     remark  = models.CharField(max_length=500,default='None')
     status = models.BooleanField(default = False)
     # mnfDetail = models.ForeignKey(ModelMNFdetail,on_delete= models.CASCADE,related_name = 'test_mnf_detail')
@@ -78,7 +84,11 @@ class TestList(models.Model):
     TestName = models.CharField(max_length=80,default='None')
 
     def __str__(self):
-     return f"{self.TestName}"
+        return f"{self.TestName}"
 
+class RTF_Test(models.Model):
+    Field1 = models.CharField(max_length=50, default='')
+    Field2 = RichTextUploadingField(null=True, blank=True)
 
-
+    def __str__(self):
+        return f"{self.Field1}"

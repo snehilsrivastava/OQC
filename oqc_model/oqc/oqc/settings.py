@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'ckeditor',
+    'ckeditor_uploader',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +42,6 @@ INSTALLED_APPS = [
     'employee',
     'authapp',
     'product',
-   
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # WKHTMLTOPDF_PATH = 'C:\Program Files\wkhtmltopdf'
 
+CKEDITOR_UPLOAD_PATH = 'content/ckeditor/'

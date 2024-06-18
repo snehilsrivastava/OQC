@@ -1,3 +1,4 @@
 ./oqc_model/myworld/
 */__pycache__/
 *.sqlite3
+./oqc_model/oqc/staticfiles
