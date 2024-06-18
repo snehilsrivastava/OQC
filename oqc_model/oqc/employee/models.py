@@ -26,6 +26,7 @@ class Model_MNF_detail(models.Model):
     Manufature = models.CharField(max_length=500,default='None')
     Location = models.CharField(max_length=100,default='None')
     Brand = models.CharField(max_length=80,default='None')
+    Product = models.CharField(max_length=80,default='None')
     Brand_model_no = models.CharField(max_length=80,default='None')
     Indkal_model_no = models.CharField(max_length=80,default='None')
     ORM_model_no = models.CharField(max_length=80,default='None')
@@ -34,7 +35,7 @@ class Model_MNF_detail(models.Model):
 
 
 class Test_core_detail(models.Model):
-    # Product = models.ForeignKey(Product_Detail,  on_delete=models.CASCADE, related_name="testdetail")
+  
     TestName =  models.CharField(max_length=500,default='None')
     Test_Objective = models.CharField(max_length=500,default='None')
     Test_Standard = models.CharField(max_length=500,default='None')
@@ -55,7 +56,7 @@ class TestStageDetail(models.Model):
 
     
 class TestRecord(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    # employee = models.CharField(max_length=80,default = 'None')
     test_name = models.CharField(max_length=255)
     test_date = models.DateField(default=datetime.date.today)
     test_start_date = models.DateField(default=datetime.date.today)
@@ -65,6 +66,11 @@ class TestRecord(models.Model):
     notes = models.CharField(max_length=255) 
     remark  = models.CharField(max_length=500,default='None')
     status = models.BooleanField(default = False)
+    ProductType = models.CharField(max_length=102,default = '')
+    ModelName = models.CharField(max_length=100,default = '')
+    SerailNo = models.CharField(max_length=100,default = '')
+    TestStage = models.CharField(max_length=20,default='')
+    TestName  = models.CharField(max_length=80,default='')
     # mnfDetail = models.ForeignKey(ModelMNFdetail,on_delete= models.CASCADE,related_name = 'test_mnf_detail')
 
     def __str__(self):

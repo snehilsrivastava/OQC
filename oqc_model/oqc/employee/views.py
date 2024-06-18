@@ -58,18 +58,111 @@ def testdetail(request, no):
 def check(request):
     return render(request,"test_report.html")
 
-def cooling(request, test_name,model_name):
-    # Fetch the specific Test_core_detail object related to the cooling test
-    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    models = get_object_or_404(AC,ModelName = model_name)
+# def cooling(request, test_name,model_name,serialno):
+#     # Fetch the specific Test_core_detail object related to the cooling test
+#     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+#     models = get_object_or_404(AC,ModelName = model_name)
+#     form = testItemFormset(request.POST)
 
+#     if form.is_valid():
+#         testdetail = TestRecord.objects.get(SerailNo = serialno)
+
+#         testdetail.sample_quantiy = request.POST.get("quantiy")
+#         testdetail.test_date  = request.POST.get("ReportDate")
+#         testdetail.test_start_date  = request.POST.get("StartDate")
+#         testdetail.test_end_date = request.POST.get("EndDate")
+#         testdetail.result = request.POST.get("Result")
+#         testdetail.notes = request.POST.get("Notes")
+
+#         testdetail.save()
+
+#     # Pass the data to the template
+#     context = {
+#         'testdetail' : TestRecord.objects.get(SerailNo = serialno),
+#         'TestProtocol': Test_protocol,
+#         'model' : models,
+#     }
+#     return render(request, "cooling_test.html", context)
+
+
+
+# def cooling(request, test_name, model_name, serialno):
+#     # Fetch the specific Test_core_detail object related to the cooling test
+#     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+#     models = get_object_or_404(AC, ModelName=model_name)
     
-    # Pass the data to the template
+#     # Fetch the related Product_Detail object using the serial number
+#     product_detail = get_object_or_404(Product_Detail, SerailNo=serialno)
+
+#     if request.method == 'POST':
+#         formset = testItemFormset(request.POST)
+
+#         if formset.is_valid():
+#             for form in formset:
+#                 test_record = TestRecord.objects.filter(Product=product_detail)
+                
+                
+#                 test_record.sample_quantiy = request.POST.get("quantiy")
+#                 test_record.test_date  = request.POST.get("ReportDate")
+#                 test_record.test_start_date  = request.POST.get("StartDate")
+#                 test_record.test_end_date = request.POST.get("EndDate")
+#                 test_record.result = request.POST.get("Result")
+#                 test_record.notes = request.POST.get("Notes")
+#                 test_record.Product = product_detail  
+#                 test_record.save()
+
+#             return redirect('/check/')  # Redirect to a success page or another view
+#     else:
+#         formset = testItemFormset()
+
+#     # Pass the data to the template
+#     context = {
+#         'testdetail': TestRecord.objects.filter(Product=product_detail),
+#         'product' : product_detail,
+#         'TestProtocol': Test_protocol,
+#         'model': models,
+#         'formset': formset,
+#     }
+#     return render(request, "cooling_test.html", context)
+
+@login_required
+def cooling(request, test_name, model_name, serialno):
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC, ModelName=model_name)
+    TestRecordDetail = get_object_or_404(Product_Detail, SerailNo=serialno)
+
+
+    if request.method == 'POST':
+        formset = testItemFormset(request.POST)
+        if formset.is_valid():
+            for form in formset:
+
+                test_record = TestRecordDetail
+                # test_record.employee = Employee.objects.get(username=request.user.username)
+                test_record.sample_quantiy = request.POST.get("quantiy")
+                test_record.test_date  = request.POST.get("ReportDate")
+                test_record.test_start_date  = request.POST.get("StartDate")
+                test_record.test_end_date = request.POST.get("EndDate")
+                test_record.result = request.POST.get("Result")
+                test_record.notes = request.POST.get("Notes") 
+                test_record.save()
+            
+            return redirect('/check/')  # Redirect to a success page or another view
+    else:
+        formset = testItemFormset()
+
     context = {
+        'testdetail': TestRecord.objects.filter(SerailNo=serialno),
         'TestProtocol': Test_protocol,
-        'model' : models,
+        'model': models,
+        'formset': formset,
+        'test_name': test_name,
+        'model_name': model_name,
+        'serialno': serialno
     }
     return render(request, "cooling_test.html", context)
+
+
 
 
 def MNF(request):
@@ -292,7 +385,7 @@ def Test_list_entry(request):
         s1 = "0000"
 
         # Check if a test with the same name already exists
-        existing_test = TestList.objects.filter(TestName=testName).first()
+        existing_test = TestList.objects.filter(TestName=testName, Product = product).first()
         if existing_test:
             s1 = existing_test.TestStage
 
