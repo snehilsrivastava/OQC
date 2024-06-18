@@ -41,8 +41,8 @@ class Product_Detail(models.Model):
     ProductType = models.CharField(max_length=100)
     ModelName = models.CharField(max_length=100)
     SerailNo = models.CharField(max_length=100)
-    TestStage = models.CharField(max_length=20,default='')
-    TestName  = models.CharField(max_length=80,default='')
+    TestName = models.CharField(max_length=80, default='')
+    TestStage = models.CharField(max_length=20, default='')
     def __str__(self):
         return f"{self.no}- {self.ProductType} - {self.SerailNo} - {self.ModelName} "
      

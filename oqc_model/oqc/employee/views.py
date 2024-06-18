@@ -16,6 +16,7 @@ import PyPDF2
 import base64
 from tempfile import NamedTemporaryFile
 from io import BytesIO
+from django.contrib import messages
 
 
 def main_page(request):
@@ -70,9 +71,6 @@ def cooling(request, test_name,model_name):
     }
     return render(request, "cooling_test.html", context)
 
-
-def MNF(request):
-    return render(request,"productMNFdetail.html")
 
 def view_test_report(request,pk):
     record = get_object_or_404(TestRecord, pk =pk)
@@ -239,6 +237,8 @@ def MNF(request):
         manufature = request.POST.get('Manufature')
         location = request.POST.get('Location')
         brand = request.POST.get('Brand')
+        product = request.POST.get('prod')
+        # print(product)
         brand_model_no = request.POST.get('Brand_model_no')
         Indkal_model_no = request.POST.get('Indkal_model_no')
         ORM_model_no = request.POST.get('ORM_model_no')
@@ -250,45 +250,137 @@ def MNF(request):
            Manufature = manufature,
            Location = location,
            Brand = brand,
+           Product = product,
            Brand_model_no = brand_model_no,
            Indkal_model_no = Indkal_model_no,
            ORM_model_no = ORM_model_no
 
         )
         new_mnf.save()
-
         # Redirect to a success page or render a success message
-        return redirect('/check/')  # Assuming you have a 'success' URL
-
+        # return redirect('/check/')  # Assuming you have a 'success' URL
+        if product == 'ac':
+            return render(request, 'AC.html', {'Indkal_model_no': Indkal_model_no})
+       
     # If not a POST request, render the form
     return render(request, 'productMNFdetail.html')
 
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import TestList, Test_core_detail
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import TestList
+
 def Test_list_entry(request):
-    
     if request.method == 'POST':
         # Get form data from the request
-        testStage = request.POST.get('TestStage')
+        testStages = request.POST.getlist('TestStage')  # Get a list of selected test stages
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
-     
 
-        # Create and save a new AC object
-        new_test = TestList(
-           TestStage = testStage,
-           Product = product,
-           TestName = testName,
-           
+        # Check if the test entry already exists for any of the selected test stages
+        for testStage in testStages:
+            if TestList.objects.filter(TestName=testName, TestStage=testStage, Product=product).exists():
+                # Display an error message if the test detail info already exists
+                messages.error(request, f'Info already exists for {testStage}')
+                return redirect('/test_list_entry/')  # Redirect back to the form
 
-        )
-        new_test.save()
+        # Create and save the new TestList instance
+        s1 = "0000"
 
-        # Redirect to a success page or render a success message
-        return redirect('/check/')  # Assuming you have a 'success' URL
+        # Check if a test with the same name already exists
+        existing_test = TestList.objects.filter(TestName=testName).first()
+        if existing_test:
+            s1 = existing_test.TestStage
+
+        # Update s1 based on the selected test stages
+        for stage in testStages:
+            if stage == "DVT":
+                s1 = '1' + s1[1:]
+            elif stage == "PP":
+                s1 = s1[0] + '1' + s1[2:]
+            elif stage == "MP":
+                s1 = s1[:2] + '1' + s1[3:]
+            elif stage == "PDI":
+                s1 = s1[:3] + '1'
+
+        if existing_test:
+            existing_test.TestStage = s1
+            existing_test.save()
+        else:
+            new_test = TestList(
+                TestStage=s1,
+                Product=product,
+                TestName=testName,
+            )
+            new_test.save()
+
+        # Redirect based on the existence of the test name
+        if existing_test:
+            return redirect('/check/')
+        else:
+            return redirect('/test_protocol_entry/')
 
     # If not a POST request, render the form
     return render(request, 'Test_list_entry.html')
 
+
+
+
+def test_protocol_entry(request):
+    if request.method == 'POST':
+        # Get form data from the request
+        testName = request.POST.get('TestName')
+        testobjective = request.POST.get('Testobjective')
+        teststandard = request.POST.get('Teststandard')
+        testcondition = request.POST.get('Testcondition')
+        testprocedure = request.POST.get('Testprocedure')
+        judgement = request.POST.get('judgement')
+        instrument = request.POST.get('instrument')
+
+        # Check if the test detail info already exists
+        if Test_core_detail.objects.filter(TestName=testName).exists():
+            # Display an error message if the test detail info already exists
+            messages.error(request, 'Test detail info already exists')
+            return redirect('/test_protocol_entry/')  # Assuming you have a 'check' URL
+
+        # Create and save the new Test_core_detail instance
+        test_detail = Test_core_detail(
+            TestName=testName,
+            Test_Objective=testobjective,
+            Test_Standard=teststandard,
+            Test_Condition=testcondition,
+            Test_Procedure=testprocedure,
+            Judgement=judgement,
+            Instrument=instrument,
+        )
+        test_detail.save()
+
+        # Redirect to a success page or render a success message
+        return redirect('/check/')  # Assuming you have a 'check' URL
+
+    # If not a POST request, render the form
+    return render(request, 'test_protocol_entry.html')
+
+
+
+
 def view_test_records(request):
     test_records = TestRecord.objects.all()
     return render(request, 'view.html', {'test_records': test_records})
+
+def rtf_test(request):
+    form = RTF_Form
+    if request.method == "POST":
+        field1 = request.POST.get('Field1')
+        field2 = request.POST.get('Field2')
+        new_entry = RTF_Test(
+            Field1 = field1,
+            Field2 = field2,
+        )
+        new_entry.save()
+    return render(request, 'rtf_test.html', context={'form': form})
