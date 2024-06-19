@@ -125,37 +125,37 @@ def check(request):
 #     }
 #     return render(request, "cooling_test.html", context)
 
-@login_required
+
+
+
 def cooling(request, test_name, model_name, serialno):
+    # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
-    TestRecordDetail = get_object_or_404(Product_Detail, SerailNo=serialno)
-
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
 
     if request.method == 'POST':
-        formset = testItemFormset(request.POST)
-        if formset.is_valid():
-            for form in formset:
+        form = testItemFormset(request.POST)
+        if form.is_valid():
+            # Update the test record with form data
+            test_record.sample_quantiy = form.cleaned_data.get("quantiy")
+            test_record.test_date = form.cleaned_data.get("ReportDate")
+            test_record.test_start_date = form.cleaned_data.get("StartDate")
+            test_record.test_end_date = form.cleaned_data.get("EndDate")
+            test_record.result = form.cleaned_data.get("Result")
+            test_record.notes = form.cleaned_data.get("Notes")
+            test_record.save()
 
-                test_record = TestRecordDetail
-                # test_record.employee = Employee.objects.get(username=request.user.username)
-                test_record.sample_quantiy = request.POST.get("quantiy")
-                test_record.test_date  = request.POST.get("ReportDate")
-                test_record.test_start_date  = request.POST.get("StartDate")
-                test_record.test_end_date = request.POST.get("EndDate")
-                test_record.result = request.POST.get("Result")
-                test_record.notes = request.POST.get("Notes") 
-                test_record.save()
-            
-            return redirect('/check/')  # Redirect to a success page or another view
+        return redirect('/check/')  # Redirect to a success page or another view
     else:
-        formset = testItemFormset()
+        form = testItemFormset()
 
+    # Pass the data to the template
     context = {
-        'testdetail': TestRecord.objects.filter(SerailNo=serialno),
+        'testdetail': test_record,
         'TestProtocol': Test_protocol,
         'model': models,
-        'formset': formset,
+        'form': form,
         'test_name': test_name,
         'model_name': model_name,
         'serialno': serialno

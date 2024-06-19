@@ -16,6 +16,7 @@ def product_form_view(request):
         serial_no = request.POST.get('SerailNo')
         test_stage = request.POST.get('TestStage')
         test_name = request.POST.get('TestName')
+        user = request.user
         
         print(request.session['username'])
         # Check if the serial number already exists in the database
@@ -28,13 +29,14 @@ def product_form_view(request):
             ModelName=model_name,
             SerailNo=serial_no,
             TestStage = test_stage,
-            TestName = test_name
+            TestName = test_name,
+            employee = user
         )
         new_product_detail.save()
 
-        return HttpResponse("all done")
+        # return HttpResponse("all done")
 
-        #return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name,'serialno' : serial_no}))
+        return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name,'serialno' : serial_no}))
 
 
 
@@ -43,10 +45,10 @@ def product_form_view(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
-    users = request.user
     test = list(TestList.objects.all().values())
+    user = request.user
 
-    print(users.username)
+    # print(users.username)
  
     
     context = {
@@ -54,7 +56,7 @@ def product_form_view(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'users': users,
+        'user': user,
         'test' : test
     }
     

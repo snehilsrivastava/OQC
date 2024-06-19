@@ -56,8 +56,7 @@ class TestStageDetail(models.Model):
 
     
 class TestRecord(models.Model):
-    # employee = models.CharField(max_length=80,default = 'None')
-    test_name = models.CharField(max_length=255)
+    employee = models.CharField(max_length=80,default = 'None')
     test_date = models.DateField(default=datetime.date.today)
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
@@ -74,7 +73,7 @@ class TestRecord(models.Model):
     # mnfDetail = models.ForeignKey(ModelMNFdetail,on_delete= models.CASCADE,related_name = 'test_mnf_detail')
 
     def __str__(self):
-        return f"{self.test_name} - {self.employee.username}"
+        return f"{self.SerailNo}"
     
 class TestImage(models.Model):
     report = models.ForeignKey(TestRecord, on_delete=models.CASCADE, related_name="images")
