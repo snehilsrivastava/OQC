@@ -16,9 +16,9 @@ def product_form_view(request):
         serial_no = request.POST.get('SerailNo')
         test_stage = request.POST.get('TestStage')
         test_name = request.POST.get('TestName')
-        user = request.user
+        user = request.session['username']
         
-        print(request.session['username'])
+     
         # Check if the serial number already exists in the database
         if Product_Detail.objects.filter(SerailNo=serial_no).exists():
             return HttpResponse("Serial number already exists")
@@ -30,7 +30,7 @@ def product_form_view(request):
             SerailNo=serial_no,
             TestStage = test_stage,
             TestName = test_name,
-            employee = user
+            employee = user,
         )
         new_product_detail.save()
 
@@ -46,7 +46,7 @@ def product_form_view(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     test = list(TestList.objects.all().values())
-    user = request.user
+    user = request.session['username']
 
     # print(users.username)
  

@@ -1,14 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+    <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product Specification Form</title>
     <link
+     
       rel="stylesheet"
+     
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+   
     />
     <style>
+      .form-container {
+        width: 50%;
+        margin: auto;
+        margin-top: 50px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+      }
+      .form-title {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      @media print {
+        button {
+          display: none;
+        }
+      }
       .form-container {
         width: 50%;
         margin: auto;
@@ -30,9 +51,12 @@
     </style>
   </head>
   <body>
+  </head>
+  <body>
     <!-- Header -->
     <header class="bg-dark text-white text-center py-4 header">
-      <h2>{{ user.username }}, Please Add Product details !!</h2>
+      <h2>{{ user }}, Please Add Product details !!</h2>
+
     </header>
 
     <br /><br /><br />
@@ -49,7 +73,7 @@
             class="form-control"
             id="ProductType"
             name="ProductType"
-            onchange="populateModels() populateTestName();"
+            onchange="populateModels(); populateTestName();"
           >
             <option value="TV">TV</option>
             <option value="AC">AC</option>
@@ -72,7 +96,6 @@
             <!-- Model options will be populated dynamically based on the selected product type -->
           </select>
         </div>
-
         <div class="form-group">
           <label for="TestType">Test Stage</label>
           <select
@@ -119,7 +142,6 @@
         "Phone": {{ phone_models|safe }},
         "Washing_Machine": {{ washing_machine_models|safe }}
       };
-
       // JavaScript function to populate the model list based on the selected product type
       function populateModels() {
         const productTypeDropdown = document.getElementById("ProductType");
@@ -136,7 +158,6 @@
           modelNameDropdown.appendChild(option);
         });
       }
-
       // JavaScript function to populate the test names based on the selected product type and test stage
       function populateTestName() {
         const testDetail = {{ test|safe }};
@@ -172,11 +193,11 @@
           populateModels();
           populateTestName(); // Also populate test names when product type changes
         });
-
         document.getElementById("TestStage").addEventListener("change", function() {
           populateTestName();
         });
       });
     </script>
-  </body>
+    
+    </body>
 </html>

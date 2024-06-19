@@ -86,44 +86,8 @@ def check(request):
 
 
 
-# def cooling(request, test_name, model_name, serialno):
-#     # Fetch the specific Test_core_detail object related to the cooling test
-#     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-#     models = get_object_or_404(AC, ModelName=model_name)
-    
-#     # Fetch the related Product_Detail object using the serial number
-#     product_detail = get_object_or_404(Product_Detail, SerailNo=serialno)
 
-#     if request.method == 'POST':
-#         formset = testItemFormset(request.POST)
 
-#         if formset.is_valid():
-#             for form in formset:
-#                 test_record = TestRecord.objects.filter(Product=product_detail)
-                
-                
-#                 test_record.sample_quantiy = request.POST.get("quantiy")
-#                 test_record.test_date  = request.POST.get("ReportDate")
-#                 test_record.test_start_date  = request.POST.get("StartDate")
-#                 test_record.test_end_date = request.POST.get("EndDate")
-#                 test_record.result = request.POST.get("Result")
-#                 test_record.notes = request.POST.get("Notes")
-#                 test_record.Product = product_detail  
-#                 test_record.save()
-
-#             return redirect('/check/')  # Redirect to a success page or another view
-#     else:
-#         formset = testItemFormset()
-
-#     # Pass the data to the template
-#     context = {
-#         'testdetail': TestRecord.objects.filter(Product=product_detail),
-#         'product' : product_detail,
-#         'TestProtocol': Test_protocol,
-#         'model': models,
-#         'formset': formset,
-#     }
-#     return render(request, "cooling_test.html", context)
 
 
 
@@ -135,20 +99,32 @@ def cooling(request, test_name, model_name, serialno):
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
 
     if request.method == 'POST':
-        form = testItemFormset(request.POST)
+        form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
-            # Update the test record with form data
-            test_record.sample_quantiy = form.cleaned_data.get("quantiy")
-            test_record.test_date = form.cleaned_data.get("ReportDate")
-            test_record.test_start_date = form.cleaned_data.get("StartDate")
-            test_record.test_end_date = form.cleaned_data.get("EndDate")
-            test_record.result = form.cleaned_data.get("Result")
-            test_record.notes = form.cleaned_data.get("Notes")
-            test_record.save()
-
+            print("random")
+            form.save()
+        else:
+            print(form.errors)
+       
         return redirect('/check/')  # Redirect to a success page or another view
     else:
-        form = testItemFormset()
+        form = TestRecordForm(instance=test_record)
+
+    # if request.method == 'POST':
+    #     form = testItemFormset(request.POST)
+    #     if form.is_valid():
+    #         # Update the test record with form data
+    #         test_record.sample_quantiy = form.cleaned_data.get("quantiy")
+    #         test_record.test_date = form.cleaned_data.get("ReportDate")
+    #         test_record.test_start_date = form.cleaned_data.get("StartDate")
+    #         test_record.test_end_date = form.cleaned_data.get("EndDate")
+    #         test_record.result = form.cleaned_data.get("Result")
+    #         test_record.notes = form.cleaned_data.get("Notes")
+    #         test_record.save()
+
+    #     return redirect('/check/')  # Redirect to a success page or another view
+    # else:
+    #     form = testItemFormset()
 
     # Pass the data to the template
     context = {
@@ -165,8 +141,6 @@ def cooling(request, test_name, model_name, serialno):
 
 
 
-def MNF(request):
-    return render(request,"productMNFdetail.html")
 
 def view_test_report(request,pk):
     record = get_object_or_404(TestRecord, pk =pk)
@@ -325,7 +299,6 @@ def generate_pdf(request):
 
     return HttpResponse("Invalid request method.", status=405)
 
-
 def MNF(request):
     if request.method == 'POST':
         # Get form data from the request
@@ -333,6 +306,8 @@ def MNF(request):
         manufature = request.POST.get('Manufature')
         location = request.POST.get('Location')
         brand = request.POST.get('Brand')
+        product = request.POST.get('prod')
+        # print(product)
         brand_model_no = request.POST.get('Brand_model_no')
         Indkal_model_no = request.POST.get('Indkal_model_no')
         ORM_model_no = request.POST.get('ORM_model_no')
@@ -344,28 +319,20 @@ def MNF(request):
            Manufature = manufature,
            Location = location,
            Brand = brand,
+           Product = product,
            Brand_model_no = brand_model_no,
            Indkal_model_no = Indkal_model_no,
            ORM_model_no = ORM_model_no
 
         )
         new_mnf.save()
-
         # Redirect to a success page or render a success message
-        return redirect('/check/')  # Assuming you have a 'success' URL
-
+        # return redirect('/check/')  # Assuming you have a 'success' URL
+        if product == 'ac':
+            return render(request, 'AC.html', {'Indkal_model_no': Indkal_model_no})
+       
     # If not a POST request, render the form
     return render(request, 'productMNFdetail.html')
-
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import TestList, Test_core_detail
-
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import TestList
 
 def Test_list_entry(request):
     if request.method == 'POST':
@@ -464,3 +431,5 @@ def test_protocol_entry(request):
 def view_test_records(request):
     test_records = TestRecord.objects.all()
     return render(request, 'view.html', {'test_records': test_records})
+
+

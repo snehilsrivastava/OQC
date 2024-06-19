@@ -15,10 +15,6 @@ class Test(models.Model):
 
     def __str__(self):
         return f"Test {self.no} from {self.start_date} to {self.end_date}"
-    
-
-
-
 
 class Model_MNF_detail(models.Model):
 
@@ -34,15 +30,16 @@ class Model_MNF_detail(models.Model):
         return f"{self.Indkal_model_no}"
 
 
+
 class Test_core_detail(models.Model):
   
     TestName =  models.CharField(max_length=500,default='None')
-    Test_Objective = models.CharField(max_length=500,default='None')
-    Test_Standard = models.CharField(max_length=500,default='None')
+    Test_Objective = models.TextField(max_length=500,default='None')
+    Test_Standard = models.TextField(max_length=500,default='None')
     Test_Condition = models.TextField(max_length=500,default='None')
     Test_Procedure = models.TextField(max_length=500,default='None')
     Judgement = models.TextField(max_length=500,default='None')
-    Instrument = models.CharField(max_length=500,default='None')
+    Instrument = models.TextField(max_length=500,default='None')
     def __str__(self):
         return f"{self.TestName}"
 
@@ -61,8 +58,8 @@ class TestRecord(models.Model):
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
     sample_quantiy = models.IntegerField(default=0)
-    result = models.CharField(max_length=255) 
-    notes = models.CharField(max_length=255) 
+    result = models.CharField(max_length=255,default='None') 
+    notes = models.CharField(max_length=255,default='None') 
     remark  = models.CharField(max_length=500,default='None')
     status = models.BooleanField(default = False)
     ProductType = models.CharField(max_length=102,default = '')
@@ -89,7 +86,11 @@ class TestList(models.Model):
     TestName = models.CharField(max_length=80,default='None')
 
     def __str__(self):
-     return f"{self.TestName}"
+        return f"{self.TestName}"
 
+# class RTF_Test(models.Model):
+#     Field1 = models.CharField(max_length=50, default='')
+#     Field2 = RichTextUploadingField(null=True, blank=True)
 
-
+#     def __str__(self):
+#         return f"{self.Field1}"
