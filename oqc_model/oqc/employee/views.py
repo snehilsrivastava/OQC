@@ -58,16 +58,38 @@ def testdetail(request, no):
 def check(request):
     return render(request,"test_report.html")
 
-def cooling(request, test_name,model_name):
+
+def cooling(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    models = get_object_or_404(AC,ModelName = model_name)
+    models = get_object_or_404(AC, ModelName=model_name)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
 
-    
+    if request.method == 'POST':
+        form = testItemFormset(request.POST)
+        if form.is_valid():
+            # Update the test record with form data
+            test_record.sample_quantiy = form.cleaned_data.get("quantiy")
+            test_record.test_date = form.cleaned_data.get("ReportDate")
+            test_record.test_start_date = form.cleaned_data.get("StartDate")
+            test_record.test_end_date = form.cleaned_data.get("EndDate")
+            test_record.result = form.cleaned_data.get("Result")
+            test_record.notes = form.cleaned_data.get("Notes")
+            test_record.save()
+
+        return redirect('/check/')  # Redirect to a success page or another view
+    else:
+        form = testItemFormset()
+
     # Pass the data to the template
     context = {
+        'testdetail': test_record,
         'TestProtocol': Test_protocol,
-        'model' : models,
+        'model': models,
+        'form': form,
+        'test_name': test_name,
+        'model_name': model_name,
+        'serialno': serialno
     }
     return render(request, "cooling_test.html", context)
 
@@ -265,16 +287,6 @@ def MNF(request):
     # If not a POST request, render the form
     return render(request, 'productMNFdetail.html')
 
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import TestList, Test_core_detail
-
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import TestList
-
 def Test_list_entry(request):
     if request.method == 'POST':
         # Get form data from the request
@@ -282,31 +294,40 @@ def Test_list_entry(request):
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
 
-        # Check if the test entry already exists for any of the selected test stages
-        for testStage in testStages:
-            if TestList.objects.filter(TestName=testName, TestStage=testStage, Product=product).exists():
-                # Display an error message if the test detail info already exists
-                messages.error(request, f'Info already exists for {testStage}')
-                return redirect('/test_list_entry/')  # Redirect back to the form
-
         # Create and save the new TestList instance
-        s1 = "0000"
+        # s1 = "0000"
 
         # Check if a test with the same name already exists
-        existing_test = TestList.objects.filter(TestName=testName).first()
-        if existing_test:
-            s1 = existing_test.TestStage
-
+        existing_test = TestList.objects.filter(TestName=testName, Product=product).first()
+        # if existing_test:
+            # s1 = existing_test.TestStage
+        s1 = ""
+        if "DVT" in testStages:
+            s1 += "1"
+        else:
+            s1 += "0"
+        if "PP" in testStages:
+            s1 += "1"
+        else:
+            s1 += "0"
+        if "MP" in testStages:
+            s1 += "1"
+        else:
+            s1 += "0"
+        if "PDI" in testStages:
+            s1 += "1"
+        else:
+            s1 += "0"
         # Update s1 based on the selected test stages
-        for stage in testStages:
-            if stage == "DVT":
-                s1 = '1' + s1[1:]
-            elif stage == "PP":
-                s1 = s1[0] + '1' + s1[2:]
-            elif stage == "MP":
-                s1 = s1[:2] + '1' + s1[3:]
-            elif stage == "PDI":
-                s1 = s1[:3] + '1'
+        # for stage in testStages:
+        #     if stage == "DVT":
+        #         s1 = '1' + s1[1:]
+        #     elif stage == "PP":
+        #         s1 = s1[0] + '1' + s1[2:]
+        #     elif stage == "MP":
+        #         s1 = s1[:2] + '1' + s1[3:]
+        #     elif stage == "PDI":
+        #         s1 = s1[:3] + '1'
 
         if existing_test:
             existing_test.TestStage = s1
@@ -321,15 +342,13 @@ def Test_list_entry(request):
 
         # Redirect based on the existence of the test name
         if existing_test:
+            messages.success(request, "Test info updated!")
             return redirect('/check/')
         else:
             return redirect('/test_protocol_entry/')
 
     # If not a POST request, render the form
     return render(request, 'Test_list_entry.html')
-
-
-
 
 def test_protocol_entry(request):
     if request.method == 'POST':
@@ -365,9 +384,6 @@ def test_protocol_entry(request):
 
     # If not a POST request, render the form
     return render(request, 'test_protocol_entry.html')
-
-
-
 
 def view_test_records(request):
     test_records = TestRecord.objects.all()
