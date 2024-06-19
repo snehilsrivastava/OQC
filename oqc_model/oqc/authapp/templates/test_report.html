@@ -95,6 +95,26 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+
+        .message {
+        list-style: none;
+        width: calc(100% - 100px);
+        padding: 10px 20px;
+        border: 1px solid #ddd;
+        margin-bottom: 10px; /* Add some spacing */
+        }
+
+        .success {
+        background-color: #dff0d8;
+        color: #468847;
+        border-color: #d6e9c6;
+        }
+
+        .error {
+        background-color: #f2dede;
+        color: #a94442;
+        border-color: #ededed;
+        }
     </style>
 </head>
 <body>
@@ -103,16 +123,32 @@
             <div id="branding">
                 <h1>Employee Dashboard</h1>
             </div>
+            <!-- Display error/success messages -->
+			{% if messages %}
+			
+			{% endif %}
             <nav>
                 <ul>
                     <!-- <li><a href="{% url 'AC'%}">Add Specification</a></li> -->
-                    <li><a href="{% url 'product'%}">Add New Report</a></li>
+                    <li><a href="{% url 'product' %}">Add New Report</a></li>
                     <li><a href="{% url 'test_list_entry'%}">Add Test List</a></li>
                     <li><a href="{% url 'mnf'%}">Add Model Detail</a></li>
                 </ul>
             </nav>
         </div>
     </header>
+
+    <div class="alert alert-primary" role="alert">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.level_tag }}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 
     <div class="container">
         <h2>Completed Tests</h2>
