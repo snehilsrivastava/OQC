@@ -29,6 +29,7 @@ class Model_MNF_detail(models.Model):
         return f"{self.Product} - {self.Indkal_model_no}"
 
 
+
 class Test_core_detail(models.Model):
   
     TestName =  models.CharField(max_length=500,default='None')
@@ -62,7 +63,7 @@ class TestRecord(models.Model):
     status = models.BooleanField(default = False)
     ProductType = models.CharField(max_length=102,default = '')
     ModelName = models.CharField(max_length=100,default = '')
-    SerailNo = models.CharField(max_length=100,default = '')
+    SerailNo  = models.CharField(max_length=100,default = '')
     TestStage = models.CharField(max_length=20,default='')
     TestName  = models.CharField(max_length=80,default='')
     # mnfDetail = models.ForeignKey(ModelMNFdetail,on_delete= models.CASCADE,related_name = 'test_mnf_detail')

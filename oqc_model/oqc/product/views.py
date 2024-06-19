@@ -90,3 +90,11 @@ def AC_spec(request):
 
     # If not a POST request, render the form
     return render(request, 'AC.html')
+
+
+
+
+
+
+
+

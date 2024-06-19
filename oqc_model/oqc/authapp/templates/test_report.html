@@ -97,25 +97,75 @@
         }
 
         .message {
-        list-style: none;
-        width: calc(100% - 100px);
-        padding: 10px 20px;
-        border: 1px solid #ddd;
-        margin-bottom: 10px; /* Add some spacing */
+            list-style: none;
+            width: calc(100% - 100px);
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px; /* Add some spacing */
         }
 
         .success {
-        background-color: #dff0d8;
-        color: #468847;
-        border-color: #d6e9c6;
+            background-color: #dff0d8;
+            color: #468847;
+            border-color: #d6e9c6;
         }
 
         .error {
-        background-color: #f2dede;
-        color: #a94442;
-        border-color: #ededed;
+            background-color: #f2dede;
+            color: #a94442;
+            border-color: #ededed;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons a {
+            background: #333;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+
+        .action-buttons a:hover {
+            background: #d9534f;
+        }
+
+        .toggle-button {
+            background: #333;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .toggle-button.true {
+            background: #d9534f;
         }
     </style>
+    <script>
+        function toggleStatus(testId) {
+            fetch(`/toggle_status/${testId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const button = document.getElementById(`status-toggle-${testId}`);
+                    button.textContent = data.new_status ? 'Complete' : 'Incomplete';
+                    button.classList.toggle('true', data.new_status);
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -124,52 +174,102 @@
                 <h1>Employee Dashboard</h1>
             </div>
             <!-- Display error/success messages -->
-			{% if messages %}
-			
-			{% endif %}
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="message {{ message.level_tag }}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             <nav>
                 <ul>
-                    <!-- <li><a href="{% url 'AC'%}">Add Specification</a></li> -->
                     <li><a href="{% url 'product' %}">Add New Report</a></li>
-                    <li><a href="{% url 'test_list_entry'%}">Add Test List</a></li>
-                    <li><a href="{% url 'mnf'%}">Add Model Detail</a></li>
+                    <li><a href="{% url 'test_list_entry' %}">Add Test List</a></li>
+                    <li><a href="{% url 'mnf' %}">Add Model Detail</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <div class="alert alert-primary" role="alert">
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="message {{ message.level_tag }}">
-                        {{ message }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-
     <div class="container">
         <h2>Completed Tests</h2>
+        <form method="get" action="{% url 'check' %}">
+            <div>
+                <label for="test_name">Test Name:</label>
+                <input type="text" id="test_name" name="test_name" value="{{ test_name }}">
+            </div>
+
+            <div>
+                <label for="product">Product Type:</label>
+                <input type="text" id="product" name="product" value="{{ product }}">
+            </div> 
+           <div>
+                <label for="test_stage">Test Stage:</label>
+                <input type="text" id="test_stage" name="test_stage" value="{{ test_stage }}">
+            </div>
+
+            <div>
+                <label for="model_name">Model Name:</label>
+                <input type="text" id="model_name" name="model_name" value="{{ model_name }}">
+            </div> 
+            <div>
+                <label for="serial_number">Serial Number:</label>
+                <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+            </div>
+            <div>
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    <option value="">All</option>
+                    <option value="complete" {% if status == 'complete' %}selected{% endif %}>Complete</option>
+                    <option value="incomplete" {% if status == 'incomplete' %}selected{% endif %}>Incomplete</option>
+                </select>
+            </div>
+            <div>
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+            <div>
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+            <button type="submit" class="button">Filter</button>
+        </form>
+
+      
         <table>
             <thead>
                 <tr>
-                    <th>Test No</th>
+                    <th>Serail No</th>
                     <th>Test Name</th>
                     <th>Date</th>
-                    <th>Result</th>
-                    <th>Notes</th>
+                    <th>Product</th>
+                    <th>Stage</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for test in completed_tests %}
                 <tr>
-                    <td>{{ test.no }}</td>
-                    <td>{{ test.name }}</td>
-                    <td>{{ test.date }}</td>
-                    <td>{{ test.result }}</td>
-                    <td>{{ test.notes }}</td>
+                    <td>{{test.SerailNo}}</td>
+                    <td>{{ test.TestName }}</td>
+                    <td>{{ test.test_date }}</td>
+                    <td>{{ test.ProductType }}</td>
+                    <td>{{ test.TestStage }}</td>
+                
+                    <td>
+                        <span id="status-toggle-{{ test.id }}" class="toggle-button {{ test.status }}" onclick="toggleStatus({{ test.id }})">
+                            {{ test.status|yesno:"Complete,Incomplete" }}
+                        </span>
+                    </td>
+                    <td class="action-buttons">
+                        <a href="{% url 'view' %}">View Report</a>
+                        <a href="{% url 'view'%}">Edit Report</a>
+                        <a href="{% url 'view'%}">Remark</a>
+                        <a href="{% url 'view'%}">Delete</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
