@@ -66,20 +66,32 @@ def cooling(request, test_name, model_name, serialno):
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
 
     if request.method == 'POST':
-        form = testItemFormset(request.POST)
+        form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
-            # Update the test record with form data
-            test_record.sample_quantiy = form.cleaned_data.get("quantiy")
-            test_record.test_date = form.cleaned_data.get("ReportDate")
-            test_record.test_start_date = form.cleaned_data.get("StartDate")
-            test_record.test_end_date = form.cleaned_data.get("EndDate")
-            test_record.result = form.cleaned_data.get("Result")
-            test_record.notes = form.cleaned_data.get("Notes")
-            test_record.save()
-
+            print("random")
+            form.save()
+        else:
+            print(form.errors)
+       
         return redirect('/check/')  # Redirect to a success page or another view
     else:
-        form = testItemFormset()
+        form = TestRecordForm(instance=test_record)
+
+    # if request.method == 'POST':
+    #     form = testItemFormset(request.POST)
+    #     if form.is_valid():
+    #         # Update the test record with form data
+    #         test_record.sample_quantiy = form.cleaned_data.get("quantiy")
+    #         test_record.test_date = form.cleaned_data.get("ReportDate")
+    #         test_record.test_start_date = form.cleaned_data.get("StartDate")
+    #         test_record.test_end_date = form.cleaned_data.get("EndDate")
+    #         test_record.result = form.cleaned_data.get("Result")
+    #         test_record.notes = form.cleaned_data.get("Notes")
+    #         test_record.save()
+
+    #     return redirect('/check/')  # Redirect to a success page or another view
+    # else:
+    #     form = testItemFormset()
 
     # Pass the data to the template
     context = {
@@ -251,7 +263,6 @@ def generate_pdf(request):
 
     return HttpResponse("Invalid request method.", status=405)
 
-
 def MNF(request):
     if request.method == 'POST':
         # Get form data from the request
@@ -294,13 +305,8 @@ def Test_list_entry(request):
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
 
-        # Create and save the new TestList instance
-        # s1 = "0000"
-
         # Check if a test with the same name already exists
         existing_test = TestList.objects.filter(TestName=testName, Product=product).first()
-        # if existing_test:
-            # s1 = existing_test.TestStage
         s1 = ""
         if "DVT" in testStages:
             s1 += "1"
@@ -318,16 +324,6 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
-        # Update s1 based on the selected test stages
-        # for stage in testStages:
-        #     if stage == "DVT":
-        #         s1 = '1' + s1[1:]
-        #     elif stage == "PP":
-        #         s1 = s1[0] + '1' + s1[2:]
-        #     elif stage == "MP":
-        #         s1 = s1[:2] + '1' + s1[3:]
-        #     elif stage == "PDI":
-        #         s1 = s1[:3] + '1'
 
         if existing_test:
             existing_test.TestStage = s1
@@ -388,15 +384,3 @@ def test_protocol_entry(request):
 def view_test_records(request):
     test_records = TestRecord.objects.all()
     return render(request, 'view.html', {'test_records': test_records})
-
-def rtf_test(request):
-    form = RTF_Form
-    if request.method == "POST":
-        field1 = request.POST.get('Field1')
-        field2 = request.POST.get('Field2')
-        new_entry = RTF_Test(
-            Field1 = field1,
-            Field2 = field2,
-        )
-        new_entry.save()
-    return render(request, 'rtf_test.html', context={'form': form})

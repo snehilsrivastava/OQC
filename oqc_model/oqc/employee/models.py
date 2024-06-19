@@ -16,6 +16,7 @@ class Test(models.Model):
         return f"Test {self.no} from {self.start_date} to {self.end_date}"
     
 class Model_MNF_detail(models.Model):
+
     Customer = models.CharField(max_length=500,default='None')
     Manufature = models.CharField(max_length=500,default='None')
     Location = models.CharField(max_length=100,default='None')
@@ -54,8 +55,8 @@ class TestRecord(models.Model):
     test_date = models.DateField(default=datetime.date.today)
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
-    sample_quantiy = models.IntegerField(default=0)
-    result = models.CharField(max_length=255) 
+    sample_quantity = models.IntegerField(default=0)
+    result = RichTextUploadingField(default="", blank=True)
     notes = models.CharField(max_length=255) 
     remark  = models.CharField(max_length=500,default='None')
     status = models.BooleanField(default = False)
@@ -84,10 +85,3 @@ class TestList(models.Model):
 
     def __str__(self):
      return f"{self.Product} - {self.TestName}"
-
-class RTF_Test(models.Model):
-    Field1 = models.CharField(max_length=50, default='')
-    Field2 = RichTextUploadingField(null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.Field1}"

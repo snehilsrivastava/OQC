@@ -139,3 +139,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # WKHTMLTOPDF_PATH = 'C:\Program Files\wkhtmltopdf'
 
 CKEDITOR_UPLOAD_PATH = 'content/ckeditor/'
+
+import django
+from django.utils.encoding import force_str
+django.utils.encoding.force_text = force_str
