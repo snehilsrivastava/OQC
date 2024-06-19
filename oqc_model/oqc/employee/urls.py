@@ -20,6 +20,7 @@ urlpatterns = [
     path('test_protocol_entry/',views.test_protocol_entry,name = 'test_protocol_entry'),
     # re_path('^rtf_test/', include('ckeditor_uploader.urls'), name='rtf'),
     # path('rtf_test/', views.rtf_test, name='rtf_test'),
+    path('toggle_status/<int:id>/', views.toggle_status, name='toggle_status'),
     path('ckeditor/', include('ckeditor_uploader.urls'))
 ]
 

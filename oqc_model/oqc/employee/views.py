@@ -53,10 +53,74 @@ def testdetail(request, no):
             'end_date': end_date,
         }
         return render(request, "test1.html", context)
+
+
+# def check(request):
+#     username = request.session.get('username')
     
+#     if username is None:
+#         return redirect('login')  # Redirect to login page if username is not in session
+
+#     # Fetch all test records associated with the username
+#     completed_tests = TestRecord.objects.filter(employee=username)
+
+#     context = {
+#        'completed_tests': completed_tests
+#     }
+
+#     return render(request, "test_report.html", context)
+
+from django.shortcuts import render
+from .models import TestRecord
 
 def check(request):
-    return render(request,"test_report.html")
+    username = request.session['username']
+
+    # Get filter parameters from request
+    test_name = request.GET.get('test_name', '')
+    test_stage = request.GET.get('test_stage', '')
+    product = request.GET.get('product','')
+    model_name = request.GET.get('model_name', '')
+    serial_number = request.GET.get('serial_number', '')
+    status = request.GET.get('status', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
+    # Filter the TestRecord queryset based on the parameters
+    completed_tests = TestRecord.objects.filter(employee=username)
+
+    if test_name:
+        completed_tests = completed_tests.filter(TestName__icontains=test_name)
+    if product:
+        completed_tests = completed_tests.filter(ProductType__icontains=product)
+    if test_stage:
+        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
+    if model_name:
+        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
+    if serial_number:
+        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
+    if status:
+        completed_tests = completed_tests.filter(status=(status.lower() == 'complete'))
+    if start_date:
+        completed_tests = completed_tests.filter(test_date__gte=start_date)
+    if end_date:
+        completed_tests = completed_tests.filter(test_date__lte=end_date)
+
+    context = {
+        'completed_tests': completed_tests,
+        'test_name': test_name,
+        'test_stage': test_stage,
+        'model_name': model_name,
+        'serial_number': serial_number,
+        'status': status,
+        'product':product,
+        'start_date': start_date,
+        'end_date': end_date,
+    }
+
+    return render(request, "test_report.html", context)
+
+
 
 
 def cooling(request, test_name, model_name, serialno):
@@ -106,6 +170,18 @@ def cooling(request, test_name, model_name, serialno):
     return render(request, "cooling_test.html", context)
 
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import TestRecord
+
+@csrf_exempt
+def toggle_status(request, id):
+    if request.method == 'POST':
+        test_record = get_object_or_404(TestRecord, id=id)
+        test_record.status = not test_record.status
+        test_record.save()
+        return JsonResponse({'success': True, 'new_status': test_record.status})
+    return JsonResponse({'success': False})
 
 
 
