@@ -2,9 +2,8 @@ from django.db import models
 from authapp.models import Employee
 import datetime
 from product.models import  Product_Detail
-
-# from ckeditor_uploader.fields import RichTextUploadingField
-# from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
+from ckeditor.fields import RichTextField
 
 # Create your models here.
 
@@ -15,7 +14,7 @@ class Test(models.Model):
 
     def __str__(self):
         return f"Test {self.no} from {self.start_date} to {self.end_date}"
-
+    
 class Model_MNF_detail(models.Model):
 
     Customer = models.CharField(max_length=500,default='None')
@@ -27,19 +26,19 @@ class Model_MNF_detail(models.Model):
     Indkal_model_no = models.CharField(max_length=80,default='None')
     ORM_model_no = models.CharField(max_length=80,default='None')
     def __str__(self):
-        return f"{self.Indkal_model_no}"
+        return f"{self.Product} - {self.Indkal_model_no}"
 
 
 
 class Test_core_detail(models.Model):
   
     TestName =  models.CharField(max_length=500,default='None')
-    Test_Objective = models.TextField(max_length=500,default='None')
-    Test_Standard = models.TextField(max_length=500,default='None')
+    Test_Objective = models.CharField(max_length=500,default='None')
+    Test_Standard = models.CharField(max_length=500,default='None')
     Test_Condition = models.TextField(max_length=500,default='None')
     Test_Procedure = models.TextField(max_length=500,default='None')
     Judgement = models.TextField(max_length=500,default='None')
-    Instrument = models.TextField(max_length=500,default='None')
+    Instrument = models.CharField(max_length=500,default='None')
     def __str__(self):
         return f"{self.TestName}"
 
@@ -58,8 +57,8 @@ class TestRecord(models.Model):
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
     sample_quantiy = models.IntegerField(default=0)
-    result = models.CharField(max_length=255,default='None') 
-    notes = models.CharField(max_length=255,default='None') 
+    result = models.CharField(max_length=255) 
+    notes = models.CharField(max_length=255) 
     remark  = models.CharField(max_length=500,default='None')
     status = models.BooleanField(default = False)
     ProductType = models.CharField(max_length=102,default = '')
@@ -86,7 +85,7 @@ class TestList(models.Model):
     TestName = models.CharField(max_length=80,default='None')
 
     def __str__(self):
-        return f"{self.TestName}"
+     return f"{self.Product} - {self.TestName}"
 
 # class RTF_Test(models.Model):
 #     Field1 = models.CharField(max_length=50, default='')

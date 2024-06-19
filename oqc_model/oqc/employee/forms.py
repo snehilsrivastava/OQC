@@ -16,7 +16,6 @@ class TestRecordForm(forms.ModelForm):
 
 testItemFormset = formset_factory(TestRecordForm, extra=1)
 
-
 class TestImageForm(forms.ModelForm):
     class Meta:
         model = TestImage
