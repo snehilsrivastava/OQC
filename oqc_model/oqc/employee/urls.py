@@ -11,7 +11,7 @@ urlpatterns = [
     path('submit-product-details', views.submit_product_details_view, name='submit_product_details'),
     path('create-test-record/', views.create_test_record, name='create_test_record'),
     path('edit-test-record/<int:pk>/', views.edit_test_record, name='edit_test_record'),
-    path('view/', views.view_test_records, name='view'),
+    path('view/<str:test_name>/<str:model_name>/<str:serialno>/', views.view, name='view'),
     path('generate-pdf/', views.generate_pdf, name='generate_pdf'),
     path('view_test_report/<int:pk>/', views.view_test_report, name='view_test_reports'),
     path('cooling/<str:test_name>/<str:model_name>/<str:serialno>/', views.cooling, name='cooling'),
@@ -21,7 +21,9 @@ urlpatterns = [
     # re_path('^rtf_test/', include('ckeditor_uploader.urls'), name='rtf'),
     # path('rtf_test/', views.rtf_test, name='rtf_test'),
     path('toggle_status/<int:id>/', views.toggle_status, name='toggle_status'),
-    path('ckeditor/', include('ckeditor_uploader.urls'))
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('delete-test-record/<int:record_id>/', views.delete_test_record, name='delete_test_record'),
+    path('remark/<int:id>/',views.remark,name = 'remark')
 ]
 
 from django.conf import settings
