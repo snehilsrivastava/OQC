@@ -106,6 +106,12 @@ def check(request):
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
 
+    tv_models = list(TV.objects.values_list('ModelName', flat=True))
+    ac_models = list(AC.objects.values_list('ModelName', flat=True))
+    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
+    test = list(TestList.objects.all().values())
+
     context = {
         'completed_tests': completed_tests,
         'test_name': test_name,
@@ -116,6 +122,11 @@ def check(request):
         'product':product,
         'start_date': start_date,
         'end_date': end_date,
+        'tv_models': tv_models,
+        'ac_models': ac_models,
+        'phone_models': phone_models,
+        'washing_machine_models': washing_machine_models,
+        'test' : test
     }
 
     return render(request, "test_report.html", context)
@@ -384,8 +395,13 @@ def Test_list_entry(request):
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
 
+        # Create and save the new TestList instance
+        # s1 = "0000"
+
         # Check if a test with the same name already exists
         existing_test = TestList.objects.filter(TestName=testName, Product=product).first()
+        # if existing_test:
+            # s1 = existing_test.TestStage
         s1 = ""
         if "DVT" in testStages:
             s1 += "1"
@@ -403,6 +419,16 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
+        # Update s1 based on the selected test stages
+        # for stage in testStages:
+        #     if stage == "DVT":
+        #         s1 = '1' + s1[1:]
+        #     elif stage == "PP":
+        #         s1 = s1[0] + '1' + s1[2:]
+        #     elif stage == "MP":
+        #         s1 = s1[:2] + '1' + s1[3:]
+        #     elif stage == "PDI":
+        #         s1 = s1[:3] + '1'
 
         if existing_test:
             existing_test.TestStage = s1
@@ -463,3 +489,4 @@ def test_protocol_entry(request):
 def view_test_records(request):
     test_records = TestRecord.objects.all()
     return render(request, 'view.html', {'test_records': test_records})
+

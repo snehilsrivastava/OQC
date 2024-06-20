@@ -8,7 +8,7 @@ from ckeditor5.fields import RichTextFormField
 class TestRecordForm(forms.ModelForm):
     class Meta:
         model = TestRecord
-        fields = ['test_date','result','sample_quantity', 'test_start_date', 'test_end_date']
+        fields = ['test_date','result','sample_quantiy', 'test_start_date', 'test_end_date']
         widgets = {
             'test_date': forms.DateInput(attrs={'type': 'date'}),
             'test_start_date': forms.DateInput(attrs={'type': 'date'}),
