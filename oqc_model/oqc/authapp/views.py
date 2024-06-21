@@ -18,17 +18,6 @@ def authenticate(username=None, password=None):
 def home(request):
 	return render(request, 'home.html')
 
-# Define custom authenticate function which uses Employee DB
-def authenticate(username=None, password=None):
-	try:
-		user = Employee.objects.using('your_database_name').get(username=username)
-	except Employee.DoesNotExist:
-		return None
-
-	if user.check_password(password):  # Assuming you're using password hashing
-		return user
-	return None
-
 # Define a view function for the login page
 def login_page(request):
 	# Check if the HTTP request method is POST (form submission)

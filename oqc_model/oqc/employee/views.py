@@ -126,7 +126,7 @@ from .models import TestRecord
 
 def check(request):
     username = request.session['username']
-
+    print(username)
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -138,18 +138,19 @@ def check(request):
     end_date = request.GET.get('end_date', '')
 
     # Filter the TestRecord queryset based on the parameters
-    completed_tests = TestRecord.objects.filter(employee=username)
+    completed_tests = TestRecord.objects.all()
+    completed_tests = completed_tests.filter(employee=username+" ")
 
     if test_name:
-        completed_tests = completed_tests.filter(TestName__icontains=test_name)
+        completed_tests = completed_tests.filter(TestName=test_name)
     if product:
-        completed_tests = completed_tests.filter(ProductType__icontains=product)
+        completed_tests = completed_tests.filter(ProductType=product)
     if test_stage:
-        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
+        completed_tests = completed_tests.filter(TestStage=test_stage)
     if model_name:
-        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
+        completed_tests = completed_tests.filter(ModelName=model_name)
     if serial_number:
-        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
+        completed_tests = completed_tests.filter(SerailNo=serial_number)
     if status:
         completed_tests = completed_tests.filter(status=(status.lower() == 'complete'))
     if start_date:

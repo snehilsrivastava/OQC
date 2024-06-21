@@ -138,6 +138,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # WKHTMLTOPDF_PATH = 'C:\Program Files\wkhtmltopdf'
 
+SILENCED_SYSTEM_CHECKS = ['2_0.W001', 'ckeditor.W001']
+
 CKEDITOR_UPLOAD_PATH = 'content/ckeditor/'
 
 import django
