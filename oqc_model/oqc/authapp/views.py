@@ -73,7 +73,7 @@ def register_page(request):
         new_employee.save()
 
         messages.info(request, "Account created Successfully!")
-        return HttpResponse("Your details saved successfully!!")
+        return redirect('/au/login/')
 
     return render(request, 'register.html')
 

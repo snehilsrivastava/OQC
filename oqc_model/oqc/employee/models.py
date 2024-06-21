@@ -57,8 +57,8 @@ class TestRecord(models.Model):
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
     sample_quantiy = models.IntegerField(default=0)
-    result = models.CharField(max_length=255) 
-    notes = models.CharField(max_length=255) 
+    result = RichTextUploadingField(default="", blank=True)
+    notes = models.CharField(max_length=255,default='') 
     employee_remark  = models.TextField(max_length=500,default='')
     owner_remark  = models.TextField(max_length=500,default='')
     status = models.BooleanField(default = False)
@@ -87,10 +87,3 @@ class TestList(models.Model):
 
     def __str__(self):
      return f"{self.Product} - {self.TestName}"
-
-# class RTF_Test(models.Model):
-#     Field1 = models.CharField(max_length=50, default='')
-#     Field2 = RichTextUploadingField(null=True, blank=True)
-
-#     def __str__(self):
-#         return f"{self.Field1}"

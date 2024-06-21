@@ -18,7 +18,6 @@ def product_form_view(request):
         test_name = request.POST.get('TestName')
         username = request.session['username']
         user = Employee.objects.get(username=username)
-        print(request.session['username'])
         # Check if the serial number already exists in the database
         if Product_Detail.objects.filter(SerailNo=serial_no).exists():
             return HttpResponse("Serial number already exists")
@@ -33,12 +32,7 @@ def product_form_view(request):
             employee = user,
         )
         new_product_detail.save()
-
-        # return HttpResponse("all done")
-
         return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name,'serialno' : serial_no}))
-
-
 
     # If GET request, prepare context with models data
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
@@ -48,9 +42,6 @@ def product_form_view(request):
     test = list(TestList.objects.all().values())
     user = request.session['username']
 
-    # print(users.username)
- 
-    
     context = {
         'tv_models': tv_models,
         'ac_models': ac_models,
