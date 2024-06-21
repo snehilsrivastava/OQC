@@ -1,2 +1,4 @@
 ./oqc_model/.venv/
 **/__pycache__/
+*.sqlite3
+./oqc_model/oqc/media
