@@ -1,2 +1,2 @@
 ./oqc_model/.venv/
-*/__pycache__/
+**/__pycache__/
