@@ -1,6 +1,10 @@
 from django.db import models
 from authapp.models import Employee
 import datetime
+from product.models import  Product_Detail
+from ckeditor_uploader.fields import RichTextUploadingField
+from ckeditor.fields import RichTextField
+
 # Create your models here.
 
 class Test(models.Model):
@@ -11,29 +15,29 @@ class Test(models.Model):
     def __str__(self):
         return f"Test {self.no} from {self.start_date} to {self.end_date}"
     
-
-
-
-
 class Model_MNF_detail(models.Model):
+
     Customer = models.CharField(max_length=500,default='None')
     Manufature = models.CharField(max_length=500,default='None')
     Location = models.CharField(max_length=100,default='None')
     Brand = models.CharField(max_length=80,default='None')
+    Product = models.CharField(max_length=80,default='None')
     Brand_model_no = models.CharField(max_length=80,default='None')
     Indkal_model_no = models.CharField(max_length=80,default='None')
     ORM_model_no = models.CharField(max_length=80,default='None')
     def __str__(self):
-        return f"{self.Indkal_model_no}"
+        return f"{self.Product} - {self.Indkal_model_no}"
+
 
 
 class Test_core_detail(models.Model):
+  
     TestName =  models.CharField(max_length=500,default='None')
     Test_Objective = models.CharField(max_length=500,default='None')
     Test_Standard = models.CharField(max_length=500,default='None')
-    Test_Condition = models.CharField(max_length=500,default='None')
-    Test_Procedure = models.CharField(max_length=500,default='None')
-    Judgement = models.CharField(max_length=500,default='None')
+    Test_Condition = models.TextField(max_length=500,default='None')
+    Test_Procedure = models.TextField(max_length=500,default='None')
+    Judgement = models.TextField(max_length=500,default='None')
     Instrument = models.CharField(max_length=500,default='None')
     def __str__(self):
         return f"{self.TestName}"
@@ -48,21 +52,26 @@ class TestStageDetail(models.Model):
 
     
 class TestRecord(models.Model):
-    # make serial number as foreign key
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    test_name = models.CharField(max_length=255)
+    employee = models.CharField(max_length=80,default = 'None')
     test_date = models.DateField(default=datetime.date.today)
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
     sample_quantiy = models.IntegerField(default=0)
-    result = models.CharField(max_length=255)
-    notes = models.TextField(blank=True, null=True)
-    remark  = models.CharField(max_length=500,default='None')
+    result = RichTextUploadingField(default="", blank=True)
+    notes = models.CharField(max_length=255) 
+    # remark  = models.CharField(max_length=500,default='None')
+    employee_remark  = models.TextField(max_length=500,default='None')
+    owner_remark  = models.TextField(max_length=500,default='None')
     status = models.BooleanField(default = False)
+    ProductType = models.CharField(max_length=102,default = '')
+    ModelName = models.CharField(max_length=100,default = '')
+    SerailNo  = models.CharField(max_length=100,default = '')
+    TestStage = models.CharField(max_length=20,default='')
+    TestName  = models.CharField(max_length=80,default='')
     # mnfDetail = models.ForeignKey(ModelMNFdetail,on_delete= models.CASCADE,related_name = 'test_mnf_detail')
 
     def __str__(self):
-        return f"{self.test_name} - {self.employee.username}"
+        return f"{self.SerailNo}"
     
 class TestImage(models.Model):
     report = models.ForeignKey(TestRecord, on_delete=models.CASCADE, related_name="images")
@@ -78,7 +87,4 @@ class TestList(models.Model):
     TestName = models.CharField(max_length=80,default='None')
 
     def __str__(self):
-     return f"{self.TestName}"
-
-
-
+     return f"{self.Product} - {self.TestName}"

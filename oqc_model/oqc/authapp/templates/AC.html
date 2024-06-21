@@ -41,8 +41,8 @@
             <form action="{% url 'AC' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="serialNumber">Model Name</label>
-                    <input type="text" class="form-control" id="ModelName" name="ModelName" required>
+                    <label for="serialNumber">Model Number</label>
+                    <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ Indkal_model_no }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="quantity">BI Motor</label>

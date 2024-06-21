@@ -59,7 +59,7 @@
 
         .button {
             display: inline-block;
-            background: #77b300;
+            background: #333;
             color: #fff;
             padding: 10px 20px;
             text-align: center;
@@ -69,7 +69,7 @@
         }
 
         .button:hover {
-            background: #669900;
+            background: #d9534f;
         }
 
         table {
@@ -95,7 +95,183 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+
+        .message {
+            list-style: none;
+            width: calc(100% - 100px);
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px; /* Add some spacing */
+        }
+
+        .success {
+            background-color: #dff0d8;
+            color: #468847;
+            border-color: #d6e9c6;
+        }
+
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border-color: #ededed;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons a {
+            background: #333;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+
+        .action-buttons a:hover {
+            background: #d9534f;
+        }
+
+        .toggle-button {
+            background: #333;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .toggle-button.true {
+            background: #d9534f;
+        }
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            populateModels();
+            populateTestName();
+        
+            document.getElementById("product").addEventListener("change", function() {
+                populateModels();
+                populateTestName();
+            });
+            document.getElementById("test_stage").addEventListener("change", function() {
+                populateTestName();
+            });
+        });
+        
+        function toggleStatus(testId) {
+            fetch(`/toggle_status/${testId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const button = document.getElementById(`status-toggle-${testId}`);
+                    button.textContent = data.new_status ? 'Complete' : 'Incomplete';
+                    button.classList.toggle('true', data.new_status);
+                }
+            });
+        }
+        
+        // JavaScript object to store model data
+        const modelsByType = {
+            "TV": {{ tv_models|safe }},
+            "AC": {{ ac_models|safe }},
+            "Phone": {{ phone_models|safe }},
+            "Washing_Machine": {{ washing_machine_models|safe }}
+        };
+        
+        // JavaScript function to populate the model list based on the selected product type
+        function populateModels() {
+            const productTypeDropdown = document.getElementById("product");
+            const modelNameDropdown = document.getElementById("model_name");
+            const selectedProductType = productTypeDropdown.value;
+        
+            // Clear existing options
+            modelNameDropdown.innerHTML = "";
+        
+            // Populate model options based on the selected product type
+            if (selectedProductType && modelsByType[selectedProductType]) {
+                const optionAllModels = document.createElement("option");
+                optionAllModels.text = "All Models";
+                optionAllModels.value = "";
+                modelNameDropdown.appendChild(optionAllModels);
+        
+                modelsByType[selectedProductType].forEach(model => {
+                    const option = document.createElement("option");
+                    option.text = model;
+                    modelNameDropdown.appendChild(option);
+                });
+            }
+        }
+        
+        // JavaScript function to populate the test names based on the selected product type and test stage
+        function populateTestName() {
+            const testDetail = {{ test|safe }};
+            const productTypeDropdown = document.getElementById("product");
+            const testStageDropdown = document.getElementById("test_stage");
+            const testNameDropdown = document.getElementById("test_name");
+            const selectedProductType = productTypeDropdown.value;
+            const selectedTestStage = testStageDropdown.value;
+        
+            // Clear existing options
+            testNameDropdown.innerHTML = "";
+        
+            const optionAllTests = document.createElement("option");
+            optionAllTests.text = "All Tests";
+            optionAllTests.value = "";
+            testNameDropdown.appendChild(optionAllTests);
+        
+            testDetail.forEach(item => {
+                const s = item.TestStage;
+        
+                if (selectedProductType === "" && selectedTestStage === "") {
+                    // If both product type and test stage are not selected, show all test names
+                    const option = document.createElement("option");
+                    option.text = item.TestName;
+                    testNameDropdown.appendChild(option);
+                } else if (selectedProductType === "") {
+                    // If only test stage is selected, filter by test stage
+                    if ((s[0] === '1' && selectedTestStage === "DVT") ||
+                        (s[1] === '1' && selectedTestStage === "PP") ||
+                        (s[2] === '1' && selectedTestStage === "MP") ||
+                        (s[3] === '1' && selectedTestStage === "PDI")) {
+                        const option = document.createElement("option");
+                        option.text = item.TestName;
+                        testNameDropdown.appendChild(option);
+                    }
+                } else if (selectedTestStage === "") {
+                    // If only product type is selected, filter by product type
+                    if (item.Product === selectedProductType) {
+                        const option = document.createElement("option");
+                        option.text = item.TestName;
+                        testNameDropdown.appendChild(option);
+                    }
+                } else {
+                    // If both product type and test stage are selected, filter by both
+                    if (item.Product === selectedProductType && (
+                        (s[0] === '1' && selectedTestStage === "DVT") ||
+                        (s[1] === '1' && selectedTestStage === "PP") ||
+                        (s[2] === '1' && selectedTestStage === "MP") ||
+                        (s[3] === '1' && selectedTestStage === "PDI"))) {
+                        const option = document.createElement("option");
+                        option.text = item.TestName;
+                        testNameDropdown.appendChild(option);
+                    }
+                }
+            });
+        }
+        
+      
+
+  
+    </script>
 </head>
 <body>
     <header>
@@ -103,12 +279,21 @@
             <div id="branding">
                 <h1>Employee Dashboard</h1>
             </div>
+            <!-- Display error/success messages -->
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="message {{ message.level_tag }}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             <nav>
                 <ul>
-                    <li><a href="{% url 'AC'%}">Add Specification</a></li>
-                    <li><a href="#">Add New Report</a></li>
-                    <li><a href="{% url 'test_list_entry'%}">Add Test List</a></li>
-                    <li><a href="{% url 'mnf'%}">Add Test Detail</a></li>
+                    <li><a href="{% url 'product' %}">Add New Report</a></li>
+                    <li><a href="{% url 'test_list_entry' %}">Add Test List</a></li>
+                    <li><a href="{% url 'mnf' %}">Add Model Detail</a></li>
                 </ul>
             </nav>
         </div>
@@ -116,24 +301,106 @@
 
     <div class="container">
         <h2>Completed Tests</h2>
+        <form id="filter-form" method="get" action="{% url 'check' %}">
+            {% csrf_token %}
+            <div>
+                <label for="product">Product Type:</label>
+                <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+                    <option value="">Select Product Type</option>
+                    <option value="TV">TV</option>
+                    <option value="AC">AC</option>
+                    <option value="Phone">Phone</option>
+                    <option value="Washing_Machine">Washing Machine</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="test_stage">Test Stage:</label>
+                <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+                    <option value="">Select Test Stage</option>
+                    <option value="DVT">DVT</option>
+                    <option value="PP">PP</option>
+                    <option value="MP">MP</option>
+                    <option value="PDI">PDI</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="model_name">Model Name:</label>
+                <select class="form-control" id="model_name" name="model_name">
+                    <!-- Model options will be populated dynamically based on the selected product type -->
+                    <option value="">All Models</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="test_name">Test Name:</label>
+                <select class="form-control" id="test_name" name="test_name" >
+                    <option value="">Select Test Name</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="serial_number">Serial Number:</label>
+                <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+            </div>
+            <br>
+            <div>
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    <option value="">All</option>
+                    <option value="complete" {% if status == 'complete' %}selected{% endif %}>Complete</option>
+                    <option value="incomplete" {% if status == 'incomplete' %}selected{% endif %}>Incomplete</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+            <br>
+            <div>
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+            <br>
+            <button type="submit" class="button">Filter</button>
+            <button type="button" class="button" onclick="clearFilters()">Clear Filters</button>
+        </form>
+
         <table>
             <thead>
                 <tr>
-                    <th>Test No</th>
+                    <th>Product</th>
+                    <th>Model Name</th>
                     <th>Test Name</th>
+                    <th>Stage</th>
                     <th>Date</th>
-                    <th>Result</th>
-                    <th>Notes</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for test in completed_tests %}
                 <tr>
-                    <td>{{ test.no }}</td>
-                    <td>{{ test.name }}</td>
-                    <td>{{ test.date }}</td>
-                    <td>{{ test.result }}</td>
-                    <td>{{ test.notes }}</td>
+                    <td>{{ test.ProductType }}</td>
+                    <td>{{ test.ModelName }}</td>
+                    <td>{{ test.TestName }}</td>
+                    <td>{{ test.TestStage }}</td>
+                    <td>{{ test.test_date }}</td>
+                    <td>
+                        <span id="status-toggle-{{ test.id }}" class="toggle-button {{ test.status }}" onclick="toggleStatus({{ test.id }})">
+                            {{ test.status|yesno:"Complete,Incomplete" }}
+                        </span>
+                    </td>
+                    <td class="action-buttons">
+                        <a href="{% url 'view' %}">View Report</a>
+                        {% if test.ProductType == 'AC' %}
+                            <a href="{% url 'cooling' test_name=test.TestName model_name=test.ModelName serialno=test.SerailNo %}">Edit Report</a>
+                        {% endif %}
+                        <a href="{% url 'view' %}">Remark</a>
+                        <a href="{% url 'view' %}">Delete</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

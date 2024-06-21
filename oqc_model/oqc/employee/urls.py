@@ -1,7 +1,12 @@
-from django.urls import path
+from django.urls import path, include, re_path
 from . import views
+# from django.conf.urls import url
+from ckeditor_uploader import views as ckeditor_views
 
 urlpatterns = [
+    # path('ckeditor/', include('ckeditor_uploader.urls')),
+    path(r'^ckeditor/upload/', ckeditor_views.upload, name='ckeditor_upload'),
+    path(r'^ckeditor/browse/', ckeditor_views.browse, name='ckeditor_browse'),
     path('', views.main_page, name='main_page'),
     path('members/', views.members, name='members'),  
     path('testdetail/<int:no>/', views.testdetail, name='testdetail'),
@@ -14,9 +19,11 @@ urlpatterns = [
     path('view/', views.view_test_records, name='view'),
     path('generate-pdf/', views.generate_pdf, name='generate_pdf'),
     path('view_test_report/<int:pk>/', views.view_test_report, name='view_test_reports'),
-    path('cooling/', views.cooling, name='cooling'),
+    path('cooling/<str:test_name>/<str:model_name>/<str:serialno>/', views.cooling, name='cooling'),
     path('mnf/', views.MNF, name='mnf'),
     path('test_list_entry/',views.Test_list_entry,name = 'test_list_entry'),
+    path('test_protocol_entry/',views.test_protocol_entry,name = 'test_protocol_entry'),
+    path('toggle_status/<int:id>/', views.toggle_status, name='toggle_status'),
 ]
 
 from django.conf import settings

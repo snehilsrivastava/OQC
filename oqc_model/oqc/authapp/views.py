@@ -52,6 +52,10 @@ def login_page(request):
 		else:
 			# Log in the user and redirect to the home page upon successful login
 			login(request, user)
+			request.session['user_type'] = user.user_type
+			request.session['username'] = user.username
+			# request.session['password'] = user.password
+			# request.session['last_login'] = user.last_login
 			if user.user_type == 'owner':
 				return redirect('/dashboard/')
 			else: # Tester
