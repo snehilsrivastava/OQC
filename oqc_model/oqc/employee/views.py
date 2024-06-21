@@ -17,10 +17,38 @@ import base64
 from tempfile import NamedTemporaryFile
 from io import BytesIO
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 
 def main_page(request):
     return redirect(login_page)
+
+def send_report(request, report_id):
+    report = get_object_or_404(TestRecord, pk=report_id)
+    # Logic to send the report to the product owner
+    # This could be an update to a status field, sending an email, etc.
+    
+    # For example, setting a status:
+    report.status = 'Sent to Product Owner'
+    report.save()
+
+    # Redirect to a page or send a response indicating success
+    if request.is_ajax():
+        return JsonResponse({'success': True})
+    return redirect('/check/')
+
+def delete_test_record(request, record_id):
+    try:
+        # Get the TestRecord instance
+        test_record = get_object_or_404(TestRecord, pk=record_id)
+        
+        # Perform deletion
+        test_record.delete()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
 
 def members(request):
   mymembers = Employee.objects.all().values()
@@ -53,6 +81,29 @@ def testdetail(request, no):
             'end_date': end_date,
         }
         return render(request, "test1.html", context)
+    
+from django.shortcuts import get_object_or_404, render
+from django.http import JsonResponse
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import TestRecord
+
+def remark(request, id):
+    TestObjectRemark = get_object_or_404(TestRecord, pk=id)
+    if request.method == 'POST':
+       
+        if 'employee-remark' in request.POST:
+            TestObjectRemark.employee_remark = request.POST.get('employee-remark')
+        TestObjectRemark.save()
+        return redirect('/check/')  # Adjust this to your actual view name
+
+    context = {
+        'TestObjectRemark': TestObjectRemark,
+    }
+    return render(request, "remark.html", context)
+
+
 
 
 # def check(request):
@@ -152,23 +203,6 @@ def cooling(request, test_name, model_name, serialno):
     else:
         form = TestRecordForm(instance=test_record)
 
-    # if request.method == 'POST':
-    #     form = testItemFormset(request.POST)
-    #     if form.is_valid():
-    #         # Update the test record with form data
-    #         test_record.sample_quantiy = form.cleaned_data.get("quantiy")
-    #         test_record.test_date = form.cleaned_data.get("ReportDate")
-    #         test_record.test_start_date = form.cleaned_data.get("StartDate")
-    #         test_record.test_end_date = form.cleaned_data.get("EndDate")
-    #         test_record.result = form.cleaned_data.get("Result")
-    #         test_record.notes = form.cleaned_data.get("Notes")
-    #         test_record.save()
-
-    #     return redirect('/check/')  # Redirect to a success page or another view
-    # else:
-    #     form = testItemFormset()
-
-    # Pass the data to the template
     context = {
         'testdetail': test_record,
         'TestProtocol': Test_protocol,
@@ -287,18 +321,47 @@ def create_test_record(request):
     })
 
 
-@login_required
-def edit_test_record(request, pk):
-    test_record = get_object_or_404(TestRecord, pk=pk)
-    
+
+def edit(request, test_name, model_name, serialno):
+    # Fetch the specific Test_core_detail object related to the cooling test
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC, ModelName=model_name)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+
     if request.method == 'POST':
-        form = TestRecordForm(request.POST, instance=test_record)
+        form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
+            print("random")
             form.save()
-            return redirect('view')
+        else:
+            print(form.errors)
+       
+        return redirect('/check/')  # Redirect to a success page or another view
     else:
         form = TestRecordForm(instance=test_record)
-    return render(request, 'edit_test_record.html', {'form': form})
+
+    context = {
+        'testdetail': test_record,
+        'TestProtocol': Test_protocol,
+        'model': models,
+        'form': form,
+        'test_name': test_name,
+        'model_name': model_name,
+        'serialno': serialno
+    }
+    return render(request, "cooling_test.html", context)
+
+# def edit_test_record(request, pk):
+#     test_record = get_object_or_404(TestRecord, pk=pk)
+    
+#     if request.method == 'POST':
+#         form = TestRecordForm(request.POST, instance=test_record)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('view')
+#     else:
+#         form = TestRecordForm(instance=test_record)
+#     return render(request, 'edit_test_record.html', {'form': form})
 
 def merge_pdfs(pdf_files):
     merger = PyPDF2.PdfMerger()
@@ -352,6 +415,26 @@ def generate_pdf(request):
             return HttpResponse("No PDF files generated.", status=500)
 
     return HttpResponse("Invalid request method.", status=405)
+
+
+
+def view(request, test_name, model_name, serialno):
+    # Fetch the specific Test_core_detail object related to the cooling test
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC, ModelName=model_name)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+
+    context = {
+        'testdetail': test_record,
+        'TestProtocol': Test_protocol,
+        'model': models,
+        'test': test_record,
+        'test_name': test_name,
+        'model_name': model_name,
+        'serialno': serialno
+    }
+    return render(request, "view_test_record.html", context)
+
 
 def MNF(request):
     if request.method == 'POST':
@@ -489,4 +572,7 @@ def test_protocol_entry(request):
 def view_test_records(request):
     test_records = TestRecord.objects.all()
     return render(request, 'view.html', {'test_records': test_records})
+
+
+
 
