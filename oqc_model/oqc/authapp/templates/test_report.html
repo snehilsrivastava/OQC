@@ -181,10 +181,10 @@
         
         // JavaScript object to store model data
         const modelsByType = {
-            "TV": `${tv_models}`,
-            "AC": `${ac_models}`,
-            "Phone": `${phone_models}`,
-            "Washing_Machine": `${washing_machine_models}`
+            "TV": {{tv_models|safe}},
+            "AC": {{ac_models|safe}},
+            "Phone": {{phone_models|safe}},
+            "Washing_Machine": {{washing_machine_models|safe}}
         };
         
         // JavaScript function to populate the model list based on the selected product type

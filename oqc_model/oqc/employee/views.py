@@ -138,18 +138,18 @@ def check(request):
     end_date = request.GET.get('end_date', '')
 
     # Filter the TestRecord queryset based on the parameters
-    completed_tests = TestRecord.objects.filter(employee=username)
+    completed_tests = TestRecord.objects.filter(employee=username+" ")
 
     if test_name:
-        completed_tests = completed_tests.filter(TestName__icontains=test_name)
+        completed_tests = completed_tests.filter(TestName=test_name)
     if product:
-        completed_tests = completed_tests.filter(ProductType__icontains=product)
+        completed_tests = completed_tests.filter(ProductType=product)
     if test_stage:
-        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
+        completed_tests = completed_tests.filter(TestStage=test_stage)
     if model_name:
-        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
+        completed_tests = completed_tests.filter(ModelName=model_name)
     if serial_number:
-        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
+        completed_tests = completed_tests.filter(SerailNo=serial_number)
     if status:
         completed_tests = completed_tests.filter(status=(status.lower() == 'complete'))
     if start_date:
@@ -423,7 +423,7 @@ def view(request, test_name, model_name, serialno):
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
-
+    result = test_record.result
     context = {
         'testdetail': test_record,
         'TestProtocol': Test_protocol,
@@ -431,7 +431,8 @@ def view(request, test_name, model_name, serialno):
         'test': test_record,
         'test_name': test_name,
         'model_name': model_name,
-        'serialno': serialno
+        'serialno': serialno,
+        'result': result,
     }
     return render(request, "view_test_record.html", context)
 
