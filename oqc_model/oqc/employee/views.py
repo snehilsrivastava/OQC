@@ -424,7 +424,7 @@ def view(request, test_name, model_name, serialno):
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
-
+    result = test_record.result
     context = {
         'testdetail': test_record,
         'TestProtocol': Test_protocol,
@@ -432,7 +432,8 @@ def view(request, test_name, model_name, serialno):
         'test': test_record,
         'test_name': test_name,
         'model_name': model_name,
-        'serialno': serialno
+        'serialno': serialno,
+        'result': result,
     }
     return render(request, "view_test_record.html", context)
 
