@@ -14,7 +14,52 @@
             padding: 5px 10px;
             font-size: 12px;
         }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* Adjust the gap between buttons as needed */
+            margin-top: 20px; /* Add margin if needed to position the buttons */
+        }
+        
+        .action-buttons .button {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #333; /* Change color as needed */
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .action-buttons .button:hover {
+            background-color: #0056b3; /* Change hover color as needed */
+        }
+      
     </style>
+    <script>
+        function sendReport(reportId) {
+            if (confirm('Are you sure you want to send this report to the product owner?')) {
+                fetch(`/send_report/${reportId}/`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Failed to send report');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while sending the report');
+                });
+            }
+        }
+    </script>
 </head>
 <body>
 
@@ -241,9 +286,12 @@
     </tbody>
 </table>
 
-<br><br><br><br>
+<br><br>
 
-<a class="button" href="{% url 'check' %}">Check</a>
+<div class="action-buttons">
+<a class="button" href="{% url 'check' %}">Return</a>
+<a class="button" href="#" onclick="sendReport({{ test.id }})">Send</a>
+</div>
 {% comment %} <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerialNo %}">View</a> {% endcomment %}
 
 

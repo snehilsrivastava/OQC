@@ -24,7 +24,19 @@ from django.views.decorators.http import require_POST
 def main_page(request):
     return redirect(login_page)
 
+def send_report(request, report_id):
+    report = get_object_or_404(TestRecord, pk=report_id)
+    # Logic to send the report to the product owner
+    # This could be an update to a status field, sending an email, etc.
+    
+    # For example, setting a status:
+    report.status = 'Sent to Product Owner'
+    report.save()
 
+    # Redirect to a page or send a response indicating success
+    if request.is_ajax():
+        return JsonResponse({'success': True})
+    return redirect('/check/')
 
 def delete_test_record(request, record_id):
     try:
@@ -309,18 +321,47 @@ def create_test_record(request):
     })
 
 
-@login_required
-def edit_test_record(request, pk):
-    test_record = get_object_or_404(TestRecord, pk=pk)
-    
+
+def edit(request, test_name, model_name, serialno):
+    # Fetch the specific Test_core_detail object related to the cooling test
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC, ModelName=model_name)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+
     if request.method == 'POST':
-        form = TestRecordForm(request.POST, instance=test_record)
+        form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
+            print("random")
             form.save()
-            return redirect('view')
+        else:
+            print(form.errors)
+       
+        return redirect('/check/')  # Redirect to a success page or another view
     else:
         form = TestRecordForm(instance=test_record)
-    return render(request, 'edit_test_record.html', {'form': form})
+
+    context = {
+        'testdetail': test_record,
+        'TestProtocol': Test_protocol,
+        'model': models,
+        'form': form,
+        'test_name': test_name,
+        'model_name': model_name,
+        'serialno': serialno
+    }
+    return render(request, "cooling_test.html", context)
+
+# def edit_test_record(request, pk):
+#     test_record = get_object_or_404(TestRecord, pk=pk)
+    
+#     if request.method == 'POST':
+#         form = TestRecordForm(request.POST, instance=test_record)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('view')
+#     else:
+#         form = TestRecordForm(instance=test_record)
+#     return render(request, 'edit_test_record.html', {'form': form})
 
 def merge_pdfs(pdf_files):
     merger = PyPDF2.PdfMerger()
