@@ -26,7 +26,6 @@ urlpatterns = [
     path('test_list_entry/',views.Test_list_entry,name = 'test_list_entry'),
     path('test_protocol_entry/',views.test_protocol_entry,name = 'test_protocol_entry'),
     path('toggle_status/<int:id>/', views.toggle_status, name='toggle_status'),
-    path('ckeditor/', include('ckeditor_uploader.urls')),
     path('delete-test-record/<int:record_id>/', views.delete_test_record, name='delete_test_record'),
     path('remark/<int:id>/',views.remark,name = 'remark'),
     path('remark_owner/<int:id>/',views.owner_remark,name = 'remark_owner'),

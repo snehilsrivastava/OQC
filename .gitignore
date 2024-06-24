@@ -1,5 +1,5 @@
-oqc_model/myworld/
+./oqc_model/.venv/
 **/__pycache__/
-*.sqlite3
+oqc_model/oqc/*.sqlite3
 oqc_model/oqc/staticfiles
 oqc_model/oqc/media/

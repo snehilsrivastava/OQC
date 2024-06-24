@@ -181,10 +181,10 @@
         
         // JavaScript object to store model data
         const modelsByType = {
-            "TV": {{ tv_models|safe }},
-            "AC": {{ ac_models|safe }},
-            "Phone": {{ phone_models|safe }},
-            "Washing_Machine": {{ washing_machine_models|safe }}
+            "TV": {{tv_models|safe}},
+            "AC": {{ac_models|safe}},
+            "Phone": {{phone_models|safe}},
+            "Washing_Machine": {{washing_machine_models|safe}}
         };
         
         // JavaScript function to populate the model list based on the selected product type
@@ -213,7 +213,7 @@
         
         // JavaScript function to populate the test names based on the selected product type and test stage
         function populateTestName() {
-            const testDetail = {{ test|safe }};
+            const testDetail = `${test}`;
             const productTypeDropdown = document.getElementById("product");
             const testStageDropdown = document.getElementById("test_stage");
             const testNameDropdown = document.getElementById("test_name");
@@ -416,7 +416,7 @@
                     <td>{{ test.TestStage }}</td>
                     <td>{{ test.test_date }}</td>
                     <td>
-                        <span id="status-toggle-{{ test.id }}" class="toggle-button {{ test.status }}" onclick="toggleStatus({{ test.id }})">
+                        <span id="status-toggle-{{ test.id }}" class="toggle-button {{ test.status }}" onclick="toggleStatus(`{{ test.id }}`)">
                             {{ test.status|yesno:"Complete,Incomplete" }}
                         </span>
                     </td>
@@ -425,7 +425,7 @@
                         <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit </a> 
                         <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
                         <a class="button" href="{% url 'remark' test.id %}">Remark</a>
-                        <a class="button" onclick="deleteTestRecord({{ test.id }})">Delete</a>
+                        <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a>
 
                     </td>
                 </tr>

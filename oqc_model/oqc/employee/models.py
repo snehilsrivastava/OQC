@@ -58,7 +58,7 @@ class TestRecord(models.Model):
     test_end_date = models.DateField(default=datetime.date.today)
     sample_quantiy = models.IntegerField(default=0)
     result = RichTextUploadingField(default="", blank=True)
-    notes = models.CharField(max_length=255,default='') 
+    notes = models.CharField(max_length=255) 
     employee_remark  = models.TextField(max_length=500,default='')
     owner_remark  = models.TextField(max_length=500,default='')
     status = models.BooleanField(default = False)
