@@ -18,6 +18,7 @@ urlpatterns = [
     # path('edit-test-record/<int:pk>/', views.edit_test_record, name='edit_test_record'),
     path('edit/<str:test_name>/<str:model_name>/<str:serialno>/', views.edit, name='edit'),
     path('view/<str:test_name>/<str:model_name>/<str:serialno>/', views.view, name='view'),
+    path('owner_view/<str:test_name>/<str:model_name>/<str:serialno>/', views.owner_view, name='owner_view'),
     path('generate-pdf/', views.generate_pdf, name='generate_pdf'),
     path('view_test_report/<int:pk>/', views.view_test_report, name='view_test_reports'),
     path('cooling/<str:test_name>/<str:model_name>/<str:serialno>/', views.cooling, name='cooling'),
@@ -27,6 +28,7 @@ urlpatterns = [
     path('toggle_status/<int:id>/', views.toggle_status, name='toggle_status'),
     path('delete-test-record/<int:record_id>/', views.delete_test_record, name='delete_test_record'),
     path('remark/<int:id>/',views.remark,name = 'remark'),
+    path('remark_owner/<int:id>/',views.owner_remark,name = 'remark_owner'),
     path('send_report/<int:report_id>/', views.send_report, name='send_report'),
 ]
 
