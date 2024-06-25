@@ -24,19 +24,16 @@ from django.views.decorators.http import require_POST
 def main_page(request):
     return redirect(login_page)
 
-def send_report(request, report_id):
-    report = get_object_or_404(TestRecord, pk=report_id)
-    # Logic to send the report to the product owner
-    # This could be an update to a status field, sending an email, etc.
-    
-    # For example, setting a status:
-    report.status = 'Sent to Product Owner'
-    report.save()
 
-    # Redirect to a page or send a response indicating success
-    if request.is_ajax():
+
+def send_report(request, report_id):
+    if request.method == 'GET':
+        report = get_object_or_404(TestRecord, pk=report_id)
+        # Update the report status to indicate it has been sent
+        report.status = 'Sent to Owner'
+        report.save()
         return JsonResponse({'success': True})
-    return redirect('/check/')
+    return JsonResponse({'success': False})
 
 def delete_test_record(request, record_id):
     try:
