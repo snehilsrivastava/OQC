@@ -61,7 +61,7 @@ class TestRecord(models.Model):
     notes = models.CharField(max_length=255) 
     employee_remark  = models.TextField(max_length=500,default='')
     owner_remark  = models.TextField(max_length=500,default='')
-    status = models.BooleanField(default = False)
+    status = models.IntegerField(default = 0)
     ProductType = models.CharField(max_length=102,default = '')
     ModelName = models.CharField(max_length=100,default = '')
     SerailNo  = models.CharField(max_length=100,default = '')

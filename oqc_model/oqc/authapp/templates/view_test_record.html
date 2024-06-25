@@ -49,6 +49,7 @@
                 .then(data => {
                     if (data.success) {
                         alert('Report sent successfully');
+                       
                         location.reload();
                     } else {
                         alert('Failed to send report');
@@ -60,6 +61,29 @@
                 });
             }
         }
+
+
+        function setStatus(testId) {
+            fetch(`/set_status/${testId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    sendReport(testId)
+                }
+            });
+        }
+  
+
+       
+        
+        
     </script>
     
 </head>
@@ -297,7 +321,12 @@
 
 <div class="action-buttons">
     <a class="button" href="{% url 'check' %}">Return</a>
-    <a class="button" href="#" onclick="sendReport({{ test.id }})">Send</a>
+ 
+{% comment %} <a class="button" href="#" onclick="sendReport({{ test.id }}); return false;">Send</a> {% endcomment %}
+<a id="status-toggle-{{ test.id }}" class="button"  onclick="setStatus({{ test.id }})">
+    Send
+</a>
+
 </div>
 
 

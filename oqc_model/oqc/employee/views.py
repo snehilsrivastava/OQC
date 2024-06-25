@@ -28,10 +28,6 @@ def main_page(request):
 
 def send_report(request, report_id):
     if request.method == 'GET':
-        report = get_object_or_404(TestRecord, pk=report_id)
-        # Update the report status to indicate it has been sent
-        report.status = 'Sent to Owner'
-        report.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
@@ -228,16 +224,37 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import TestRecord
 
+
+
 @csrf_exempt
 def toggle_status(request, id):
     if request.method == 'POST':
-        test_record = get_object_or_404(TestRecord, id=id)
-        test_record.status = not test_record.status
-        test_record.save()
-        return JsonResponse({'success': True, 'new_status': test_record.status})
-    return JsonResponse({'success': False})
+        try:
+            test_record = TestRecord.objects.get(id=id)
+            # Cycle through the statuses or implement your own logic
+            new_status = ((test_record.status) % 3)+1
+            test_record.status = new_status
+            test_record.save()
+            return JsonResponse({'success': True, 'new_status': new_status})
+        except TestRecord.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Test record not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
+
+@csrf_exempt
+def set_status(request, id):
+    if request.method == 'POST':
+        try:
+            test_record = TestRecord.objects.get(id=id)
+            # Cycle through the statuses or implement your own logic
+            new_status = 1
+            test_record.status = new_status
+            test_record.save()
+            return JsonResponse({'success': True, 'new_status': new_status})
+        except TestRecord.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Test record not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 def view_test_report(request,pk):
     record = get_object_or_404(TestRecord, pk =pk)

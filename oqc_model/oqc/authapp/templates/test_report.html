@@ -142,9 +142,31 @@
             cursor: pointer;
         }
 
-        .toggle-button.true {
-            background: #d9534f;
+       
+        .status-0 {
+            background: #333;
+            color: #fff;
         }
+        
+        .status-1 {
+            /* styles for 'Waiting for Approval' */
+            background: #4FAAD7;
+            color: #fff;
+        }
+        
+        .status-2 {
+            /* styles for 'Approved' */
+            background: #5AA33F;
+            color: #fff;
+        }
+        
+        .status-3 {
+            /* styles for 'Rejected' */
+            background: #b20b00;
+            color: #fff;
+        }
+        
+       
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -160,24 +182,7 @@
             });
         });
         
-        function toggleStatus(testId) {
-            fetch(`/toggle_status/${testId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const button = document.getElementById(`status-toggle-${testId}`);
-                    button.textContent = data.new_status ? 'Complete' : 'Incomplete';
-                    button.classList.toggle('true', data.new_status);
-                }
-            });
-        }
+        
         
         // JavaScript object to store model data
         const modelsByType = {
@@ -416,10 +421,21 @@
                     <td>{{ test.TestStage }}</td>
                     <td>{{ test.test_date }}</td>
                     <td>
-                        <span id="status-toggle-{{ test.id }}" class="toggle-button {{ test.status }}" onclick="toggleStatus(`{{ test.id }}`)">
-                            {{ test.status|yesno:"Complete,Incomplete" }}
+                        <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" >
+                            {% if test.status == 0 %}
+                                Not Send
+                            {% elif test.status == 1 %}
+                                Waiting for Approval
+                            {% elif test.status == 2 %}
+                                Approved
+                            {% elif test.status == 3 %}
+                                Rejected
+                            {% else %}
+                                Unknown Status
+                            {% endif %}
                         </span>
                     </td>
+                    
                     <td class="action-buttons">
                          
                         <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit </a> 
