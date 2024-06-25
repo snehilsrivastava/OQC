@@ -100,7 +100,6 @@ def remark(request, id):
     }
     return render(request, "remark.html", context)
 
-
 def owner_remark(request, id):
     TestObjectRemark = get_object_or_404(TestRecord, pk=id)
     if request.method == 'POST':
@@ -114,6 +113,7 @@ def owner_remark(request, id):
         'TestObjectRemark': TestObjectRemark,
     }
     return render(request, "owner_remark.html", context)
+
 
 # def check(request):
 #     username = request.session.get('username')
@@ -301,7 +301,6 @@ def dashboard(request):
         'test' : test
     }
 
- 
     return render(request, 'dashboard_employee.html', context)
             
 def logout(request):
@@ -485,7 +484,6 @@ def view(request, test_name, model_name, serialno):
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
-    result = test_record.result
     context = {
         'testdetail': test_record,
         'TestProtocol': Test_protocol,
@@ -494,7 +492,6 @@ def view(request, test_name, model_name, serialno):
         'test_name': test_name,
         'model_name': model_name,
         'serialno': serialno,
-        'result': result,
     }
     return render(request, "view_test_record.html", context)
 
@@ -514,7 +511,6 @@ def owner_view(request, test_name, model_name, serialno):
         'serialno': serialno
     }
     return render(request, "owner_view.html", context)
-
 
 def MNF(request):
     if request.method == 'POST':
