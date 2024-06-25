@@ -103,7 +103,19 @@ def remark(request, id):
     }
     return render(request, "remark.html", context)
 
+def owner_remark(request, id):
+    TestObjectRemark = get_object_or_404(TestRecord, pk=id)
+    if request.method == 'POST':
+       
+        if 'product-owner-remark' in request.POST:
+            TestObjectRemark.owner_remark = request.POST.get('product-owner-remark')
+        TestObjectRemark.save()
+        return redirect('/dashboard/')  # Adjust this to your actual view name
 
+    context = {
+        'TestObjectRemark': TestObjectRemark,
+    }
+    return render(request, "owner_remark.html", context)
 
 
 # def check(request):
@@ -236,10 +248,62 @@ def view_test_report(request,pk):
     return render(request, 'view_record.html', {'record': record, 'images': images})
 
 def dashboard(request):
-    users = Employee.objects.all()
+
+    username = request.session['username']
+
+    # Get filter parameters from request
+    test_name = request.GET.get('test_name', '')
+    test_stage = request.GET.get('test_stage', '')
+    product = request.GET.get('product','')
+    model_name = request.GET.get('model_name', '')
+    serial_number = request.GET.get('serial_number', '')
+    status = request.GET.get('status', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
+    # Filter the TestRecord queryset based on the parameters
+    completed_tests = TestRecord.objects.filter()
+
+    if test_name:
+        completed_tests = completed_tests.filter(TestName__icontains=test_name)
+    if product:
+        completed_tests = completed_tests.filter(ProductType__icontains=product)
+    if test_stage:
+        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
+    if model_name:
+        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
+    if serial_number:
+        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
+    if status:
+        completed_tests = completed_tests.filter(status=(status.lower() == 'complete'))
+    if start_date:
+        completed_tests = completed_tests.filter(test_date__gte=start_date)
+    if end_date:
+        completed_tests = completed_tests.filter(test_date__lte=end_date)
+
+    tv_models = list(TV.objects.values_list('ModelName', flat=True))
+    ac_models = list(AC.objects.values_list('ModelName', flat=True))
+    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
+    test = list(TestList.objects.all().values())
+
     context = {
-        'users': users
+        'completed_tests': completed_tests,
+        'test_name': test_name,
+        'test_stage': test_stage,
+        'model_name': model_name,
+        'serial_number': serial_number,
+        'status': status,
+        'product':product,
+        'start_date': start_date,
+        'end_date': end_date,
+        'tv_models': tv_models,
+        'ac_models': ac_models,
+        'phone_models': phone_models,
+        'washing_machine_models': washing_machine_models,
+        'test' : test
     }
+
     return render(request, 'dashboard_employee.html', context)
             
 def logout(request):
@@ -423,7 +487,6 @@ def view(request, test_name, model_name, serialno):
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
-    result = test_record.result
     context = {
         'testdetail': test_record,
         'TestProtocol': Test_protocol,
@@ -432,10 +495,25 @@ def view(request, test_name, model_name, serialno):
         'test_name': test_name,
         'model_name': model_name,
         'serialno': serialno,
-        'result': result,
     }
     return render(request, "view_test_record.html", context)
 
+def owner_view(request, test_name, model_name, serialno):
+    # Fetch the specific Test_core_detail object related to the cooling test
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC, ModelName=model_name)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+
+    context = {
+        'testdetail': test_record,
+        'TestProtocol': Test_protocol,
+        'model': models,
+        'test': test_record,
+        'test_name': test_name,
+        'model_name': model_name,
+        'serialno': serialno
+    }
+    return render(request, "owner_view.html", context)
 
 def MNF(request):
     if request.method == 'POST':
