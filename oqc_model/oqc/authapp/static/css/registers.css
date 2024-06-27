@@ -1,0 +1,145 @@
+@import url("color_pallette.css");
+
+.content-wrapper {
+    position: fixed;
+    top: 50px;
+    left: 50%;
+    z-index: 1000;
+}
+.content {
+    width: 100%;
+    padding: 0px;
+}
+/* .navbar-custom {
+    background-color: #fff0;
+    height: 100px;
+}   */
+a:hover {
+    color: #007bff;
+}
+.container {
+    /* transform: translate(-50%, 50%); */
+    margin-top: 10rem;
+    margin-bottom: 10rem;
+    /* margin-top: 10em; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-success {
+    background-color:aquamarine;
+    border-color: aqua;
+    width: fit-content;
+    height: fit-content;
+    color: black;
+    padding-top: 1pt;
+    padding-bottom: 1pt;
+}
+
+.alert-error {
+    background-color: lightcoral;
+    border-color: red;
+    width: fit-content;
+    height: fit-content;
+    color: white;
+    padding-top: 1pt;
+    padding-bottom: 1pt;
+}
+
+.alert-warning {
+    background-color:rgb(255, 255, 159);
+    border-color: yellow;
+    width: fit-content;
+    height: fit-content;
+    color: black;
+    padding-top: 1pt;
+    padding-bottom: 1pt;
+}
+
+.no-background {
+    background-color: #d1dfff00;
+}
+body {
+    background-image: url("./../images/best_dark1.png");
+    /* background-color: gray; */
+    background-repeat: no-repeat;
+    background-position: center;  
+    background-size: cover;
+    height: 100%;
+    background-attachment: fixed;
+    overflow: hidden;
+}
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.card {
+    background-color: #6792ab33;
+    transform: translate(0%, -15%);
+    width: 85%;
+    max-width: 450px;
+    height: 100%;
+    margin: 0 20px;
+    padding-top: 50px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow:0rem 0rem 1rem gray !important
+}
+.card-header{
+    transform: translate(0%, -30%);
+}
+.Indkal-Logo {
+    width: 250px;
+}
+#card-2 {
+    background-color: #fff0;
+}
+.card-body {
+    transform: translate(-8%, -2%);
+    /* background-color: #d1dfff00; */
+    margin-left: -35pt;
+    margin-top: -20pt;
+    margin-bottom: -10pt;
+    width: max-content;
+}
+#exampleInputEmail1 {
+    width: 250px;
+}
+#exampleInputPassword1 {
+    width: 250px;
+}
+.card-footer {
+    /* display: flex; */
+    transform: translate(-14%, 2%);
+    width: fit-content;
+    height: fit-content;
+    align-items: center;
+    justify-content: center;
+}
+.forgot-password {
+    top: 10px
+}
+.btn-fill {
+    background-color: #4C4CFF;
+    border-color: #4C4CFF;
+    transform: translate(95%, 0%);
+    display: block;
+    margin: 5pt 0pt 15pt -12pt;
+    border-radius: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    width: 6em;
+    height: 2em;
+}
+.btn-fill:hover{
+    background-color: #5b5bfd;
+    border-color: #5b5bfd;
+}
+.no_wrap {
+    text-wrap: nowrap;
+    color: white;
+    width: 250px;
+    transform: translate(5%, 0%);
+}
