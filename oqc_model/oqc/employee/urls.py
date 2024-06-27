@@ -30,6 +30,7 @@ urlpatterns = [
     path('remark/<int:id>/',views.remark,name = 'remark'),
     path('remark_owner/<int:id>/',views.owner_remark,name = 'remark_owner'),
     path('send_report/<int:report_id>/', views.send_report, name='send_report'),
+    path('view_pdf/<str:test_name>/<str:model_name>/<str:serialno>/', views.view_pdf, name='view_pdf'),
 ]
 
 from django.conf import settings

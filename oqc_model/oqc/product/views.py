@@ -16,8 +16,8 @@ def product_form_view(request):
         serial_no = request.POST.get('SerailNo')
         test_stage = request.POST.get('TestStage')
         test_name = request.POST.get('TestName')
-        username = request.session['username']
-        user = Employee.objects.get(username=username)
+        username = request.session['username'].strip()
+        # user = Employee.objects.get(username=username)
         # Check if the serial number already exists in the database
         if Product_Detail.objects.filter(SerailNo=serial_no).exists():
             return HttpResponse("Serial number already exists")
@@ -29,7 +29,7 @@ def product_form_view(request):
             SerailNo=serial_no,
             TestStage = test_stage,
             TestName = test_name,
-            employee = user,
+            employee = username,
         )
         new_product_detail.save()
         return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name,'serialno' : serial_no}))

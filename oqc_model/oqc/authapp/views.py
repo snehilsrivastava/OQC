@@ -62,18 +62,20 @@ def register_page(request):
 
         # Check if a user with the provided username already exists
         if Employee.objects.filter(username=username).exists():
-            messages.info(request, "Username already taken!")
+            messages.info(request, "Email already exists.")
             return redirect('/au/register/')
 
         # Create and save the new Employee instance
         new_employee = Employee(
+			first_name=first_name,
+			last_name=last_name,
             username=username,
             password=make_password(password)  # Hash the password before saving
         )
         new_employee.save()
 
-        messages.info(request, "Account created Successfully!")
-        return HttpResponse("Your details saved successfully!!")
+        messages.info(request, "Account created!")
+        return redirect('/au/login/')
 
     return render(request, 'register.html')
 

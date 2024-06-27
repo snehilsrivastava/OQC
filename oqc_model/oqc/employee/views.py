@@ -8,7 +8,7 @@ from django.conf import settings
 from django.http import Http404
 from .forms import *
 from .models import *
-from .renderers import *
+from .renderers import render_to_pdf
 from product.views import *
 from authapp.models import Employee
 from authapp.views import login_page
@@ -19,24 +19,19 @@ from io import BytesIO
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-
+import os
 
 def main_page(request):
     return redirect(login_page)
 
 def send_report(request, report_id):
-    report = get_object_or_404(TestRecord, pk=report_id)
-    # Logic to send the report to the product owner
-    # This could be an update to a status field, sending an email, etc.
-    
-    # For example, setting a status:
-    report.status = 'Sent to Product Owner'
-    report.save()
-
-    # Redirect to a page or send a response indicating success
-    if request.is_ajax():
+    if request.method == 'GET':
+        report = get_object_or_404(TestRecord, pk=report_id)
+        # Update the report status to indicate it has been sent
+        report.status = 'Sent to Owner'
+        report.save()
         return JsonResponse({'success': True})
-    return redirect('/check/')
+    return JsonResponse({'success': False})
 
 def delete_test_record(request, record_id):
     try:
@@ -118,24 +113,6 @@ def owner_remark(request, id):
     return render(request, "owner_remark.html", context)
 
 
-# def check(request):
-#     username = request.session.get('username')
-    
-#     if username is None:
-#         return redirect('login')  # Redirect to login page if username is not in session
-
-#     # Fetch all test records associated with the username
-#     completed_tests = TestRecord.objects.filter(employee=username)
-
-#     context = {
-#        'completed_tests': completed_tests
-#     }
-
-#     return render(request, "test_report.html", context)
-
-from django.shortcuts import render
-from .models import TestRecord
-
 def check(request):
     username = request.session['username']
 
@@ -150,7 +127,7 @@ def check(request):
     end_date = request.GET.get('end_date', '')
 
     # Filter the TestRecord queryset based on the parameters
-    completed_tests = TestRecord.objects.filter(employee=username+" ")
+    completed_tests = TestRecord.objects.filter(employee=username)
 
     if test_name:
         completed_tests = completed_tests.filter(TestName=test_name)
@@ -168,7 +145,7 @@ def check(request):
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
-
+    completed_tests = completed_tests.order_by('-test_date')
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
@@ -195,18 +172,16 @@ def check(request):
     return render(request, "test_report.html", context)
 
 
-
-
 def cooling(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestName=test_name, ModelName=model_name)
 
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
-            print("random")
+            # print("random")
             form.save()
         else:
             print(form.errors)
@@ -318,7 +293,7 @@ def logout(request):
 def submit_product_details_view(request):
     return HttpResponse("Thank you for submitting product details")
 
-@login_required
+# @login_required
 def create_test_record(request):
     if request.method == 'POST':
         num_images = int(request.POST.get('num_images', 0))  # Default to 0 images
@@ -390,16 +365,18 @@ def edit(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+    # multiple test records might have same serial no.
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestName=test_name, ModelName=model_name)
 
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
-            print("random")
+            # print("random")
             form.save()
         else:
             print(form.errors)
-       
+
+        messages.success(request, 'Test record updated.')
         return redirect('/check/')  # Redirect to a success page or another view
     else:
         form = TestRecordForm(instance=test_record)
@@ -415,68 +392,82 @@ def edit(request, test_name, model_name, serialno):
     }
     return render(request, "cooling_test.html", context)
 
-# def edit_test_record(request, pk):
-#     test_record = get_object_or_404(TestRecord, pk=pk)
-    
-#     if request.method == 'POST':
-#         form = TestRecordForm(request.POST, instance=test_record)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('view')
-#     else:
-#         form = TestRecordForm(instance=test_record)
-#     return render(request, 'edit_test_record.html', {'form': form})
+def view_pdf(request, test_name, model_name, serialno):
+    # Fetch the specific Test_core_detail object related to the cooling test
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC, ModelName=model_name)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+    context = {
+        'TestProtocol': Test_protocol,
+        'model': models,
+        'test': test_record,
+    }
+    return render(request, "view_pdf.html", context)
 
-def merge_pdfs(pdf_files):
+
+def merge_pdfs(pdf_list):
+
+    # output_dir = os.path.dirname(output_path)
+    # if not os.path.exists(output_dir):
+    #     os.makedirs(output_dir)
+    
     merger = PyPDF2.PdfMerger()
-    for pdf_file in pdf_files:
-        pdf_buffer = BytesIO(pdf_file)
-        merger.append(pdf_buffer)
-    merged_pdf = BytesIO()
-    merger.write(merged_pdf)
-    merger.close()
-    return merged_pdf.getvalue()
+    for pdf in pdf_list:
+        pdf.seek(0)
+        merger.append(pdf)
+
+    merged_pdf_io = BytesIO()
+    merger.write(merged_pdf_io)
+    merged_pdf_io.seek(0)
+    return merged_pdf_io
+    # with open(output_path, 'wb') as f:
+    #     merger.write(f)
+    # response = HttpResponse(merger, content_type='application/pdf')
+    # response['Content-Disposition'] = 'attachment; filename=view_test_record.pdf'
+    # return response
 
 def generate_pdf(request):
     if request.method == 'POST':
         selected_test_ids = request.POST.getlist('selected_tests')
-
         # Retrieve the selected test records from the database
         selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids)
         if not selected_test_records.exists():
             raise Http404("No test records found")
+        pdf_list = []
 
-        pdf_files = []
+        # if selected_test_records.count() == 1:
+        #     for test_record in selected_test_records:
+        #         test_name = test_record.TestName
+        #         Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+        #         context = {
+        #             'test': test_record,
+        #             'model': test_record.ModelName,
+        #             'TestProtocol': Test_protocol,
+        #         }
+        #         return render_to_pdf('view_pdf.html', context)
+            
 
         for i, test_record in enumerate(selected_test_records, start=1):
-            record_data = {
-                'date': test_record.test_date,
-                'name': test_record.test_name,
-                'no': i,
-                'result': test_record.result,
-                'notes': test_record.notes,
-                'images': TestImage.objects.filter(report=test_record),
-                'MEDIA_URL': settings.MEDIA_URL  # Add MEDIA_URL to context
+            model_name = test_record.ModelName
+            test_name = test_record.TestName
+            Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+            models = get_object_or_404(AC, ModelName=model_name)
+            context = {
+                'test': test_record,
+                'model': models,
+                'TestProtocol': Test_protocol,
             }
+            # html_content = loader.render_to_string('view_pdf.html', context)
+            pdf_content = render_to_pdf('view_pdf.html', context, request)
+            pdf_list.append(BytesIO(pdf_content))
 
-            if test_record.test_name == 'Test1':
-                pdf = render_to_pdf('view_test_record.html', {'record': record_data})
-            elif test_record.test_name == 'Test2':
-                pdf = render_to_pdf('view_test_record.html', {'record': record_data})
-            else:
-                pdf = render_to_pdf('home.html', {'record': record_data})
-            
-            if pdf:
-                pdf_files.append(pdf)
-
-
-        if pdf_files:
-            merged_pdf = merge_pdfs(pdf_files)
-            response = HttpResponse(merged_pdf, content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="test_records.pdf"'
-            return response
-        else:
-            return HttpResponse("No PDF files generated.", status=500)
+        merged_pdf = merge_pdfs(pdf_list)
+        response = HttpResponse(merged_pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
+        return response
+        # output_path = f'oqc_model/oqc/media/merged.pdf'
+        # output_path = os.path.abspath(output_path)
+        # return merge_pdfs(pdf_list)
 
     return HttpResponse("Invalid request method.", status=405)
 
@@ -488,13 +479,9 @@ def view(request, test_name, model_name, serialno):
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
     context = {
-        'testdetail': test_record,
         'TestProtocol': Test_protocol,
         'model': models,
         'test': test_record,
-        'test_name': test_name,
-        'model_name': model_name,
-        'serialno': serialno,
     }
     return render(request, "view_test_record.html", context)
 
