@@ -50,13 +50,21 @@ a:hover {
 .alert-warning {
     background-color:rgb(255, 255, 159);
     border-color: yellow;
-    width: fit-content;
+    width: 250px;
     height: fit-content;
     color: black;
+    text-wrap: wrap;
     padding-top: 1pt;
     padding-bottom: 1pt;
+    font-size: 11pt;
 }
-
+.alert {
+    position: relative;
+    padding: 0rem 0rem 0rem 0.55rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
 .no-background {
     background-color: #d1dfff00;
 }

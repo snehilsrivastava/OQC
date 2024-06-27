@@ -10,6 +10,8 @@ from django.db.models import Q
 from random import randint
 from django.conf import settings
 from django.core.mail import send_mail
+import re
+
 
 
 # Define custom authenticate function which uses Employee DB
@@ -98,6 +100,25 @@ def send_otp(request, new_employee):
         messages.success(request, "OTP sent successfully.")
     return
 
+def validate_password(password):
+    flag = 0
+    while True:
+        if (len(password)<8):
+            return ("Passwords must be at least 8 characters")
+        elif not re.search("[a-z]", password):
+            return ("Passwords must have at least a lowercase letter")
+        elif not re.search("[A-Z]", password):
+             return ("Passwords must have at least an uppercase letter")
+        elif not re.search("[0-9]", password):
+            return ("Passwords must have at least a digit")
+        # elif not re.search("[_#@$]" , password):
+            # return ("Password must have a special symbol (_, @, #, $)")
+        elif re.search("\s" , password):
+            return ("Password must not have any whitespace characters")
+        else:
+            return None
+        
+
 # sign up button
 # Define a view function for the registration page
 def register_page(request):
@@ -107,6 +128,13 @@ def register_page(request):
         fname = request.POST.get('first_name')
         lname = request.POST.get('last_name')
         pword = request.POST.get('password')
+        if username.split('@')[-1] != "indkal.com":
+             messages.warning(request, "Please enter a valid email address.")
+             return render(request, 'register.html')
+        validity = validate_password(pword)
+        if validity:
+             messages.warning(request, f"{validity}")
+             return render(request, 'register.html')
         new_employee = Employee(username=username, first_name=fname, last_name=lname, password=pword)
         in_otp = request.POST.get('OTP')
         if act=='send_otp':
