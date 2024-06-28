@@ -52,21 +52,21 @@ class TestStageDetail(models.Model):
 
     
 class TestRecord(models.Model):
-    employee = models.CharField(max_length=80,default = 'None')
+    employee = models.CharField(max_length=80, default = 'None')
     test_date = models.DateField(default=datetime.date.today)
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
     sample_quantiy = models.IntegerField(default=0)
-    result = RichTextUploadingField(default="", blank=True)
-    notes = models.CharField(max_length=255) 
-    employee_remark  = models.TextField(max_length=500,default='')
-    owner_remark  = models.TextField(max_length=500,default='')
-    status = models.IntegerField(default = 0)
-    ProductType = models.CharField(max_length=102,default = '')
-    ModelName = models.CharField(max_length=100,default = '')
-    SerailNo  = models.CharField(max_length=100,default = '')
-    TestStage = models.CharField(max_length=20,default='')
-    TestName  = models.CharField(max_length=80,default='')
+    result = RichTextUploadingField(default="None", blank=True)
+    notes = models.CharField(max_length=255, default="None") 
+    employee_remark  = models.TextField(max_length=500,default="None")
+    owner_remark  = models.TextField(max_length=500,default="None")
+    status = models.BooleanField(default = False)
+    ProductType = models.CharField(max_length=102,default = "None")
+    ModelName = models.CharField(max_length=100,default = "None")
+    SerailNo  = models.CharField(max_length=100,default = "None")
+    TestStage = models.CharField(max_length=20,default="None")
+    TestName  = models.CharField(max_length=80,default="None")
     # mnfDetail = models.ForeignKey(ModelMNFdetail,on_delete= models.CASCADE,related_name = 'test_mnf_detail')
 
     def __str__(self):

@@ -15,11 +15,6 @@
             font-size: 12px;
         }
     </style>
-    <script>
-        CKEDITOR.on('instanceReady', function(ev) {
-            ev.editor.addCss('body {font-size: 72px}');
-        });
-    </script>
 </head>
 <body>
 
@@ -234,7 +229,7 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Result &amp; Conclusion</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:12.5pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:72px;font-family:"Arial",sans-serif;'>{{form.result}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{form.result}}</span></p>
                 {% comment %} <input type="text" name="Result" class="align-middle" style="border: 0; overflow: hidden;" value="{% if testdetail.result %}{{ testdetail.result}}{% endif %}"> {% endcomment %}
             </td>
         </tr>

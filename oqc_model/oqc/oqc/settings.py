@@ -105,6 +105,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# OTP Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'protrack@indkal.com'
+EMAIL_HOST_PASSWORD = 'bngjmomfunuqhrmy'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -124,9 +133,9 @@ USE_TZ = True
 import os 
 STATIC_URL = '/static/'
 STATIC_ROOT= os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIR = {
-    os.path.join(BASE_DIR, 'public/static')
-}
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'authapp/static')
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -137,6 +146,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # WKHTMLTOPDF_PATH = 'C:\Program Files\wkhtmltopdf'
+
+SILENCED_SYSTEM_CHECKS = ['2_0.W001', 'ckeditor.W001']
 
 CKEDITOR_UPLOAD_PATH = 'content/ckeditor/'
 

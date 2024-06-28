@@ -131,7 +131,7 @@ from .models import TestRecord
 
 def check(request):
     username = request.session['username']
-
+    print(username)
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -143,7 +143,8 @@ def check(request):
     end_date = request.GET.get('end_date', '')
 
     # Filter the TestRecord queryset based on the parameters
-    completed_tests = TestRecord.objects.filter(employee=username+" ")
+    completed_tests = TestRecord.objects.all()
+    completed_tests = completed_tests.filter(employee=username+" ")
 
     if test_name:
         completed_tests = completed_tests.filter(TestName=test_name)

@@ -1,5 +1,5 @@
 from django import forms
-from .models import TestRecord,TestImage
+from .models import *
 from django.forms import formset_factory
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 # from ckeditor5.fields import RichTextFormField
