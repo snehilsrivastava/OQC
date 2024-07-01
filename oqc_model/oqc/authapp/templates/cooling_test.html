@@ -10,6 +10,9 @@
             align-items: center;
             flex-direction: column;
         }
+        .additional_details {
+            width: 650px;
+        }
         .custom-btn-small {
             padding: 5px 10px;
             font-size: 12px;
@@ -26,7 +29,7 @@
             cursor: pointer;
         }
         .page-break {
-            page-break-after: always;
+            page-break-before: always;
             border: 0;
             height: 1px;
             background: #333;
@@ -39,12 +42,11 @@
 </head>
 <body>
 <form class="col-6 mx-auto card p-3 shadow-lg" method="post" action="{% url 'cooling' test_name=test_name model_name=model_name serialno=serialno %}"  enctype="multipart/form-data">
-<p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>
-<br>
     {% csrf_token %}
     {{ form.media }}
-    <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>
-<table class="table-break" style="margin-left:26.0pt;border-collapse:collapse;border:none;">
+    <!-- {{ form.as_p }} -->
+<p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>
+<table class="table-break" style="border-collapse:collapse;border:none;">
     <tbody>
         <tr>
             <td style="width:96.4pt;border:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:5.8pt;">
@@ -258,13 +260,15 @@
         </tr>
     </tbody>
 </table>
-<!-- <div style="margin: 10px 0 10px 0;"></div> -->
 <div style="margin: 10px 0 10px 0;"></div>
 
 <div class="page-break"></div>
-
+{% if form.additional_details %}
+<div class="additional_details">{{ form.additional_details }}</div>
+{% else %}
 <button id="addPageButton" type="button" class="custom-add-page-button">Add page</button>
-<div class="additional_details" style="width: 1000px; display: none;">{{ form.additional_details }}</div>
+<div class="additional_details" style="display: none;">{{ form.additional_details }}</div>
+{% endif %}
 
 <button type="submit" class="btn btn-primary custom-btn-small">Submit</button>
 </form>

@@ -13,20 +13,6 @@ class TestRecordForm(forms.ModelForm):
             'test_date': forms.DateInput(attrs={'type': 'date'}),
             'test_start_date': forms.DateInput(attrs={'type': 'date'}),
             'test_end_date': forms.DateInput(attrs={'type': 'date'}),
-            # 'result': RichTextFormField()
         }
 
 testItemFormset = formset_factory(TestRecordForm, extra=1)
-
-# class TestRemarkForm(forms.ModelForm):
-#     class Meta:
-#         model = TestRecord
-       
-#         fields = ['employee_remark','owner_remark']
-       
-# testRemarkFormset = formset_factory(TestRemarkForm, extra=1)
-
-# class TestImageForm(forms.ModelForm):
-#     class Meta:
-#         model = TestImage
-#         fields = ['image']

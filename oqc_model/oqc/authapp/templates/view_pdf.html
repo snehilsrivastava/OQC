@@ -4,6 +4,10 @@
     <meta charset="utf-8">
     <title>Cooling Test Form</title>
     <style>
+        .page_break {
+            page-break-before: always;
+            margin-top: 20px;
+        }
         p {
             /* padding-top: 3pt; */
             margin: 0;
@@ -38,7 +42,7 @@
             margin-top: 40px;
             font-family: Arial;
             font-size: 10.5px;
-            page-break-before: always;
+            /* page-break-before: always; */
         }
     </style>
 </head>
@@ -264,7 +268,7 @@
 
 <!-- <div style="margin: 10px 0 10px 0;"></div>
 <div style="margin: 10px 0 10px 0;"></div> -->
-<div class="additional_details">{{ test.additional_details|safe }}</div>
+<div class="additional_details page_break">{{ test.additional_details|safe }}</div>
 </form>
 </body>
 </html>

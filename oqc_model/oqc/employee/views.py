@@ -255,7 +255,7 @@ def dashboard(request):
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
-
+    completed_tests = completed_tests.order_by('-test_date')
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
@@ -448,12 +448,8 @@ def generate_pdf(request):
         response = HttpResponse(merged_pdf, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
         return response
-        # output_path = f'oqc_model/oqc/media/merged.pdf'
-        # output_path = os.path.abspath(output_path)
-        # return merge_pdfs(pdf_list)
 
     return HttpResponse("Invalid request method.", status=405)
-
 
 
 def view(request, test_name, model_name, serialno):
@@ -551,16 +547,6 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
-        # Update s1 based on the selected test stages
-        # for stage in testStages:
-        #     if stage == "DVT":
-        #         s1 = '1' + s1[1:]
-        #     elif stage == "PP":
-        #         s1 = s1[0] + '1' + s1[2:]
-        #     elif stage == "MP":
-        #         s1 = s1[:2] + '1' + s1[3:]
-        #     elif stage == "PDI":
-        #         s1 = s1[:3] + '1'
 
         if existing_test:
             existing_test.TestStage = s1
@@ -621,7 +607,3 @@ def test_protocol_entry(request):
 def view_test_records(request):
     test_records = TestRecord.objects.all()
     return render(request, 'view.html', {'test_records': test_records})
-
-
-
-
