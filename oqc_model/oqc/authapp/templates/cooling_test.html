@@ -39,6 +39,8 @@
 </head>
 <body>
 <form class="col-6 mx-auto card p-3 shadow-lg" method="post" action="{% url 'cooling' test_name=test_name model_name=model_name serialno=serialno %}"  enctype="multipart/form-data">
+<p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>
+<br>
     {% csrf_token %}
     {{ form.media }}
     <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>

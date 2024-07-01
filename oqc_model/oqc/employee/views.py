@@ -115,7 +115,7 @@ def owner_remark(request, id):
 
 def check(request):
     username = request.session['username']
-
+    print(username)
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
