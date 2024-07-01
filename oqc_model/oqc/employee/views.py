@@ -294,70 +294,70 @@ def submit_product_details_view(request):
     return HttpResponse("Thank you for submitting product details")
 
 # @login_required
-def create_test_record(request):
-    if request.method == 'POST':
-        num_images = int(request.POST.get('num_images', 0))  # Default to 0 images
-        print(f"Number of images: {num_images}")
+# def create_test_record(request):
+#     if request.method == 'POST':
+#         num_images = int(request.POST.get('num_images', 0))  # Default to 0 images
+#         print(f"Number of images: {num_images}")
         
-        TestImageFormSet = modelformset_factory(TestImage, form=TestImageForm, extra=num_images)
-        report_form = TestRecordForm(request.POST)
-        formset = TestImageFormSet(request.POST, request.FILES, queryset=TestImage.objects.none())
+#         TestImageFormSet = modelformset_factory(TestImage, form=TestImageForm, extra=num_images)
+#         report_form = TestRecordForm(request.POST)
+#         formset = TestImageFormSet(request.POST, request.FILES, queryset=TestImage.objects.none())
 
-        if report_form.is_valid() and formset.is_valid():
-            # First, save the TestRecord instance
-            report = report_form.save(commit=False)
-            report.employee = Employee.objects.get(username=request.user.username)
-            report.save()
+#         if report_form.is_valid() and formset.is_valid():
+#             # First, save the TestRecord instance
+#             report = report_form.save(commit=False)
+#             report.employee = Employee.objects.get(username=request.user.username)
+#             report.save()
 
-            # Next, save the formset images and associate them with the report
-            for form in formset:
-                if form.cleaned_data:  # Ensure the form has data
-                    image_instance = form.save(commit=False)
-                    image_instance.report = report
-                    image_instance.save()
+#             # Next, save the formset images and associate them with the report
+#             for form in formset:
+#                 if form.cleaned_data:  # Ensure the form has data
+#                     image_instance = form.save(commit=False)
+#                     image_instance.report = report
+#                     image_instance.save()
 
-            # Handle captured images
-            for i in range(num_images):
-                print(f"Processing image {i}")
-                captured_image_data = request.POST.get(f'captured_images_{i}')
-                print(f"Captured image data for {i}: {captured_image_data}")
-                if captured_image_data:
-                    # Extract image data from base64 string
-                    format, imgstr = captured_image_data.split(';base64,')
-                    ext = format.split('/')[-1]
-                    # Decode base64 data
-                    data = base64.b64decode(imgstr)
+#             # Handle captured images
+#             for i in range(num_images):
+#                 print(f"Processing image {i}")
+#                 captured_image_data = request.POST.get(f'captured_images_{i}')
+#                 print(f"Captured image data for {i}: {captured_image_data}")
+#                 if captured_image_data:
+#                     # Extract image data from base64 string
+#                     format, imgstr = captured_image_data.split(';base64,')
+#                     ext = format.split('/')[-1]
+#                     # Decode base64 data
+#                     data = base64.b64decode(imgstr)
 
-                    # Create a temporary file to hold the image data
-                    temp_image = NamedTemporaryFile(delete=True)
-                    temp_image.write(data)
-                    temp_image.flush()
+#                     # Create a temporary file to hold the image data
+#                     temp_image = NamedTemporaryFile(delete=True)
+#                     temp_image.write(data)
+#                     temp_image.flush()
 
-                    # Create a Django File object from the temporary file
-                    image = File(temp_image, name=f'captured_image_{i}.{ext}')
+#                     # Create a Django File object from the temporary file
+#                     image = File(temp_image, name=f'captured_image_{i}.{ext}')
 
-                    # Create and save TestImage object with the report and image
-                    TestImage.objects.create(report=report, image=image)
+#                     # Create and save TestImage object with the report and image
+#                     TestImage.objects.create(report=report, image=image)
 
-            return redirect('view')  # Replace 'view' with your actual view name or URL name
-        else:
-            # Debug statements to understand form errors
-            print("Report form errors:", report_form.errors)
-            print("Formset errors:", formset.errors)
-    else:
-        num_images = 0  # Default to 0 images
-        if 'num_images' in request.GET:
-            num_images = int(request.GET.get('num_images'))
-        TestImageFormSet = modelformset_factory(TestImage, form=TestImageForm, extra=num_images)
+#             return redirect('view')  # Replace 'view' with your actual view name or URL name
+#         else:
+#             # Debug statements to understand form errors
+#             print("Report form errors:", report_form.errors)
+#             print("Formset errors:", formset.errors)
+#     else:
+#         num_images = 0  # Default to 0 images
+#         if 'num_images' in request.GET:
+#             num_images = int(request.GET.get('num_images'))
+#         TestImageFormSet = modelformset_factory(TestImage, form=TestImageForm, extra=num_images)
 
-        report_form = TestRecordForm()
-        formset = TestImageFormSet(queryset=TestImage.objects.none())
+#         report_form = TestRecordForm()
+#         formset = TestImageFormSet(queryset=TestImage.objects.none())
 
-    return render(request, 'create_test_record.html', {
-        'report_form': report_form,
-        'formset': formset,
-        'num_images': num_images
-    })
+#     return render(request, 'create_test_record.html', {
+#         'report_form': report_form,
+#         'formset': formset,
+#         'num_images': num_images
+#     })
 
 
 
@@ -406,11 +406,6 @@ def view_pdf(request, test_name, model_name, serialno):
 
 
 def merge_pdfs(pdf_list):
-
-    # output_dir = os.path.dirname(output_path)
-    # if not os.path.exists(output_dir):
-    #     os.makedirs(output_dir)
-    
     merger = PyPDF2.PdfMerger()
     for pdf in pdf_list:
         pdf.seek(0)
@@ -434,18 +429,6 @@ def generate_pdf(request):
         if not selected_test_records.exists():
             raise Http404("No test records found")
         pdf_list = []
-
-        # if selected_test_records.count() == 1:
-        #     for test_record in selected_test_records:
-        #         test_name = test_record.TestName
-        #         Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-        #         context = {
-        #             'test': test_record,
-        #             'model': test_record.ModelName,
-        #             'TestProtocol': Test_protocol,
-        #         }
-        #         return render_to_pdf('view_pdf.html', context)
-            
 
         for i, test_record in enumerate(selected_test_records, start=1):
             model_name = test_record.ModelName

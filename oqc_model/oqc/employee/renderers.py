@@ -2,10 +2,10 @@ import os
 from django.conf import settings
 from django.template.loader import get_template, render_to_string
 from django.http import HttpResponse
-import pdfkit
+# import pdfkit
 from weasyprint import HTML, CSS
-from xhtml2pdf import pisa
-from io import BytesIO
+# from xhtml2pdf import pisa
+# from io import BytesIO
 from bs4 import BeautifulSoup
 
 

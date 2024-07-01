@@ -32,6 +32,14 @@
             margin: 0 auto;
             margin-right: 35px;
         }
+        .additional_details {
+            width: 700px;
+            margin-left: 35px;
+            margin-top: 40px;
+            font-family: Arial;
+            font-size: 10.5px;
+            page-break-before: always;
+        }
     </style>
 </head>
 <body>
@@ -256,7 +264,7 @@
 
 <!-- <div style="margin: 10px 0 10px 0;"></div>
 <div style="margin: 10px 0 10px 0;"></div> -->
-
+<div class="additional_details">{{ test.additional_details|safe }}</div>
 </form>
 </body>
 </html>
