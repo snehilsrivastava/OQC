@@ -151,30 +151,25 @@ SILENCED_SYSTEM_CHECKS = ['2_0.W001', 'ckeditor.W001']
 
 CKEDITOR_UPLOAD_PATH = 'content/ckeditor/'
 
-SILENCED_SYSTEM_CHECKS = ['2_0.W001', 'ckeditor.W001']
-
 import django
 from django.utils.encoding import force_str
 django.utils.encoding.force_text = force_str
-
-
 
 CKEDITOR_CONFIGS = {
     'default': {
         'allowedContent': True,
         'width': '500px',
-        # 'contentsCss': 'static/styling.css',
         'skin': 'moono-lisa',
-        # 'fontSize_defaultLabel': 'TEST',
-        # 'fontSize': '72',
-        # 'font_defaultLabel': 'Arial',
-        # 'skin': 'office2013',
-        'toolbar_Basic': [
-            ['Source', '-', 'Bold', 'Italic']
+        'toolbar': [
+            {'items': ['Table', 'Image',]},
         ],
-        'toolbar_YourCustomToolbarConfig': [
-            {'items': ['FontSize', 'Table', 'Image',]},
-        ],
-        'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
+    },
+    'full': {
+        'allowedContent': True,
+        'width': '650px',
+        'skin': 'moono-lisa',
+        'toolbar': [
+            {'items': ['Table', 'Image',]},
+        ]
     }
 }

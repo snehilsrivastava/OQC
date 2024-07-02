@@ -347,7 +347,16 @@
             });
         }
        
-      
+        function clearFilter() {
+            // Get the form element
+            var form = document.getElementById("filter-form");
+        
+            // Reset all the form fields
+            form.reset();
+        
+            // Submit the form to apply the cleared filters
+            form.submit();
+        }
 
   
     </script>

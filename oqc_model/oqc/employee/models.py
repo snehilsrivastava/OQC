@@ -18,13 +18,13 @@ class Test(models.Model):
 class Model_MNF_detail(models.Model):
 
     Customer = models.CharField(max_length=500,default='None')
-    Manufature = models.CharField(max_length=500,default='None')
+    Manufacture = models.CharField(max_length=500,default='None')
     Location = models.CharField(max_length=100,default='None')
     Brand = models.CharField(max_length=80,default='None')
     Product = models.CharField(max_length=80,default='None')
     Brand_model_no = models.CharField(max_length=80,default='None')
     Indkal_model_no = models.CharField(max_length=80,default='None')
-    ORM_model_no = models.CharField(max_length=80,default='None')
+    ODM_model_no = models.CharField(max_length=80,default='None')
     def __str__(self):
         return f"{self.Product} - {self.Indkal_model_no}"
 
@@ -58,10 +58,11 @@ class TestRecord(models.Model):
     test_end_date = models.DateField(default=datetime.date.today)
     sample_quantiy = models.IntegerField(default=0)
     result = RichTextUploadingField(default="", blank=True)
+    additional_details = RichTextUploadingField(default="", blank=True, config_name='full')
     notes = models.CharField(max_length=255, blank=True) 
     employee_remark  = models.TextField(max_length=500,default='',blank=True)
     owner_remark  = models.TextField(max_length=500,default='',blank=True)
-    status = models.IntegerField(default =0)
+    status = models.IntegerField(default=0)
     ProductType = models.CharField(max_length=102,default = "None")
     ModelName = models.CharField(max_length=100,default = "None")
     SerailNo  = models.CharField(max_length=100,default = "None")
