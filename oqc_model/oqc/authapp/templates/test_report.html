@@ -3,83 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard</title>
+    <title>Full Page Navbar with Header</title>
+    <!-- Correctly include Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            font-family: 'Times New Roman', Times, serif;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            color: white;
+            font-size: 20px;
+            text-decoration-color: whitesmoke;
         }
 
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-        }
-
-        header {
-            background: #333;
-            color: #fff;
-            padding-top: 30px;
-            min-height: 70px;
-            border-bottom: #77b300 3px solid;
-        }
-
-        header a {
-            color: #fff;
-            text-decoration: none;
-            text-transform: uppercase;
-            font-size: 16px;
-        }
-
-        header ul {
-            padding: 0;
-            list-style: none;
-        }
-
-        header li {
-            float: left;
-            display: inline;
-            padding: 0 20px 0 20px;
-        }
-
-        header #branding {
-            float: left;
-        }
-
-        header #branding h1 {
-            margin: 0;
-        }
-
-        header nav {
-            float: right;
-            margin-top: 10px;
-        }
-
-        .button {
-            display: inline-block;
-            background: #333;
-            color: #fff;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            margin: 10px 0;
-            border-radius: 5px;
+            background-color: #03385e;
+            color: white;
+            width: 100%;
         }
 
-        .button:hover {
-            background: #d9534f;
+        .header .fa {
+            margin-right: 10px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 300px;
+            height: 100vh;
+            background-color: #03385e;
+            color: white;
+            overflow: auto;
+        }
+
+        .nav .bottom-icon {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            height : 100%;
+        }
+
+        li a {
+            display: flex;
+            align-items: center;
+            color: white;  /* Change text color to white */
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        /* Change the link color on hover */
+        li a:hover {
+            background-color: #a9b9bc;
+            color: white;
+        }
+
+        .fa-icon {
+            margin-right: 10px;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            color: black; /* Content text color */
         }
 
         table {
             width: 100%;
-            margin: 20px 0;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         table, th, td {
-            border: 1px solid #ddd;
+            border: 1px solid black;
         }
 
         th, td {
@@ -88,12 +96,163 @@
         }
 
         th {
-            background-color: #333;
+            background-color: #03385e;
             color: white;
         }
 
         tr:nth-child(even) {
             background-color: #f2f2f2;
+        }
+        button {
+           height: 30px;
+           color: rgb(239, 237, 246); 
+           width: 170px;
+           border: 10px;
+           border-color: black;
+           background-color: #03385e;
+           font-size: 20px;
+           border-radius: 3px;
+        }
+        button a {
+            color : whitesmoke;
+            width: 120px;
+        }
+
+        button a:hover {
+            background-color: #a9b9bc;
+            color: white; 
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background-color: white;
+            color: black;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .popup form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .popup form label {
+            margin-bottom: 5px;
+        }
+
+        .popup form input {
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+
+        .user-info {
+            display: none;
+            position: absolute;
+            right: 20px;
+            background-color: #f1f1f1;
+            color: black;
+            padding: 10px;
+            border: 1px solid #ddd;
+            z-index: 1;
+        }
+
+        .user-info p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .user-btn {
+            background-color: #03385e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            display: block;
+            margin-top: 10px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .status-0 {
+            background:#03385e;
+            color: #fff;
+        }
+        
+        .status-1 {
+            /* styles for 'Waiting for Approval' */
+            background: #4FAAD7;
+            color: #fff;
+        }
+        
+        .status-2 {
+            /* styles for 'Approved' */
+            background: #5AA33F;
+            color: #fff;
+        }
+        
+        .status-3 {
+            /* styles for 'Rejected' */
+            background: #b20b00;
+            color: #fff;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons a {
+            background:#03385e;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+
+        .action-buttons a:hover {
+            background: #d9534f;
+        }
+
+        .toggle-button {
+            background:;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+            cursor: pointer;
         }
 
         .message {
@@ -115,61 +274,241 @@
             color: #a94442;
             border-color: #ededed;
         }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-buttons a {
-            background: #333;
-            color: #fff;
-            padding: 5px 10px;
-            text-decoration: none;
+        .button-container {
+            text-align: center; /* Optional: Centers the buttons horizontally */
             border-radius: 3px;
         }
-
-        .action-buttons a:hover {
-            background: #d9534f;
-        }
-
-        .toggle-button {
-            background: #333;
-            color: #fff;
-            padding: 5px 10px;
-            text-decoration: none;
+        .button-container button {
+            display: inline-block; /* Display buttons side by side */
+            margin-right: 10px; /* Optional: Add some spacing between buttons */
             border-radius: 3px;
-            cursor: pointer;
-        }
-
-       
-        .status-0 {
-            background: #333;
-            color: #fff;
         }
         
-        .status-1 {
-            /* styles for 'Waiting for Approval' */
-            background: #4FAAD7;
-            color: #fff;
-        }
-        
-        .status-2 {
-            /* styles for 'Approved' */
-            background: #5AA33F;
-            color: #fff;
-        }
-        
-        .status-3 {
-            /* styles for 'Rejected' */
-            background: #b20b00;
-            color: #fff;
-        }
-        
-       
     </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
+</head>
+<body>
+
+<div class="header">
+    <div class="left-icon">
+        <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
+    </div>
+
+    <div class="container">
+           
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.level_tag }}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+    </div>
+   
+    <div class="right-icon">
+        <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+            <span id="userButtonText"></span>
+            <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
+        </button>
+        <div class="user-info" id="userInfo">
+            <p>Username: {{ username }}</p>
+            <p>Name: {{ first_name }} &nbsp {{ last_name }}</p>
+            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+        </div>
+    </div>
+  
+</div>
+
+<div class="main-content">
+    <ul class='nav' id="sidebar">
+        <li><a href="{% url 'check' %}"><i class="fa fa-home fa-icon"></i>&nbsp Home</a></li>
+        <li><a href="{% url 'product' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add report</a></li>
+        <li><a href="{% url 'mnf' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add model detail</a></li>
+        <li><a href="{% url 'test_list_entry' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add test detail</a></li>
+        <!-- <div class="bottom-icon">
+            <a href="/logout" style="color: white;"><i class="fa fa-sign-out"></i> Logout</a>
+        </div> -->
+    </ul>
+
+    <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
+
+<!-- Filter Popup -->
+<div class="popup" id="filterPopup">
+    <span class="close" onclick="toggleFilter()">&times;</span>
+    <h2>Filter Options</h2>
+    <form id="filter-form" method="get" action="{% url 'check' %}">
+        {% csrf_token %}
+        <div>
+            <label for="product">Product Type:</label>
+            <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+                <option value="">Select Product Type</option>
+                <option value="TV">TV</option>
+                <option value="AC">AC</option>
+                <option value="Phone">Phone</option>
+                <option value="Washing_Machine">Washing Machine</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="test_stage">Test Stage:</label>
+            <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+                <option value="">Select Test Stage</option>
+                <option value="DVT">DVT</option>
+                <option value="PP">PP</option>
+                <option value="MP">MP</option>
+                <option value="PDI">PDI</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="model_name">Model Name:</label>
+            <select class="form-control" id="model_name" name="model_name">
+                <!-- Model options will be populated dynamically based on the selected product type -->
+                <option value="">All Models</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="test_name">Test Name:</label>
+            <select class="form-control" id="test_name" name="test_name" >
+                <option value="">Select Test Name</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="serial_number">Serial Number:</label>
+            <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+        </div>
+        <br>
+        <div>
+            <label for="status">Status:</label>
+            <select id="status" name="status">
+                <option value="">All</option>
+                <option value= 0  {% if status == 0 %}selected{% endif %}>Not Send</option>
+                <option value= 1 {% if status == 1 %}selected{% endif %}>Watting for Approval</option>
+                <option value= 2 {% if status == 2 %}selected{% endif %}>Approved</option>
+                <option value= 3 {% if status == 3 %}selected{% endif %}>Reject</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+        </div>
+        <br>
+        <div>
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+        </div>
+        <br>
+      
+        <div class="button-container">
+            <button type="submit" class="button" >Filter</button>
+            <button type="button" class="button" onclick="clearFilters()">Clear Filters</button>
+        </div>
+    </form>
+
+</div>
+
+    <div class="content">
+        <h1>Dashboard</h1>
+        <i class="fa fa-search fa-icon"></i>
+        <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Model Name</th>
+                    <th>Test Name</th>
+                    <th>Stage</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in completed_tests %}
+                <tr>
+                    <td>{{ test.ProductType }}</td>
+                    <td>{{ test.ModelName }}</td>
+                    <td>{{ test.TestName }}</td>
+                    <td>{{ test.TestStage }}</td>
+                    <td>{{ test.test_date }}</td>
+                    <td>
+                        <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" >
+                            {% if test.status == 0 %}
+                                Not Send
+                            {% elif test.status == 1 %}
+                                Waiting for Approval
+                            {% elif test.status == 2 %}
+                                Approved
+                            {% elif test.status == 3 %}
+                                Rejected
+                            {% else %}
+                                Unknown Status
+                            {% endif %}
+                        </span>
+                    </td>
+                    
+                    <td class="action-buttons">
+                         
+                        <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit </a> 
+                        <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
+                        <a class="button" href="{% url 'remark' test.id %}">Remark</a>
+                        <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function toggleMenu() {
+        var sidebar = document.getElementById("sidebar");
+        if (sidebar.style.display === "block") {
+            sidebar.style.display = "none";
+        } else {
+            sidebar.style.display = "block";
+        }
+    }
+
+    function toggleFilter() {
+        var popup = document.getElementById("filterPopup");
+        var overlay = document.getElementById("overlay");
+        var display = popup.style.display;
+
+        if (display === "block") {
+            popup.style.display = "none";
+            overlay.style.display = "none";
+        } else {
+            popup.style.display = "block";
+            overlay.style.display = "block";
+        }
+    }
+
+    function toggleUserInfo() {
+        var sidebar = document.getElementById("userInfo");
+        if (sidebar.style.display === "block" || sidebar.style.display === "") {
+            sidebar.style.display = "none";
+        } else {
+            sidebar.style.display = "block";
+        }
+    }
+
+    // Ensure user info starts hidden
+    document.addEventListener("DOMContentLoaded", function() {
+        var sidebar = document.getElementById("userInfo");
+        sidebar.style.display = "none";
+    });
+   
+   
+    document.addEventListener("DOMContentLoaded", function() {
             populateModels();
             populateTestName();
         
@@ -300,154 +639,39 @@
                 });
             }
         }
+
+        function logoutUser() {
+            fetch('/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Redirect to the home page or show a success message
+                    window.location.href = '/';
+                } else {
+                    alert('Logout failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Logout failed');
+            });
+        }
+        
+        
       
 
-  
-    </script>
-</head>
-<body>
-    <header>
-        <div class="container">
-            <div id="branding">
-                <h1>Employee Dashboard</h1>
-            </div>
-            <!-- Display error/success messages -->
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li class="message {{ message.level_tag }}">
-                            {{ message }}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            <nav>
-                <ul>
-                    <li><a href="{% url 'product' %}">Add New Report</a></li>
-                    <li><a href="{% url 'test_list_entry' %}">Add Test List</a></li>
-                    <li><a href="{% url 'mnf' %}">Add Model Detail</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <div class="container">
-        <h2>Completed Tests</h2>
-        <form id="filter-form" method="get" action="{% url 'check' %}">
-            {% csrf_token %}
-            <div>
-                <label for="product">Product Type:</label>
-                <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
-                    <option value="">Select Product Type</option>
-                    <option value="TV">TV</option>
-                    <option value="AC">AC</option>
-                    <option value="Phone">Phone</option>
-                    <option value="Washing_Machine">Washing Machine</option>
-                </select>
-            </div>
-            <br>
-            <div>
-                <label for="test_stage">Test Stage:</label>
-                <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
-                    <option value="">Select Test Stage</option>
-                    <option value="DVT">DVT</option>
-                    <option value="PP">PP</option>
-                    <option value="MP">MP</option>
-                    <option value="PDI">PDI</option>
-                </select>
-            </div>
-            <br>
-            <div>
-                <label for="model_name">Model Name:</label>
-                <select class="form-control" id="model_name" name="model_name">
-                    <!-- Model options will be populated dynamically based on the selected product type -->
-                    <option value="">All Models</option>
-                </select>
-            </div>
-            <br>
-            <div>
-                <label for="test_name">Test Name:</label>
-                <select class="form-control" id="test_name" name="test_name" >
-                    <option value="">Select Test Name</option>
-                </select>
-            </div>
-            <br>
-            <div>
-                <label for="serial_number">Serial Number:</label>
-                <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
-            </div>
-            <br>
-            <div>
-                <label for="status">Status:</label>
-                <select id="status" name="status">
-                    <option value="">All</option>
-                    <option value="complete" {% if status == 'complete' %}selected{% endif %}>Complete</option>
-                    <option value="incomplete" {% if status == 'incomplete' %}selected{% endif %}>Incomplete</option>
-                </select>
-            </div>
-            <br>
-            <div>
-                <label for="start_date">Start Date:</label>
-                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
-            </div>
-            <br>
-            <div>
-                <label for="end_date">End Date:</label>
-                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
-            </div>
-            <br>
-            <button type="submit" class="button">Filter</button>
-            <button type="button" class="button" onclick="clearFilters()">Clear Filters</button>
-        </form>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Model Name</th>
-                    <th>Test Name</th>
-                    <th>Stage</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for test in completed_tests %}
-                <tr>
-                    <td>{{ test.ProductType }}</td>
-                    <td>{{ test.ModelName }}</td>
-                    <td>{{ test.TestName }}</td>
-                    <td>{{ test.TestStage }}</td>
-                    <td>{{ test.test_date }}</td>
-                    <td>
-                        <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" >
-                            {% if test.status == 0 %}
-                                Not Send
-                            {% elif test.status == 1 %}
-                                Waiting for Approval
-                            {% elif test.status == 2 %}
-                                Approved
-                            {% elif test.status == 3 %}
-                                Rejected
-                            {% else %}
-                                Unknown Status
-                            {% endif %}
-                        </span>
-                    </td>
-                    
-                    <td class="action-buttons">
-                         
-                        <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit </a> 
-                        <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
-                        <a class="button" href="{% url 'remark' test.id %}">Remark</a>
-                        <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a>
-
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+</script>
 </body>
 </html>

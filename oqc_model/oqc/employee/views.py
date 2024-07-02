@@ -20,6 +20,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import os
+from django.shortcuts import get_object_or_404
 
 def main_page(request):
     return redirect(login_page)
@@ -113,6 +114,8 @@ def owner_remark(request, id):
     return render(request, "owner_remark.html", context)
 
 
+
+
 def check(request):
     username = request.session['username']
     print(username)
@@ -125,6 +128,7 @@ def check(request):
     status = request.GET.get('status', '')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
+    
 
     # Filter the TestRecord queryset based on the parameters
     completed_tests = TestRecord.objects.filter(employee=username)
@@ -151,7 +155,9 @@ def check(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     test = list(TestList.objects.all().values())
-
+ 
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
     context = {
         'completed_tests': completed_tests,
         'test_name': test_name,
@@ -166,10 +172,19 @@ def check(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'test' : test
+        'test' : test,
+        'first_name' : employee.first_name,
+        'last_name' : employee.last_name,
+        'icon' : icon,
+        'username' :username
+      
     }
 
     return render(request, "test_report.html", context)
+
+
+
+ 
 
 
 def cooling(request, test_name, model_name, serialno):
@@ -301,15 +316,16 @@ def dashboard(request):
     }
 
     return render(request, 'dashboard_employee.html', context)
-            
+
+from django.http import JsonResponse
+from django.contrib.auth import logout as auth_logout
+
 def logout(request):
     if request.method == "POST":
-        # logout(request)
-        context = {
-            'success_message': "You have successfully logged out."
-        }
-        return render(request, 'logout.html', context)
-    return render(request, 'logout.html')
+        auth_logout(request)  # Use the correct logout method from django.contrib.auth
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
+
 
 def submit_product_details_view(request):
     return HttpResponse("Thank you for submitting product details")

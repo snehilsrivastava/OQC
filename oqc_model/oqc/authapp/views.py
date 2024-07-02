@@ -50,6 +50,7 @@ def login_page(request):
 			login(request, user)
 			request.session['user_type'] = user.user_type
 			request.session['username'] = user.username
+            
 			# request.session['password'] = user.password
 			# request.session['last_login'] = user.last_login
 			if user.user_type == 'owner':

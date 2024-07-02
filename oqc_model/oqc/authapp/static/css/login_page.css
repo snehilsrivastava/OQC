@@ -38,38 +38,31 @@ a:hover {
 }
 
 .alert-error {
-    background-color: lightcoral;
+    background-color: rgb(255, 104, 104);
     border-color: red;
     width: fit-content;
     height: fit-content;
     color: white;
     padding-top: 1pt;
     padding-bottom: 1pt;
+    border-width: 0.5px;
 }
 
 .alert-warning {
     background-color:rgb(255, 255, 159);
     border-color: yellow;
-    width: 250px;
+    width: fit-content;
     height: fit-content;
     color: black;
-    text-wrap: wrap;
     padding-top: 1pt;
     padding-bottom: 1pt;
-    font-size: 11pt;
 }
-.alert {
-    position: relative;
-    padding: 0rem 0rem 0rem 0.55rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: .25rem;
-}
+
 .no-background {
     background-color: #d1dfff00;
 }
 body {
-    background-image: url("./../images/best_dark1.png");
+    background-image: url("./../images/best_dark.png");
     /* background-color: gray; */
     background-repeat: no-repeat;
     background-position: center;  
@@ -78,14 +71,9 @@ body {
     background-attachment: fixed;
     overflow: hidden;
 }
-.button-container {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
 .card {
     background-color: #6792ab33;
-    transform: translate(0%, -15%);
+    transform: translate(0%, -5%);
     width: 85%;
     max-width: 450px;
     height: 100%;
@@ -105,7 +93,7 @@ body {
     background-color: #fff0;
 }
 .card-body {
-    transform: translate(-8%, -2%);
+    transform: translate(-8%, -10%);
     /* background-color: #d1dfff00; */
     margin-left: -35pt;
     margin-top: -20pt;
@@ -120,7 +108,7 @@ body {
 }
 .card-footer {
     /* display: flex; */
-    transform: translate(-14%, 2%);
+    transform: translate(-14%, -10%);
     width: fit-content;
     height: fit-content;
     align-items: center;
@@ -132,9 +120,9 @@ body {
 .btn-fill {
     background-color: #4C4CFF;
     border-color: #4C4CFF;
-    transform: translate(95%, 0%);
+    transform: translate(65%, 0%);
     display: block;
-    margin: 5pt 0pt 15pt -12pt;
+    margin: 5pt 0pt 15pt 0pt;
     border-radius: 10px;
     padding-top: 2px;
     padding-bottom: 2px;
@@ -149,5 +137,7 @@ body {
     text-wrap: nowrap;
     color: white;
     width: 250px;
-    transform: translate(5%, 0%);
+}
+span>.no_wrap>p {
+    background-color: white;
 }
