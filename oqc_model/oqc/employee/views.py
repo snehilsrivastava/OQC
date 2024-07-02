@@ -1,9 +1,5 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.template import loader
-from django.contrib.auth.decorators import login_required
-from django.forms import modelformset_factory
-from django.core.files import File
 from django.conf import settings
 from django.http import Http404
 from .forms import *
@@ -13,13 +9,10 @@ from product.views import *
 from authapp.models import Employee
 from authapp.views import login_page
 import PyPDF2
-import base64
-from tempfile import NamedTemporaryFile
 from io import BytesIO
 from django.contrib import messages
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-import os
+from django.shortcuts import get_object_or_404
 
 def main_page(request):
     return redirect(login_page)
@@ -43,47 +36,7 @@ def delete_test_record(request, record_id):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
-
-
-def members(request):
-  mymembers = Employee.objects.all().values()
-  template = loader.get_template('check.html')
-  context = {
-    'mymembers': mymembers,
-  }
-  return HttpResponse(template.render(context, request))
-
-from django.shortcuts import render, get_object_or_404
-
-def testdetail(request, no):
-    if request.method == 'GET':
-        context = {
-            'report': get_object_or_404(Test, no=no),
-            'bill_base': "bill_base.html",
-       
-        }
-        return render(request, "test1.html", context)
     
-    elif request.method == 'POST':
-        no = request.POST.get('no')
-        start_date = request.POST.get('start_date')
-        end_date = request.POST.get('end_date')
-        # Process the POST data as needed
-        context = {
-            'report': get_object_or_404(Test, no=no),
-            'bill_base': "bill_base.html",
-            'start_date': start_date,
-            'end_date': end_date,
-        }
-        return render(request, "test1.html", context)
-    
-from django.shortcuts import get_object_or_404, render
-from django.http import JsonResponse
-
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import TestRecord
-
 def remark(request, id):
     TestObjectRemark = get_object_or_404(TestRecord, pk=id)
     if request.method == 'POST':
@@ -112,7 +65,6 @@ def owner_remark(request, id):
     }
     return render(request, "owner_remark.html", context)
 
-
 def check(request):
     username = request.session['username']
     print(username)
@@ -125,7 +77,7 @@ def check(request):
     status = request.GET.get('status', '')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
-
+    
     # Filter the TestRecord queryset based on the parameters
     completed_tests = TestRecord.objects.filter(employee=username)
 
@@ -140,7 +92,7 @@ def check(request):
     if serial_number:
         completed_tests = completed_tests.filter(SerailNo=serial_number)
     if status:
-        completed_tests = completed_tests.filter(status=(status.lower() == 'complete'))
+        completed_tests = completed_tests.filter(status=status)
     if start_date:
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:
@@ -151,7 +103,8 @@ def check(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     test = list(TestList.objects.all().values())
-
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
     context = {
         'completed_tests': completed_tests,
         'test_name': test_name,
@@ -166,11 +119,15 @@ def check(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'test' : test
+        'test' : test,
+        'first_name' : employee.first_name,
+        'last_name' : employee.last_name,
+        'icon' : icon,
+        'username' :username
+      
     }
 
     return render(request, "test_report.html", context)
-
 
 def cooling(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
@@ -201,21 +158,35 @@ def cooling(request, test_name, model_name, serialno):
     }
     return render(request, "cooling_test.html", context)
 
-
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import TestRecord
 
 @csrf_exempt
 def toggle_status(request, id):
     if request.method == 'POST':
-        test_record = get_object_or_404(TestRecord, id=id)
-        test_record.status = not test_record.status
-        test_record.save()
-        return JsonResponse({'success': True, 'new_status': test_record.status})
-    return JsonResponse({'success': False})
+        try:
+            test_record = TestRecord.objects.get(id=id)
+            # Cycle through the statuses or implement your own logic
+            new_status = ((test_record.status) % 3)+1
+            test_record.status = new_status
+            test_record.save()
+            return JsonResponse({'success': True, 'new_status': new_status})
+        except TestRecord.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Test record not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-
+@csrf_exempt
+def set_status(request, id):
+    if request.method == 'POST':
+        try:
+            test_record = TestRecord.objects.get(id=id)
+            # Cycle through the statuses or implement your own logic
+            new_status = 1
+            test_record.status = new_status
+            test_record.save()
+            return JsonResponse({'success': True, 'new_status': new_status})
+        except TestRecord.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Test record not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 def view_test_report(request,pk):
     record = get_object_or_404(TestRecord, pk =pk)
@@ -280,15 +251,16 @@ def dashboard(request):
     }
 
     return render(request, 'dashboard_employee.html', context)
-            
+
+from django.http import JsonResponse
+from django.contrib.auth import logout as auth_logout
+
 def logout(request):
     if request.method == "POST":
-        # logout(request)
-        context = {
-            'success_message': "You have successfully logged out."
-        }
-        return render(request, 'logout.html', context)
-    return render(request, 'logout.html')
+        auth_logout(request)  # Use the correct logout method from django.contrib.auth
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
+
 
 def submit_product_details_view(request):
     return HttpResponse("Thank you for submitting product details")
@@ -347,11 +319,6 @@ def merge_pdfs(pdf_list):
     merger.write(merged_pdf_io)
     merged_pdf_io.seek(0)
     return merged_pdf_io
-    # with open(output_path, 'wb') as f:
-    #     merger.write(f)
-    # response = HttpResponse(merger, content_type='application/pdf')
-    # response['Content-Disposition'] = 'attachment; filename=view_test_record.pdf'
-    # return response
 
 def generate_pdf(request):
     if request.method == 'POST':

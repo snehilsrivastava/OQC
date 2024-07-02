@@ -1,10 +1,7 @@
 from django.shortcuts import render,redirect
 from .models import *
 from django.http import HttpResponse
-from authapp.models import Employee
-from employee.models import TestList,TestRecord
-
-
+from employee.models import TestRecord
 from django.shortcuts import render, HttpResponse
 from .models import Product_Detail, TV, AC, Phone, Washing_Machine
 from django.urls import reverse
@@ -17,6 +14,7 @@ def product_form_view(request):
         test_stage = request.POST.get('TestStage')
         test_name = request.POST.get('TestName')
         username = request.session['username'].strip()
+     
         # user = Employee.objects.get(username=username)
         # Check if the serial number already exists in the database
         if Product_Detail.objects.filter(SerailNo=serial_no).exists():
@@ -30,6 +28,7 @@ def product_form_view(request):
             TestStage = test_stage,
             TestName = test_name,
             employee = username,
+
         )
         new_product_detail.save()
         return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name,'serialno' : serial_no}))
@@ -39,7 +38,6 @@ def product_form_view(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
-    test = list(TestList.objects.all().values())
     user = request.session['username']
 
     context = {
@@ -48,7 +46,6 @@ def product_form_view(request):
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
         'user': user,
-        'test' : test
     }
     
     return render(request, 'product.html', context)
@@ -90,11 +87,3 @@ def AC_spec(request):
 
     # If not a POST request, render the form
     return render(request, 'AC.html')
-
-
-
-
-
-
-
-
