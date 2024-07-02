@@ -120,31 +120,41 @@ def validate_password(password):
             return None
         
 
+
 # sign up button
 # Define a view function for the registration page
 def register_page(request):
     if request.method == 'POST':
         act = request.POST.get('action')
         username = request.POST.get('username')
-        password = request.POST.get('password')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-
-        # Check if a user with the provided username already exists
-        if Employee.objects.filter(username=username).exists():
-            messages.info(request, "Email already exists.")
-            return redirect('/au/register/')
-
-        # Create and save the new Employee instance
-        new_employee = Employee(
-			first_name=first_name,
-			last_name=last_name,
-            username=username,
-            password=make_password(password)  # Hash the password before saving
-        )
-        new_employee.save()
-
-        messages.info(request, "Account created!")
-        return redirect('/au/login/')
-
+        fname = request.POST.get('first_name')
+        lname = request.POST.get('last_name')
+        pword = request.POST.get('password')
+        if username.split('@')[-1] != "indkal.com":
+             messages.warning(request, "Please enter a valid email address.")
+             return render(request, 'register.html')
+        validity = validate_password(pword)
+        if validity:
+             messages.warning(request, f"{validity}")
+             return render(request, 'register.html')
+        new_employee = Employee(username=username, first_name=fname, last_name=lname, password=pword)
+        in_otp = request.POST.get('OTP')
+        if act=='send_otp':
+            send_otp(request, new_employee)
+            return render(request, 'register.html', context={"employee":new_employee, "password":pword})
+        elif act=='sign_up':
+            msg = verify_otp(username, in_otp)
+            print(msg)
+            match (msg):
+                case 1:
+                    new_employee.save()
+                    messages.success(request, "OTP Verified successfully.")
+                    messages.success(request, "Account created!")
+                    return redirect('/au/login/')
+                case 2:
+                    messages.error(request, "Invalid or Expired OTP.")
+                case 3:
+                    messages.error(request, "Invalid OTP.")
+        elif act=="otp_resend":
+            new_employee = send_otp()
     return render(request, 'register.html')

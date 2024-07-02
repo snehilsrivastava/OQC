@@ -144,7 +144,7 @@ def check(request):
     if serial_number:
         completed_tests = completed_tests.filter(SerailNo=serial_number)
     if status:
-        completed_tests = completed_tests.filter(status=(status.lower() == 'complete'))
+        completed_tests = completed_tests.filter(status=status)
     if start_date:
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:

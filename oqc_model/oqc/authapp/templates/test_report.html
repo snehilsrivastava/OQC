@@ -289,9 +289,9 @@
 <body>
 
 <div class="header">
-    <div class="left-icon">
+    {% comment %} <div class="left-icon">
         <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
-    </div>
+    </div> {% endcomment %}
 
     <div class="container">
            
@@ -322,7 +322,7 @@
 </div>
 
 <div class="main-content">
-    <ul class='nav' id="sidebar">
+    {% comment %} <ul class='nav' id="sidebar">
         <li><a href="{% url 'check' %}"><i class="fa fa-home fa-icon"></i>&nbsp Home</a></li>
         <li><a href="{% url 'product' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add report</a></li>
         <li><a href="{% url 'mnf' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add model detail</a></li>
@@ -330,7 +330,7 @@
         <!-- <div class="bottom-icon">
             <a href="/logout" style="color: white;"><i class="fa fa-sign-out"></i> Logout</a>
         </div> -->
-    </ul>
+    </ul> {% endcomment %}
 
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 
@@ -372,7 +372,7 @@
         <br>
         <div>
             <label for="test_name">Test Name:</label>
-            <select class="form-control" id="test_name" name="test_name" >
+            <select class="form-control" id="test_name" name="test_name">
                 <option value="">Select Test Name</option>
             </select>
         </div>
@@ -386,10 +386,10 @@
             <label for="status">Status:</label>
             <select id="status" name="status">
                 <option value="">All</option>
-                <option value= 0  {% if status == 0 %}selected{% endif %}>Not Send</option>
-                <option value= 1 {% if status == 1 %}selected{% endif %}>Watting for Approval</option>
-                <option value= 2 {% if status == 2 %}selected{% endif %}>Approved</option>
-                <option value= 3 {% if status == 3 %}selected{% endif %}>Reject</option>
+                <option value="0" {% if status == '0' %}selected{% endif %}>Not Sent</option>
+                <option value="1" {% if status == '1' %}selected{% endif %}>Waiting for Approval</option>
+                <option value="2" {% if status == '2' %}selected{% endif %}>Approved</option>
+                <option value="3" {% if status == '3' %}selected{% endif %}>Rejected</option>
             </select>
         </div>
         <br>
@@ -403,10 +403,9 @@
             <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
         </div>
         <br>
-      
         <div class="button-container">
-            <button type="submit" class="button" >Filter</button>
-            <button type="button" class="button" onclick="clearFilters()">Clear Filters</button>
+            <button type="submit" class="button">Filter</button>
+            <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
         </div>
     </form>
 
@@ -416,6 +415,9 @@
         <h1>Dashboard</h1>
         <i class="fa fa-search fa-icon"></i>
         <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
+        <br><br>
+        <i class="fa fa-file fa-icon"></i>
+        <button><a href="{% url 'product' %}">Add new report</a></button>
         
         <table>
             <thead>
@@ -501,6 +503,9 @@
         }
     }
 
+  
+    
+
     // Ensure user info starts hidden
     document.addEventListener("DOMContentLoaded", function() {
         var sidebar = document.getElementById("userInfo");
@@ -555,9 +560,8 @@
             }
         }
         
-        // JavaScript function to populate the test names based on the selected product type and test stage
         function populateTestName() {
-            const testDetail = `${test}`;
+            const testDetail = {{ test|safe }};
             const productTypeDropdown = document.getElementById("product");
             const testStageDropdown = document.getElementById("test_stage");
             const testNameDropdown = document.getElementById("test_name");
@@ -611,6 +615,9 @@
                 }
             });
         }
+       
+      
+
         function deleteTestRecord(recordId) {
             if (confirm("Are you sure you want to delete this record?")) {
                 fetch(`/delete-test-record/${recordId}/`, {
