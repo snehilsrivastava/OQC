@@ -8,7 +8,7 @@ from django.conf import settings
 from django.http import Http404
 from .forms import *
 from .models import *
-from .renderers import render_to_pdf
+from .renderers import *
 from product.views import *
 from authapp.models import Employee
 from authapp.views import login_page
@@ -293,74 +293,6 @@ def logout(request):
 def submit_product_details_view(request):
     return HttpResponse("Thank you for submitting product details")
 
-# @login_required
-# def create_test_record(request):
-#     if request.method == 'POST':
-#         num_images = int(request.POST.get('num_images', 0))  # Default to 0 images
-#         print(f"Number of images: {num_images}")
-        
-#         TestImageFormSet = modelformset_factory(TestImage, form=TestImageForm, extra=num_images)
-#         report_form = TestRecordForm(request.POST)
-#         formset = TestImageFormSet(request.POST, request.FILES, queryset=TestImage.objects.none())
-
-#         if report_form.is_valid() and formset.is_valid():
-#             # First, save the TestRecord instance
-#             report = report_form.save(commit=False)
-#             report.employee = Employee.objects.get(username=request.user.username)
-#             report.save()
-
-#             # Next, save the formset images and associate them with the report
-#             for form in formset:
-#                 if form.cleaned_data:  # Ensure the form has data
-#                     image_instance = form.save(commit=False)
-#                     image_instance.report = report
-#                     image_instance.save()
-
-#             # Handle captured images
-#             for i in range(num_images):
-#                 print(f"Processing image {i}")
-#                 captured_image_data = request.POST.get(f'captured_images_{i}')
-#                 print(f"Captured image data for {i}: {captured_image_data}")
-#                 if captured_image_data:
-#                     # Extract image data from base64 string
-#                     format, imgstr = captured_image_data.split(';base64,')
-#                     ext = format.split('/')[-1]
-#                     # Decode base64 data
-#                     data = base64.b64decode(imgstr)
-
-#                     # Create a temporary file to hold the image data
-#                     temp_image = NamedTemporaryFile(delete=True)
-#                     temp_image.write(data)
-#                     temp_image.flush()
-
-#                     # Create a Django File object from the temporary file
-#                     image = File(temp_image, name=f'captured_image_{i}.{ext}')
-
-#                     # Create and save TestImage object with the report and image
-#                     TestImage.objects.create(report=report, image=image)
-
-#             return redirect('view')  # Replace 'view' with your actual view name or URL name
-#         else:
-#             # Debug statements to understand form errors
-#             print("Report form errors:", report_form.errors)
-#             print("Formset errors:", formset.errors)
-#     else:
-#         num_images = 0  # Default to 0 images
-#         if 'num_images' in request.GET:
-#             num_images = int(request.GET.get('num_images'))
-#         TestImageFormSet = modelformset_factory(TestImage, form=TestImageForm, extra=num_images)
-
-#         report_form = TestRecordForm()
-#         formset = TestImageFormSet(queryset=TestImage.objects.none())
-
-#     return render(request, 'create_test_record.html', {
-#         'report_form': report_form,
-#         'formset': formset,
-#         'num_images': num_images
-#     })
-
-
-
 def edit(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
@@ -429,7 +361,8 @@ def generate_pdf(request):
         if not selected_test_records.exists():
             raise Http404("No test records found")
         pdf_list = []
-
+        cumul_page_count, cumul_page_count_list = 3, []
+        test_name_list = []
         for i, test_record in enumerate(selected_test_records, start=1):
             model_name = test_record.ModelName
             test_name = test_record.TestName
@@ -440,10 +373,22 @@ def generate_pdf(request):
                 'model': models,
                 'TestProtocol': Test_protocol,
             }
-            # html_content = loader.render_to_string('view_pdf.html', context)
-            pdf_content = render_to_pdf('view_pdf.html', context, request)
+            test_name_list.append(test_name)
+            cumul_page_count_list.append(cumul_page_count)
+            pdf_content, page_count = render_to_pdf('view_pdf.html', context, request)
             pdf_list.append(BytesIO(pdf_content))
+            cumul_page_count += page_count
 
+        if len(pdf_list) > 1:  # No cover page or table of contents for one test
+            test_record = selected_test_records[0] # assuming all records are for same model
+            model_name = test_record.ModelName
+            MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
+            cover_context = {
+                'MNF_detail': MNF_detail,
+            }
+            pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
+            context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
+            pdf_list.insert(1, BytesIO(render_contents_to_pdf('pdf_contents.html', {'list': context_list}, request)))
         merged_pdf = merge_pdfs(pdf_list)
         response = HttpResponse(merged_pdf, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'

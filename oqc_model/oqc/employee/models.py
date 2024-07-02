@@ -18,13 +18,13 @@ class Test(models.Model):
 class Model_MNF_detail(models.Model):
 
     Customer = models.CharField(max_length=500,default='None')
-    Manufature = models.CharField(max_length=500,default='None')
+    Manufacture = models.CharField(max_length=500,default='None')
     Location = models.CharField(max_length=100,default='None')
     Brand = models.CharField(max_length=80,default='None')
     Product = models.CharField(max_length=80,default='None')
     Brand_model_no = models.CharField(max_length=80,default='None')
     Indkal_model_no = models.CharField(max_length=80,default='None')
-    ORM_model_no = models.CharField(max_length=80,default='None')
+    ODM_model_no = models.CharField(max_length=80,default='None')
     def __str__(self):
         return f"{self.Product} - {self.Indkal_model_no}"
 
