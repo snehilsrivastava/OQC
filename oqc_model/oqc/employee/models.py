@@ -16,6 +16,7 @@ class Test(models.Model):
         return f"Test {self.no} from {self.start_date} to {self.end_date}"
     
 class Model_MNF_detail(models.Model):
+
     Customer = models.CharField(max_length=500,default='None')
     Manufature = models.CharField(max_length=500,default='None')
     Location = models.CharField(max_length=100,default='None')
@@ -26,6 +27,7 @@ class Model_MNF_detail(models.Model):
     ORM_model_no = models.CharField(max_length=80,default='None')
     def __str__(self):
         return f"{self.Product} - {self.Indkal_model_no}"
+
 
 
 class Test_core_detail(models.Model):
@@ -50,20 +52,21 @@ class TestStageDetail(models.Model):
 
     
 class TestRecord(models.Model):
-    employee = models.CharField(max_length=80,default = 'None')
+    employee = models.CharField(max_length=80, default = 'None')
     test_date = models.DateField(default=datetime.date.today)
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
     sample_quantiy = models.IntegerField(default=0)
-    result = models.CharField(max_length=255) 
-    notes = models.CharField(max_length=255) 
-    remark  = models.CharField(max_length=500,default='None')
-    status = models.BooleanField(default = False)
-    ProductType = models.CharField(max_length=102,default = '')
-    ModelName = models.CharField(max_length=100,default = '')
-    SerailNo = models.CharField(max_length=100,default = '')
-    TestStage = models.CharField(max_length=20,default='')
-    TestName  = models.CharField(max_length=80,default='')
+    result = RichTextUploadingField(default="", blank=True)
+    notes = models.CharField(max_length=255, blank=True) 
+    employee_remark  = models.TextField(max_length=500,default='',blank=True)
+    owner_remark  = models.TextField(max_length=500,default='',blank=True)
+    status = models.IntegerField(default =0)
+    ProductType = models.CharField(max_length=102,default = "None")
+    ModelName = models.CharField(max_length=100,default = "None")
+    SerailNo  = models.CharField(max_length=100,default = "None")
+    TestStage = models.CharField(max_length=20,default="None")
+    TestName  = models.CharField(max_length=80,default="None")
     # mnfDetail = models.ForeignKey(ModelMNFdetail,on_delete= models.CASCADE,related_name = 'test_mnf_detail')
 
     def __str__(self):
@@ -84,10 +87,3 @@ class TestList(models.Model):
 
     def __str__(self):
      return f"{self.Product} - {self.TestName}"
-
-class RTF_Test(models.Model):
-    Field1 = models.CharField(max_length=50, default='')
-    Field2 = RichTextUploadingField(null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.Field1}"

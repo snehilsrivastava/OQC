@@ -5,6 +5,13 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.hashers import make_password, check_password
+from datetime import datetime, timedelta
+from django.db.models import Q
+from random import randint
+from django.conf import settings
+from django.core.mail import send_mail
+import re
+
 
 
 # Define custom authenticate function which uses Employee DB
@@ -43,6 +50,7 @@ def login_page(request):
 			login(request, user)
 			request.session['user_type'] = user.user_type
 			request.session['username'] = user.username
+            
 			# request.session['password'] = user.password
 			# request.session['last_login'] = user.last_login
 			if user.user_type == 'owner':
@@ -52,29 +60,91 @@ def login_page(request):
 	# Render the login page template (GET request)
 	return render(request, 'login.html')
 
+def generate_otp(length=6):
+	return str(randint(10**(length-1), 10**length -1))
+
+def delete_expired_otps():
+	expirations_time = datetime.now() - timedelta(minutes=5)
+	OTP.objects.filter(Q(is_verified=True) | Q(created_at__lt=expirations_time)).delete()
+	return
+
+def verify_otp(user, otp_code):
+    if otp_code:
+        try:
+            otp_obj = OTP.objects.get(user=user, otp=otp_code, is_verified=False)
+            if otp_code == otp_obj.otp:
+                otp_obj.is_verified = True
+                otp_obj.save()
+                return 1
+            else:
+                return 2
+        except OTP.DoesNotExist:
+            return 3
+
+# send OTP button
+def send_otp(request, new_employee):
+    if request.method == 'POST':
+        # Check if a user with the provided username already exists
+        if Employee.objects.filter(username=new_employee.username).exists():
+            messages.warning(request, "Email is already registered.")
+            return redirect('/au/register/')
+        
+        # delete_expired_otps()
+        otp = generate_otp()
+        messages.info(request, f"{otp}")
+        OTP.objects.create(user=new_employee.username, otp=otp, created_at=datetime.now(), is_verified=False)
+        subject = 'OTP'
+        message = f'Hi {new_employee.first_name},\nYour OTP is {otp}. It expires in 5 minutes.'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [new_employee.username]
+        send_mail(subject, message, email_from, recipient_list)
+        messages.success(request, "OTP sent successfully.")
+    return
+
+def validate_password(password):
+    flag = 0
+    while True:
+        if (len(password)<8):
+            return ("Passwords must be at least 8 characters")
+        elif not re.search("[a-z]", password):
+            return ("Passwords must have at least a lowercase letter")
+        elif not re.search("[A-Z]", password):
+             return ("Passwords must have at least an uppercase letter")
+        elif not re.search("[0-9]", password):
+            return ("Passwords must have at least a digit")
+        # elif not re.search("[_#@$]" , password):
+            # return ("Password must have a special symbol (_, @, #, $)")
+        elif re.search("\s" , password):
+            return ("Password must not have any whitespace characters")
+        else:
+            return None
+        
+
+# sign up button
 # Define a view function for the registration page
 def register_page(request):
     if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
+        act = request.POST.get('action')
         username = request.POST.get('username')
         password = request.POST.get('password')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
 
         # Check if a user with the provided username already exists
         if Employee.objects.filter(username=username).exists():
-            messages.info(request, "Username already taken!")
+            messages.info(request, "Email already exists.")
             return redirect('/au/register/')
 
         # Create and save the new Employee instance
         new_employee = Employee(
+			first_name=first_name,
+			last_name=last_name,
             username=username,
             password=make_password(password)  # Hash the password before saving
         )
         new_employee.save()
 
-        messages.info(request, "Account created Successfully!")
-        return HttpResponse("Your details saved successfully!!")
+        messages.info(request, "Account created!")
+        return redirect('/au/login/')
 
     return render(request, 'register.html')
-
-

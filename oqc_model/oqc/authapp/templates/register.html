@@ -2,64 +2,132 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	{% load static %}
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sign Up</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-	<title>Registration Form</title>
+	<link rel="stylesheet" href="{%static 'css/register_detail.css' %}">
+    <!-- <link rel="script" href="{%static 'js/register.js' %}"> -->
 </head>
-<body>
-	<div class="container mt-5">
-		<!-- Registration form -->
-		<form class="col-6 mx-auto card p-3 shadow-lg" method="post" action="{% url 'register' %}"  enctype="multipart/form-data">
-			{% csrf_token %} <!-- CSRF token for security -->
-
-			<!-- Registration form heading -->
-			<h1 style="text-align: center;"><span style="color: blue;">INDKAL</span></h1>
-			<h3>Register</h3>
-			<hr>
-
-			<!-- Display error/success messages -->
-			{% if messages %}
-			<div class="alert alert-primary" role="alert">
-				{% for message in messages %}
-				{{ message }}
-				{% endfor %}
+<body class="body">
+	<div class="container">
+		<!-- Login form -->
+		<div class="card">
+			<div class="card-header text-center py-4 border-0 no-background">
+				<img class="Indkal-Logo" src="{%static 'images/Logo.svg' %}" alt="Indka Logo"></img>
 			</div>
-			{% endif %}
+            <div class="initial-view">
+                <form id="card-2" class="col-6 mx-auto card-2 p-3" method="post" action="{% url 'register' %}" enctype="multipart/form-data">
 
-			<!-- First Name input field -->
-			<div class="form-group">
-				<label for="exampleInputEmail1">First name</label>
-				<input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-					placeholder="Enter First name" name="first_name" required>
-			</div>
+                    {% csrf_token %} <!-- CSRF token for security -->
 
-			<!-- Last Name input field -->
-			<div class="form-group">
-				<label for="exampleInputEmail1">Last name</label>
-				<input type="text" name="last_name" class="form-control" id="exampleInputEmail1"
-					aria-describedby="emailHelp" placeholder="Enter Last name" required>
-			</div>
+                    <!-- Login heading -->
+                    <!-- <h3 class="title">Log in</h3> -->
+                    <!-- <hr> -->
+                    <div class="card-body px-5 py3 border-0 no-background">
+                        <!-- Display error/success messages -->
+                        {% if messages %}
+                        <!-- <div class="alert alert-primary" role="alert"> -->
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        <!-- </div> -->
+                        {% endif %}
+                        <!-- First Name input field -->
+                        <div class="form-group">
+                            <!-- <label for="exampleInputEmail1">First name</label> -->
+                            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                                placeholder="First name" name="first_name" required>
+                        </div>
 
-			<!-- Username input field -->
-			<div class="form-group">
-				<label for="exampleInputEmail1">Username</label>
-				<input type="text" class="form-control" name="username" id="exampleInputEmail1"
-					aria-describedby="emailHelp" placeholder="Enter email" required>
-			</div>
+                        <!-- Last Name input field -->
+                        <div class="form-group">
+                            <!-- <label for="exampleInputEmail1">Last name</label> -->
+                            <input type="text" name="last_name" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp" placeholder="Last name" required>
+                        </div>
 
-			<!-- Password input field -->
-			<div class="form-group">
-				<label for="exampleInputPassword1">Password</label>
-				<input type="password" class="form-control" name="password" id="exampleInputPassword1"
-					placeholder="Password" required>
-			</div>
+                        <!-- Username input field -->
+                        <div class="form-group">
+                            <!-- <label for="exampleInputEmail1">Username</label> -->
+                            <input type="text" class="form-control" name="username" id="exampleInputEmail1"
+                                aria-describedby="emailHelp" placeholder="Email" required>
+                        </div>
 
-			<!-- Link to login page for users who already have an account -->
-			<p>Already have an account <a href="/au/login/">Login</a> </p>
+                        <!-- Password input field -->
+                        <div class="form-group">
+                            <!-- <label for="exampleInputPassword1">Password</label> -->
+                            <input type="password" class="form-control" name="password" id="exampleInputPassword1"
+                                placeholder="Password" required>
+                        </div>
+                        <div class="button-container">                    
+                            <div class="otp-button">
+                                <button id="send-otp-btn" type="submit" name="action" value="send_otp" class="btn btn-primary btn-fill">Send OTP</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="final-view" style="display: flex; flex-direction: column;">
+                <form id="card-2" class="col-6 mx-auto card-2 p-3" method="post" action="{% url 'register' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="card-body px-5 py3 border-0 no-background">
+                        <!-- Display error/success messages -->
+                        {% if messages %}
+                        <!-- <div class="alert alert-primary" role="alert"> -->
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        <!-- </div> -->
+                        {% endif %}
+                        <!-- First Name input field -->
+                        <div class="form-group">
+                            <!-- <label for="exampleInputEmail1">First name</label> -->
+                            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                                placeholder="First name" name="first_name" required value="{{ employee.first_name }}">
+                        </div>
 
-			<!-- Submit button -->
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
+                        <!-- Last Name input field -->
+                        <div class="form-group">
+                            <!-- <label for="exampleInputEmail1">Last name</label> -->
+                            <input type="text" name="last_name" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp" placeholder="Last name" required value="{{ employee.last_name }}">
+                        </div>
+
+                        <!-- Username input field -->
+                        <div class="form-group">
+                            <!-- <label for="exampleInputEmail1">Username</label> -->
+                            <input type="text" class="form-control" name="username" id="exampleInputEmail1"
+                                aria-describedby="emailHelp" placeholder="Email" required value="{{ employee.username }}">
+                        </div>
+
+                        <!-- Password input field -->
+                        <div class="form-group">
+                            <!-- <label for="exampleInputPassword1">Password</label> -->
+                            <input type="password" class="form-control" name="password" id="exampleInputPassword1"
+                                placeholder="Password" required value="{{ password }}">
+                        </div>
+                        <!-- OTP input field -->
+                        <div class="form-group">
+                            <!-- <label for="exampleInputOTP1">OTP</label> -->
+                            <input type="OTP" class="form-control" name="OTP" id="exampleInputOTP1"
+                                placeholder="OTP" required>
+                        </div>
+                        <!-- Submit button -->
+                        <button type="submit" name="action" value="sign_up" class="btn btn-primary btn-fill">Sign Up</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center border-0 no-background element-center"></div>
+                <!-- Link to login page for users who already have an account -->
+            <p class="no_wrap">Already have an account? <a href="/au/login/">Sign in</a> </p>
+            </div>
+		</div>
+        
 	</div>
 </body>
 </html>

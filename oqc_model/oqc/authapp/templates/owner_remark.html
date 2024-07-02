@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remarks</title>
+    <style>
+        .section {
+            margin: 20px 0;
+        }
+        .remark-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .remark-form label {
+            margin-bottom: 5px;
+        }
+        .remark-form textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .submit-btn {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .submit-btn:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+
+        <div class="section">
+            <h2>Employee's Remark</h2>
+            
+                <textarea id="employee-remark" name="employee-remark" >{{TestObjectRemark.employee_remark}}</textarea>
+            
+        </div>
+
+        <h2>Product Owner's Remark</h2>
+        <form class="remark-form" id="product-owner-remark-form" method="POST" action="{% url 'remark_owner' id=TestObjectRemark.id %}">
+            {% csrf_token %}
+            <label for="product-owner-remark">Enter Remark:</label>
+            <textarea id="product-owner-remark" name="product-owner-remark" placeholder="Enter remark for product owner..."></textarea>
+            <button type="submit" class="submit-btn">Submit Remark</button>
+        </form> 
+    </div>
+
+    
+</body>
+</html>
