@@ -62,7 +62,9 @@ class TestRecord(models.Model):
     notes = models.CharField(max_length=255, blank=True) 
     employee_remark  = models.TextField(max_length=500,default='',blank=True)
     owner_remark  = models.TextField(max_length=500,default='',blank=True)
-    status = models.IntegerField(default=0)
+    status = models.CharField(max_length=50,default="Not sent")
+    L_status = models.CharField(max_length=50,default="Not sent")
+    B_status = models.CharField(max_length=50,default="Not sent")
     ProductType = models.CharField(max_length=102,default = "None")
     ModelName = models.CharField(max_length=100,default = "None")
     SerailNo  = models.CharField(max_length=100,default = "None")
@@ -72,14 +74,7 @@ class TestRecord(models.Model):
 
     def __str__(self):
         return f"{self.SerailNo}"
-    
-class TestImage(models.Model):
-    report = models.ForeignKey(TestRecord, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to="test_images/", height_field=None, width_field=None, max_length=None)
 
-    def __str__(self):
-        return f"Image for {self.report.test_name}"
-    
 
 class TestList(models.Model):
     TestStage = models.CharField(max_length=20,default='None')

@@ -1,3 +1,4 @@
+from datetime import date
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
@@ -29,18 +30,40 @@ def delete_test_record(request, record_id):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
     
+def change_status(request, test_id, status):
+    test = get_object_or_404(TestRecord, id=test_id)
+    test.status = status
+    test.save()
+    test_name = test.TestName
+    model_name = test.ModelName
+    serialno = test.SerailNo
+    return redirect('owner_view', test_name=test_name, model_name=model_name, serialno=serialno)
+
+def change_status_legal(request, test_id, status):
+    test = get_object_or_404(TestRecord, id=test_id)
+    if status == 1:
+        test.L_status = "Waiting for Approval"
+    elif status == 2:
+        test.L_status = "Approved"
+    else:
+        test.L_status = "Rejected"
+    test.save()
+    test_name = test.TestName
+    model_name = test.ModelName
+    serialno = test.SerailNo
+    return redirect('legal_view', test_name=test_name, model_name=model_name, serialno=serialno)
+
 def remark(request, id):
     TestObjectRemark = get_object_or_404(TestRecord, pk=id)
+    test_name = TestObjectRemark.TestName
+    model_name = TestObjectRemark.ModelName
+    serialno = TestObjectRemark.SerailNo
     if request.method == 'POST':
-       
         if 'employee-remark' in request.POST:
             TestObjectRemark.employee_remark = request.POST.get('employee-remark')
         TestObjectRemark.save()
-        return redirect('/check/')
-
-    context = {
-        'TestObjectRemark': TestObjectRemark,
-    }
+        return redirect(reverse('view', args=[test_name, model_name, serialno])) # Adjust this to your actual view name
+    context = {'TestObjectRemark': TestObjectRemark}
     return render(request, "remark.html", context)
 
 def owner_remark(request, id):
@@ -116,72 +139,25 @@ def check(request):
         'last_name' : employee.last_name,
         'icon' : icon,
         'username' :username
-      
     }
-
     return render(request, "test_report.html", context)
 
-def filter(request):
-    username = request.session['username']
-    # print(username)
-    # Get filter parameters from request
-    test_name = request.GET.get('test_name', '')
-    test_stage = request.GET.get('test_stage', '')
-    product = request.GET.get('product','')
-    model_name = request.GET.get('model_name', '')
-    serial_number = request.GET.get('serial_number', '')
-    status = request.GET.get('status', '')
-    start_date = request.GET.get('start_date', '')
-    end_date = request.GET.get('end_date', '')
-    
-    # Filter the TestRecord queryset based on the parameters
-    completed_tests = TestRecord.objects.all()
-    completed_tests = completed_tests.filter(Q(status=1)|Q(status=2)|Q(status=3))
-    if test_name:
-        completed_tests = completed_tests.filter(TestName=test_name)
-    if product:
-        completed_tests = completed_tests.filter(ProductType=product)
-    if test_stage:
-        completed_tests = completed_tests.filter(TestStage=test_stage)
-    if model_name:
-        completed_tests = completed_tests.filter(ModelName=model_name)
-    if serial_number:
-        completed_tests = completed_tests.filter(SerailNo=serial_number)
-    if status:
-        completed_tests = completed_tests.filter(status=status)
-    if start_date:
-        completed_tests = completed_tests.filter(test_date__gte=start_date)
-    if end_date:
-        completed_tests = completed_tests.filter(test_date__lte=end_date)
-    completed_tests = completed_tests.order_by('-test_date')
-    tv_models = list(TV.objects.values_list('ModelName', flat=True))
-    ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
-    test = list(TestList.objects.all().values())
+def legal_dashboard(request):
+    username = request.session.get('username')
+    test = list(TestRecord.objects.values('ProductType','ModelName', 'TestStage').distinct())
     employee = Employee.objects.get(username=username)
+    all_tests = TestRecord.objects.all()
+    all_tests = all_tests.order_by('-test_end_date')
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
-        'completed_tests': completed_tests,
-        'test_name': test_name,
-        'test_stage': test_stage,
-        'model_name': model_name,
-        'serial_number': serial_number,
-        'status': status,
-        'product':product,
-        'start_date': start_date,
-        'end_date': end_date,
-        'tv_models': tv_models,
-        'ac_models': ac_models,
-        'phone_models': phone_models,
-        'washing_machine_models': washing_machine_models,
-        'test' : test,
-        'first_name' : employee.first_name,
-        'last_name' : employee.last_name,
-        'icon' : icon,
-        'username' :username
+        'tests': test,
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
+        'all_tests': all_tests,
     }
-    return render(request, "filter.html", context)
+    return render(request, "legal_dashboard.html", context)
 
 def cooling(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
@@ -215,27 +191,13 @@ def cooling(request, test_name, model_name, serialno):
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
-def toggle_status(request, id):
-    if request.method == 'POST':
-        try:
-            test_record = TestRecord.objects.get(id=id)
-            # Cycle through the statuses or implement your own logic
-            new_status = ((test_record.status) % 3)+1
-            test_record.status = new_status
-            test_record.save()
-            return JsonResponse({'success': True, 'new_status': new_status})
-        except TestRecord.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Test record not found'})
-    return JsonResponse({'success': False, 'error': 'Invalid request method'})
-
-@csrf_exempt
 def set_status(request, id):
     if request.method == 'POST':
         try:
             test_record = TestRecord.objects.get(id=id)
-            # Cycle through the statuses or implement your own logic
             new_status = 1
             test_record.status = new_status
+            test_record.test_end_date = date.today()
             test_record.save()
             return JsonResponse({'success': True, 'new_status': new_status})
         except TestRecord.DoesNotExist:
@@ -329,17 +291,15 @@ def edit(request, test_name, model_name, serialno):
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
-            # print("random")
             form.save()
         else:
             print(form.errors)
 
         messages.success(request, 'Test record updated.')
-        return redirect('/check/')  # Redirect to a success page or another view
+        return redirect('/check/')
     else:
         form = TestRecordForm(instance=test_record)
     test_record.additional_details = test_record.additional_details.strip()
-    print(test_record.additional_details)
     context = {
         'testdetail': test_record,
         'TestProtocol': Test_protocol,
@@ -363,6 +323,30 @@ def view_pdf(request, test_name, model_name, serialno):
     }
     return render(request, "view_pdf.html", context)
 
+def pdf_model_stage(request,model_name,test_stage):
+    if request.method == 'GET':
+        selected_test_records = TestRecord.objects.filter(ModelName=model_name, TestStage=test_stage)
+        if not selected_test_records.exists():
+            raise Http404("No test records found")
+        pdf_list = []
+        for i, test_record in enumerate(selected_test_records, start=1):
+            model_name = test_record.ModelName
+            test_name = test_record.TestName
+            Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+            models = get_object_or_404(AC, ModelName=model_name)
+            context = {
+                'test': test_record,
+                'model': models,
+                'TestProtocol': Test_protocol,
+            }
+            pdf_content = render_to_pdf('view_pdf.html', context, request)
+            pdf_list.append(BytesIO(pdf_content))
+
+        merged_pdf = merge_pdfs(pdf_list)
+        response = HttpResponse(merged_pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
+        return response
+    return HttpResponse("Invalid request method.", status=405)
 
 def merge_pdfs(pdf_list):
     merger = PyPDF2.PdfMerger()
@@ -462,6 +446,21 @@ def owner_view(request, test_name, model_name, serialno):
         'serialno': serialno
     }
     return render(request, "owner_view.html", context)
+
+def legal_view(request, test_name, model_name, serialno):
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC, ModelName=model_name)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+    context = {
+        'testdetail': test_record,
+        'TestProtocol': Test_protocol,
+        'model': models,
+        'test': test_record,
+        'test_name': test_name,
+        'model_name': model_name,
+        'serialno': serialno
+    }
+    return render(request, "legal_view.html", context)
 
 def MNF(request):
     if request.method == 'POST':

@@ -16,6 +16,7 @@
             color: white;
             font-size: 20px;
             text-decoration-color: whitesmoke;
+            overflow-x: hidden;
         }
 
         .header {
@@ -46,6 +47,12 @@
             background-color: #03385e;
             color: white;
             overflow: auto;
+        }
+
+        #sidebar {
+            position: sticky;
+            top: 0; /* Adjust as needed for top position */
+            left: 0; /* Adjust as needed for left position */
         }
 
         .nav .bottom-icon {
@@ -336,7 +343,7 @@
 <div class="popup" id="filterPopup">
     <span class="close" onclick="toggleFilter()">&times;</span>
     <h2>Filter Options</h2>
-    <form id="filter-form" method="get" action="{% url 'filter' %}">
+    <form id="filter-form" method="get" action="{% url 'dashboard' %}">
         {% csrf_token %}
         <div>
             <label for="product">Product Type:</label>
