@@ -21,9 +21,15 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import os
 from django.shortcuts import get_object_or_404
+from datetime import date
 
 def main_page(request):
     return redirect(login_page)
+
+def redirect_dashboard(request):
+    if request.method == 'POST':
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
 
 def send_report(request, report_id):
     if request.method == 'GET':
@@ -85,14 +91,52 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import TestRecord
 
+def change_status(request, test_id, status):
+    test = get_object_or_404(TestRecord, id=test_id)
+    test.status = status
+    test.save()
+    test_name = test.TestName
+    model_name = test.ModelName
+    serialno = test.SerailNo
+
+        # Redirect to the owner_view page with the retrieved parameters
+    return redirect('owner_view', test_name=test_name, model_name=model_name, serialno=serialno)
+
+from django.shortcuts import get_object_or_404, redirect
+from .models import TestRecord
+
+def change_status_legal(request, test_id, status):
+    test = get_object_or_404(TestRecord, id=test_id)
+
+    if status == 1:
+        test.legal_status = "Waiting for Approval"
+    elif status == 2:
+        test.legal_status = "Approved"
+    else:
+        test.legal_status = "Rejected"
+
+    test.save()
+
+    # Retrieve parameters for redirection
+    test_name = test.TestName
+    model_name = test.ModelName
+    serialno = test.SerailNo
+
+    # Redirect to legal_view with the retrieved parameters
+    return redirect('legal_view', test_name=test_name, model_name=model_name, serialno=serialno)
+
+
 def remark(request, id):
     TestObjectRemark = get_object_or_404(TestRecord, pk=id)
+    test_name = TestObjectRemark.TestName
+    model_name = TestObjectRemark.ModelName
+    serialno = TestObjectRemark.SerailNo
     if request.method == 'POST':
        
         if 'employee-remark' in request.POST:
             TestObjectRemark.employee_remark = request.POST.get('employee-remark')
         TestObjectRemark.save()
-        return redirect('/check/')  # Adjust this to your actual view name
+        return redirect(reverse('view', args=[test_name, model_name, serialno])) # Adjust this to your actual view name
 
     context = {
         'TestObjectRemark': TestObjectRemark,
@@ -184,7 +228,35 @@ def check(request):
 
 
 
- 
+def legal_dashboard(request):
+    # Assuming 'username' is stored in the session, retrieve it
+    username = request.session.get('username')
+
+    # Retrieve distinct combinations of 'Product' and 'TestStage' from TestList model
+    test = list(TestRecord.objects.values('ProductType','ModelName', 'TestStage').distinct())
+
+    # Retrieve employee details based on 'username'
+    employee = Employee.objects.get(username=username)
+    all_tests = TestRecord.objects.all()
+    all_tests = all_tests.order_by('-test_end_date')
+    # Create an icon based on employee's first and last name initials
+    icon = employee.first_name[0] + employee.last_name[0]
+
+    # Prepare context data to pass to the template
+    context = {
+        'tests': test,
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
+        'all_tests': all_tests,
+    }
+
+    # Render the template 'legal_dashboard.html' with the context data
+    return render(request, "legal_dashboard.html", context)
+
+
+
 
 
 def cooling(request, test_name, model_name, serialno):
@@ -247,6 +319,7 @@ def set_status(request, id):
             # Cycle through the statuses or implement your own logic
             new_status = 1
             test_record.status = new_status
+            test_record.test_end_date = date.today()
             test_record.save()
             return JsonResponse({'success': True, 'new_status': new_status})
         except TestRecord.DoesNotExist:
@@ -316,6 +389,8 @@ def dashboard(request):
     }
 
     return render(request, 'dashboard_employee.html', context)
+
+
 
 from django.http import JsonResponse
 from django.contrib.auth import logout as auth_logout
@@ -408,13 +483,13 @@ def edit(request, test_name, model_name, serialno):
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
-            # print("random")
+
             form.save()
         else:
             print(form.errors)
 
         messages.success(request, 'Test record updated.')
-        return redirect('/check/')  # Redirect to a success page or another view
+        return redirect('/check/')
     else:
         form = TestRecordForm(instance=test_record)
 
@@ -427,6 +502,7 @@ def edit(request, test_name, model_name, serialno):
         'model_name': model_name,
         'serialno': serialno
     }
+
     return render(request, "cooling_test.html", context)
 
 def view_pdf(request, test_name, model_name, serialno):
@@ -441,6 +517,36 @@ def view_pdf(request, test_name, model_name, serialno):
     }
     return render(request, "view_pdf.html", context)
 
+def generate_pdf_for_legal(request,model_name,test_stage):
+    if request.method == 'GET':
+
+        selected_test_records = TestRecord.objects.filter(ModelName=model_name, TestStage=test_stage)
+        if not selected_test_records.exists():
+            raise Http404("No test records found")
+        pdf_list = []
+
+     
+        for i, test_record in enumerate(selected_test_records, start=1):
+            model_name = test_record.ModelName
+            test_name = test_record.TestName
+            Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+            models = get_object_or_404(AC, ModelName=model_name)
+            context = {
+                'test': test_record,
+                'model': models,
+                'TestProtocol': Test_protocol,
+            }
+            # html_content = loader.render_to_string('view_pdf.html', context)
+            pdf_content = render_to_pdf('view_pdf.html', context, request)
+            pdf_list.append(BytesIO(pdf_content))
+
+        merged_pdf = merge_pdfs(pdf_list)
+        response = HttpResponse(merged_pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
+        return response
+        
+
+    return HttpResponse("Invalid request method.", status=405)
 
 def merge_pdfs(pdf_list):
 
@@ -538,6 +644,23 @@ def owner_view(request, test_name, model_name, serialno):
         'serialno': serialno
     }
     return render(request, "owner_view.html", context)
+
+def legal_view(request, test_name, model_name, serialno):
+    # Fetch the specific Test_core_detail object related to the cooling test
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC, ModelName=model_name)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+
+    context = {
+        'testdetail': test_record,
+        'TestProtocol': Test_protocol,
+        'model': models,
+        'test': test_record,
+        'test_name': test_name,
+        'model_name': model_name,
+        'serialno': serialno
+    }
+    return render(request, "legal_view.html", context)
 
 def MNF(request):
     if request.method == 'POST':

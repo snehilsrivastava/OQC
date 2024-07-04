@@ -14,23 +14,74 @@
             padding: 5px 10px;
             font-size: 12px;
         }
+        .custom-add-page-button {
+            padding: 5px 10px;
+            font-size: 12px;
+            display: block;
+            margin: 10px auto;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .page-break {
+            page-break-after: always;
+            border: 0;
+            height: 1px;
+            background: #333;
+            margin: 20px 0;
+        }
+        .custom-add-page-button:hover {
+            background-color: #0056b3;
+        }
     </style>
+    <script>
+        function addPage() {
+            var extraDetailsContainer = document.getElementById('extra-details-container');
+            
+            if (extraDetailsContainer.children.length === 0) {
+                var newPageDiv = document.createElement('div');
+                newPageDiv.className = 'form-group';
+        
+                var newLabel = document.createElement('label');
+                newLabel.for = 'extra_details_0';
+                newPageDiv.appendChild(newLabel);
+        
+                var newTextarea = document.createElement('textarea');
+                newTextarea.className = 'form-control';
+                newTextarea.id = 'extra_details_0';
+                newTextarea.name = 'extra_details_0';
+                newTextarea.rows = 5;
+                newPageDiv.appendChild(newTextarea);
+        
+                extraDetailsContainer.appendChild(newPageDiv); 
+                
+                // Hide the add page button
+                document.getElementById('add-page-button').style.display = 'none';
+            }
+        }
+    </script>
 </head>
 <body>
 
-<p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>
-<p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'><span style="text-decoration:none;">&nbsp;</span></span></u></strong></p>
-
+    <!-- <br> -->
+    <!-- <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'><span style="text-decoration:none;"></span></span></u></strong></p> -->
+    
 <form class="col-6 mx-auto card p-3 shadow-lg" method="post" action="{% url 'edit' test_name=test_name model_name=model_name serialno=serialno %}"  enctype="multipart/form-data">
+<p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>
+<br>
     {% csrf_token %}
-<table style="margin-left:26.0pt;border-collapse:collapse;border:none;">
+    {{ form.media }}
+    <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>
+<table class="table-break" style="margin-left:26.0pt;border-collapse:collapse;border:none;">
     <tbody>
         <tr>
             <td style="width:96.4pt;border:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:5.8pt;">
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Test Objective</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:5.8pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{TestProtocol.Test_Objective}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{TestProtocol.Test_Objective}}</span></p>
             </td>
         </tr>
         <tr>
@@ -38,7 +89,7 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Model No.</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.ModelName}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.ModelName}}</span></p>
             </td>
         </tr>
         <tr>
@@ -46,8 +97,8 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Sample Quantity</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{form.sample_quantiy}}</span></p>
-                {% comment %} <p class="inner-box align-middle" style="width: 25%;"> <input type="text" name="quantiy" class="align-middle" style="border: 0; overflow: hidden;" value={{ form.sample_quantiy}}> </p> {% endcomment %}
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{form.sample_quantiy}}</span></p>
+                <!-- {% comment %} <p class="inner-box align-middle" style="width: 25%;"> <input type="text" name="quantiy" class="align-middle" style="border: 0; overflow: hidden;" value={{ form.sample_quantity}}> </p> {% endcomment %} -->
               
             </td>
         </tr>
@@ -56,7 +107,7 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Serial No.</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{serialno}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{serialno}}</span></p>
                
             </td>
         </tr>
@@ -65,123 +116,123 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Set Details</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Report verification Date :{{form.test_date}}</span></p>
-                {% comment %} <p class="inner-box align-middle" style="width: 25%;"> <input type="text" name="ReportDate" class="align-middle" style="border: 0; overflow: hidden;" value="{% if testdetail.test_date %}{{ testdetail.test_date }}{% endif %}"> </p> {% endcomment %}
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Report verification Date :{{form.test_date}}</span></p>
+                <!-- {% comment %} <p class="inner-box align-middle" style="width: 25%;"> <input type="text" name="ReportDate" class="align-middle" style="border: 0; overflow: hidden;" value="{% if testdetail.test_date %}{{ testdetail.test_date }}{% endif %}"> </p> {% endcomment %} -->
             </td>
             
         </tr>
         <tr>
             <td colspan="2" style="width:207.0pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Start Date: {{form.test_start_date}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Start Date: {{form.test_start_date}}</span></p>
             </td>
             <td colspan="2" style="width:203.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>End Date: {{form.test_end_date}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>End Date: {{form.test_end_date}}</span></p>
             </td>
         </tr>
         <tr>
             <td colspan="2" style="width:207.0pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Indoor unit details</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Indoor unit details</span></p>
             </td>
             <td colspan="2" style="width:203.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Outdoor unit details</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Outdoor unit details</span></p>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Model</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Model</span></p>
             </td>
             <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.ModelName}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.ModelName}}</span></p>
             </td>
             <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Model</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Model</span></p>
             </td>
             <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.ModelName}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.ModelName}}</span></p>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>S.</span><span style='font-size:11px;font-family:"Arial",sans-serif;'>N</span><span style='font-size:11px;font-family:"Arial",sans-serif;'>o</span><span style='font-size:11px;font-family:"Arial",sans-serif;'>.</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>S.</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>N</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>o</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>.</span></p>
             </td>
             <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>N/A</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>N/A</span></p>
             </td>
             <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>S.</span><span style='font-size:11px;font-family:"Arial",sans-serif;'>N</span><span style='font-size:11px;font-family:"Arial",sans-serif;'>o</span><span style='font-size:11px;font-family:"Arial",sans-serif;'>.</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>S.</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>N</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>o</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>.</span></p>
             </td>
             <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>N/A</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>N/A</span></p>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Bl. Motor</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Bl. Motor</span></p>
             </td>
             <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.BImotor}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.BImotor}}</span></p>
             </td>
             <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Compressor</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Compressor</span></p>
             </td>
             <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.Compressor}} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.Compressor}} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Blower</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Blower</span></p>
             </td>
             <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.Blower}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.Blower}}</span></p>
             </td>
             <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Fan motor</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Fan motor</span></p>
             </td>
             <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.FanMotor}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.FanMotor}}</span></p>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Eva. Coil</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Eva. Coil</span></p>
             </td>
             <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.Eva}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.Eva}}</span></p>
             </td>
             <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Fan</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Fan</span></p>
             </td>
             <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.Fan}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.Fan}}</span></p>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Conn. Pipe</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Conn. Pipe</span></p>
             </td>
             <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.ConPipe}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.ConPipe}}</span></p>
             </td>
             <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Cond. Coil</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Cond. Coil</span></p>
             </td>
             <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.CondCoil}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.CondCoil}}</span></p>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Ref. Charge</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Ref. Charge</span></p>
             </td>
             <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.RefCharge}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.RefCharge}}</span></p>
             </td>
             <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>Capillary tube</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Capillary tube</span></p>
             </td>
             <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{model.Capilary}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.Capilary}}</span></p>
             </td>
         </tr>
         <tr>
@@ -189,7 +240,7 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Test Standard</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{TestProtocol.Test_Standard}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{TestProtocol.Test_Standard}}</span></p>
             </td>
         </tr>
         <tr>
@@ -197,7 +248,7 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Test Condition</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:11px;font-family:"Arial",sans-serif;'> {{TestProtocol.Test_Condition|linebreaksbr }}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:13px;font-family:"Arial",sans-serif;'> {{TestProtocol.Test_Condition|linebreaksbr }}</span></p>
             </td>
         </tr>
         <tr>
@@ -205,7 +256,7 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Test Procedure</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:11px;font-family:"Arial",sans-serif;'> {{TestProtocol.Test_Procedure|linebreaksbr }}</span></p> 
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:13px;font-family:"Arial",sans-serif;'> {{TestProtocol.Test_Procedure|linebreaksbr }}</span></p> 
             </td>
         </tr>
         <tr>
@@ -213,7 +264,7 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Judgement Criteria</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:11px;font-family:"Arial",sans-serif;'> {{TestProtocol.Judgement|linebreaksbr }}</span></p>  
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:13px;font-family:"Arial",sans-serif;'> {{TestProtocol.Judgement|linebreaksbr }}</span></p>  
             </td>
         </tr>
         <tr>
@@ -221,7 +272,7 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Instrument / Equipment used</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:14.35pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>{{TestProtocol.Instrument}}</span></p>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{TestProtocol.Instrument}}</span></p>
             </td>
         </tr>
         <tr>
@@ -229,23 +280,31 @@
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Result &amp; Conclusion</span></strong></p>
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:12.5pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{form.result}}</span></p>
-                {% comment %} <input type="text" name="Result" class="align-middle" style="border: 0; overflow: hidden;" value="{% if testdetail.result %}{{ testdetail.result}}{% endif %}"> {% endcomment %}
-            </td>
+                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{ form.result }}</span></p>
+                <!-- {% comment %} <input type="text" name="Result" class="align-middle" style="border: 0; overflow: hidden;" value="{% if testdetail.result %}{{ testdetail.result }}{% endif %}"> {% endcomment %} -->
+            </td> 
         </tr>
         <tr>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:16.6pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:11px;font-family:"Arial",sans-serif;'>As per the verification of base model (Cl1832A223G2) report</span><span style='font-size:11px;font-family:"Arial",sans-serif;'>, AC is found to turn ON at default set temperature.</span></p>
-            </td>
         </tr>
     </tbody>
 </table>
+<div style="margin: 10px 0 10px 0;"></div>
+<div style="margin: 10px 0 10px 0;"></div>
 
-<br><br><br><br>
+<div class="page-break"></div>
 
+<div id="extra-details-container" class="form-group">
+    <!-- Additional pages will be added here -->
+</div>
+<button id="add-page-button" class="custom-add-page-button" type="button" onclick="addPage()">Add page</button>
+
+
+
+<div id="extra-details-container" class="form-group">
+    <!-- Additional pages will be added here -->
+</div>
+<button id="add-page-button" class="custom-add-page-button" type="button" onclick="addPage()">Add page</button>
 <button type="submit" class="btn btn-primary custom-btn-small">Submit</button>
-
-
 </form>
 
 </body>

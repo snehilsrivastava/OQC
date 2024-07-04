@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Page Navbar with Header</title>
+    <!-- Correctly include Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Times New Roman', Times, serif;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            color: white;
+            font-size: 20px;
+            text-decoration-color: whitesmoke;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #03385e;
+            color: white;
+            width: 100%;
+        }
+
+        .header .fa {
+            margin-right: 10px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 300px;
+            height: 100vh;
+            background-color: #03385e;
+            color: white;
+            overflow: auto;
+        }
+
+        .nav .bottom-icon {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            height : 100%;
+        }
+
+        li a {
+            display: flex;
+            align-items: center;
+            color: white;  /* Change text color to white */
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        /* Change the link color on hover */
+        li a:hover {
+            background-color: #a9b9bc;
+            color: white;
+        }
+
+        .fa-icon {
+            margin-right: 10px;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            color: black; /* Content text color */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #03385e;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        button {
+           height: 30px;
+           color: rgb(239, 237, 246); 
+           width: 170px;
+           border: 10px;
+           border-color: black;
+           background-color: #03385e;
+           font-size: 20px;
+           border-radius: 3px;
+        }
+        button a {
+            color : whitesmoke;
+            width: 120px;
+        }
+
+        button a:hover {
+            background-color: #a9b9bc;
+            color: white; 
+        }
+
+       
+     
+        .user-info {
+            display: none;
+            position: absolute;
+            right: 20px;
+            background-color: #f1f1f1;
+            color: black;
+            padding: 10px;
+            border: 1px solid #ddd;
+            z-index: 1;
+        }
+
+        .user-info p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .user-btn {
+            background-color: #03385e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            display: block;
+            margin-top: 10px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .status-0 {
+            background:#03385e;
+            color: #fff;
+        }
+        
+        .status-1 {
+            /* styles for 'Waiting for Approval' */
+            background: #4FAAD7;
+            color: #fff;
+        }
+        
+        .status-2 {
+            /* styles for 'Approved' */
+            background: #5AA33F;
+            color: #fff;
+        }
+        
+        .status-3 {
+            /* styles for 'Rejected' */
+            background: #b20b00;
+            color: #fff;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons a {
+            background:#03385e;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+
+        .action-buttons a:hover {
+            background: #d9534f;
+        }
+
+        .toggle-button {
+            background:;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .message {
+            list-style: circle;
+            width: calc(100% - 100px);
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px; /* Add some spacing */
+        }
+
+        .success {
+            background-color: #dff0d8;
+            color: #468847;
+            border-color: #d6e9c6;
+        }
+
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border-color: #ededed;
+        }
+        .button-container {
+            text-align: center; /* Optional: Centers the buttons horizontally */
+            border-radius: 3px;
+        }
+        .button-container button {
+            display: inline-block; /* Display buttons side by side */
+            margin-right: 10px; /* Optional: Add some spacing between buttons */
+            border-radius: 3px;
+        }
+        
+    </style>
+</head>
+<body>
+
+<div class="header">
+    {% comment %} <div class="left-icon">
+        <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
+    </div> {% endcomment %}
+
+    <div class="container">
+           
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.level_tag }}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+    </div>
+   
+    <div class="right-icon">
+        <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+            <span id="userButtonText"></span>
+            <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
+        </button>
+        <div class="user-info" id="userInfo">
+            <p>Username: {{ username }}</p>
+            <p>Name: {{ first_name }} &nbsp {{ last_name }}</p>
+            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+        </div>
+    </div>
+  
+</div>
+
+<div class="main-content">
+
+
+    <div class="content">
+
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Model Name</th>
+                    <th>Stage</th>
+                    {% comment %} <th>Status</th> {% endcomment %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in tests %}
+                <tr>
+                    <td>{{ test.ProductType }}</td>
+                    <td>{{ test.ModelName }}</td>
+                    <td>{{ test.TestStage }}</td>
+                    
+                    <td class="action-buttons">
+                        <a href="{% url 'generate_pdf_for_legal' model_name=test.ModelName test_stage=test.TestStage %}" class="btn btn-primary">View PDF</a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+   
+
+    function toggleUserInfo() {
+        var sidebar = document.getElementById("userInfo");
+        if (sidebar.style.display === "block" || sidebar.style.display === "") {
+            sidebar.style.display = "none";
+        } else {
+            sidebar.style.display = "block";
+        }
+    }
+
+  
+    
+
+    // Ensure user info starts hidden
+    document.addEventListener("DOMContentLoaded", function() {
+        var sidebar = document.getElementById("userInfo");
+        sidebar.style.display = "none";
+    });
+   
+   
+    document.addEventListener("DOMContentLoaded", function() {
+   
+     
+
+        function logoutUser() {
+            fetch('/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Redirect to the home page or show a success message
+                    window.location.href = '/';
+                } else {
+                    alert('Logout failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Logout failed');
+            });
+        }
+        
+        
+      
+
+</script>
+</body>
+</html>

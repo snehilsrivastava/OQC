@@ -62,6 +62,8 @@ class TestRecord(models.Model):
     employee_remark  = models.TextField(max_length=500,default='',blank=True)
     owner_remark  = models.TextField(max_length=500,default='',blank=True)
     status = models.IntegerField(default =0)
+    legal_status = models.CharField(max_length=80,default="Not Send")
+    brand_status = models.CharField(max_length=80,default="Not Send")
     ProductType = models.CharField(max_length=102,default = "None")
     ModelName = models.CharField(max_length=100,default = "None")
     SerailNo  = models.CharField(max_length=100,default = "None")
@@ -87,3 +89,6 @@ class TestList(models.Model):
 
     def __str__(self):
      return f"{self.Product} - {self.TestName}"
+    
+
+

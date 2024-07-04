@@ -503,9 +503,12 @@
                                 {% endif %}
                             </span>
                         </td>
+                      
+
                         <td class="action-buttons">
                             <a class="button" href="{% url 'owner_view' test.TestName test.ModelName test.SerailNo %}">View</a>
                             <a class="button" href="{% url 'remark_owner' test.id %}">Remark</a>
+                            
                         </td>
                     </tr>
                     {% endfor %}

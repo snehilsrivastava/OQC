@@ -459,7 +459,7 @@
                          
                         <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit </a> 
                         <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
-                        <a class="button" href="{% url 'remark' test.id %}">Remark</a>
+                       
                         <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a>
 
                     </td>
