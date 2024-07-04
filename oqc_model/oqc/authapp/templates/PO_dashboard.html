@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Owner Dashboard</title>
-    <style>
+    <!-- <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -133,7 +134,7 @@
 
         th, td {
             padding: 15px;
-            text-align: left;
+            text-align: center;
         }
 
         th {
@@ -209,7 +210,7 @@
             background: #b20b00;
             color: #fff;
         }
-    </style>
+    </style> -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             populateModels();
@@ -357,9 +358,9 @@
             // Submit the form to apply the cleared filters
             form.submit();
         }
-
-  
     </script>
+    <link rel="stylesheet" href="{% static '/css/PO_dashboards.css' %}"></link>
+    <link rel="stylesheet" href="{% static '/css/legend.css' %}"></link>
 </head>
 <body>
     <header>
@@ -433,12 +434,29 @@
                 <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
             </div>
             <br>
-            <div>
-                <label for="status">Status:</label>
+            <div class="status-filter">
+                <label for="status">Product Owner status:</label>
                 <select id="status" name="status">
                     <option value="">All</option>
-                    <option value="complete" {% if status == 'complete' %}selected{% endif %}>Complete</option>
-                    <option value="incomplete" {% if status == 'incomplete' %}selected{% endif %}>Incomplete</option>
+                    {% for stat, clr in status_color.items %}
+                        <option value="{{stat}}" {% if status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label for="L_status">Legal Team status:</label>
+                <select id="L_status" name="L_status">
+                    <option value="">All</option>
+                    {% for stat, clr in status_color.items %}
+                        <option value="{{stat}}" {% if L_status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label for="B_status">Brand Team status:</label>
+                <select id="B_status" name="B_status">
+                    <option value="">All</option>
+                    {% for stat, clr in status_color.items %}
+                        <option value="{{stat}}" {% if B_status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
+                    {% endfor %}
                 </select>
             </div>
             <br>
@@ -453,7 +471,7 @@
             </div>
             <br>
             <button type="submit" class="button">Filter</button>
-            <button type="button" class="button" onclick="clearFilters()">Clear Filters</button>
+            <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
         </form>
 
 
@@ -469,7 +487,24 @@
                         <th>Test Inspector</th>
                         <th>Stage</th>
                         <th>Date</th>
-                        <th>Status</th>
+                        <th class="Status-column">Status
+                            <span class="help-legends">
+                                ? 
+                                <div class="legends">
+                                    <span class="color">
+                                        {% for status, color in status_color.items %}
+                                            <span class="circle" name="{{status}}" id="leg" style="background-color: {{color}};"></span> : {{status}}<br>
+                                        {% endfor %}
+                                    </span>
+                                    <br>
+                                    <span class="letter">
+                                        {% for letter, role in role_letter.items %}
+                                            <span class="circle" name='{{role}}' id="leg">{{letter}}</span> : {{role}}<br>
+                                        {% endfor %}
+                                    </span>
+                                </div>
+                            </span>
+                        </th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -490,7 +525,7 @@
                         <td>{{ test.TestStage }}</td>
                         <td>{{ test.test_date }}</td>
                         <td>
-                            <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" onclick="toggleStatus({{ test.id }})">
+                            <!-- <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" onclick="toggleStatus({{ test.id }})">
                                
                                 {%  if test.status == 1 %}
                                     Waiting for Approval
@@ -501,6 +536,16 @@
                                 {% else %}
                                     Unknown Status
                                 {% endif %}
+                            </span>
+                            <br> -->
+                            <span class="test-status">
+                                <span class="letter">
+                                    <span class="color">
+                                        <span class="circle status-{{test.status}}">O</span>
+                                        <span class="circle status-{{test.L_status}}">L</span>
+                                        <span class="circle status-{{test.B_status}}">B</span>
+                                    </span>
+                                </span>
                             </span>
                         </td>
                         <td class="action-buttons">

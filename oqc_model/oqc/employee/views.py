@@ -124,7 +124,6 @@ def check(request):
         'last_name' : employee.last_name,
         'icon' : icon,
         'username' :username
-      
     }
 
     return render(request, "test_report.html", context)
@@ -204,8 +203,12 @@ def dashboard(request):
     model_name = request.GET.get('model_name', '')
     serial_number = request.GET.get('serial_number', '')
     status = request.GET.get('status', '')
+    L_status = request.GET.get('L_status', '')
+    B_status = request.GET.get('B_status', '')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
+    status_color = {"Not Sent": "#b331a4", "Waiting for Approval": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
+    role_letter = {"L": "Legal Team", "B": "Brand Team", "O": "Product Owner"}
 
     # Filter the TestRecord queryset based on the parameters
     completed_tests = TestRecord.objects.filter()
@@ -231,7 +234,6 @@ def dashboard(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
-    test = list(TestList.objects.all().values())
 
     context = {
         'completed_tests': completed_tests,
@@ -240,6 +242,8 @@ def dashboard(request):
         'model_name': model_name,
         'serial_number': serial_number,
         'status': status,
+        'L_status': L_status,
+        'B_status': B_status,
         'product':product,
         'start_date': start_date,
         'end_date': end_date,
@@ -247,10 +251,11 @@ def dashboard(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'test' : test
+        'status_color' : status_color,
+        'role_letter': role_letter
     }
 
-    return render(request, 'dashboard_employee.html', context)
+    return render(request, 'PO_dashboard.html', context)
 
 from django.http import JsonResponse
 from django.contrib.auth import logout as auth_logout
