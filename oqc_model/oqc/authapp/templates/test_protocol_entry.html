@@ -46,12 +46,9 @@
             </div>
             {% endif %}
 
-            <form action="{% url 'test_protocol_entry' %}" method="post">
+            <form action="{% url 'test_protocol_entry' test_name product %}" method="post">
                 {% csrf_token %}
-                <div class="form-group">
-                    <label >Test Name</label>
-                    <input type="text" class="form-control" id="TestName" name="TestName" required>
-                </div>
+               
                 
                 <div class="form-group">
                     <label >Test Objective</label>

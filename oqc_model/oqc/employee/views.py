@@ -14,6 +14,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from datetime import date
+from django.db.models import Q
 
 def main_page(request):
     return redirect(login_page)
@@ -205,6 +206,10 @@ def view_test_report(request,pk):
     images = record.images.all()  # Fetch all images related to this record
     return render(request, 'view_record.html', {'record': record, 'images': images})
 
+
+
+    
+
 def dashboard(request):
 
     username = request.session['username']
@@ -220,8 +225,8 @@ def dashboard(request):
     end_date = request.GET.get('end_date', '')
 
     # Filter the TestRecord queryset based on the parameters
-    completed_tests = TestRecord.objects.filter()
-
+    completed_tests = TestRecord.objects.all()
+    completed_tests = completed_tests.filter(Q(status=1)|Q(status=2)|Q(status=3))
     if test_name:
         completed_tests = completed_tests.filter(TestName__icontains=test_name)
     if product:
@@ -233,7 +238,7 @@ def dashboard(request):
     if serial_number:
         completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
     if status:
-        completed_tests = completed_tests.filter(status=(status.lower() == 'complete'))
+        completed_tests = completed_tests.filter(status=status)
     if start_date:
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:
@@ -244,7 +249,8 @@ def dashboard(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     test = list(TestList.objects.all().values())
-
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
     context = {
         'completed_tests': completed_tests,
         'test_name': test_name,
@@ -259,12 +265,14 @@ def dashboard(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'test' : test
+        'test' : test,
+        'first_name' : employee.first_name,
+        'last_name' : employee.last_name,
+        'icon' : icon,
+        'username' :username
     }
 
     return render(request, 'dashboard_employee.html', context)
-
-
 
 from django.http import JsonResponse
 from django.contrib.auth import logout as auth_logout
@@ -438,6 +446,70 @@ def owner_view(request, test_name, model_name, serialno):
     }
     return render(request, "owner_view.html", context)
 
+
+def change_status(request, test_id, status):
+    test = get_object_or_404(TestRecord, id=test_id)
+    test.status = status
+    test.save()
+    test_name = test.TestName
+    model_name = test.ModelName
+    serialno = test.SerailNo
+
+        # Redirect to the owner_view page with the retrieved parameters
+    return redirect('owner_view', test_name=test_name, model_name=model_name, serialno=serialno)
+
+from django.shortcuts import get_object_or_404, redirect
+from .models import TestRecord
+
+def change_status_legal(request, test_id, status):
+    test = get_object_or_404(TestRecord, id=test_id)
+
+    if status == 1:
+        test.legal_status = "Waiting for Approval"
+    elif status == 2:
+        test.legal_status = "Approved"
+    else:
+        test.legal_status = "Rejected"
+
+    test.save()
+
+    # Retrieve parameters for redirection
+    test_name = test.TestName
+    model_name = test.ModelName
+    serialno = test.SerailNo
+
+    # Redirect to legal_view with the retrieved parameters
+    return redirect('legal_view', test_name=test_name, model_name=model_name, serialno=serialno)
+
+def legal_dashboard(request):
+    # Assuming 'username' is stored in the session, retrieve it
+    username = request.session.get('username')
+
+    # Retrieve distinct combinations of 'Product' and 'TestStage' from TestList model
+    test = list(TestRecord.objects.values('ProductType','ModelName', 'TestStage').distinct())
+
+    # Retrieve employee details based on 'username'
+    employee = Employee.objects.get(username=username)
+    all_tests = TestRecord.objects.all()
+    all_tests = all_tests.order_by('-test_end_date')
+    # Create an icon based on employee's first and last name initials
+    icon = employee.first_name[0] + employee.last_name[0]
+
+    # Prepare context data to pass to the template
+    context = {
+        'tests': test,
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
+        'all_tests': all_tests,
+    }
+
+    # Render the template 'legal_dashboard.html' with the context data
+    return render(request, "legal_dashboard.html", context)
+
+
+
 def legal_view(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
@@ -538,15 +610,13 @@ def Test_list_entry(request):
             messages.success(request, "Test info updated!")
             return redirect('/check/')
         else:
-            return redirect('/test_protocol_entry/')
+            return redirect(reverse('test_protocol_entry', args=[testName, product]))
 
     # If not a POST request, render the form
     return render(request, 'Test_list_entry.html')
 
-def test_protocol_entry(request):
+def test_protocol_entry(request,test_name,product):
     if request.method == 'POST':
-        # Get form data from the request
-        testName = request.POST.get('TestName')
         testobjective = request.POST.get('Testobjective')
         teststandard = request.POST.get('Teststandard')
         testcondition = request.POST.get('Testcondition')
@@ -555,14 +625,22 @@ def test_protocol_entry(request):
         instrument = request.POST.get('instrument')
 
         # Check if the test detail info already exists
-        if Test_core_detail.objects.filter(TestName=testName).exists():
+        if Test_core_detail.objects.filter(TestName=test_name ,  ProductType = product).exists():
             # Display an error message if the test detail info already exists
-            messages.error(request, 'Test detail info already exists')
-            return redirect('/test_protocol_entry/')  # Assuming you have a 'check' URL
+            existing_test = Test_core_detail.objects.filter(TestName=test_name, Product=product).first()
+            existing_test.Test_Objective=testobjective,
+            existing_test.Test_Standard=teststandard,
+            existing_test.Test_Condition=testcondition,
+            existing_test.Test_Procedure=testprocedure,
+            existing_test.Judgement=judgement,
+            existing_test.Instrument=instrument,
+            existing_test.save()
+            return redirect('/check/')  
 
         # Create and save the new Test_core_detail instance
         test_detail = Test_core_detail(
-            TestName=testName,
+            ProductType = product,
+            TestName=test_name,
             Test_Objective=testobjective,
             Test_Standard=teststandard,
             Test_Condition=testcondition,
@@ -573,10 +651,63 @@ def test_protocol_entry(request):
         test_detail.save()
 
         # Redirect to a success page or render a success message
-        return redirect('/check/')  # Assuming you have a 'check' URL
+        return redirect('/dashboard/')  # Assuming you have a 'check' URL
 
     # If not a POST request, render the form
-    return render(request, 'test_protocol_entry.html')
+    return render(request, 'test_protocol_entry.html', {'test_name': test_name, 'product': product})
+
+def update_test_list_entry(request):
+    if request.method == 'POST':
+        # Get form data from the request
+        testStages = request.POST.getlist('TestStage')  # Get a list of selected test stages
+        product = request.POST.get('Product')
+        testName = request.POST.get('TestName')
+
+        # Create and save the new TestList instance
+        # s1 = "0000"
+
+        # Check if a test with the same name already exists
+        existing_test = TestList.objects.filter(TestName=testName, Product=product).first()
+        # if existing_test:
+            # s1 = existing_test.TestStage
+        s1 = ""
+        if "DVT" in testStages:
+            s1 += "1"
+        else:
+            s1 += "0"
+        if "PP" in testStages:
+            s1 += "1"
+        else:
+            s1 += "0"
+        if "MP" in testStages:
+            s1 += "1"
+        else:
+            s1 += "0"
+        if "PDI" in testStages:
+            s1 += "1"
+        else:
+            s1 += "0"
+
+        if existing_test:
+            existing_test.TestStage = s1
+            existing_test.save()
+       
+
+        # messages.success(request, "Test info updated!")
+
+        return redirect(reverse('test_protocol_entry', args=[testName, product]))
+
+    test_names = TestList.objects.values_list('TestName', flat=True).distinct()
+    products = Product_Detail.objects.values_list('ProductType', flat=True).distinct()
+    
+    context = {
+        'test_names': test_names,
+        'products': products,
+    }
+    
+    return render(request, 'Update_Test_list_entry.html', context)
+
+
 
 def view_test_records(request):
     test_records = TestRecord.objects.all()
