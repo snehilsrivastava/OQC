@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Page Navbar with Header</title>
+    <title>Employee Dashboard</title>
     <!-- Correctly include Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -230,8 +230,8 @@
             color: #fff;
         }
         .action-buttons {
-            display: flex;
-            gap: 10px;
+            display: flexbox;
+            gap: 5px;
         }
 
         .action-buttons a {
@@ -313,8 +313,8 @@
             <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
         </button>
         <div class="user-info" id="userInfo">
-            <p>Username: {{ username }}</p>
-            <p>Name: {{ first_name }} &nbsp {{ last_name }}</p>
+            <p>Name: {{ first_name }} {{ last_name }}</p>
+            <p>Email: {{ username }}</p>
             <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
         </div>
     </div>
@@ -322,16 +322,6 @@
 </div>
 
 <div class="main-content">
-    {% comment %} <ul class='nav' id="sidebar">
-        <li><a href="{% url 'check' %}"><i class="fa fa-home fa-icon"></i>&nbsp Home</a></li>
-        <li><a href="{% url 'product' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add report</a></li>
-        <li><a href="{% url 'mnf' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add model detail</a></li>
-        <li><a href="{% url 'test_list_entry' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add test detail</a></li>
-        <!-- <div class="bottom-icon">
-            <a href="/logout" style="color: white;"><i class="fa fa-sign-out"></i> Logout</a>
-        </div> -->
-    </ul> {% endcomment %}
-
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 
 <!-- Filter Popup -->
@@ -457,7 +447,7 @@
                     
                     <td class="action-buttons">
                          
-                        <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit </a> 
+                        <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit</a> 
                         <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
                         <a class="button" href="{% url 'remark' test.id %}">Remark</a>
                         <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a>

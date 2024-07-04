@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Owner Dashboard</title>
+    <title>Filtered Records</title>
+    <!-- Correctly include Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- <style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
         body {
             margin: 0;
             font-family: 'Times New Roman', Times, serif;
@@ -91,7 +92,7 @@
 
         th, td {
             padding: 15px;
-            text-align: center;
+            text-align: left;
         }
 
         th {
@@ -104,6 +105,8 @@
         }
         button {
            height: 30px;
+           /* display: flexbox; */
+           white-space: nowrap;
            color: rgb(239, 237, 246); 
            width: 170px;
            border: 10px;
@@ -228,62 +231,275 @@
             background: #b20b00;
             color: #fff;
         }
-    </style> -->
-    <script>
-        function toggleMenu() {
-            var sidebar = document.getElementById("sidebar");
-            if (sidebar.style.display === "block") {
-                sidebar.style.display = "none";
-            } else {
-                sidebar.style.display = "block";
-            }
+        .action-buttons {
+            display: flexbox;
+            gap: 5px;
         }
 
-        function toggleFilter() {
-            var popup = document.getElementById("filterPopup");
-            var overlay = document.getElementById("overlay");
-            var display = popup.style.display;
-
-            if (display === "block") {
-                popup.style.display = "none";
-                overlay.style.display = "none";
-            } else {
-                popup.style.display = "block";
-                overlay.style.display = "block";
-            }
+        .action-buttons a {
+            background:#03385e;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
         }
 
-        function toggleUserInfo() {
-            var sidebar = document.getElementById("userInfo");
-            if (sidebar.style.display === "block" || sidebar.style.display === "") {
-                sidebar.style.display = "none";
-            } else {
-                sidebar.style.display = "block";
-            }
+        .action-buttons a:hover {
+            background: #d9534f;
         }
 
-        function clearFilter() {
+        .toggle-button {
+            background:;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
 
-                // Get the form element
-                var form = document.getElementById("filter-form");
-            
-                // Reset all the form fields
-                form.reset();
-            
-                // Submit the form to apply the cleared filters
-                form.submit();
-            
+        .message {
+            list-style: circle;
+            width: calc(100% - 100px);
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px; /* Add some spacing */
+        }
+
+        .success {
+            background-color: #dff0d8;
+            color: #468847;
+            border-color: #d6e9c6;
+        }
+
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border-color: #ededed;
+        }
+        .button-container {
+            text-align: center; /* Optional: Centers the buttons horizontally */
+            border-radius: 3px;
+        }
+        .button-container button {
+            display: inline-block; /* Display buttons side by side */
+            margin-right: 10px; /* Optional: Add some spacing between buttons */
+            border-radius: 3px;
         }
         
+    </style>
+</head>
+<body>
 
-        // Ensure user info starts hidden
-        document.addEventListener("DOMContentLoaded", function() {
-            var sidebar = document.getElementById("userInfo");
+<div class="header">
+    <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.level_tag }}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+   
+    <div class="right-icon">
+        <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+            <span id="userButtonText"></span>
+            <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
+        </button>
+        <div class="user-info" id="userInfo">
+            <p>Name: {{ first_name }} {{ last_name }}</p>
+            <p>Email: {{ username }}</p>
+            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+        </div>
+    </div>
+  
+</div>
+
+<div class="main-content">
+    <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
+
+<!-- Filter Popup -->
+<div class="popup" id="filterPopup">
+    <span class="close" onclick="toggleFilter()">&times;</span>
+    <h2>Filter Options</h2>
+    <form id="filter-form" method="get" action="{% url 'check' %}">
+        {% csrf_token %}
+        <div>
+            <label for="product">Product Type:</label>
+            <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+                <option value="">Select Product Type</option>
+                <option value="TV">TV</option>
+                <option value="AC">AC</option>
+                <option value="Phone">Phone</option>
+                <option value="Washing_Machine">Washing Machine</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="test_stage">Test Stage:</label>
+            <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+                <option value="">Select Test Stage</option>
+                <option value="DVT">DVT</option>
+                <option value="PP">PP</option>
+                <option value="MP">MP</option>
+                <option value="PDI">PDI</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="model_name">Model Name:</label>
+            <select class="form-control" id="model_name" name="model_name">
+                <!-- Model options will be populated dynamically based on the selected product type -->
+                <option value="">All Models</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="test_name">Test Name:</label>
+            <select class="form-control" id="test_name" name="test_name">
+                <option value="">Select Test Name</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="serial_number">Serial Number:</label>
+            <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+        </div>
+        <br>
+        <div>
+            <label for="status">Status:</label>
+            <select id="status" name="status">
+                <option value="">All</option>
+                <option value="0" {% if status == '0' %}selected{% endif %}>Not Sent</option>
+                <option value="1" {% if status == '1' %}selected{% endif %}>Waiting for Approval</option>
+                <option value="2" {% if status == '2' %}selected{% endif %}>Approved</option>
+                <option value="3" {% if status == '3' %}selected{% endif %}>Rejected</option>
+            </select>
+        </div>
+        <br>
+        <div>
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+        </div>
+        <br>
+        <div>
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+        </div>
+        <br>
+        <div class="button-container">
+            <button type="submit" class="button">Filter</button>
+            <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
+        </div>
+    </form>
+
+</div>
+
+    <div class="content">
+        <i class="fas fa-arrow-left fa-icon"></i>
+        <button><a href="{% url 'dashboard' %}">Back to dashboard</a></button>
+        <h2>Filtered Records</h1>
+        <i class="fa fa-search fa-icon"></i>
+        <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
+        <br><br>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Model Name</th>
+                    <th>Test Name</th>
+                    <th>Stage</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in completed_tests %}
+                <tr>
+                    <td>{{ test.ProductType }}</td>
+                    <td>{{ test.ModelName }}</td>
+                    <td>{{ test.TestName }}</td>
+                    <td>{{ test.TestStage }}</td>
+                    <td>{{ test.test_date }}</td>
+                    <td>
+                        <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" >
+                            {% if test.status == 0 %}
+                                Not Send
+                            {% elif test.status == 1 %}
+                                Waiting for Approval
+                            {% elif test.status == 2 %}
+                                Approved
+                            {% elif test.status == 3 %}
+                                Rejected
+                            {% else %}
+                                Unknown Status
+                            {% endif %}
+                        </span>
+                    </td>
+                    
+                    <td class="action-buttons">
+                         
+                        <!-- <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit</a>  -->
+                        <a class="button" href="{% url 'owner_view' test.TestName test.ModelName test.SerailNo %}">View</a>
+                        <a class="button" href="{% url 'remark_owner' test.id %}">Remark</a>
+                        <!-- <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a> -->
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function toggleMenu() {
+        var sidebar = document.getElementById("sidebar");
+        if (sidebar.style.display === "block") {
             sidebar.style.display = "none";
-        });
+        } else {
+            sidebar.style.display = "block";
+        }
+    }
+
+    function toggleFilter() {
+        var popup = document.getElementById("filterPopup");
+        var overlay = document.getElementById("overlay");
+        var display = popup.style.display;
+
+        if (display === "block") {
+            popup.style.display = "none";
+            overlay.style.display = "none";
+        } else {
+            popup.style.display = "block";
+            overlay.style.display = "block";
+        }
+    }
+
+    function toggleUserInfo() {
+        var sidebar = document.getElementById("userInfo");
+        if (sidebar.style.display === "block" || sidebar.style.display === "") {
+            sidebar.style.display = "none";
+        } else {
+            sidebar.style.display = "block";
+        }
+    }
+
+  
     
-    
-        document.addEventListener("DOMContentLoaded", function() {
+
+    // Ensure user info starts hidden
+    document.addEventListener("DOMContentLoaded", function() {
+        var sidebar = document.getElementById("userInfo");
+        sidebar.style.display = "none";
+    });
+   
+   
+    document.addEventListener("DOMContentLoaded", function() {
             populateModels();
             populateTestName();
         
@@ -414,194 +630,6 @@
                 alert('Logout failed');
             });
         }
-    </script>
-    <link rel="stylesheet" href="{% static '/css/PO_dashboards.css' %}"></link>
-    <link rel="stylesheet" href="{% static '/css/legend.css' %}"></link>
-</head>
-<body>
-    <header>
-        <div class="container">
-            <div id="branding">
-                <h1>Product Owner Dashboard</h1>
-            </div>
-            <!-- Display error/success messages -->
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li class="message {{ message.level_tag }}">
-                            {{ message }}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            {% comment %} <nav>
-                <ul>
-                    <li><a href="{% url 'product' %}">Add New Report</a></li>
-                    <li><a href="{% url 'test_list_entry' %}">Add Test List</a></li>
-                    <li><a href="{% url 'mnf' %}">Add Model Detail</a></li>
-                </ul>
-            </nav> {% endcomment %}
-        </div>
-    </header>
-
-    <div class="container">
-        <h2>Completed Tests</h2>
-        <form id="filter-form" method="get" action="{% url 'dashboard' %}">
-            {% csrf_token %}
-            <div>
-                <label for="product">Product Type:</label>
-                <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
-                    <option value="">Select Product Type</option>
-                    <option value="TV">TV</option>
-                    <option value="AC">AC</option>
-                    <option value="Phone">Phone</option>
-                    <option value="Washing_Machine">Washing Machine</option>
-                </select>
-            </div>
-            <br>
-            <div>
-                <label for="test_stage">Test Stage:</label>
-                <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
-                    <option value="">Select Test Stage</option>
-                    <option value="DVT">DVT</option>
-                    <option value="PP">PP</option>
-                    <option value="MP">MP</option>
-                    <option value="PDI">PDI</option>
-                </select>
-            </div>
-            <br>
-            <div>
-                <label for="model_name">Model Name:</label>
-                <select class="form-control" id="model_name" name="model_name">
-                    <!-- Model options will be populated dynamically based on the selected product type -->
-                    <option value="">All Models</option>
-                </select>
-            </div>
-            <br>
-            <div>
-                <label for="test_name">Test Name:</label>
-                <select class="form-control" id="test_name" name="test_name" >
-                    <option value="">Select Test Name</option>
-                </select>
-            </div>
-            <br>
-            <div>
-                <label for="serial_number">Serial Number:</label>
-                <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
-            </div>
-            <br>
-            <div class="status-filter">
-                <label for="status">Product Owner status:</label>
-                <select id="status" name="status">
-                    <option value="">All</option>
-                    {% for stat, clr in status_color.items %}
-                        <option value="{{stat}}" {% if status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
-                    {% endfor %}
-                </select>
-                <br>
-                <label for="L_status">Legal Team status:</label>
-                <select id="L_status" name="L_status">
-                    <option value="">All</option>
-                    {% for stat, clr in status_color.items %}
-                        <option value="{{stat}}" {% if L_status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
-                    {% endfor %}
-                </select>
-                <br>
-                <label for="B_status">Brand Team status:</label>
-                <select id="B_status" name="B_status">
-                    <option value="">All</option>
-                    {% for stat, clr in status_color.items %}
-                        <option value="{{stat}}" {% if B_status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <br>
-            <div>
-                <label for="start_date">Start Date:</label>
-                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
-            </div>
-            <br>
-            <div>
-                <label for="end_date">End Date:</label>
-                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
-            </div>
-            <br>
-            <button type="submit" class="button">Filter</button>
-            <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
-        </form>
-
-
-        <form method="post" action="{% url 'generate_pdf' %}">
-            {% csrf_token %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Product</th>
-                        <th>Model Name</th>
-                        <th>Test Name</th>
-                        <th>Test Inspector</th>
-                        <th>Stage</th>
-                        <th>Date</th>
-                        <th class="Status-column">Status
-                            <span class="help-legends">
-                                ? 
-                                <div class="legends">
-                                    <span class="color">
-                                        {% for status, color in status_color.items %}
-                                            <span class="circle" name="{{status}}" id="leg" style="background-color: {{color}};"></span> : {{status}}<br>
-                                        {% endfor %}
-                                    </span>
-                                    <br>
-                                    <span class="letter">
-                                        {% for letter, role in role_letter.items %}
-                                            <span class="circle" name='{{role}}' id="leg">{{letter}}</span> : {{role}}<br>
-                                        {% endfor %}
-                                    </span>
-                                </div>
-                            </span>
-                        </th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for test in completed_tests %}
-                    <tr>
-                        <td>
-                            <input
-                              type="checkbox"
-                              name="selected_tests"
-                              value="{{ test.id }}"
-                            />
-                        </td>
-                        <td>{{ test.ProductType }}</td>
-                        <td>{{ test.ModelName }}</td>
-                        <td>{{ test.TestName }}</td>
-                        <td>{{ test.employee }}</td>
-                        <td>{{ test.TestStage }}</td>
-                        <td>{{ test.test_date }}</td>
-                        <td>
-                            <span class="test-status">
-                                <span class="letter">
-                                    <span class="color">
-                                        <span class="circle status-{{test.status}}">O</span>
-                                        <span class="circle status-{{test.L_status}}">L</span>
-                                        <span class="circle status-{{test.B_status}}">B</span>
-                                    </span>
-                                </span>
-                            </span>
-                        </td>
-                        <td class="action-buttons">
-                            <a class="button" href="{% url 'owner_view' test.TestName test.ModelName test.SerailNo %}">View</a>
-                            <a class="button" href="{% url 'remark_owner' test.id %}">Remark</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <button type="submit" class="btn btn-primary">Generate PDF</button>
-        </form>
-        
-    </div>
+</script>
 </body>
 </html>

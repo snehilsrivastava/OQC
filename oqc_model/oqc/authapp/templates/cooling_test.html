@@ -70,8 +70,6 @@
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{form.sample_quantiy}}</span></p>
-                <!-- {% comment %} <p class="inner-box align-middle" style="width: 25%;"> <input type="text" name="quantiy" class="align-middle" style="border: 0; overflow: hidden;" value={{ form.sample_quantity}}> </p> {% endcomment %} -->
-              
             </td>
         </tr>
         <tr>
@@ -89,9 +87,7 @@
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Report verification Date :{{form.test_date}}</span></p>
-                <!-- {% comment %} <p class="inner-box align-middle" style="width: 25%;"> <input type="text" name="ReportDate" class="align-middle" style="border: 0; overflow: hidden;" value="{% if testdetail.test_date %}{{ testdetail.test_date }}{% endif %}"> </p> {% endcomment %} -->
             </td>
-            
         </tr>
         <tr>
             <td colspan="2" style="width:207.0pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
@@ -253,7 +249,6 @@
             </td>
             <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:12.5pt;">
                 <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{ form.result }}</span></p>
-                <!-- {% comment %} <input type="text" name="Result" class="align-middle" style="border: 0; overflow: hidden;" value="{% if testdetail.result %}{{ testdetail.result }}{% endif %}"> {% endcomment %} -->
             </td> 
         </tr>
         <tr>
@@ -263,6 +258,9 @@
 <div style="margin: 10px 0 10px 0;"></div>
 
 <div class="page-break"></div>
+
+<!-- this code doesnt work as additional_details isnt a string
+ so if condition just defaults to True -->
 {% if form.additional_details %}
 <div class="additional_details">{{ form.additional_details }}</div>
 {% else %}
