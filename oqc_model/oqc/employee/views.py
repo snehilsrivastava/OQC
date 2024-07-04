@@ -1,25 +1,17 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.template import loader
-from django.contrib.auth.decorators import login_required
-from django.forms import modelformset_factory
-from django.core.files import File
 from django.conf import settings
 from django.http import Http404
 from .forms import *
 from .models import *
-from .renderers import render_to_pdf
+from .renderers import *
 from product.views import *
 from authapp.models import Employee
 from authapp.views import login_page
 import PyPDF2
-import base64
-from tempfile import NamedTemporaryFile
 from io import BytesIO
 from django.contrib import messages
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-import os
 from django.shortcuts import get_object_or_404
 from datetime import date
 
@@ -50,80 +42,6 @@ def delete_test_record(request, record_id):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
-
-
-def members(request):
-  mymembers = Employee.objects.all().values()
-  template = loader.get_template('check.html')
-  context = {
-    'mymembers': mymembers,
-  }
-  return HttpResponse(template.render(context, request))
-
-from django.shortcuts import render, get_object_or_404
-
-def testdetail(request, no):
-    if request.method == 'GET':
-        context = {
-            'report': get_object_or_404(Test, no=no),
-            'bill_base': "bill_base.html",
-       
-        }
-        return render(request, "test1.html", context)
-    
-    elif request.method == 'POST':
-        no = request.POST.get('no')
-        start_date = request.POST.get('start_date')
-        end_date = request.POST.get('end_date')
-        # Process the POST data as needed
-        context = {
-            'report': get_object_or_404(Test, no=no),
-            'bill_base': "bill_base.html",
-            'start_date': start_date,
-            'end_date': end_date,
-        }
-        return render(request, "test1.html", context)
-    
-from django.shortcuts import get_object_or_404, render
-from django.http import JsonResponse
-
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import TestRecord
-
-def change_status(request, test_id, status):
-    test = get_object_or_404(TestRecord, id=test_id)
-    test.status = status
-    test.save()
-    test_name = test.TestName
-    model_name = test.ModelName
-    serialno = test.SerailNo
-
-        # Redirect to the owner_view page with the retrieved parameters
-    return redirect('owner_view', test_name=test_name, model_name=model_name, serialno=serialno)
-
-from django.shortcuts import get_object_or_404, redirect
-from .models import TestRecord
-
-def change_status_legal(request, test_id, status):
-    test = get_object_or_404(TestRecord, id=test_id)
-
-    if status == 1:
-        test.legal_status = "Waiting for Approval"
-    elif status == 2:
-        test.legal_status = "Approved"
-    else:
-        test.legal_status = "Rejected"
-
-    test.save()
-
-    # Retrieve parameters for redirection
-    test_name = test.TestName
-    model_name = test.ModelName
-    serialno = test.SerailNo
-
-    # Redirect to legal_view with the retrieved parameters
-    return redirect('legal_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
 
 def remark(request, id):
@@ -157,9 +75,6 @@ def owner_remark(request, id):
     }
     return render(request, "owner_remark.html", context)
 
-
-
-
 def check(request):
     username = request.session['username']
     print(username)
@@ -173,7 +88,6 @@ def check(request):
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
     
-
     # Filter the TestRecord queryset based on the parameters
     completed_tests = TestRecord.objects.filter(employee=username)
 
@@ -199,7 +113,6 @@ def check(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     test = list(TestList.objects.all().values())
- 
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
@@ -225,38 +138,6 @@ def check(request):
     }
 
     return render(request, "test_report.html", context)
-
-
-
-def legal_dashboard(request):
-    # Assuming 'username' is stored in the session, retrieve it
-    username = request.session.get('username')
-
-    # Retrieve distinct combinations of 'Product' and 'TestStage' from TestList model
-    test = list(TestRecord.objects.values('ProductType','ModelName', 'TestStage').distinct())
-
-    # Retrieve employee details based on 'username'
-    employee = Employee.objects.get(username=username)
-    all_tests = TestRecord.objects.all()
-    all_tests = all_tests.order_by('-test_end_date')
-    # Create an icon based on employee's first and last name initials
-    icon = employee.first_name[0] + employee.last_name[0]
-
-    # Prepare context data to pass to the template
-    context = {
-        'tests': test,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
-        'all_tests': all_tests,
-    }
-
-    # Render the template 'legal_dashboard.html' with the context data
-    return render(request, "legal_dashboard.html", context)
-
-
-
 
 
 def cooling(request, test_name, model_name, serialno):
@@ -288,12 +169,7 @@ def cooling(request, test_name, model_name, serialno):
     }
     return render(request, "cooling_test.html", context)
 
-
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import TestRecord
-
-
 
 @csrf_exempt
 def toggle_status(request, id):
@@ -308,8 +184,6 @@ def toggle_status(request, id):
         except TestRecord.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Test record not found'})
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
-
-
 
 @csrf_exempt
 def set_status(request, id):
@@ -364,7 +238,7 @@ def dashboard(request):
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
-
+    completed_tests = completed_tests.order_by('-test_date')
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
@@ -404,74 +278,6 @@ def logout(request):
 
 def submit_product_details_view(request):
     return HttpResponse("Thank you for submitting product details")
-
-# @login_required
-def create_test_record(request):
-    if request.method == 'POST':
-        num_images = int(request.POST.get('num_images', 0))  # Default to 0 images
-        print(f"Number of images: {num_images}")
-        
-        TestImageFormSet = modelformset_factory(TestImage, form=TestImageForm, extra=num_images)
-        report_form = TestRecordForm(request.POST)
-        formset = TestImageFormSet(request.POST, request.FILES, queryset=TestImage.objects.none())
-
-        if report_form.is_valid() and formset.is_valid():
-            # First, save the TestRecord instance
-            report = report_form.save(commit=False)
-            report.employee = Employee.objects.get(username=request.user.username)
-            report.save()
-
-            # Next, save the formset images and associate them with the report
-            for form in formset:
-                if form.cleaned_data:  # Ensure the form has data
-                    image_instance = form.save(commit=False)
-                    image_instance.report = report
-                    image_instance.save()
-
-            # Handle captured images
-            for i in range(num_images):
-                print(f"Processing image {i}")
-                captured_image_data = request.POST.get(f'captured_images_{i}')
-                print(f"Captured image data for {i}: {captured_image_data}")
-                if captured_image_data:
-                    # Extract image data from base64 string
-                    format, imgstr = captured_image_data.split(';base64,')
-                    ext = format.split('/')[-1]
-                    # Decode base64 data
-                    data = base64.b64decode(imgstr)
-
-                    # Create a temporary file to hold the image data
-                    temp_image = NamedTemporaryFile(delete=True)
-                    temp_image.write(data)
-                    temp_image.flush()
-
-                    # Create a Django File object from the temporary file
-                    image = File(temp_image, name=f'captured_image_{i}.{ext}')
-
-                    # Create and save TestImage object with the report and image
-                    TestImage.objects.create(report=report, image=image)
-
-            return redirect('view')  # Replace 'view' with your actual view name or URL name
-        else:
-            # Debug statements to understand form errors
-            print("Report form errors:", report_form.errors)
-            print("Formset errors:", formset.errors)
-    else:
-        num_images = 0  # Default to 0 images
-        if 'num_images' in request.GET:
-            num_images = int(request.GET.get('num_images'))
-        TestImageFormSet = modelformset_factory(TestImage, form=TestImageForm, extra=num_images)
-
-        report_form = TestRecordForm()
-        formset = TestImageFormSet(queryset=TestImage.objects.none())
-
-    return render(request, 'create_test_record.html', {
-        'report_form': report_form,
-        'formset': formset,
-        'num_images': num_images
-    })
-
-
 
 def edit(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
@@ -549,11 +355,6 @@ def generate_pdf_for_legal(request,model_name,test_stage):
     return HttpResponse("Invalid request method.", status=405)
 
 def merge_pdfs(pdf_list):
-
-    # output_dir = os.path.dirname(output_path)
-    # if not os.path.exists(output_dir):
-    #     os.makedirs(output_dir)
-    
     merger = PyPDF2.PdfMerger()
     for pdf in pdf_list:
         pdf.seek(0)
@@ -563,11 +364,6 @@ def merge_pdfs(pdf_list):
     merger.write(merged_pdf_io)
     merged_pdf_io.seek(0)
     return merged_pdf_io
-    # with open(output_path, 'wb') as f:
-    #     merger.write(f)
-    # response = HttpResponse(merger, content_type='application/pdf')
-    # response['Content-Disposition'] = 'attachment; filename=view_test_record.pdf'
-    # return response
 
 def generate_pdf(request):
     if request.method == 'POST':
@@ -577,19 +373,8 @@ def generate_pdf(request):
         if not selected_test_records.exists():
             raise Http404("No test records found")
         pdf_list = []
-
-        # if selected_test_records.count() == 1:
-        #     for test_record in selected_test_records:
-        #         test_name = test_record.TestName
-        #         Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-        #         context = {
-        #             'test': test_record,
-        #             'model': test_record.ModelName,
-        #             'TestProtocol': Test_protocol,
-        #         }
-        #         return render_to_pdf('view_pdf.html', context)
-            
-
+        cumul_page_count, cumul_page_count_list = 3, []
+        test_name_list = []
         for i, test_record in enumerate(selected_test_records, start=1):
             model_name = test_record.ModelName
             test_name = test_record.TestName
@@ -600,20 +385,28 @@ def generate_pdf(request):
                 'model': models,
                 'TestProtocol': Test_protocol,
             }
-            # html_content = loader.render_to_string('view_pdf.html', context)
-            pdf_content = render_to_pdf('view_pdf.html', context, request)
+            test_name_list.append(test_name)
+            cumul_page_count_list.append(cumul_page_count)
+            pdf_content, page_count = render_to_pdf('view_pdf.html', context, request)
             pdf_list.append(BytesIO(pdf_content))
+            cumul_page_count += page_count
 
+        if len(pdf_list) > 1:  # No cover page or table of contents for one test
+            test_record = selected_test_records[0] # assuming all records are for same model
+            model_name = test_record.ModelName
+            MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
+            cover_context = {
+                'MNF_detail': MNF_detail,
+            }
+            pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
+            context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
+            pdf_list.insert(1, BytesIO(render_contents_to_pdf('pdf_contents.html', {'list': context_list}, request)))
         merged_pdf = merge_pdfs(pdf_list)
         response = HttpResponse(merged_pdf, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
         return response
-        # output_path = f'oqc_model/oqc/media/merged.pdf'
-        # output_path = os.path.abspath(output_path)
-        # return merge_pdfs(pdf_list)
 
     return HttpResponse("Invalid request method.", status=405)
-
 
 
 def view(request, test_name, model_name, serialno):
@@ -728,16 +521,6 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
-        # Update s1 based on the selected test stages
-        # for stage in testStages:
-        #     if stage == "DVT":
-        #         s1 = '1' + s1[1:]
-        #     elif stage == "PP":
-        #         s1 = s1[0] + '1' + s1[2:]
-        #     elif stage == "MP":
-        #         s1 = s1[:2] + '1' + s1[3:]
-        #     elif stage == "PDI":
-        #         s1 = s1[:3] + '1'
 
         if existing_test:
             existing_test.TestStage = s1
@@ -798,7 +581,3 @@ def test_protocol_entry(request):
 def view_test_records(request):
     test_records = TestRecord.objects.all()
     return render(request, 'view.html', {'test_records': test_records})
-
-
-
-

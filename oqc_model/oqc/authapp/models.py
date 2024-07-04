@@ -3,8 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Employee(models.Model):
- 
-    user_type = models.CharField(max_length=50)
+    user_type = models.CharField(max_length=50, blank=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     username  = models.CharField(max_length=255)

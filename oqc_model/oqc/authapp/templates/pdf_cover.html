@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        .report {
+            border-collapse: collapse;
+            width: 97%;
+            margin: 0 auto;
+        }
+        .inspector {
+            border-collapse: collapse;
+            font-weight: bold;
+            width: 60%;
+        }
+        td {
+            font-family: system-ui;
+            font-size: 13px;
+            border: 1px solid black;
+            padding: 1px;
+            padding-left: 8px;
+        }
+        .fields {
+            font-weight: bold;
+        }
+    </style>    
+</head>
+<body>
+    <h2 style="text-align: center;"><u>TEST REPORT</u></h2>
+    <table class="report">
+        <tr>
+            <td class="fields" style="width: 40%;">Name and Address of the customer</td>
+            <td>{{ MNF_detail.Customer }}</td>
+        </tr>
+        <tr>
+            <td class="fields">Name and Address of the Manufacturer</td>
+            <td>{{ MNF_detail.Manufacture }}</td>
+        </tr>
+        <tr>
+            <td class="fields">Test Location</td>
+            <td>{{ MNF_detail.Location }}</td>
+        </tr>   
+        <tr>
+            <td class="fields">Test Start Date</td>
+            <td>{{ start_date|date:"d/m/Y" }}</td>
+        </tr>
+        <tr>
+            <td class="fields">Test End Date</td>
+            <td>{{ end_date|date:"d/m/Y" }}</td>
+        </tr>
+        <tr>
+            <td class="fields">Report Issue Date</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="fields">Inspection of Material Description</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="fields">Brand</td>
+            <td class="fields">{{ MNF_detail.Brand }}</td>
+        </tr>
+        <tr>
+            <td class="fields">Brand Model No.</td>
+            <td class="fields">{{ MNF_detail.Brand_model_no }}</td>
+        </tr>
+        <tr>
+            <td class="fields">Indkal Model No.</td>
+            <td class="fields">{{ MNF_detail.Indkal_model_no }}</td>
+        </tr>
+        <tr>
+            <td class="fields">ODM Model No.</td>
+            <td class="fields">{{ MNF_detail.ODM_model_no }}</td>
+        </tr>
+        <tr>
+            <td class="fields">Test Procedure and Acceptance Criteria</td>
+            <td></td>
+        </tr>
+    </table>
+    <div style="margin: 30px;"></div>
+    <p style="font-family: sans-serif; font-size: 13px;">Test Inspected By</p>
+    <div style="margin: 20px;"></div>
+    <table class="inspector">
+        <tr>
+            <td style="width: 40%;">Name</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Designation</td>
+            <td></td>            
+        </tr>
+        <tr>
+            <td>Signature with Date</td>
+            <td></td>
+        </tr>
+    </table>
+</body>
+</html>

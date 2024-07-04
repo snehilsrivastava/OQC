@@ -16,16 +16,3 @@ class TestRecordForm(forms.ModelForm):
         }
 
 testItemFormset = formset_factory(TestRecordForm, extra=1)
-
-# class TestRemarkForm(forms.ModelForm):
-#     class Meta:
-#         model = TestRecord
-       
-#         fields = ['employee_remark','owner_remark']
-       
-# testRemarkFormset = formset_factory(TestRemarkForm, extra=1)
-
-class TestImageForm(forms.ModelForm):
-    class Meta:
-        model = TestImage
-        fields = ['image']

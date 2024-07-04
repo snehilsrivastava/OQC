@@ -4,17 +4,20 @@
     <meta charset="utf-8">
     <title>Cooling Test Form</title>
     <style>
+        .page_break {
+            page-break-before: always;
+            margin-top: 20px;
+        }
         p {
             /* padding-top: 3pt; */
             margin: 0;
             line-height: 12pt;
-            font-family: Arial;
+            font-family: system-ui;
             font-size: 10.5px;
         }
         span {
-            font-family: Arial;
+            font-family: system-ui;
             font-size: 10.5px;
-            letter-spacing: 0.015rem;
         }
         .row_header {
             font-size: 11px;
@@ -29,234 +32,240 @@
             width: calc(100%);
             border-collapse: collapse;
             border: 1px solid black;
-            margin: 0 auto;
-            margin-right: 35px;
+            margin-right: 20px;
+            margin-left: 10px;
+        }
+        .additional_details {
+            width: 700px;
+            margin-left: 35px;
+            margin-top: 40px;
+            font-family: Arial;
+            font-size: 10.5px;
         }
     </style>
 </head>
 <body>
 
-    <!-- <p style='margin:0cm;font-size:15px;font-family:"Times New Roman",serif;text-align:center;'><strong><u><span style='font-size:21px;font-family:"Times New Roman",sans-serif;'><span style="text-decoration:none;">&nbsp;</span></span></u></strong></p> -->
-<form class="col-6 mx-auto card p-3 shadow-lg" >
+<div style="margin: 60px;"></div>
+<form>
     <!-- {% csrf_token %} -->
     {% load static %}
     {{ form.media }}
     {{ form.as_p }}
-<p style='margin:0cm;font-size:15px;font-family:"Times New Roman",serif;text-align:center;'><strong><u><span style='font-size:21px;font-family:"Times New Roman",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>
-<div style="margin: 10px 0 10px 0;"></div>
-<table style="margin-left:26.0pt;">
+<strong><u><span style='font-size:20px; font-family: system-ui; text-align: center; display: block;'>{{TestProtocol.TestName}}</span></u></strong>
+<div style="margin: 20px;"></div>
+<table>
     <tbody>
         <tr>
             <td style="width:96.4pt;height:5.8pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Test Objective</span></strong></p>
+                <strong><span class="row_header">Test Objective</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;height:5.8pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>{{TestProtocol.Test_Objective}}</span></p>
+                <span>{{TestProtocol.Test_Objective}}</span>
             </td>
         </tr>
         <tr>
             <td style="width:96.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Model No.</span></strong></p>
+                <strong><span class="row_header">Model No.</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>{{model.ModelName}}</span></p>
+                <span>{{model.ModelName}}</span>
             </td>
         </tr>
         <tr>
             <td style="width:96.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Sample Quantity</span></strong></p>
+                <strong><span class="row_header">Sample Quantity</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>{{test.sample_quantiy}}</span></p>
+                <span>{{test.sample_quantiy}}</span>
             </td>
         </tr>
         <tr>
             <td style="width:96.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Serial No.</span></strong></p>
+                <strong><span class="row_header">Serial No.</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>{{test.SerailNo}}</span></p>
+                <span>{{test.SerailNo}}</span>
                
             </td>
         </tr>
         <tr>
             <td rowspan="10" style="width:96.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Set Details</span></strong></p>
+                <strong><span class="row_header">Set Details</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>Report verification Date :{{test.test_date}}</span></p>
-                <!-- {% comment %} <p class="inner-box align-middle" style="width: 25%;"> <input type="text" name="ReportDate" class="align-middle" style=" 0; overflow: hidden;" value="{% if testdetail.test_date %}{{ testdetail.test_date }}{% endif %}"> </p> {% endcomment %} -->
+                <span>Report verification Date: {{test.test_date|date:"d/m/Y"}}</span>
             </td>
             
         </tr>
         <tr>
             <td colspan="2" style="width:207.0pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>Start Date: {{test.test_start_date}}</span></p>
+                <span>Start Date: {{test.test_start_date|date:"d/m/Y"}}</span>
             </td>
             <td colspan="2" style="width:203.65pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>End Date: {{test.test_end_date}}</span></p>
+                <span>End Date: {{test.test_end_date|date:"d/m/Y"}}</span>
             </td>
         </tr>
         <tr>
             <td colspan="2" style="width:207.0pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>Indoor unit details</span></p>
+                <span>Indoor unit details</span>
             </td>
             <td colspan="2" style="width:203.65pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>Outdoor unit details</span></p>
+                <span>Outdoor unit details</span>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt; ">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Model</span></p>
+                <span>Model</span>
             </td>
             <td style="width:148.1pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.ModelName}}</span></p>
+                <span>{{model.ModelName}}</span>
             </td>
             <td style="width:75.6pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Model</span></p>
+                <span>Model</span>
             </td>
             <td style="width:128.05pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.ModelName}}</span></p>
+                <span>{{model.ModelName}}</span>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt; ">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>S.</span><span>N</span><span>o</span><span>.</span></p>
+                <span>S.</span><span>N</span><span>o</span><span>.</span>
             </td>
             <td style="width:148.1pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>N/A</span></p>
+                <span>N/A</span>
             </td>
             <td style="width:75.6pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>S.</span><span>N</span><span>o</span><span>.</span></p>
+                <span>S.</span><span>N</span><span>o</span><span>.</span>
             </td>
             <td style="width:128.05pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>N/A</span></p>
+                <span>N/A</span>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt; ">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Bl. Motor</span></p>
+                <span>Bl. Motor</span>
             </td>
             <td style="width:148.1pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.BImotor}}</span></p>
+                <span>{{model.BImotor}}</span>
             </td>
             <td style="width:75.6pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Compressor</span></p>
+                <span>Compressor</span>
             </td>
             <td style="width:128.05pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.Compressor}}</span></p>
+                <span>{{model.Compressor}}</span>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt; ">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Blower</span></p>
+                <span>Blower</span>
             </td>
             <td style="width:148.1pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.Blower}}</span></p>
+                <span>{{model.Blower}}</span>
             </td>
             <td style="width:75.6pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Fan motor</span></p>
+                <span>Fan motor</span>
             </td>
             <td style="width:128.05pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.FanMotor}}</span></p>
+                <span>{{model.FanMotor}}</span>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt; ">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Eva. Coil</span></p>
+                <span>Eva. Coil</span>
             </td>
             <td style="width:148.1pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.Eva}}</span></p>
+                <span>{{model.Eva}}</span>
             </td>
             <td style="width:75.6pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Fan</span></p>
+                <span>Fan</span>
             </td>
             <td style="width:128.05pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.Fan}}</span></p>
+                <span>{{model.Fan}}</span>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt; ">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Conn. Pipe</span></p>
+                <span>Conn. Pipe</span>
             </td>
             <td style="width:148.1pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.ConPipe}}</span></p>
+                <span>{{model.ConPipe}}</span>
             </td>
             <td style="width:75.6pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Cond. Coil</span></p>
+                <span>Cond. Coil</span>
             </td>
             <td style="width:128.05pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.CondCoil}}</span></p>
+                <span>{{model.CondCoil}}</span>
             </td>
         </tr>
         <tr>
             <td style="width:58.9pt; ">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Ref. Charge</span></p>
+                <span>Ref. Charge</span>
             </td>
             <td style="width:148.1pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.RefCharge}}</span></p>
+                <span>{{model.RefCharge}}</span>
             </td>
             <td style="width:75.6pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>Capillary tube</span></p>
+                <span>Capillary tube</span>
             </td>
             <td style="width:128.05pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;'><span>{{model.Capilary}}</span></p>
+                <span>{{model.Capilary}}</span>
             </td>
         </tr>
         <tr>
             <td style="width:96.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Test Standard</span></strong></p>
+                <strong><span class="row_header">Test Standard</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>{{TestProtocol.Test_Standard}}</span></p>
+                <span>{{TestProtocol.Test_Standard}}</span>
             </td>
         </tr>
         <tr>
             <td style="width:96.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Test Condition</span></strong></p>
+                <strong><span class="row_header">Test Condition</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span> {{TestProtocol.Test_Condition|linebreaksbr }}</span></p>
+                <span> {{TestProtocol.Test_Condition|linebreaksbr }}</span>
             </td>
         </tr>
         <tr>
             <td style="width:96.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Test Procedure</span></strong></p>
+                <strong><span class="row_header">Test Procedure</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span> {{TestProtocol.Test_Procedure|linebreaksbr }}</span></p> 
+                <span> {{TestProtocol.Test_Procedure|linebreaksbr }}</span> 
             </td>
         </tr>
         <tr>
             <td style="width:96.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Judgement Criteria</span></strong></p>
+                <strong><span class="row_header">Judgement Criteria</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span> {{TestProtocol.Judgement|linebreaksbr }}</span></p>  
+                <span> {{TestProtocol.Judgement|linebreaksbr }}</span>  
             </td>
         </tr>
         <tr>
             <td style="width:96.4pt;height:14.35pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Instrument / Equipment used</span></strong></p>
+                <strong><span class="row_header">Instrument / Equipment used</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;height:14.35pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>{{TestProtocol.Instrument}}</span></p>
+                <span>{{TestProtocol.Instrument}}</span>
             </td>
         </tr>
         <tr>
             <td rowspan="2" style="width:96.4pt;height:12.5pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><strong><span class="row_header">Result &amp; Conclusion</span></strong></p>
+                <strong><span class="row_header">Result &amp; Conclusion</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;height:12.5pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span>{{test.result|safe}}</span></p>
+                <span>{{test.result|safe}}</span>
             </td>
         </tr>
     </tbody>
 </table>
 
-<!-- <div style="margin: 10px 0 10px 0;"></div>
-<div style="margin: 10px 0 10px 0;"></div> -->
-
+{% if test.additional_details %}
+<div class="additional_details page_break">{{ test.additional_details|safe }}</div>
+{% endif %}
 </form>
 </body>
 </html>
