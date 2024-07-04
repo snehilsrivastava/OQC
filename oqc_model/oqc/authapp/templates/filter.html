@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Owner Dashboard</title>
+    <title>Filtered Records</title>
+    <!-- Correctly include Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         body {
             margin: 0;
@@ -104,6 +105,8 @@
         }
         button {
            height: 30px;
+           /* display: flexbox; */
+           white-space: nowrap;
            color: rgb(239, 237, 246); 
            width: 170px;
            border: 10px;
@@ -286,13 +289,9 @@
     </style>
 </head>
 <body>
-<div class="header">
-    <div class="left-icon">
-        <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
-    </div>
 
+<div class="header">
     <div class="container">
-           
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
@@ -302,7 +301,6 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        
     </div>
    
     <div class="right-icon">
@@ -311,8 +309,8 @@
             <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
         </button>
         <div class="user-info" id="userInfo">
-            <p>Username: {{ username }}</p>
             <p>Name: {{ first_name }} {{ last_name }}</p>
+            <p>Email: {{ username }}</p>
             <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
         </div>
     </div>
@@ -320,23 +318,13 @@
 </div>
 
 <div class="main-content">
-    <ul class='nav' id="sidebar">
-        <li><a href="{% url 'dashboard' %}"><i class="fa fa-home fa-icon"></i>&nbsp Home</a></li>
-        <li><a href="{% url 'product' %}"><i class="fa fa-file fa-icon"></i>&nbsp Add report</a></li>
-        <li><a href="{% url 'mnf' %}"><i class="fa fa-file fa-icon"></i>&nbsp Add model detail</a></li>
-        <li><a href="{% url 'test_list_entry' %}"><i class="fa fa-file fa-icon"></i>&nbsp Add test detail</a></li>
-        <!-- <div class="bottom-icon">
-            <a href="/logout" style="color: white;"><i class="fa fa-sign-out"></i> Logout</a>
-        </div> -->
-    </ul>
-
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 
 <!-- Filter Popup -->
 <div class="popup" id="filterPopup">
     <span class="close" onclick="toggleFilter()">&times;</span>
     <h2>Filter Options</h2>
-    <form id="filter-form" method="get" action="{% url 'filter' %}">
+    <form id="filter-form" method="get" action="{% url 'check' %}">
         {% csrf_token %}
         <div>
             <label for="product">Product Type:</label>
@@ -370,7 +358,7 @@
         <br>
         <div>
             <label for="test_name">Test Name:</label>
-            <select class="form-control" id="test_name" name="test_name" >
+            <select class="form-control" id="test_name" name="test_name">
                 <option value="">Select Test Name</option>
             </select>
         </div>
@@ -391,7 +379,6 @@
             </select>
         </div>
         <br>
-      
         <div>
             <label for="start_date">Start Date:</label>
             <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
@@ -402,9 +389,8 @@
             <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
         </div>
         <br>
-      
         <div class="button-container">
-            <button type="submit" class="button" >Filter</button>
+            <button type="submit" class="button">Filter</button>
             <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
         </div>
     </form>
@@ -412,9 +398,12 @@
 </div>
 
     <div class="content">
-        <h1>Dashboard</h1>
+        <i class="fas fa-arrow-left fa-icon"></i>
+        <button><a href="{% url 'dashboard' %}">Back to dashboard</a></button>
+        <h2>Filtered Records</h1>
         <i class="fa fa-search fa-icon"></i>
         <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
+        <br><br>
         
         <table>
             <thead>
@@ -500,18 +489,7 @@
         }
     }
 
-    function clearFilter() {
-
-            // Get the form element
-            var form = document.getElementById("filter-form");
-        
-            // Reset all the form fields
-            form.reset();
-        
-            // Submit the form to apply the cleared filters
-            form.submit();
-        
-    }
+  
     
 
     // Ensure user info starts hidden
