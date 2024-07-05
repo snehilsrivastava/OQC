@@ -200,22 +200,24 @@ def view_test_report(request,pk):
     
 
 def dashboard(request):
-
     username = request.session['username']
 
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
-    product = request.GET.get('product','')
+    product = request.GET.get('product', '')
     model_name = request.GET.get('model_name', '')
     serial_number = request.GET.get('serial_number', '')
     status = request.GET.get('status', '')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
 
-    # Filter the TestRecord queryset based on the parameters
-    completed_tests = TestRecord.objects.all()
-    completed_tests = completed_tests.exclude(status="Not Sent")
+    # # Filter the TestRecord queryset based on the parameters
+    # tests = list(TestRecord.objects.values('ProductType', 'ModelName', 'TestStage').distinct())
+    # tests = tests.exclude(status="Not Sent")
+    completed_tests = TestRecord.objects.exclude(status="Not Sent")
+
+    tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
     if test_name:
         completed_tests = completed_tests.filter(TestName__icontains=test_name)
     if product:
@@ -233,6 +235,7 @@ def dashboard(request):
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
     completed_tests = completed_tests.order_by('-test_date')
+    
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
@@ -241,24 +244,24 @@ def dashboard(request):
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
-        'completed_tests': completed_tests,
+        'tests': tests,
+        'all_tests': completed_tests,
         'test_name': test_name,
         'test_stage': test_stage,
         'model_name': model_name,
         'serial_number': serial_number,
         'status': status,
-        'product':product,
+        'product': product,
         'start_date': start_date,
         'end_date': end_date,
         'tv_models': tv_models,
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'test' : test,
-        'first_name' : employee.first_name,
-        'last_name' : employee.last_name,
-        'icon' : icon,
-        'username' :username
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username
     }
 
     return render(request, 'dashboard_employee.html', context)
@@ -361,6 +364,66 @@ def merge_pdfs(pdf_list):
     merger.write(merged_pdf_io)
     merged_pdf_io.seek(0)
     return merged_pdf_io
+
+def handle_selected_tests(request):
+    if request.method == 'POST':
+        selected_test_ids = request.POST.getlist('selected_tests')
+        action = request.POST.get('action')
+        selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids)
+        if action == 'generate_pdf':
+            
+            if not selected_test_records.exists():
+              raise Http404("No test records found")
+            pdf_list = []
+            cumul_page_count, cumul_page_count_list = 3, []
+            test_name_list = []
+            for i, test_record in enumerate(selected_test_records, start=1):
+                model_name = test_record.ModelName
+                test_name = test_record.TestName
+                Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+                models = get_object_or_404(AC, ModelName=model_name)
+                context = {
+                'test': test_record,
+                'model': models,
+                'TestProtocol': Test_protocol,
+                 }
+                test_name_list.append(test_name)
+                cumul_page_count_list.append(cumul_page_count)
+                pdf_content, page_count = render_to_pdf('view_pdf.html', context, request)
+                pdf_list.append(BytesIO(pdf_content))
+                cumul_page_count += page_count
+
+            if len(pdf_list) > 1:  # No cover page or table of contents for one test
+               test_record = selected_test_records[0] # assuming all records are for same model
+               model_name = test_record.ModelName
+               MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
+               cover_context = {
+                'MNF_detail': MNF_detail,
+               }
+               pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
+               context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
+               pdf_list.insert(1, BytesIO(render_contents_to_pdf('pdf_contents.html', {'list': context_list}, request)))
+            merged_pdf = merge_pdfs(pdf_list)
+            response = HttpResponse(merged_pdf, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
+            return response
+
+        elif action == 'send_brand':
+           
+            for test_record in selected_test_records:
+             new_status = "Waiting for Approval"
+             test_record.B_status = new_status
+             test_record.save()
+            
+
+        elif action == 'send_legal':
+            for test_record in selected_test_records:
+              new_status = "Waiting for Approval"
+              test_record.L_status = new_status
+              test_record.save()
+          
+
+    return redirect('/dashboard/')
 
 def generate_pdf(request):
     if request.method == 'POST':
@@ -484,13 +547,12 @@ def change_status_legal(request, test_id, status):
 def legal_dashboard(request):
     # Assuming 'username' is stored in the session, retrieve it
     username = request.session.get('username')
+    all_tests = TestRecord.objects.exclude(L_status="Not Sent")
 
-    # Retrieve distinct combinations of 'Product' and 'TestStage' from TestList model
-    test = list(TestRecord.objects.values('ProductType','ModelName', 'TestStage').distinct())
+    test = all_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
 
     # Retrieve employee details based on 'username'
     employee = Employee.objects.get(username=username)
-    all_tests = TestRecord.objects.all()
     all_tests = all_tests.order_by('-test_end_date')
     # Create an icon based on employee's first and last name initials
     icon = employee.first_name[0] + employee.last_name[0]

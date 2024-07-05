@@ -6,6 +6,7 @@
     <title>Product Owner Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+
     <style>
         body {
             margin: 0;
@@ -180,6 +181,32 @@
             border: 1px solid #ddd;
             z-index: 1;
         }
+        button.collapse-button {
+            height: 20px;
+            width: 20px;
+            padding: 0;
+            background-color: #03385e;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button.collapse-button i {
+            font-size: 12px;
+        }
+
+        .collapse-arrow {
+            color: white;
+        }
+
+        .collapse-arrow.down {
+            transform: rotate(0deg);
+        }
+
+        .collapse-arrow.up {
+            transform: rotate(180deg);
+        }
+
 
         .user-info p {
             margin: 0;
@@ -284,6 +311,10 @@
         }
         
     </style>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="header">
@@ -320,7 +351,7 @@
 </div>
 
 <div class="main-content">
-    <ul class='nav' id="sidebar">
+    <ul class='nav' id="sidebar" style="display:flex; flex-direction:column;">
         <li><a href="{% url 'dashboard' %}"><i class="fa fa-home fa-icon"></i>&nbsp Home</a></li>
         <li><a href="{% url 'product' %}"><i class="fa fa-file fa-icon"></i>&nbsp Add report</a></li>
         <li><a href="{% url 'mnf' %}"><i class="fa fa-file fa-icon"></i>&nbsp Add model detail</a></li>
@@ -412,47 +443,96 @@
 
 </div>
 
+
     <div class="content">
         <h1>Dashboard</h1>
         <i class="fa fa-search fa-icon"></i>
         <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
-        
-        <table>
+        <form method="POST" action="{% url 'handle_selected_tests' %}">
+            {% csrf_token %}
+        <table class="table table-bordered" style="width:80%">
             <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Model Name</th>
-                    <th>Test Name</th>
-                    <th>Stage</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
+            <tr>
+                <th style='width: 2%; border-right:none'></th>
+                <th style='border-left: none'>Product</th>
+                <th>Model Name</th>
+                <th>Stage</th>
+                <th>Actions</th>
+            </tr>
             </thead>
             <tbody>
-                {% for test in completed_tests %}
-                <tr>
-                    <td>{{ test.ProductType }}</td>
-                    <td>{{ test.ModelName }}</td>
-                    <td>{{ test.TestName }}</td>
-                    <td>{{ test.TestStage }}</td>
-                    <td>{{ test.test_date }}</td>
-                    <td> {{test.status}}</td>
-                    
-                    <td class="action-buttons">
-                         
-                        <!-- <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit</a>  -->
-                        <a class="button" href="{% url 'owner_view' test.TestName test.ModelName test.SerailNo %}">View</a>
-                        <a class="button" href="{% url 'remark_owner' test.id %}">Remark</a>
-                        <!-- <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a> -->
-
-                    </td>
-                </tr>
-                {% endfor %}
+            {% for test in tests %}
+            <tr>
+                <td>
+                    <button class="collapse-button" type="button" data-toggle="collapse"
+                    data-target="#testList{{ forloop.counter }}" aria-expanded="false"
+                    aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)"
+                    style="display:inline-flex; justify-content:center; align-items:center;">
+                 <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
+            </button>
+                </td>
+                <td>{{ test.ProductType }}</td>
+                <td>{{ test.ModelName }}</td>
+                <td>{{ test.TestStage }}</td>
+                <td class="action-buttons">
+                    {% comment %} <a class="btn btn-primary" href="{% url 'pdf_view' model_name=test.ModelName test_stage=test.TestStage %}">View PDF</a> {% endcomment %}
+                    <div class="dropdown">
+                        <button class="toggle-button dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Actions
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <button class="dropdown-item" name="action" value="generate_pdf" type="submit">Generate Report</button>
+                          <button class="dropdown-item" name="action" value="send_brand" type="submit">Send Brand</button>
+                          <button class="dropdown-item" name="action" value="send_legal" type="submit">Send Legal</button>
+                        </div>
+                      </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <div class="collapse" id="testList{{ forloop.counter }}">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Test Name</th>
+                                    <th>Date</th>
+                                    <th>Serial No</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subtest in all_tests %}
+                                {% if subtest.ModelName == test.ModelName and subtest.TestStage == test.TestStage %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="selected_tests" value="{{ subtest.id }}">
+                                    </td>
+                                    <td>{{ subtest.TestName }}</td>
+                                    <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
+                                    <td>{{ subtest.SerailNo }}</td>
+                                    <td>{{ subtest.L_status }}</td>
+                                    <td>
+                                        <a class="btn btn-primary" href="{% url 'owner_view' subtest.TestName subtest.ModelName subtest.SerailNo %}">View</a>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
+    </form>
     </div>
-</div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script>
     function toggleMenu() {
@@ -639,6 +719,25 @@
                 alert('Logout failed');
             });
         }
+
+
+
+            $(document).ready(function () {
+                $('.collapse').on('show.bs.collapse', function () {
+                    var target = $(this).prev().find('button i.fas');
+                    target.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                }).on('hide.bs.collapse', function () {
+                    var target = $(this).prev().find('button i.fas');
+                    target.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                });
+            });
+
+            function toggleCollapseIcon(button) {
+                var icon = button.querySelector('i.fas');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            }
+        
 </script>
 </body>
 </html>
