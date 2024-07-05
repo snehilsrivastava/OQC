@@ -62,7 +62,7 @@ class TestRecord(models.Model):
     notes = models.CharField(max_length=255, blank=True) 
     employee_remark  = models.TextField(max_length=500,default='',blank=True)
     owner_remark  = models.TextField(max_length=500,default='',blank=True)
-    status = models.IntegerField(default =0)
+    status = models.CharField(max_length=80,default="Not Sent")
     L_status = models.CharField(max_length=80,default="Not Sent")
     B_status = models.CharField(max_length=80,default="Not Sent")
     ProductType = models.CharField(max_length=102,default = "None")

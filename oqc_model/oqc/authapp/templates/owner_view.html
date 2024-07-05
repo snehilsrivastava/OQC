@@ -304,17 +304,8 @@
     
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {% if test.status == 0 %}
-                                Not Send
-                            {% elif test.status == 1 %}
-                                Waiting for Approval
-                            {% elif test.status == 2 %}
-                                Approved
-                            {% elif test.status == 3 %}
-                                Rejected
-                            {% else %}
-                                Unknown Status
-                            {% endif %}
+                         {{test.status}}
+                            
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="{% url 'change_status' test.id 1 %}">Waiting for Approval</a>

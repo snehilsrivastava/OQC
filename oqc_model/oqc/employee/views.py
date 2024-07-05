@@ -172,19 +172,8 @@ def cooling(request, test_name, model_name, serialno):
 
 from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
-def toggle_status(request, id):
-    if request.method == 'POST':
-        try:
-            test_record = TestRecord.objects.get(id=id)
-            # Cycle through the statuses or implement your own logic
-            new_status = ((test_record.status) % 3)+1
-            test_record.status = new_status
-            test_record.save()
-            return JsonResponse({'success': True, 'new_status': new_status})
-        except TestRecord.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Test record not found'})
-    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
 
 @csrf_exempt
 def set_status(request, id):
@@ -192,7 +181,7 @@ def set_status(request, id):
         try:
             test_record = TestRecord.objects.get(id=id)
             # Cycle through the statuses or implement your own logic
-            new_status = 1
+            new_status = "Waiting for Approval"
             test_record.status = new_status
             test_record.test_end_date = date.today()
             test_record.save()
@@ -226,7 +215,7 @@ def dashboard(request):
 
     # Filter the TestRecord queryset based on the parameters
     completed_tests = TestRecord.objects.all()
-    completed_tests = completed_tests.filter(Q(status=1)|Q(status=2)|Q(status=3))
+    completed_tests = completed_tests.exclude(status="Not Sent")
     if test_name:
         completed_tests = completed_tests.filter(TestName__icontains=test_name)
     if product:
@@ -449,14 +438,25 @@ def owner_view(request, test_name, model_name, serialno):
 
 def change_status(request, test_id, status):
     test = get_object_or_404(TestRecord, id=test_id)
-    test.status = status
+
+    if status == 1:
+        test.status = "Waiting for Approval"
+    elif status == 2:
+        test.status = "Approved"
+    elif status == 3:
+        test.status = "Rejected"
+    else:
+        # Handle unexpected status values, could redirect with an error or set a default
+        return redirect('owner_view', test_name=test.TestName, model_name=test.ModelName, serialno=test.SerailNo)
+
     test.save()
+
+    # Retrieve parameters for redirection
     test_name = test.TestName
     model_name = test.ModelName
     serialno = test.SerailNo
 
-        # Redirect to the owner_view page with the retrieved parameters
-    return redirect('owner_view', test_name=test_name, model_name=model_name, serialno=serialno)
+    return redirect(reverse('owner_view', kwargs={'test_name': test_name, 'model_name': model_name, 'serialno': serialno}))
 
 from django.shortcuts import get_object_or_404, redirect
 from .models import TestRecord

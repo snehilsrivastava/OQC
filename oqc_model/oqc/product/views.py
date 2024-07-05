@@ -5,6 +5,7 @@ from employee.models import TestRecord
 from django.shortcuts import render, HttpResponse
 from .models import Product_Detail, TV, AC, Phone, Washing_Machine
 from django.urls import reverse
+from employee.models import TestList
 
 def product_form_view(request):
     if request.method == 'POST':
@@ -14,24 +15,17 @@ def product_form_view(request):
         test_stage = request.POST.get('TestStage')
         test_name = request.POST.get('TestName')
         username = request.session['username'].strip()
-     
-        # user = Employee.objects.get(username=username)
-        # Check if the serial number already exists in the database
-        if Product_Detail.objects.filter(SerailNo=serial_no).exists():
-            return HttpResponse("Serial number already exists")
 
-        # Create and save the new Product_Detail instance
         new_product_detail = TestRecord(
             ProductType=product_type,
             ModelName=model_name,
             SerailNo=serial_no,
-            TestStage = test_stage,
-            TestName = test_name,
-            employee = username,
-
+            TestStage=test_stage,
+            TestName=test_name,
+            employee=username,
         )
         new_product_detail.save()
-        return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name,'serialno' : serial_no}))
+        return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name, 'serialno': serial_no}))
 
     # If GET request, prepare context with models data
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
@@ -39,6 +33,7 @@ def product_form_view(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     user = request.session['username']
+    test = list(TestList.objects.values('Product', 'TestStage', 'TestName'))
 
     context = {
         'tv_models': tv_models,
@@ -46,6 +41,7 @@ def product_form_view(request):
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
         'user': user,
+        'test': test,
     }
     
     return render(request, 'product.html', context)

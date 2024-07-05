@@ -437,21 +437,7 @@
                     <td>{{ test.TestName }}</td>
                     <td>{{ test.TestStage }}</td>
                     <td>{{ test.test_date }}</td>
-                    <td>
-                        <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" >
-                            {% if test.status == 0 %}
-                                Not Send
-                            {% elif test.status == 1 %}
-                                Waiting for Approval
-                            {% elif test.status == 2 %}
-                                Approved
-                            {% elif test.status == 3 %}
-                                Rejected
-                            {% else %}
-                                Unknown Status
-                            {% endif %}
-                        </span>
-                    </td>
+                    <td> {{test.status}}</td>
                     
                     <td class="action-buttons">
                          
