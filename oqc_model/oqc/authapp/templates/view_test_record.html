@@ -306,8 +306,8 @@
 
 <div class="action-buttons">
     <a class="button" href="{% url 'check' %}">Return</a>
-    {% if test.status == 0 or test.status == 3 %}
-    <a id="status-toggle-{{ test.id }}" class="button" onclick="setStatus({{ test.id }})">Send</a>
+    {% if test.status == 'Not Sent' or test.status == 'Rejected' %}
+        <a id="status-toggle-{{ test.id }}" class="button" onclick="setStatus({{ test.id }})">Send</a>
     {% endif %}
     <a class="button" href="{% url 'remark' test.id %}">Remark</a>
 </div>

@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Legal Dashboard</title>
-
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            font-family: 'Times New Roman', Times, serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             display: flex;
             flex-direction: column;
             height: 100%;
             color: white;
-            font-size: 20px;
+            font-size: 17px;
             text-decoration-color: whitesmoke;
         }
 
@@ -147,13 +149,13 @@
             color: white;
         }
 
-        .collapse-arrow.down {
+        /* .collapse-arrow.down {
             transform: rotate(0deg);
         }
 
         .collapse-arrow.up {
             transform: rotate(180deg);
-        }
+        } */
 
         .action-buttons {
             display: flex;
@@ -172,14 +174,9 @@
             background: #d9534f;
         }
 
-        /* .toggle-button {
-            background:;
-            color: #fff;
-            padding: 5px 10px;
-            text-decoration: none;
-            border-radius: 3px;
-            cursor: pointer;
-        } */
+        .icon {
+            font-size: 20px;
+        }
 
         .user-btn {
             background-color: #03385e;
@@ -189,11 +186,11 @@
             cursor: pointer;
         }
 
-        .logout-btn {
+        .user-info .logout-btn {
             display: block;
             margin-top: 10px;
             background-color: #d9534f;
-            color: white;
+            color: white !important;
             border: none;
             padding: 10px 20px;
             text-align: center;
@@ -232,9 +229,7 @@
             border-radius: 3px;
         }
     </style>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
 </head>
 <body>
 
@@ -263,8 +258,8 @@
             <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
         </button>
         <div class="user-info" id="userInfo">
-            <p>Username: {{ username }}</p>
             <p>Name: {{ first_name }} {{ last_name }}</p>
+            <p>Email: {{ username }}</p>
             <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
         </div>
     </div>
@@ -311,7 +306,7 @@
                                 <tr>
                                     <th>Test Name</th>
                                     <th>Date</th>
-                                    <th>Serial No</th> <!-- Fixed typo here: missing closing </th> -->
+                                    <th>Serial No</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -321,8 +316,8 @@
                                 {% if subtest.ModelName == test.ModelName and subtest.TestStage == test.TestStage %}
                                 <tr>
                                     <td>{{ subtest.TestName }}</td>
-                                    <td>{{ subtest.test_end_date }}</td>
-                                    <td>{{ subtest.SerailNo }}</td> <!-- Fixed typo here: SerialNo was misspelled -->
+                                    <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
+                                    <td>{{ subtest.SerailNo }}</td>
                                     <td>{{ subtest.L_status }}</td>
                                     <td><a href="{% url 'legal_view' subtest.TestName subtest.ModelName subtest.SerailNo %}"
                                             class="btn btn-primary">View</a>
@@ -401,6 +396,14 @@
                     alert('Logout failed');
                 });
     }
+
+    document.addEventListener('click', function(event) {
+    var clickedElement = event.target;
+    if (clickedElement !== document.getElementById("userInfo") && clickedElement !== document.getElementById("userButton")) {
+        document.getElementById("userInfo").style.display = "none";
+    }
+    });
+
 </script>
 </body>
 </html>

@@ -7,7 +7,7 @@ urlpatterns = [
     # path('ckeditor/', include('ckeditor_uploader.urls')),
     path(r'^ckeditor/upload/', ckeditor_views.upload, name='ckeditor_upload'),
     path(r'^ckeditor/browse/', ckeditor_views.browse, name='ckeditor_browse'),
-    path('change_status/<int:test_id>/<int:status>/', views.change_status, name='change_status'),
+     path('change_status/<int:test_id>/<int:status>/', views.change_status, name='change_status'),
     path('change_status_legal/<int:test_id>/<int:status>/', views.change_status_legal, name='change_status_legal'),
     path('', views.main_page, name='main_page'),
     # path('members/', views.members, name='members'),  
@@ -29,14 +29,15 @@ urlpatterns = [
     path('cooling/<str:test_name>/<str:model_name>/<str:serialno>/', views.cooling, name='cooling'),
     path('mnf/', views.MNF, name='mnf'),
     path('test_list_entry/',views.Test_list_entry,name = 'test_list_entry'),
-    path('test_protocol_entry/',views.test_protocol_entry,name = 'test_protocol_entry'),
-    # path('toggle_status/<int:id>/', views.toggle_status, name='toggle_status'),
+    path('update_test_list_entry/',views.update_test_list_entry,name = 'update_test_list_entry'),
+    path('test_protocol_entry/<str:test_name>/<str:product>/',views.test_protocol_entry,name = 'test_protocol_entry'),
     path('set_status/<int:id>/', views.set_status, name='set_status'),
     path('delete-test-record/<int:record_id>/', views.delete_test_record, name='delete_test_record'),
     path('remark/<int:id>/',views.remark,name = 'remark'),
     path('remark_owner/<int:id>/',views.owner_remark,name = 'remark_owner'),
-    # path('send_report/<int:report_id>/', views.send_report, name='send_report'),
+    path('send_report/<int:report_id>/', views.send_report, name='send_report'),
     path('view_pdf/<str:test_name>/<str:model_name>/<str:serialno>/', views.view_pdf, name='view_pdf'),
+    path('handle_selected_tests/',views.handle_selected_tests,name = 'handle_selected_tests'),
 ]
 
 from django.conf import settings

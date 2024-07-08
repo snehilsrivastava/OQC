@@ -3,6 +3,9 @@
 <head>
     <title>Cooling Test Form</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <style>
         table {
             border: 1px solid black;
@@ -16,6 +19,10 @@
             line-height: 90%;
         }
         .additional_details {
+            font-family: Arial;
+            font-size: 13px;
+        }
+        p {
             font-family: Arial;
             font-size: 13px;
         }
@@ -66,7 +73,7 @@
     {% csrf_token %}
     {{ form.media }}
     {{ form.as_p }}
-    <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>
+    <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;font-family:"`;'>{{TestProtocol.TestName}}</span></u></strong></p>
     <div style="margin: 6px;"></div>
     <table>
         <tbody>
@@ -282,29 +289,24 @@
 <div class="additional_details">{{ test.additional_details|safe }}</div>
 
 <div class="action-buttons">
-    <a class="button" href="{% url 'check' %}">Return</a>
+    <a class="btn btn-primary" href="{% url 'dashboard' %}">Return</a>
     <a class="btn btn-secondary" href="{% url 'remark_owner' test.id %}">Remark</a>
+    <a class="btn btn-primary" href="{% url 'dashboard' %}">Send to Legal</a>
+    <a class="btn btn-primary" href="{% url 'dashboard' %}">Send to Brand</a>
+    
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {% if test.status == 0 %}
-                                Not Send
-                            {% elif test.status == 1 %}
-                                Waiting for Approval
-                            {% elif test.status == 2 %}
-                                Approved
-                            {% elif test.status == 3 %}
-                                Rejected
-                            {% else %}
-                                Unknown Status
-                            {% endif %}
+        {{test.status}}
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="{% url 'change_status' test.id 1 %}">Waiting for Approval</a>
-            <a class="dropdown-item" href="{% url 'change_status' test.id 2 %}">Approved</a>
+            <a class="dropdown-item" href="{% url 'change_status' test.id 2 %}">Approve</a>
             <a class="dropdown-item" href="{% url 'change_status' test.id 3 %}">Reject</a>
         </div>
     </div>
 </div>
+
 </form>
+
 </body>
 </html>
