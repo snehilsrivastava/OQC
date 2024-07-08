@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Page Navbar with Header</title>
-    <!-- Correctly include Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Brand Dashboard</title>
 
     <style>
         body {
@@ -18,6 +16,26 @@
             font-size: 20px;
             text-decoration-color: whitesmoke;
         }
+
+        button {
+            height: 30px;
+            color: rgb(239, 237, 246); 
+            width: 170px;
+            border: 10px;
+            border-color: black;
+            background-color: #03385e;
+            font-size: 20px;
+            border-radius: 3px;
+         }
+         button a {
+             color : whitesmoke;
+             width: 120px;
+         }
+ 
+         button a:hover {
+             background-color: #a9b9bc;
+             color: white; 
+         }
 
         .header {
             display: flex;
@@ -103,93 +121,40 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
-        button {
-           height: 30px;
-           color: rgb(239, 237, 246); 
-           width: 170px;
-           border: 10px;
-           border-color: black;
-           background-color: #03385e;
-           font-size: 20px;
-           border-radius: 3px;
-        }
-        button a {
-            color : whitesmoke;
-            width: 120px;
-        }
 
-        button a:hover {
-            background-color: #a9b9bc;
-            color: white; 
-        }
-
-       
-     
-        .user-info {
-            display: none;
-            position: absolute;
-            right: 20px;
-            background-color: #f1f1f1;
-            color: black;
-            padding: 10px;
-            border: 1px solid #ddd;
-            z-index: 1;
-        }
-
-        .user-info p {
-            margin: 0;
-            padding: 5px 0;
-        }
-
-        .user-btn {
+        button.collapse-button {
+            height: 20px;
+            width: 20px;
+            padding: 0;
             background-color: #03385e;
             color: white;
             border: none;
-            padding: 10px 20px;
             cursor: pointer;
         }
 
-        .logout-btn {
-            display: block;
-            margin-top: 10px;
-            background-color: #d9534f;
+        button.collapse-button i {
+            font-size: 12px;
+        }
+
+        .collapse-arrow {
             color: white;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
         }
 
-        .status-0 {
-            background:#03385e;
-            color: #fff;
+        .collapse-arrow.down {
+            transform: rotate(0deg);
         }
-        
-        .status-1 {
-            /* styles for 'Waiting for Approval' */
-            background: #4FAAD7;
-            color: #fff;
+
+        .collapse-arrow.up {
+            transform: rotate(180deg);
         }
-        
-        .status-2 {
-            /* styles for 'Approved' */
-            background: #5AA33F;
-            color: #fff;
-        }
-        
-        .status-3 {
-            /* styles for 'Rejected' */
-            background: #b20b00;
-            color: #fff;
-        }
+
         .action-buttons {
             display: flex;
             gap: 10px;
         }
 
         .action-buttons a {
-            background:#03385e;
+            background: #03385e;
             color: #fff;
             padding: 5px 10px;
             text-decoration: none;
@@ -228,39 +193,91 @@
             color: #a94442;
             border-color: #ededed;
         }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background-color: white;
+            color: black;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+
+        .popup .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .popup form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .popup form label {
+            margin-bottom: 5px;
+        }
+
+        .popup form input {
+            
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+
         .button-container {
             text-align: center; /* Optional: Centers the buttons horizontally */
             border-radius: 3px;
         }
+
         .button-container button {
             display: inline-block; /* Display buttons side by side */
             margin-right: 10px; /* Optional: Add some spacing between buttons */
             border-radius: 3px;
         }
-        
     </style>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="header">
-    {% comment %} <div class="left-icon">
+    {% comment %}
+    <div class="left-icon">
         <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
-    </div> {% endcomment %}
+    </div>
+    {% endcomment %}
 
     <div class="container">
-           
         {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="message {{ message.level_tag }}">
-                        {{ message }}
-                    </li>
-                {% endfor %}
-            </ul>
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="message {{ message.level_tag }}">
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
         {% endif %}
-        
     </div>
-   
+
     <div class="right-icon">
         <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
             <span id="userButtonText"></span>
@@ -269,104 +286,371 @@
         <div class="user-info" id="userInfo">
             <p>Username: {{ username }}</p>
             <p>Name: {{ first_name }} &nbsp {{ last_name }}</p>
-            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+            <a class="logout-btn" onclick="logoutUser()">Logout</a>
         </div>
     </div>
-  
+
 </div>
 
 <div class="main-content">
+    <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 
-
+    <!-- Filter Popup -->
+    <div class="popup" id="filterPopup">
+        <span class="close" onclick="toggleFilter()">&times;</span>
+        <h2>Filter Options</h2>
+        <form id="filter-form" method="get" action="{% url 'brand_dashboard' %}">
+            {% csrf_token %}
+            <div>
+                <label for="product">Product Type:</label>
+                <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+                    <option value="">Select Product Type</option>
+                    <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
+                    <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
+                    <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
+                    <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="test_stage">Test Stage:</label>
+                <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+                    <option value="">Select Test Stage</option>
+                    <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
+                    <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
+                    <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
+                    <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="model_name">Model Name:</label>
+                <select class="form-control" id="model_name" name="model_name">
+                    <!-- Model options will be populated dynamically based on the selected product type -->
+                    {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
+                    <option value="">{{model_name}}</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="test_name">Test Name:</label>
+                <select class="form-control" id="test_name" name="test_name">
+                    <option value="">Select Test Name</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="serial_number">Serial Number:</label>
+                <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+            </div>
+            <br>
+            <div>
+                <label for="B_status">Status:</label>
+                <select id="B_status" name="B_status">
+                    <option value="">All</option>
+                    <option value="Not Sent"{%if B_status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
+                    <option value="Waiting for Approval"  {%if B_status == 'Waiting for Approval'%}selected{%endif%}>Waiting for Approval</option>
+                    <option value="Approve" {%if B_status == 'Approve'%}selected{%endif%}>Approve</option>
+                    <option value="Rejected"{%if B_status == 'Rejected'%}selected{%endif%}>Rejected</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+            <br>
+            <div>
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+            <br>
+            <div class="button-container">
+                <button type="submit" class="button">Filter</button>
+                <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
+            </div>
+        </form>
+    
+    </div>
+    
     <div class="content">
-
-        
-        <table>
+        <h1>Dashboard</h1>
+        <i class="fa fa-search fa-icon"></i>
+        <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
+        <br><br>
+        <table class="table table-bordered">
             <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Model Name</th>
-                    <th>Stage</th>
-                    {% comment %} <th>Status</th> {% endcomment %}
-                    <th>Actions</th>
-                </tr>
+            <tr>
+                <th></th>
+                <th>Product</th>
+                <th>Model Name</th>
+                <th>Stage</th>
+                <th>Actions</th>
+                <!-- Column for collapse icon -->
+            </tr>
             </thead>
             <tbody>
-                {% for test in tests %}
-                <tr>
-                    <td>{{ test.ProductType }}</td>
-                    <td>{{ test.ModelName }}</td>
-                    <td>{{ test.TestStage }}</td>
-                    
-                    <td class="action-buttons">
-                        <a href="{% url 'generate_pdf_for_legal' model_name=test.ModelName test_stage=test.TestStage %}" class="btn btn-primary">View PDF</a>
+            {% for test in tests %}
+            <tr>
+                <td>
+                    <button class="collapse-button" type="button" data-toggle="collapse"
+                            data-target="#testList{{ forloop.counter }}" aria-expanded="false"
+                            aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">
+                        <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
+                    </button>
+                </td>
+                <td>{{ test.ProductType }}</td>
+                <td>{{ test.ModelName }}</td>
+                <td>{{ test.TestStage }}</td>
+                <td class="action-buttons">
+                    <a href="{% url 'pdf_model_stage' model_name=test.ModelName test_stage=test.TestStage %}"
+                       class="btn btn-primary">View PDF</a>
+                </td>
 
-                    </td>
-                </tr>
-                {% endfor %}
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <div class="collapse" id="testList{{ forloop.counter }}">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Test Name</th>
+                                    <th>Date</th>
+                                    <th>Serial No</th> <!-- Fixed typo here: missing closing </th> -->
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subtest in all_tests %}
+                                {% if subtest.ModelName == test.ModelName and subtest.TestStage == test.TestStage %}
+                                <tr>
+                                    <td>{{ subtest.TestName }}</td>
+                                    <td>{{ subtest.test_end_date }}</td>
+                                    <td>{{ subtest.SerailNo }}</td> <!-- Fixed typo here: SerialNo was misspelled -->
+                                    <td>{{ subtest.B_status }}</td>
+                                    <td>
+                                        
+                                        <a href="{% url 'brand_view' subtest.TestName subtest.ModelName subtest.SerailNo %}"
+                                            class="btn btn-primary">View</a>
+                                        
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+                
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
-   
+    $(document).ready(function () {
+        $('.collapse').on('show.bs.collapse', function () {
+            var target = $(this).prev().find('button i.fas');
+            target.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        }).on('hide.bs.collapse', function () {
+            var target = $(this).prev().find('button i.fas');
+            target.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        });
+    });
 
-    function toggleUserInfo() {
-        var sidebar = document.getElementById("userInfo");
-        if (sidebar.style.display === "block" || sidebar.style.display === "") {
-            sidebar.style.display = "none";
-        } else {
-            sidebar.style.display = "block";
-        }
+    function toggleCollapseIcon(button) {
+        var icon = button.querySelector('i.fas');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
     }
 
-  
+    function toggleFilter() {
+        var popup = document.getElementById("filterPopup");
+        var overlay = document.getElementById("overlay");
+        var display = popup.style.display;
+
+        if (display === "block") {
+            popup.style.display = "none";
+            overlay.style.display = "none";
+        } else {
+            popup.style.display = "block";
+            overlay.style.display = "block";
+        }
+    }
+    function clearFilter(){
+        var form = document.getElementById("filter-form");
+
+        // Manually reset each field to the empty string or their default values if needed
+        var product = document.getElementById("product");
+        var testStage = document.getElementById("test_stage");
+        var modelName = document.getElementById("model_name");
+        var testName = document.getElementById("test_name");
+        var serialNumber = document.getElementById("serial_number");
+        var B_status = document.getElementById("B_status");
+        var startDate = document.getElementById("start_date");
+        var endDate = document.getElementById("end_date");
+
     
+        // Set default values
+        product.value = "";
+        testStage.value = "";
+        modelName.value = "";
+        testName.value = "";
+        serialNumber.value = "";
+        B_status.value = "";
+        startDate.value = "";
+        endDate.value = "";
+
+  
+    }
+
+    function toggleUserInfo() {
+        var userInfo = document.getElementById("userInfo");
+        userInfo.style.display = userInfo.style.display === "none" ? "block" : "none";
+    }
 
     // Ensure user info starts hidden
-    document.addEventListener("DOMContentLoaded", function() {
-        var sidebar = document.getElementById("userInfo");
-        sidebar.style.display = "none";
+    document.addEventListener("DOMContentLoaded", function () {
+        var userInfo = document.getElementById("userInfo");
+        userInfo.style.display = "none";
     });
-   
-   
     document.addEventListener("DOMContentLoaded", function() {
-   
-     
-
-        function logoutUser() {
-            fetch('/logout/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    // Redirect to the home page or show a success message
-                    window.location.href = '/';
-                } else {
-                    alert('Logout failed');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Logout failed');
+        populateModels();
+        populateTestName();
+    
+        document.getElementById("product").addEventListener("change", function() {
+            populateModels();
+            populateTestName();
+        });
+        document.getElementById("test_stage").addEventListener("change", function() {
+            populateTestName();
+        });
+    });
+    
+    
+    
+    // JavaScript object to store model data
+    const modelsByType = {
+        "TV": {{tv_models|safe}},
+        "AC": {{ac_models|safe}},
+        "Phone": {{phone_models|safe}},
+        "Washing_Machine": {{washing_machine_models|safe}}
+    };
+    
+    // JavaScript function to populate the model list based on the selected product type
+    function populateModels() {
+        const productTypeDropdown = document.getElementById("product");
+        const modelNameDropdown = document.getElementById("model_name");
+        const selectedProductType = productTypeDropdown.value;
+    
+        // Clear existing options
+        modelNameDropdown.innerHTML = "";
+    
+        // Populate model options based on the selected product type
+        if (selectedProductType && modelsByType[selectedProductType]) {
+            const optionAllModels = document.createElement("option");
+            optionAllModels.text = "All Models";
+            optionAllModels.value = "";
+            modelNameDropdown.appendChild(optionAllModels);
+    
+            modelsByType[selectedProductType].forEach(model => {
+                const option = document.createElement("option");
+                option.text = model;
+                modelNameDropdown.appendChild(option);
             });
         }
-        
-        
-      
-
+    }
+    
+    function populateTestName() {
+        const testDetail = {{ test|safe }};
+        const productTypeDropdown = document.getElementById("product");
+        const testStageDropdown = document.getElementById("test_stage");
+        const testNameDropdown = document.getElementById("test_name");
+        const selectedProductType = productTypeDropdown.value;
+        const selectedTestStage = testStageDropdown.value;
+    
+        // Clear existing options
+        testNameDropdown.innerHTML = "";
+    
+        const optionAllTests = document.createElement("option");
+        optionAllTests.text = "All Tests";
+        optionAllTests.value = "";
+        testNameDropdown.appendChild(optionAllTests);
+    
+        testDetail.forEach(item => {
+            const s = item.TestStage;
+    
+            if (selectedProductType === "" && selectedTestStage === "") {
+                // If both product type and test stage are not selected, show all test names
+                const option = document.createElement("option");
+                option.text = item.TestName;
+                testNameDropdown.appendChild(option);
+            } else if (selectedProductType === "") {
+                // If only test stage is selected, filter by test stage
+                if ((s[0] === '1' && selectedTestStage === "DVT") ||
+                    (s[1] === '1' && selectedTestStage === "PP") ||
+                    (s[2] === '1' && selectedTestStage === "MP") ||
+                    (s[3] === '1' && selectedTestStage === "PDI")) {
+                    const option = document.createElement("option");
+                    option.text = item.TestName;
+                    testNameDropdown.appendChild(option);
+                }
+            } else if (selectedTestStage === "") {
+                // If only product type is selected, filter by product type
+                if (item.Product === selectedProductType) {
+                    const option = document.createElement("option");
+                    option.text = item.TestName;
+                    testNameDropdown.appendChild(option);
+                }
+            } else {
+                // If both product type and test stage are selected, filter by both
+                if (item.Product === selectedProductType && (
+                    (s[0] === '1' && selectedTestStage === "DVT") ||
+                    (s[1] === '1' && selectedTestStage === "PP") ||
+                    (s[2] === '1' && selectedTestStage === "MP") ||
+                    (s[3] === '1' && selectedTestStage === "PDI"))) {
+                    const option = document.createElement("option");
+                    option.text = item.TestName;
+                    testNameDropdown.appendChild(option);
+                }
+            }
+        });
+    }
+    function logoutUser() {
+        fetch('/logout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
+            },
+            body: JSON.stringify({})
+        })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to the home page or show a success message
+                        window.location.href = '/';
+                    } else {
+                        alert('Logout failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Logout failed');
+                });
+    }
 </script>
+
 </body>
 </html>

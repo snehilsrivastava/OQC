@@ -19,10 +19,6 @@ from django.db.models import Q
 def main_page(request):
     return redirect(login_page)
 
-def redirect_dashboard(request):
-    if request.method == 'POST':
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False}, status=400)
 
 def send_report(request, report_id):
     if request.method == 'GET':
@@ -88,6 +84,8 @@ def check(request):
     status = request.GET.get('status', '')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
+
+    
     
     # Filter the TestRecord queryset based on the parameters
     completed_tests = TestRecord.objects.filter(employee=username)
@@ -211,13 +209,15 @@ def dashboard(request):
     status = request.GET.get('status', '')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
+    L_status = request.GET.get('L_status','')
+    B_status = request.GET.get('B_status','')
 
     # # Filter the TestRecord queryset based on the parameters
     # tests = list(TestRecord.objects.values('ProductType', 'ModelName', 'TestStage').distinct())
     # tests = tests.exclude(status="Not Sent")
     completed_tests = TestRecord.objects.exclude(status="Not Sent")
-
-    tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
+    
+    
     if test_name:
         completed_tests = completed_tests.filter(TestName__icontains=test_name)
     if product:
@@ -230,11 +230,18 @@ def dashboard(request):
         completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
     if status:
         completed_tests = completed_tests.filter(status=status)
+    if L_status:
+        completed_tests = completed_tests.filter(L_status= L_status)
+    if B_status:
+        completed_tests = completed_tests.filter(B_status= B_status)
     if start_date:
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
+
+    tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
     completed_tests = completed_tests.order_by('-test_date')
+   
     
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
@@ -251,6 +258,8 @@ def dashboard(request):
         'model_name': model_name,
         'serial_number': serial_number,
         'status': status,
+        'L_status' : L_status,
+        'B_status' : B_status,
         'product': product,
         'start_date': start_date,
         'end_date': end_date,
@@ -261,6 +270,7 @@ def dashboard(request):
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
+        'test' : test,
         'username': username
     }
 
@@ -323,7 +333,7 @@ def view_pdf(request, test_name, model_name, serialno):
     }
     return render(request, "view_pdf.html", context)
 
-def generate_pdf_for_legal(request,model_name,test_stage):
+def pdf_model_stage(request,model_name,test_stage):
     if request.method == 'GET':
 
         selected_test_records = TestRecord.objects.filter(ModelName=model_name, TestStage=test_stage)
@@ -425,48 +435,7 @@ def handle_selected_tests(request):
 
     return redirect('/dashboard/')
 
-def generate_pdf(request):
-    if request.method == 'POST':
-        selected_test_ids = request.POST.getlist('selected_tests')
-        # Retrieve the selected test records from the database
-        selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids)
-        if not selected_test_records.exists():
-            raise Http404("No test records found")
-        pdf_list = []
-        cumul_page_count, cumul_page_count_list = 3, []
-        test_name_list = []
-        for i, test_record in enumerate(selected_test_records, start=1):
-            model_name = test_record.ModelName
-            test_name = test_record.TestName
-            Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-            models = get_object_or_404(AC, ModelName=model_name)
-            context = {
-                'test': test_record,
-                'model': models,
-                'TestProtocol': Test_protocol,
-            }
-            test_name_list.append(test_name)
-            cumul_page_count_list.append(cumul_page_count)
-            pdf_content, page_count = render_to_pdf('view_pdf.html', context, request)
-            pdf_list.append(BytesIO(pdf_content))
-            cumul_page_count += page_count
 
-        if len(pdf_list) > 1:  # No cover page or table of contents for one test
-            test_record = selected_test_records[0] # assuming all records are for same model
-            model_name = test_record.ModelName
-            MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
-            cover_context = {
-                'MNF_detail': MNF_detail,
-            }
-            pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
-            context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
-            pdf_list.insert(1, BytesIO(render_contents_to_pdf('pdf_contents.html', {'list': context_list}, request)))
-        merged_pdf = merge_pdfs(pdf_list)
-        response = HttpResponse(merged_pdf, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
-        return response
-
-    return HttpResponse("Invalid request method.", status=405)
 
 
 def view(request, test_name, model_name, serialno):
@@ -502,10 +471,8 @@ def owner_view(request, test_name, model_name, serialno):
 def change_status(request, test_id, status):
     test = get_object_or_404(TestRecord, id=test_id)
 
-    if status == 1:
-        test.status = "Waiting for Approval"
-    elif status == 2:
-        test.status = "Approved"
+    if status == 2:
+        test.status = "Approve"
     elif status == 3:
         test.status = "Rejected"
     else:
@@ -527,12 +494,10 @@ from .models import TestRecord
 def change_status_legal(request, test_id, status):
     test = get_object_or_404(TestRecord, id=test_id)
 
-    if status == 1:
-        test.legal_status = "Waiting for Approval"
-    elif status == 2:
-        test.legal_status = "Approved"
+    if status == 2:
+        test.L_status = "Approve"
     else:
-        test.legal_status = "Rejected"
+        test.L_status = "Rejected"
 
     test.save()
 
@@ -544,31 +509,168 @@ def change_status_legal(request, test_id, status):
     # Redirect to legal_view with the retrieved parameters
     return redirect('legal_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
+def change_status_brand(request, test_id, status):
+    test = get_object_or_404(TestRecord, id=test_id)
+
+    if status == 2:
+        test.B_status = "Approve"
+    else:
+        test.B_status = "Rejected"
+
+    test.save()
+
+    # Retrieve parameters for redirection
+    test_name = test.TestName
+    model_name = test.ModelName
+    serialno = test.SerailNo
+
+    # Redirect to legal_view with the retrieved parameters
+    return redirect('brand_view', test_name=test_name, model_name=model_name, serialno=serialno)
+
 def legal_dashboard(request):
-    # Assuming 'username' is stored in the session, retrieve it
-    username = request.session.get('username')
-    all_tests = TestRecord.objects.exclude(L_status="Not Sent")
+    username = request.session['username']
 
-    test = all_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
+    # Get filter parameters from request
+    test_name = request.GET.get('test_name', '')
+    test_stage = request.GET.get('test_stage', '')
+    product = request.GET.get('product', '')
+    model_name = request.GET.get('model_name', '')
+    serial_number = request.GET.get('serial_number', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+    L_status = request.GET.get('L_status','')
 
-    # Retrieve employee details based on 'username'
+
+    # # Filter the TestRecord queryset based on the parameters
+    # tests = list(TestRecord.objects.values('ProductType', 'ModelName', 'TestStage').distinct())
+    # tests = tests.exclude(status="Not Sent")
+    completed_tests = TestRecord.objects.exclude(L_status="Not Sent")
+    
+    
+    if test_name:
+        completed_tests = completed_tests.filter(TestName__icontains=test_name)
+    if product:
+        completed_tests = completed_tests.filter(ProductType__icontains=product)
+    if test_stage:
+        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
+    if model_name:
+        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
+    if serial_number:
+        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
+    if L_status:
+        completed_tests = completed_tests.filter(L_status= L_status)
+    if start_date:
+        completed_tests = completed_tests.filter(test_date__gte=start_date)
+    if end_date:
+        completed_tests = completed_tests.filter(test_date__lte=end_date)
+
+    tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
+    completed_tests = completed_tests.order_by('-test_date')
+   
+    
+    tv_models = list(TV.objects.values_list('ModelName', flat=True))
+    ac_models = list(AC.objects.values_list('ModelName', flat=True))
+    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
+    test = list(TestList.objects.all().values())
     employee = Employee.objects.get(username=username)
-    all_tests = all_tests.order_by('-test_end_date')
-    # Create an icon based on employee's first and last name initials
     icon = employee.first_name[0] + employee.last_name[0]
-
-    # Prepare context data to pass to the template
     context = {
-        'tests': test,
+        'tests': tests,
+        'all_tests': completed_tests,
+        'test_name': test_name,
+        'test_stage': test_stage,
+        'model_name': model_name,
+        'serial_number': serial_number,
+        'L_status' : L_status,
+        'product': product,
+        'start_date': start_date,
+        'end_date': end_date,
+        'tv_models': tv_models,
+        'ac_models': ac_models,
+        'phone_models': phone_models,
+        'washing_machine_models': washing_machine_models,
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
-        'username': username,
-        'all_tests': all_tests,
+        'test' : test,
+        'username': username
     }
 
-    # Render the template 'legal_dashboard.html' with the context data
+    
     return render(request, "legal_dashboard.html", context)
+
+def brand_dashboard(request):
+    username = request.session['username']
+
+    # Get filter parameters from request
+    test_name = request.GET.get('test_name', '')
+    test_stage = request.GET.get('test_stage', '')
+    product = request.GET.get('product', '')
+    model_name = request.GET.get('model_name', '')
+    serial_number = request.GET.get('serial_number', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+    B_status = request.GET.get('B_status','')
+
+
+    # # Filter the TestRecord queryset based on the parameters
+    # tests = list(TestRecord.objects.values('ProductType', 'ModelName', 'TestStage').distinct())
+    # tests = tests.exclude(status="Not Sent")
+    completed_tests = TestRecord.objects.exclude(B_status="Not Sent")
+    
+    
+    if test_name:
+        completed_tests = completed_tests.filter(TestName__icontains=test_name)
+    if product:
+        completed_tests = completed_tests.filter(ProductType__icontains=product)
+    if test_stage:
+        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
+    if model_name:
+        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
+    if serial_number:
+        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
+    if B_status:
+        completed_tests = completed_tests.filter(B_status= B_status)
+    if start_date:
+        completed_tests = completed_tests.filter(test_date__gte=start_date)
+    if end_date:
+        completed_tests = completed_tests.filter(test_date__lte=end_date)
+
+    tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
+    completed_tests = completed_tests.order_by('-test_date')
+   
+    
+    tv_models = list(TV.objects.values_list('ModelName', flat=True))
+    ac_models = list(AC.objects.values_list('ModelName', flat=True))
+    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
+    test = list(TestList.objects.all().values())
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
+    context = {
+        'tests': tests,
+        'all_tests': completed_tests,
+        'test_name': test_name,
+        'test_stage': test_stage,
+        'model_name': model_name,
+        'serial_number': serial_number,
+        'B_status' : B_status,
+        'product': product,
+        'start_date': start_date,
+        'end_date': end_date,
+        'tv_models': tv_models,
+        'ac_models': ac_models,
+        'phone_models': phone_models,
+        'washing_machine_models': washing_machine_models,
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'test' : test,
+        'username': username
+    }
+
+    return render(request, "brand_dashboard.html", context)
 
 
 
@@ -589,11 +691,28 @@ def legal_view(request, test_name, model_name, serialno):
     }
     return render(request, "legal_view.html", context)
 
+def brand_view(request, test_name, model_name, serialno):
+    # Fetch the specific Test_core_detail object related to the cooling test
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+    models = get_object_or_404(AC, ModelName=model_name)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+
+    context = {
+        'testdetail': test_record,
+        'TestProtocol': Test_protocol,
+        'model': models,
+        'test': test_record,
+        'test_name': test_name,
+        'model_name': model_name,
+        'serialno': serialno
+    }
+    return render(request, "brand_view.html", context)
+
 def MNF(request):
     if request.method == 'POST':
         # Get form data from the request
         customer = request.POST.get('Customer')
-        manufature = request.POST.get('Manufature')
+        Manufacture = request.POST.get('Manufacture')
         location = request.POST.get('Location')
         brand = request.POST.get('Brand')
         product = request.POST.get('prod')
@@ -606,7 +725,7 @@ def MNF(request):
         # Create and save a new AC object
         new_mnf = Model_MNF_detail(
            Customer = customer,
-           Manufature = manufature,
+           Manufacture = Manufacture,
            Location = location,
            Brand = brand,
            Product = product,

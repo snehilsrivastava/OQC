@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Page Navbar with Header</title>
+    <title>Employee Dashboard</title>
     <!-- Correctly include Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -219,7 +219,7 @@
         }
         
         .status-2 {
-            /* styles for 'Approved' */
+            /* styles for 'Approve' */
             background: #5AA33F;
             color: #fff;
         }
@@ -322,15 +322,7 @@
 </div>
 
 <div class="main-content">
-    {% comment %} <ul class='nav' id="sidebar">
-        <li><a href="{% url 'check' %}"><i class="fa fa-home fa-icon"></i>&nbsp Home</a></li>
-        <li><a href="{% url 'product' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add report</a></li>
-        <li><a href="{% url 'mnf' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add model detail</a></li>
-        <li><a href="{% url 'test_list_entry' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add test detail</a></li>
-        <!-- <div class="bottom-icon">
-            <a href="/logout" style="color: white;"><i class="fa fa-sign-out"></i> Logout</a>
-        </div> -->
-    </ul> {% endcomment %}
+
 
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 
@@ -344,10 +336,10 @@
             <label for="product">Product Type:</label>
             <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
                 <option value="">Select Product Type</option>
-                <option value="TV">TV</option>
-                <option value="AC">AC</option>
-                <option value="Phone">Phone</option>
-                <option value="Washing_Machine">Washing Machine</option>
+                <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
+                <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
+                <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
+                <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
             </select>
         </div>
         <br>
@@ -355,10 +347,10 @@
             <label for="test_stage">Test Stage:</label>
             <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
                 <option value="">Select Test Stage</option>
-                <option value="DVT">DVT</option>
-                <option value="PP">PP</option>
-                <option value="MP">MP</option>
-                <option value="PDI">PDI</option>
+                <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
+                <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
+                <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
+                <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
             </select>
         </div>
         <br>
@@ -366,7 +358,8 @@
             <label for="model_name">Model Name:</label>
             <select class="form-control" id="model_name" name="model_name">
                 <!-- Model options will be populated dynamically based on the selected product type -->
-                <option value="">All Models</option>
+                {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
+                <option value="">{{model_name}}</option>
             </select>
         </div>
         <br>
@@ -386,10 +379,10 @@
             <label for="status">Status:</label>
             <select id="status" name="status">
                 <option value="">All</option>
-                <option value="0" {% if status == '0' %}selected{% endif %}>Not Sent</option>
-                <option value="1" {% if status == '1' %}selected{% endif %}>Waiting for Approval</option>
-                <option value="2" {% if status == '2' %}selected{% endif %}>Approved</option>
-                <option value="3" {% if status == '3' %}selected{% endif %}>Rejected</option>
+                <option value="Not Sent"{%if status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
+                <option value="Waiting for Approval"  {%if status == 'Waiting for Approval'%}selected{%endif%}>Waiting for Approval</option>
+                <option value="Approve" {%if status == 'Approve'%}selected{%endif%}>Approve</option>
+                <option value="Rejected"{%if status == 'Rejected'%}selected{%endif%}>Rejected</option>
             </select>
         </div>
         <br>
@@ -439,8 +432,8 @@
                     <td>{{ test.TestName }}</td>
                     <td>{{ test.TestStage }}</td>
                     <td>{{ test.test_date }}</td>
-                    <td> {{test.status}}
-                    </td>
+                    <td> {{test.status}}</td>
+
                     
                     <td class="action-buttons">
                          
@@ -490,6 +483,33 @@
         }
     }
 
+    function clearFilter(){
+        var form = document.getElementById("filter-form");
+
+        // Manually reset each field to the empty string or their default values if needed
+        var product = document.getElementById("product");
+        var testStage = document.getElementById("test_stage");
+        var modelName = document.getElementById("model_name");
+        var testName = document.getElementById("test_name");
+        var serialNumber = document.getElementById("serial_number");
+        var status = document.getElementById("status");
+        var startDate = document.getElementById("start_date");
+        var endDate = document.getElementById("end_date");
+
+    
+        // Set default values
+        product.value = "";
+        testStage.value = "";
+        modelName.value = "";
+        testName.value = "";
+        serialNumber.value = "";
+        status.value = "";
+        startDate.value = "";
+        endDate.value = "";
+
+  
+    }
+
   
     
 
@@ -528,6 +548,7 @@
             const productTypeDropdown = document.getElementById("product");
             const modelNameDropdown = document.getElementById("model_name");
             const selectedProductType = productTypeDropdown.value;
+            var selectedModel = "{{ model_name }}";
         
             // Clear existing options
             modelNameDropdown.innerHTML = "";
@@ -542,6 +563,9 @@
                 modelsByType[selectedProductType].forEach(model => {
                     const option = document.createElement("option");
                     option.text = model;
+                    if (model === selectedModel) {
+                        option.selected = true;
+                    }
                     modelNameDropdown.appendChild(option);
                 });
             }
@@ -561,6 +585,7 @@
             const optionAllTests = document.createElement("option");
             optionAllTests.text = "All Tests";
             optionAllTests.value = "";
+            var selectedTest = "{{ test_name }}";
             testNameDropdown.appendChild(optionAllTests);
         
             testDetail.forEach(item => {
@@ -570,6 +595,9 @@
                     // If both product type and test stage are not selected, show all test names
                     const option = document.createElement("option");
                     option.text = item.TestName;
+                    if (item.TestName === selectedTest) {
+                        option.selected = true;
+                    }
                     testNameDropdown.appendChild(option);
                 } else if (selectedProductType === "") {
                     // If only test stage is selected, filter by test stage
@@ -579,6 +607,9 @@
                         (s[3] === '1' && selectedTestStage === "PDI")) {
                         const option = document.createElement("option");
                         option.text = item.TestName;
+                        if (item.TestName === selectedTest) {
+                            option.selected = true;
+                        }
                         testNameDropdown.appendChild(option);
                     }
                 } else if (selectedTestStage === "") {
@@ -586,6 +617,9 @@
                     if (item.Product === selectedProductType) {
                         const option = document.createElement("option");
                         option.text = item.TestName;
+                        if (item.TestName === selectedTest) {
+                            option.selected = true;
+                        }
                         testNameDropdown.appendChild(option);
                     }
                 } else {
@@ -597,6 +631,9 @@
                         (s[3] === '1' && selectedTestStage === "PDI"))) {
                         const option = document.createElement("option");
                         option.text = item.TestName;
+                        if (item.TestName === selectedTest) {
+                            option.selected = true;
+                        }
                         testNameDropdown.appendChild(option);
                     }
                 }
