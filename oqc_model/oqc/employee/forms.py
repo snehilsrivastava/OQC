@@ -8,11 +8,9 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 class TestRecordForm(forms.ModelForm):
     class Meta:
         model = TestRecord
-        fields = ['test_date','result','sample_quantiy']
+        fields = ['test_date','result','sample_quantiy','additional_details']
         widgets = {
             'test_date': forms.DateInput(attrs={'type': 'date'}),
-          
-            # 'result': RichTextFormField()
         }
 
 testItemFormset = formset_factory(TestRecordForm, extra=1)

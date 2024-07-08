@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            color: white;
+            font-size: 17px;
+            text-decoration-color: whitesmoke;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #03385e;
+            color: white;
+            width: 100%;
+        }
+
+        .header .fa {
+            margin-right: 10px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 300px;
+            height: 100vh;
+            background-color: #03385e;
+            color: white;
+            overflow: auto;
+        }
+
+        .nav .bottom-icon {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            height : 100%;
+        }
+
+        li a {
+            display: flex;
+            align-items: center;
+            color: white;  /* Change text color to white */
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        /* Change the link color on hover */
+        li a:hover {
+            background-color: #a9b9bc;
+            color: white;
+        }
+
+        .fa-icon {
+            margin-right: 10px;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            color: black; /* Content text color */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #03385e;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+
+        .user-info {
+            display: none;
+            position: absolute;
+            right: 20px;
+            background-color: #f1f1f1;
+            color: black;
+            padding: 10px;
+            border: 1px solid #ddd;
+            z-index: 1;
+        }
+
+        .user-info p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        button.collapse-button {
+            height: 20px;
+            width: 20px;
+            padding: 0;
+            background-color: #03385e;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button.collapse-button i {
+            font-size: 12px;
+        }
+
+        .collapse-arrow {
+            color: white;
+        }
+
+        /* .collapse-arrow.down {
+            transform: rotate(0deg);
+        }
+
+        .collapse-arrow.up {
+            transform: rotate(180deg);
+        } */
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons a {
+            background: #03385e;
+            color: #fff;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+
+        .action-buttons a:hover {
+            background: #d9534f;
+        }
+
+        .icon {
+            font-size: 20px;
+        }
+
+        .user-btn {
+            background-color: #03385e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .user-info .logout-btn {
+            display: block;
+            margin-top: 10px;
+            background-color: #d9534f;
+            color: white !important;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .message {
+            list-style: circle;
+            width: calc(100% - 100px);
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px; /* Add some spacing */
+        }
+
+        .success {
+            background-color: #dff0d8;
+            color: #468847;
+            border-color: #d6e9c6;
+        }
+
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border-color: #ededed;
+        }
+
+        .button-container {
+            text-align: center; /* Optional: Centers the buttons horizontally */
+            border-radius: 3px;
+        }
+
+        .button-container button {
+            display: inline-block; /* Display buttons side by side */
+            margin-right: 10px; /* Optional: Add some spacing between buttons */
+            border-radius: 3px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="header">
+    {% comment %}
+    <div class="left-icon">
+        <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
+    </div>
+    {% endcomment %}
+
+    <div class="container">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="message {{ message.level_tag }}">
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <div class="right-icon">
+        <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+            <span id="userButtonText"></span>
+            <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
+        </button>
+        <div class="user-info" id="userInfo">
+            <p>Name: {{ first_name }} {{ last_name }}</p>
+            <p>Email: {{ username }}</p>
+            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+        </div>
+    </div>
+
+</div>
+
+<div class="main-content">
+    <div class="content">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Product</th>
+                <th>Model Name</th>
+                <th>Stage</th>
+                <th>Actions</th>
+                <!-- Column for collapse icon -->
+            </tr>
+            </thead>
+            <tbody>
+            {% for test in tests %}
+            <tr>
+                <td>
+                    <button class="collapse-button" type="button" data-toggle="collapse"
+                            data-target="#testList{{ forloop.counter }}" aria-expanded="false"
+                            aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">
+                        <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
+                    </button>
+                </td>
+                <td>{{ test.ProductType }}</td>
+                <td>{{ test.ModelName }}</td>
+                <td>{{ test.TestStage }}</td>
+                <td class="action-buttons">
+                    <a href="{% url 'pdf_model_stage' model_name=test.ModelName test_stage=test.TestStage %}"
+                       class="btn btn-primary">View PDF</a>
+                </td>
+
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <div class="collapse" id="testList{{ forloop.counter }}">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Test Name</th>
+                                    <th>Date</th>
+                                    <th>Serial No</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subtest in all_tests %}
+                                {% if subtest.ModelName == test.ModelName and subtest.TestStage == test.TestStage %}
+                                <tr>
+                                    <td>{{ subtest.TestName }}</td>
+                                    <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
+                                    <td>{{ subtest.SerailNo }}</td>
+                                    <td>{{ subtest.L_status }}</td>
+                                    <td><a href="{% url 'legal_view' subtest.TestName subtest.ModelName subtest.SerailNo %}"
+                                            class="btn btn-primary">View</a>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+                
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.collapse').on('show.bs.collapse', function () {
+            var target = $(this).prev().find('button i.fas');
+            target.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        }).on('hide.bs.collapse', function () {
+            var target = $(this).prev().find('button i.fas');
+            target.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        });
+    });
+
+    function toggleCollapseIcon(button) {
+        var icon = button.querySelector('i.fas');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
+    }
+
+    function toggleUserInfo() {
+        var userInfo = document.getElementById("userInfo");
+        userInfo.style.display = userInfo.style.display === "none" ? "block" : "none";
+    }
+
+    // Ensure user info starts hidden
+    document.addEventListener("DOMContentLoaded", function () {
+        var userInfo = document.getElementById("userInfo");
+        userInfo.style.display = "none";
+    });
+
+    function logoutUser() {
+        fetch('/logout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
+            },
+            body: JSON.stringify({})
+        })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to the home page or show a success message
+                        window.location.href = '/';
+                    } else {
+                        alert('Logout failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Logout failed');
+                });
+    }
+
+    document.addEventListener('click', function(event) {
+    var clickedElement = event.target;
+    if (clickedElement !== document.getElementById("userInfo") && clickedElement !== document.getElementById("userButton")) {
+        document.getElementById("userInfo").style.display = "none";
+    }
+    });
+
+</script>
+</body>
+</html>

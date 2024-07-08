@@ -5,5 +5,4 @@ from .models import *
 admin.site.register(TestRecord)
 admin.site.register(Model_MNF_detail)
 admin.site.register(Test_core_detail)
-admin.site.register(TestStageDetail)
 admin.site.register(TestList)

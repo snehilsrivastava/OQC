@@ -12,8 +12,6 @@ from django.conf import settings
 from django.core.mail import send_mail
 import re
 
-
-
 # Define custom authenticate function which uses Employee DB
 def authenticate(username=None, password=None):
     login_user = Employee.objects.get(username=username)
@@ -50,9 +48,6 @@ def login_page(request):
             login(request, user)
             request.session['user_type'] = user.user_type
             request.session['username'] = user.username
-            
-            # request.session['password'] = user.password
-            # request.session['last_login'] = user.last_login
             if user.user_type == 'owner':
                 return redirect('/dashboard/')
             elif user.user_type == 'legal':
