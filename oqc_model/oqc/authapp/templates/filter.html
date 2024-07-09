@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Page Navbar with Header</title>
+    <title>Filtered Records</title>
     <!-- Correctly include Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         body {
             margin: 0;
@@ -105,6 +105,8 @@
         }
         button {
            height: 30px;
+           /* display: flexbox; */
+           white-space: nowrap;
            color: rgb(239, 237, 246); 
            width: 170px;
            border: 10px;
@@ -230,8 +232,8 @@
             color: #fff;
         }
         .action-buttons {
-            display: flex;
-            gap: 10px;
+            display: flexbox;
+            gap: 5px;
         }
 
         .action-buttons a {
@@ -289,12 +291,7 @@
 <body>
 
 <div class="header">
-    {% comment %} <div class="left-icon">
-        <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
-    </div> {% endcomment %}
-
     <div class="container">
-           
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
@@ -304,7 +301,6 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        
     </div>
    
     <div class="right-icon">
@@ -313,8 +309,8 @@
             <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
         </button>
         <div class="user-info" id="userInfo">
-            <p>Username: {{ username }}</p>
-            <p>Name: {{ first_name }} &nbsp {{ last_name }}</p>
+            <p>Name: {{ first_name }} {{ last_name }}</p>
+            <p>Email: {{ username }}</p>
             <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
         </div>
     </div>
@@ -322,16 +318,6 @@
 </div>
 
 <div class="main-content">
-    {% comment %} <ul class='nav' id="sidebar">
-        <li><a href="{% url 'check' %}"><i class="fa fa-home fa-icon"></i>&nbsp Home</a></li>
-        <li><a href="{% url 'product' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add report</a></li>
-        <li><a href="{% url 'mnf' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add model detail</a></li>
-        <li><a href="{% url 'test_list_entry' %}"><i class="fa fa-file fa-icon"></i>&nbsp&nbsp Add test detail</a></li>
-        <!-- <div class="bottom-icon">
-            <a href="/logout" style="color: white;"><i class="fa fa-sign-out"></i> Logout</a>
-        </div> -->
-    </ul> {% endcomment %}
-
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 
 <!-- Filter Popup -->
@@ -412,12 +398,12 @@
 </div>
 
     <div class="content">
-        <h1>Dashboard</h1>
+        <i class="fas fa-arrow-left fa-icon"></i>
+        <button><a href="{% url 'dashboard' %}">Back to dashboard</a></button>
+        <h2>Filtered Records</h1>
         <i class="fa fa-search fa-icon"></i>
         <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
         <br><br>
-        <i class="fa fa-file fa-icon"></i>
-        <button><a href="{% url 'product' %}">Add new report</a></button>
         
         <table>
             <thead>
@@ -457,10 +443,10 @@
                     
                     <td class="action-buttons">
                          
-                        <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit </a> 
-                        <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
-                        <a class="button" href="{% url 'remark' test.id %}">Remark</a>
-                        <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a>
+                        <!-- <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit</a>  -->
+                        <a class="button" href="{% url 'owner_view' test.TestName test.ModelName test.SerailNo %}">View</a>
+                        <a class="button" href="{% url 'remark_owner' test.id %}">Remark</a>
+                        <!-- <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a> -->
 
                     </td>
                 </tr>
@@ -615,37 +601,6 @@
                 }
             });
         }
-       
-      
-
-        function deleteTestRecord(recordId) {
-            if (confirm("Are you sure you want to delete this record?")) {
-                fetch(`/delete-test-record/${recordId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({})
-                })
-                .then(response => {
-                    if (response.ok) {
-                       
-                        const recordElement = document.getElementById(`test-record-${recordId}`);
-                        if (recordElement) {
-                            recordElement.remove();
-                        }
-                        location.reload(); 
-                    } else {
-                        throw new Error('Failed to delete record.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error deleting record:', error);
-                    alert('Failed to delete record. Please try again later.');
-                });
-            }
-        }
 
         function logoutUser() {
             fetch('/logout/', {
@@ -675,10 +630,6 @@
                 alert('Logout failed');
             });
         }
-        
-        
-      
-
 </script>
 </body>
 </html>

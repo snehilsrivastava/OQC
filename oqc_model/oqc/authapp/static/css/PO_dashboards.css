@@ -212,3 +212,58 @@ tr:nth-child(even) {
     justify-content: center;
     align-items: center;
 }
+
+.action-buttons {
+    display: flexbox;
+    gap: 5px;
+}
+
+.action-buttons a {
+    background:#03385e;
+    color: #fff;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.action-buttons a:hover {
+    background: #d9534f;
+}
+
+.toggle-button {
+    background:;
+    color: #fff;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.message {
+    list-style: circle;
+    width: calc(100% - 100px);
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px; /* Add some spacing */
+}
+
+.success {
+    background-color: #dff0d8;
+    color: #468847;
+    border-color: #d6e9c6;
+}
+
+.error {
+    background-color: #f2dede;
+    color: #a94442;
+    border-color: #ededed;
+}
+.button-container {
+    text-align: center; /* Optional: Centers the buttons horizontally */
+    border-radius: 3px;
+}
+.button-container button {
+    display: inline-block; /* Display buttons side by side */
+    margin-right: 10px; /* Optional: Add some spacing between buttons */
+    border-radius: 3px;
+}

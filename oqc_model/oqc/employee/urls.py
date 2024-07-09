@@ -11,6 +11,7 @@ urlpatterns = [
     # path('members/', views.members, name='members'),  
     # path('testdetail/<int:no>/', views.testdetail, name='testdetail'),
     path('check/', views.check, name='check'),
+    path('filter/', views.filter, name='filter'),
     path('dashboard/',views.dashboard,name = 'dashboard'),
     path('logout/',views.logout,name = 'logout'),
     path('submit-product-details', views.submit_product_details_view, name='submit_product_details'),
