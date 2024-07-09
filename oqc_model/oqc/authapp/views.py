@@ -12,61 +12,60 @@ from django.conf import settings
 from django.core.mail import send_mail
 import re
 
-
-
 # Define custom authenticate function which uses Employee DB
 def authenticate(username=None, password=None):
-	login_user = Employee.objects.get(username=username)
-	if check_password(password, login_user.password):
-		return login_user
-	return None
+    login_user = Employee.objects.get(username=username)
+    if check_password(password, login_user.password):
+        return login_user
+    return None
 
 # Define a view function for the home page
 def home(request):
-	return render(request, 'home.html')
+    return render(request, 'home.html')
 
 # Define a view function for the login page
 def login_page(request):
-	# Check if the HTTP request method is POST (form submission)
-	if request.method == "POST":
-		username = request.POST.get('username')
-		password = request.POST.get('password')
-		
-		# Check if a user with the provided username exists
-		if not Employee.objects.filter(username=username).exists():
-			# Display an error message if the username does not exist
-			messages.error(request, 'Invalid Username')
-			return redirect('/au/login/')
-		
-		# Authenticate the user with the provided username and password
-		user = authenticate(username=username, password=password)
-		
-		if user is None:
-			# Display an error message if authentication fails (invalid password)
-			messages.error(request, "Invalid Password")
-			return redirect('/au/login/')
-		else:
-			# Log in the user and redirect to the home page upon successful login
-			login(request, user)
-			request.session['user_type'] = user.user_type
-			request.session['username'] = user.username
-            
-			# request.session['password'] = user.password
-			# request.session['last_login'] = user.last_login
-			if user.user_type == 'owner':
-				return redirect('/dashboard/')
-			else: # Tester
-				return redirect('/check/')
-	# Render the login page template (GET request)
-	return render(request, 'login.html')
+    # Check if the HTTP request method is POST (form submission)
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        # Check if a user with the provided username exists
+        if not Employee.objects.filter(username=username).exists():
+            # Display an error message if the username does not exist
+            messages.error(request, 'Invalid Username')
+            return redirect('/au/login/')
+        
+        # Authenticate the user with the provided username and password
+        user = authenticate(username=username, password=password)
+        
+        if user is None:
+            # Display an error message if authentication fails (invalid password)
+            messages.error(request, "Invalid Password")
+            return redirect('/au/login/')
+        else:
+            # Log in the user and redirect to the home page upon successful login
+            login(request, user)
+            request.session['user_type'] = user.user_type
+            request.session['username'] = user.username
+            if user.user_type == 'owner':
+                return redirect('/dashboard/')
+            elif user.user_type == 'legal':
+                return redirect('/legal_dashboard/')
+            elif user.user_type == 'brand':
+                return redirect('/brand_dashboard/')
+            else: # Tester
+                return redirect('/check/')
+    # Render the login page template (GET request)
+    return render(request, 'login.html')
 
 def generate_otp(length=6):
-	return str(randint(10**(length-1), 10**length -1))
+    return str(randint(10**(length-1), 10**length -1))
 
 def delete_expired_otps():
-	expirations_time = datetime.now() - timedelta(minutes=5)
-	OTP.objects.filter(Q(is_verified=True) | Q(created_at__lt=expirations_time)).delete()
-	return
+    expirations_time = datetime.now() - timedelta(minutes=5)
+    OTP.objects.filter(Q(is_verified=True) | Q(created_at__lt=expirations_time)).delete()
+    return
 
 def verify_otp(user, otp_code):
     if otp_code:

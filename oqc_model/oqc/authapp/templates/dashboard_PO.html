@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard</title>
-    <!-- Correctly include Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <title>Product Owner Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -17,17 +17,17 @@
             color: white;
             font-size: 17px;
             text-decoration-color: whitesmoke;
-            overflow-x: hidden;
         }
 
         .header {
             display: flex;
-            justify-content: space-between;
+            /* justify-content: space-between; */
             align-items: center;
             padding: 10px 20px;
             background-color: #03385e;
             color: white;
             width: 100%;
+            position: sticky;
         }
 
         .header .fa {
@@ -50,7 +50,18 @@
             overflow: auto;
         }
 
-        .nav .bottom-icon {
+        .left-icon {
+            display: flex;
+        }
+
+        .nav {
+            position: sticky;
+            top: 59.25px;
+            /* left: 10px; */
+            height : calc(100vh-2000px);
+        }
+
+        .bottom-icon {
             position: absolute;
             bottom: 10px;
             left: 10px;
@@ -69,6 +80,7 @@
         li a:hover {
             background-color: #a9b9bc;
             color: white;
+            text-decoration: none;
         }
 
         .fa-icon {
@@ -104,6 +116,7 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+
         button {
            height: 30px;
            color: rgb(239, 237, 246); 
@@ -111,18 +124,19 @@
            border: 10px;
            border-color: black;
            background-color: #03385e;
-           font-size: 20px;
+           /* font-size: 20px; */
            border-radius: 3px;
         }
+
         button a {
             color : whitesmoke;
             width: 120px;
-            text-decoration: none;
         }
 
         button a:hover {
             background-color: #a9b9bc;
             color: white; 
+            text-decoration: none;
         }
 
         .popup {
@@ -183,6 +197,31 @@
             border: 1px solid #ddd;
             z-index: 1;
         }
+        button.collapse-button {
+            height: 20px;
+            width: 20px;
+            padding: 0;
+            background-color: #03385e;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button.collapse-button i {
+            font-size: 12px;
+        }
+
+        .collapse-arrow {
+            color: white;
+        }
+
+        .collapse-arrow.down {
+            transform: rotate(0deg);
+        }
+
+        .collapse-arrow.up {
+            transform: rotate(180deg);
+        }
 
         .user-info p {
             margin: 0;
@@ -195,13 +234,15 @@
             border: none;
             padding: 10px 20px;
             cursor: pointer;
+            width: 40px;
+            font-size: 20px;
         }
 
         .logout-btn {
             display: block;
             margin-top: 10px;
             background-color: #d9534f;
-            color: white;
+            color: white !important;
             border: none;
             padding: 10px 20px;
             text-align: center;
@@ -209,28 +250,29 @@
             cursor: pointer;
         }
 
-        .status-Not.Sent {
+        .status-0 {
             background:#03385e;
             color: #fff;
         }
         
-        .status-Waiting.for.Approval {
+        .status-1 {
             /* styles for 'Waiting for Approval' */
             background: #4FAAD7;
             color: #fff;
         }
         
-        .status-Approved {
+        .status-2 {
             /* styles for 'Approved' */
             background: #5AA33F;
             color: #fff;
         }
         
-        .status-Rejected {
+        .status-3 {
             /* styles for 'Rejected' */
             background: #b20b00;
             color: #fff;
         }
+
         .action-buttons {
             display: flexbox;
             gap: 5px;
@@ -287,16 +329,14 @@
         }
         
     </style>
+
 </head>
 <body>
-
 <div class="header">
-    {% comment %} <div class="left-icon">
+    <div class="left-icon" style="display: flex; align-items: center;">
         <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
-    </div> {% endcomment %}
-
+    </div>
     <div class="container">
-           
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
@@ -306,11 +346,10 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        
     </div>
-   
     <div class="right-icon">
         <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+            <span id="userButtonText"></span>
             <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
         </button>
         <div class="user-info" id="userInfo">
@@ -319,17 +358,27 @@
             <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
         </div>
     </div>
-  
 </div>
 
 <div class="main-content">
+    <ul class='nav' id="sidebar" style="display:flex; flex-direction:column;">
+        <li><a href="{% url 'dashboard' %}"><i class="fa fa-home fa-icon"></i>&nbsp Home</a></li>
+        <!-- <li><a href="{% url 'product' %}"><i class="fa fa-file fa-icon"></i>&nbsp Add report</a></li> -->
+        <li><a href="{% url 'mnf' %}"><i class="fa fa-file fa-icon"></i>&nbsp Add model detail</a></li>
+        <li><a href="{% url 'test_list_entry' %}"><i class="fa fa-file fa-icon"></i>&nbsp Add test detail</a></li>
+        <li><a href="{% url 'update_test_list_entry' %}"><i class="fa fa-file fa-icon"></i>&nbsp Update test detail</a></li>
+        <!-- <div class="bottom-icon">
+            <a href="/logout" style="color: white;"><i class="fa fa-sign-out"></i> Logout</a>
+        </div> -->
+    </ul>
+
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 
 <!-- Filter Popup -->
 <div class="popup" id="filterPopup">
     <span class="close" onclick="toggleFilter()">&times;</span>
     <h2>Filter Options</h2>
-    <form id="filter-form" method="get" action="{% url 'check' %}">
+    <form id="filter-form" method="get" action="{% url 'dashboard' %}">
         {% csrf_token %}
         <div>
             <label for="product">Product Type:</label>
@@ -363,7 +412,7 @@
         <br>
         <div>
             <label for="test_name">Test Name:</label>
-            <select class="form-control" id="test_name" name="test_name">
+            <select class="form-control" id="test_name" name="test_name" >
                 <option value="">Select Test Name</option>
             </select>
         </div>
@@ -384,6 +433,7 @@
             </select>
         </div>
         <br>
+      
         <div>
             <label for="start_date">Start Date:</label>
             <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
@@ -394,73 +444,109 @@
             <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
         </div>
         <br>
+      
         <div class="button-container">
-            <button type="submit" class="button">Filter</button>
+            <button type="submit" class="button" >Filter</button>
             <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
         </div>
     </form>
 
 </div>
 
+
     <div class="content">
         <h1>Dashboard</h1>
         <i class="fa fa-search fa-icon"></i>
         <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
-        <br><br>
-        <i class="fa fa-file fa-icon"></i>
-        <button><a href="{% url 'product' %}">Add new report</a></button>
-        
-        <table>
+        <form method="POST" action="{% url 'handle_selected_tests' %}">
+            {% csrf_token %}
+        <table class="table table-bordered">
             <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Model Name</th>
-                    <th>Test Name</th>
-                    <th>Stage</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
+            <tr>
+                <th style='width: 2%; border-right:none'></th>
+                <th style='border-left: none'>Product</th>
+                <th>Model Name</th>
+                <th>Stage</th>
+                <th>Actions</th>
+            </tr>
             </thead>
             <tbody>
-                {% for test in completed_tests %}
-                <tr>
-                    <td>{{ test.ProductType }}</td>
-                    <td>{{ test.ModelName }}</td>
-                    <td>{{ test.TestName }}</td>
-                    <td>{{ test.TestStage }}</td>
-                    <td>{{ test.test_end_date|date:"d/m/Y" }}</td>
-                    <td>
-                        <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" >
-                            <!-- {% if test.status == 0 %}
-                                Not Send
-                            {% elif test.status == 1 %}
-                                Waiting for Approval
-                            {% elif test.status == 2 %}
-                                Approved
-                            {% elif test.status == 3 %}
-                                Rejected
-                            {% else %}
-                                Unknown Status
-                            {% endif %} -->
-                            {{ test.status }}
-                        </span>
-                    </td>
-                    
-                    <td class="action-buttons">
-                         
-                        <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit</a> 
-                        <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
-                        <!-- <a class="button" href="{% url 'remark' test.id %}">Remark</a> -->
-                        <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a>
-
-                    </td>
-                </tr>
-                {% endfor %}
+            {% for test in tests %}
+            <tr>
+                <td>
+                    <button class="collapse-button" type="button" data-toggle="collapse"
+                    data-target="#testList{{ forloop.counter }}" aria-expanded="false"
+                    aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)"
+                    style="display:inline-flex; justify-content:center; align-items:center;">
+                 <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
+            </button>
+                </td>
+                <td>{{ test.ProductType }}</td>
+                <td>{{ test.ModelName }}</td>
+                <td>{{ test.TestStage }}</td>
+                <td class="action-buttons">
+                    {% comment %} <a class="btn btn-primary" href="{% url 'pdf_view' model_name=test.ModelName test_stage=test.TestStage %}">View PDF</a> {% endcomment %}
+                    <div class="dropdown">
+                        <button class="toggle-button dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Actions
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <button class="dropdown-item" name="action" value="generate_pdf" type="submit">Generate Report</button>
+                          <button class="dropdown-item" name="action" value="send_legal" type="submit">Send to Legal</button>
+                          <button class="dropdown-item" name="action" value="send_brand" type="submit">Send to Brand</button>
+                        </div>
+                      </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <div class="collapse" id="testList{{ forloop.counter }}">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" id="select-all-{{ forloop.counter }}">
+                                    </th>
+                                    <th>Test Name</th>
+                                    <th>Date</th>
+                                    <th>Test Inspector</th>
+                                    <th>Serial No</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subtest in all_tests %}
+                                {% if subtest.ModelName == test.ModelName and subtest.TestStage == test.TestStage %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="selected_tests" value="{{ subtest.id }}">
+                                    </td>
+                                    <td>{{ subtest.TestName }}</td>
+                                    <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
+                                    <td>{{ subtest.employee }}</td>
+                                    <td>{{ subtest.SerailNo }}</td>
+                                    <td>{{ subtest.status }}</td>
+                                    <td>
+                                        <a class="btn btn-primary" href="{% url 'owner_view' subtest.TestName subtest.ModelName subtest.SerailNo %}">View</a>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
+    </form>
     </div>
-</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script>
     function toggleMenu() {
@@ -522,9 +608,7 @@
             populateTestName();
         });
     });
-    
-    
-    
+        
     // JavaScript object to store model data
     const modelsByType = {
         "TV": {{tv_models|safe}},
@@ -556,7 +640,7 @@
             });
         }
     }
-    
+        
     function populateTestName() {
         const testDetail = {{ test|safe }};
         const productTypeDropdown = document.getElementById("product");
@@ -612,35 +696,6 @@
             }
         });
     }
-    
-    function deleteTestRecord(recordId) {
-        if (confirm("Are you sure you want to delete this record?")) {
-            fetch(`/delete-test-record/${recordId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => {
-                if (response.ok) {
-                    
-                    const recordElement = document.getElementById(`test-record-${recordId}`);
-                    if (recordElement) {
-                        recordElement.remove();
-                    }
-                    location.reload(); 
-                } else {
-                    throw new Error('Failed to delete record.');
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting record:', error);
-                alert('Failed to delete record. Please try again later.');
-            });
-        }
-    }
 
     function logoutUser() {
         fetch('/logout/', {
@@ -671,13 +726,42 @@
         });
     }
 
+    $(document).ready(function () {
+        $('.collapse').on('show.bs.collapse', function () {
+            var target = $(this).prev().find('button i.fas');
+            target.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        }).on('hide.bs.collapse', function () {
+            var target = $(this).prev().find('button i.fas');
+            target.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        });
+    });
+
+    function toggleCollapseIcon(button) {
+        var icon = button.querySelector('i.fas');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select all checkboxes when the "select-all" checkbox is clicked
+        document.querySelectorAll('[id^="select-all-"]').forEach(checkbox => {
+            checkbox.addEventListener('click', function(event) {
+                const table = event.target.closest('table'); // Find the closest table
+                const checkboxes = table.querySelectorAll('td input[type="checkbox"]'); // Get all checkboxes within the table
+                for (const checkbox of checkboxes) {
+                    checkbox.checked = event.target.checked;
+                }
+            });
+        });
+    });
+    
     document.addEventListener('click', function(event) {
     var clickedElement = event.target;
     if (clickedElement !== document.getElementById("userInfo") && clickedElement !== document.getElementById("userButton")) {
         document.getElementById("userInfo").style.display = "none";
     }
     });
-    
+        
 </script>
 </body>
 </html>

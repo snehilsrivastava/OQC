@@ -6,14 +6,6 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from ckeditor.fields import RichTextField
 
 # Create your models here.
-
-class Test(models.Model):
-    no = models.IntegerField()  # Corrected: Added parentheses
-    start_date = models.DateField(auto_now=False, auto_now_add=False)  # Removed empty string
-    end_date = models.DateField(auto_now=False, auto_now_add=False)  # Removed empty string
-
-    def __str__(self):
-        return f"Test {self.no} from {self.start_date} to {self.end_date}"
     
 class Model_MNF_detail(models.Model):
 
@@ -31,7 +23,7 @@ class Model_MNF_detail(models.Model):
 
 
 class Test_core_detail(models.Model):
-  
+    ProductType = models.CharField(max_length=500,default='None')
     TestName =  models.CharField(max_length=500,default='None')
     Test_Objective = models.CharField(max_length=500,default='None')
     Test_Standard = models.CharField(max_length=500,default='None')
@@ -41,15 +33,6 @@ class Test_core_detail(models.Model):
     Instrument = models.CharField(max_length=500,default='None')
     def __str__(self):
         return f"{self.TestName}"
-
-class TestStageDetail(models.Model):
-    ModelName = models.CharField(max_length=80,default='None')
-    TestStage = models.CharField(max_length=20,default='None')
-    Test_Report_date = models.DateField(default=datetime.date.today)
-
-    def __str__(self):
-        return f"{self.ModelName}"
-
     
 class TestRecord(models.Model):
     employee = models.CharField(max_length=80, default = 'None')
@@ -62,7 +45,9 @@ class TestRecord(models.Model):
     notes = models.CharField(max_length=255, blank=True) 
     employee_remark  = models.TextField(max_length=500,default='',blank=True)
     owner_remark  = models.TextField(max_length=500,default='',blank=True)
-    status = models.IntegerField(default=0)
+    status = models.CharField(max_length=50,default="Not Sent")
+    L_status = models.CharField(max_length=50,default="Not Sent")
+    B_status = models.CharField(max_length=50,default="Not Sent")
     ProductType = models.CharField(max_length=102,default = "None")
     ModelName = models.CharField(max_length=100,default = "None")
     SerailNo  = models.CharField(max_length=100,default = "None")
@@ -72,14 +57,7 @@ class TestRecord(models.Model):
 
     def __str__(self):
         return f"{self.SerailNo}"
-    
-class TestImage(models.Model):
-    report = models.ForeignKey(TestRecord, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to="test_images/", height_field=None, width_field=None, max_length=None)
 
-    def __str__(self):
-        return f"Image for {self.report.test_name}"
-    
 
 class TestList(models.Model):
     TestStage = models.CharField(max_length=20,default='None')

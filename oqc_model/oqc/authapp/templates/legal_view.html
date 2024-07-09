@@ -3,6 +3,9 @@
 <head>
     <title>Cooling Test Form</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <style>
         table {
             border: 1px solid black;
@@ -63,25 +66,6 @@
             background-color: #0056b3; /* Change hover color as needed */
         }
     </style>
-    <script>
-        function setStatus(testId) {
-            if (confirm('Are you sure you want to send this report to the product owner?')) {
-                fetch(`/set_status/${testId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    redirect('/check/');
-                });
-            }
-        }
-    </script>
-    
 </head>
 <body>
 
@@ -303,13 +287,21 @@
 <hr class="page-break-indicator">
 
 <div class="additional_details">{{ test.additional_details|safe }}</div>
+<br><br>
 
 <div class="action-buttons">
-    <a class="button" href="{% url 'check' %}">Return</a>
-    {% if test.status == 'Not Sent' or test.status == 'Rejected' %}
-        <a id="status-toggle-{{ test.id }}" class="button" onclick="setStatus({{ test.id }})">Send</a>
-    {% endif %}
-    <a class="button" href="{% url 'remark' test.id %}">Remark</a>
+    <a class="btn btn-primary" href="{% url 'legal_dashboard' %}">Return</a>
+   
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{test.L_status}}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="{% url 'change_status_legal' test.id 1 %}">Waiting for Approval</a>
+            <a class="dropdown-item" href="{% url 'change_status_legal' test.id 2 %}">Approved</a>
+            <a class="dropdown-item" href="{% url 'change_status_legal' test.id 3 %}">Reject</a>
+        </div>
+    </div>
 </div>
 </form>
 </body>

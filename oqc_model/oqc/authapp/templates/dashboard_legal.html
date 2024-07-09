@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard</title>
-    <!-- Correctly include Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Legal Dashboard</title>
 
     <style>
         body {
             margin: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: 'Times New Roman', Times, serif;
             display: flex;
             flex-direction: column;
             height: 100%;
             color: white;
-            font-size: 17px;
+            font-size: 20px;
             text-decoration-color: whitesmoke;
-            overflow-x: hidden;
         }
 
         .header {
@@ -95,6 +92,42 @@
             padding: 15px;
             text-align: left;
         }
+        
+        .user-info {
+            display: none;
+            position: absolute;
+            right: 20px;
+            background-color: #f1f1f1;
+            color: black;
+            padding: 10px;
+            border: 1px solid #ddd;
+            z-index: 1;
+        }
+        .user-info p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .user-btn {
+            background-color: #03385e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            display: block;
+            margin-top: 10px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
 
         th {
             background-color: #03385e;
@@ -105,26 +138,50 @@
             background-color: #f2f2f2;
         }
         button {
-           height: 30px;
-           color: rgb(239, 237, 246); 
-           width: 170px;
-           border: 10px;
-           border-color: black;
-           background-color: #03385e;
-           font-size: 20px;
-           border-radius: 3px;
-        }
-        button a {
-            color : whitesmoke;
-            width: 120px;
-            text-decoration: none;
+            height: 30px;
+            color: rgb(239, 237, 246); 
+            width: 170px;
+            border: 10px;
+            border-color: black;
+            background-color: #03385e;
+            font-size: 20px;
+            border-radius: 3px;
+         }
+         button a {
+             color : whitesmoke;
+             width: 120px;
+         }
+ 
+         button a:hover {
+             background-color: #a9b9bc;
+             color: white; 
+         }
+
+        button.collapse-button {
+            height: 20px;
+            width: 20px;
+            padding: 0;
+            background-color: #03385e;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
 
-        button a:hover {
-            background-color: #a9b9bc;
-            color: white; 
+        button.collapse-button i {
+            font-size: 12px;
         }
 
+        .collapse-arrow {
+            color: white;
+        }
+
+        .collapse-arrow.down {
+            transform: rotate(0deg);
+        }
+
+        .collapse-arrow.up {
+            transform: rotate(180deg);
+        }
         .popup {
             display: none;
             position: fixed;
@@ -157,8 +214,8 @@
         }
 
         .popup form input {
-            margin-bottom: 15px;
-            padding: 10px;
+            
+            padding: 5px;
             font-size: 16px;
         }
 
@@ -172,72 +229,13 @@
             background-color: rgba(0,0,0,0.5);
             z-index: 1;
         }
-
-        .user-info {
-            display: none;
-            position: absolute;
-            right: 20px;
-            background-color: #f1f1f1;
-            color: black;
-            padding: 10px;
-            border: 1px solid #ddd;
-            z-index: 1;
-        }
-
-        .user-info p {
-            margin: 0;
-            padding: 5px 0;
-        }
-
-        .user-btn {
-            background-color: #03385e;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-
-        .logout-btn {
-            display: block;
-            margin-top: 10px;
-            background-color: #d9534f;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .status-Not.Sent {
-            background:#03385e;
-            color: #fff;
-        }
-        
-        .status-Waiting.for.Approval {
-            /* styles for 'Waiting for Approval' */
-            background: #4FAAD7;
-            color: #fff;
-        }
-        
-        .status-Approved {
-            /* styles for 'Approved' */
-            background: #5AA33F;
-            color: #fff;
-        }
-        
-        .status-Rejected {
-            /* styles for 'Rejected' */
-            background: #b20b00;
-            color: #fff;
-        }
         .action-buttons {
-            display: flexbox;
-            gap: 5px;
+            display: flex;
+            gap: 10px;
         }
 
         .action-buttons a {
-            background:#03385e;
+            background: #03385e;
             color: #fff;
             padding: 5px 10px;
             text-decoration: none;
@@ -276,69 +274,76 @@
             color: #a94442;
             border-color: #ededed;
         }
+
         .button-container {
             text-align: center; /* Optional: Centers the buttons horizontally */
             border-radius: 3px;
         }
+
         .button-container button {
             display: inline-block; /* Display buttons side by side */
             margin-right: 10px; /* Optional: Add some spacing between buttons */
             border-radius: 3px;
         }
-        
     </style>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="header">
-    {% comment %} <div class="left-icon">
+    {% comment %}
+    <div class="left-icon">
         <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
-    </div> {% endcomment %}
+    </div>
+    {% endcomment %}
 
     <div class="container">
-           
         {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="message {{ message.level_tag }}">
-                        {{ message }}
-                    </li>
-                {% endfor %}
-            </ul>
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="message {{ message.level_tag }}">
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
         {% endif %}
-        
     </div>
-   
+
     <div class="right-icon">
         <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+            <span id="userButtonText"></span>
             <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
         </button>
         <div class="user-info" id="userInfo">
-            <p>Name: {{ first_name }} {{ last_name }}</p>
-            <p>Email: {{ username }}</p>
-            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+            <p>Username: {{ username }}</p>
+            <p>Name: {{ first_name }} &nbsp {{ last_name }}</p>
+            <a class="logout-btn" onclick="logoutUser()">Logout</a>
         </div>
     </div>
-  
+    
+
 </div>
 
 <div class="main-content">
+    
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 
 <!-- Filter Popup -->
 <div class="popup" id="filterPopup">
     <span class="close" onclick="toggleFilter()">&times;</span>
     <h2>Filter Options</h2>
-    <form id="filter-form" method="get" action="{% url 'check' %}">
+    <form id="filter-form" method="get" action="{% url 'legal_dashboard' %}">
         {% csrf_token %}
         <div>
             <label for="product">Product Type:</label>
             <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
                 <option value="">Select Product Type</option>
-                <option value="TV">TV</option>
-                <option value="AC">AC</option>
-                <option value="Phone">Phone</option>
-                <option value="Washing_Machine">Washing Machine</option>
+                <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
+                <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
+                <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
+                <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
             </select>
         </div>
         <br>
@@ -346,10 +351,10 @@
             <label for="test_stage">Test Stage:</label>
             <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
                 <option value="">Select Test Stage</option>
-                <option value="DVT">DVT</option>
-                <option value="PP">PP</option>
-                <option value="MP">MP</option>
-                <option value="PDI">PDI</option>
+                <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
+                <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
+                <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
+                <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
             </select>
         </div>
         <br>
@@ -357,7 +362,8 @@
             <label for="model_name">Model Name:</label>
             <select class="form-control" id="model_name" name="model_name">
                 <!-- Model options will be populated dynamically based on the selected product type -->
-                <option value="">All Models</option>
+                {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
+                <option value="">{{model_name}}</option>
             </select>
         </div>
         <br>
@@ -374,13 +380,13 @@
         </div>
         <br>
         <div>
-            <label for="status">Status:</label>
-            <select id="status" name="status">
+            <label for="L_status">Status:</label>
+            <select id="L_status" name="L_status">
                 <option value="">All</option>
-                <option value="0" {% if status == '0' %}selected{% endif %}>Not Sent</option>
-                <option value="1" {% if status == '1' %}selected{% endif %}>Waiting for Approval</option>
-                <option value="2" {% if status == '2' %}selected{% endif %}>Approved</option>
-                <option value="3" {% if status == '3' %}selected{% endif %}>Rejected</option>
+                <option value="Not Sent"{%if L_status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
+                <option value="Waiting for Approval"  {%if L_status == 'Waiting for Approval'%}selected{%endif%}>Waiting for Approval</option>
+                <option value="Approve" {%if L_status == 'Approve'%}selected{%endif%}>Approve</option>
+                <option value="Rejected"{%if L_status == 'Rejected'%}selected{%endif%}>Rejected</option>
             </select>
         </div>
         <br>
@@ -407,70 +413,111 @@
         <i class="fa fa-search fa-icon"></i>
         <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
         <br><br>
-        <i class="fa fa-file fa-icon"></i>
-        <button><a href="{% url 'product' %}">Add new report</a></button>
-        
-        <table>
+        <table class="table table-bordered">
             <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Model Name</th>
-                    <th>Test Name</th>
-                    <th>Stage</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
+            <tr>
+                <th></th>
+                <th>Product</th>
+                <th>Model Name</th>
+                <th>Stage</th>
+                <th>Actions</th>
+                <!-- Column for collapse icon -->
+            </tr>
             </thead>
             <tbody>
-                {% for test in completed_tests %}
-                <tr>
-                    <td>{{ test.ProductType }}</td>
-                    <td>{{ test.ModelName }}</td>
-                    <td>{{ test.TestName }}</td>
-                    <td>{{ test.TestStage }}</td>
-                    <td>{{ test.test_end_date|date:"d/m/Y" }}</td>
-                    <td>
-                        <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" >
-                            <!-- {% if test.status == 0 %}
-                                Not Send
-                            {% elif test.status == 1 %}
-                                Waiting for Approval
-                            {% elif test.status == 2 %}
-                                Approved
-                            {% elif test.status == 3 %}
-                                Rejected
-                            {% else %}
-                                Unknown Status
-                            {% endif %} -->
-                            {{ test.status }}
-                        </span>
-                    </td>
-                    
-                    <td class="action-buttons">
-                         
-                        <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit</a> 
-                        <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
-                        <!-- <a class="button" href="{% url 'remark' test.id %}">Remark</a> -->
-                        <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a>
+            {% for test in tests %}
+            <tr>
+                <td>
+                    <button class="collapse-button" type="button" data-toggle="collapse"
+                            data-target="#testList{{ forloop.counter }}" aria-expanded="false"
+                            aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">
+                        <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
+                    </button>
+                </td>
+                <td>{{ test.ProductType }}</td>
+                <td>{{ test.ModelName }}</td>
+                <td>{{ test.TestStage }}</td>
+                <td class="action-buttons">
+                    <a href="{% url 'pdf_model_stage' model_name=test.ModelName test_stage=test.TestStage %}"
+                       class="btn btn-primary">View PDF</a>
+                </td>
 
-                    </td>
-                </tr>
-                {% endfor %}
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <div class="collapse" id="testList{{ forloop.counter }}">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Test Name</th>
+                                    <th>Date</th>
+                                    <th>Serial No</th> <!-- Fixed typo here: missing closing </th> -->
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subtest in all_tests %}
+                                {% if subtest.ModelName == test.ModelName and subtest.TestStage == test.TestStage %}
+                                <tr>
+                                    <td>{{ subtest.TestName }}</td>
+                                    <td>{{ subtest.test_end_date }}</td>
+                                    <td>{{ subtest.SerailNo }}</td> <!-- Fixed typo here: SerialNo was misspelled -->
+                                    <td>{{ subtest.L_status }}</td>
+                                    <td>
+                                        
+                                        <a href="{% url 'legal_view' subtest.TestName subtest.ModelName subtest.SerailNo %}"
+                                            class="btn btn-primary">View</a>
+                                        
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+                
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
-    function toggleMenu() {
-        var sidebar = document.getElementById("sidebar");
-        if (sidebar.style.display === "block") {
+    $(document).ready(function () {
+        $('.collapse').on('show.bs.collapse', function () {
+            var target = $(this).prev().find('button i.fas');
+            target.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        }).on('hide.bs.collapse', function () {
+            var target = $(this).prev().find('button i.fas');
+            target.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        });
+    });
+
+    function toggleCollapseIcon(button) {
+        var icon = button.querySelector('i.fas');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
+    }
+
+    function toggleUserInfo() {
+        var sidebar = document.getElementById("userInfo");
+        if (sidebar.style.display === "block" || sidebar.style.display === "") {
             sidebar.style.display = "none";
         } else {
             sidebar.style.display = "block";
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var sidebar = document.getElementById("userInfo");
+        sidebar.style.display = "none";
+    });
 
     function toggleFilter() {
         var popup = document.getElementById("filterPopup");
@@ -486,30 +533,60 @@
         }
     }
 
-    function toggleUserInfo() {
-        var sidebar = document.getElementById("userInfo");
-        if (sidebar.style.display === "block" || sidebar.style.display === "") {
-            sidebar.style.display = "none";
-        } else {
-            sidebar.style.display = "block";
-        }
-    }
+    function clearFilter(){
+        var form = document.getElementById("filter-form");
 
-    function clearFilter() {
-            // Get the form element
-            var form = document.getElementById("filter-form");
-            // Reset all the form fields
-            form.reset();
-    }
+        // Manually reset each field to the empty string or their default values if needed
+        var product = document.getElementById("product");
+        var testStage = document.getElementById("test_stage");
+        var modelName = document.getElementById("model_name");
+        var testName = document.getElementById("test_name");
+        var serialNumber = document.getElementById("serial_number");
+        var L_status = document.getElementById("L_status");
+        var startDate = document.getElementById("start_date");
+        var endDate = document.getElementById("end_date");
+
     
+        // Set default values
+        product.value = "";
+        testStage.value = "";
+        modelName.value = "";
+        testName.value = "";
+        serialNumber.value = "";
+        L_status.value = "";
+        startDate.value = "";
+        endDate.value = "";
+    }
 
-    // Ensure user info starts hidden
-    document.addEventListener("DOMContentLoaded", function() {
-        var sidebar = document.getElementById("userInfo");
-        sidebar.style.display = "none";
-    });
-   
-   
+    function logoutUser() {
+        fetch('/logout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
+            },
+            body: JSON.stringify({})
+        })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to the home page or show a success message
+                        window.location.href = '/';
+                    } else {
+                        alert('Logout failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Logout failed');
+                });
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
         populateModels();
         populateTestName();
@@ -522,8 +599,6 @@
             populateTestName();
         });
     });
-    
-    
     
     // JavaScript object to store model data
     const modelsByType = {
@@ -612,72 +687,8 @@
             }
         });
     }
-    
-    function deleteTestRecord(recordId) {
-        if (confirm("Are you sure you want to delete this record?")) {
-            fetch(`/delete-test-record/${recordId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => {
-                if (response.ok) {
-                    
-                    const recordElement = document.getElementById(`test-record-${recordId}`);
-                    if (recordElement) {
-                        recordElement.remove();
-                    }
-                    location.reload(); 
-                } else {
-                    throw new Error('Failed to delete record.');
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting record:', error);
-                alert('Failed to delete record. Please try again later.');
-            });
-        }
-    }
 
-    function logoutUser() {
-        fetch('/logout/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
-            },
-            body: JSON.stringify({})
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Redirect to the home page or show a success message
-                window.location.href = '/';
-            } else {
-                alert('Logout failed');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Logout failed');
-        });
-    }
-
-    document.addEventListener('click', function(event) {
-    var clickedElement = event.target;
-    if (clickedElement !== document.getElementById("userInfo") && clickedElement !== document.getElementById("userButton")) {
-        document.getElementById("userInfo").style.display = "none";
-    }
-    });
-    
 </script>
+
 </body>
 </html>
