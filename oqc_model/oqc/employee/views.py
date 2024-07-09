@@ -67,7 +67,6 @@ def owner_remark(request, id):
 
 def check(request):
     username = request.session['username']
-    print(username)
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -126,7 +125,7 @@ def check(request):
         'username' :username
     }
 
-    return render(request, "test_report.html", context)
+    return render(request, "dashboard_Test.html", context)
 
 def cooling(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
@@ -255,7 +254,7 @@ def dashboard(request):
         'role_letter': role_letter
     }
 
-    return render(request, 'PO_dashboard.html', context)
+    return render(request, 'dashboard_PO.html', context)
 
 from django.http import JsonResponse
 from django.contrib.auth import logout as auth_logout

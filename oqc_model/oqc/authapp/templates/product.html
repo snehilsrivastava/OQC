@@ -81,15 +81,6 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="SerailNo">Serial Number:</label>
-          <input
-            type="text"
-            class="form-control"
-            id="SerailNo"
-            name="SerailNo"
-          />
-        </div>
-        <div class="form-group">
           <label for="ModelName">Model Name:</label>
           <select class="form-control" id="ModelName" name="ModelName">
             <!-- Model options will be populated dynamically based on the selected product type -->
@@ -101,8 +92,7 @@
             class="form-control"
             id="TestStage"
             name="TestStage"
-            onchange="populateTestName();"
-          >
+            onchange="populateTestName();">
             <option value="DVT">DVT</option>
             <option value="PP">PP</option>
             <option value="PDI">MP</option>
@@ -114,6 +104,14 @@
           <label for="TestType">Test Name:</label>
           <select class="form-control" id="TestName" name="TestName"></select>
         </div>
+        <div class="form-group">
+            <label for="SerailNo">Serial Number:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="SerailNo"
+              name="SerailNo"/>
+          </div>
         <div style="text-align: center">
           <button
             style="text-align: center"
