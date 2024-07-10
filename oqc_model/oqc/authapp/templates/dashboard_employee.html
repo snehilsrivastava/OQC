@@ -431,24 +431,12 @@
                     <td>{{ test.TestStage }}</td>
                     <td>{{ test.test_end_date|date:"d/m/Y" }}</td>
                     <td>
-                        <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" >
-                            <!-- {% if test.status == 0 %}
-                                Not Send
-                            {% elif test.status == 1 %}
-                                Waiting for Approval
-                            {% elif test.status == 2 %}
-                                Approved
-                            {% elif test.status == 3 %}
-                                Rejected
-                            {% else %}
-                                Unknown Status
-                            {% endif %} -->
+                        <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}">
                             {{ test.status }}
                         </span>
                     </td>
                     
                     <td class="action-buttons">
-                         
                         <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit</a> 
                         <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
                         <!-- <a class="button" href="{% url 'remark' test.id %}">Remark</a> -->

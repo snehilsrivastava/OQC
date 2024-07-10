@@ -2,42 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Specification Form</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .form-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-        }
-
-        .form-group label {
-            font-weight: bold;
-        }
-
-        .btn-submit {
-            width: 100%;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
 </head>
 <body>
- 
+    <div class="nav">
+        <div class="container">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="message {{ message.level_tag }}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="right-icon">
+            <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+                <span id="userButtonText"></span>
+                <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
+            </button>
+            <div class="user-info" id="userInfo">
+                <p>Username: {{ username }}</p>
+                <p>Name: {{ first_name }} {{ last_name }}</p>
+                <a class="logout-btn" onclick="logoutUser()" data-csrf="{{ csrf_token }}">Logout</a>
+
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="form-container">
-            
             <div class="header">
                 <h1>Product Test Detail Form</h1>
             </div>
-
             {% if messages %}
             <div class="alert alert-danger">
                 {% for message in messages %}
@@ -45,19 +46,16 @@
                 {% endfor %}
             </div>
             {% endif %}
-
             <form action="{% url 'test_list_entry' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
                     <label>Test Name</label>
                     <input type="text" class="form-control" id="TestName" name="TestName" required>
                 </div>
-
                 <div class="form-group">
                     <label>Product</label>
                     <input type="text" class="form-control" id="Product" name="Product" required>
                 </div>
-
                 <div class="form-group">
                     <label>Test Stage</label><br>
                     <div class="form-check form-check-inline">
@@ -77,14 +75,13 @@
                         <label class="form-check-label" for="PDI">PDI</label>
                     </div>
                 </div>
-               
                 <button type="submit" class="btn btn-secondary btn-submit">Submit</button>
             </form>
         </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/form.js' %}"></script>
 </body>
 </html>

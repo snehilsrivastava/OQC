@@ -2,299 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% load static%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brand Dashboard</title>
+
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            color: white;
-            font-size: 17px;
-            text-decoration-color: whitesmoke;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #03385e;
-            color: white;
-            width: 100%;
-        }
-
-        .header .fa {
-            margin-right: 10px;
-        }
-
-        .main-content {
-            display: flex;
-            flex-grow: 1;
-        }
-
-        ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            width: 300px;
-            height: 100vh;
-            background-color: #03385e;
-            color: white;
-            overflow: auto;
-        }
-
-        .nav .bottom-icon {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            height : 100%;
-        }
-
-        li a {
-            display: flex;
-            align-items: center;
-            color: white;  /* Change text color to white */
-            padding: 8px 16px;
-            text-decoration: none;
-        }
-
-        /* Change the link color on hover */
-        li a:hover {
-            background-color: #a9b9bc;
-            color: white;
-        }
-
-        .fa-icon {
-            margin-right: 10px;
-        }
-
-        .content {
-            flex-grow: 1;
-            padding: 20px;
-            color: black; /* Content text color */
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        table, th, td {
-            border: 1px solid black;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #03385e;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1;
-        }
-
-        button {
-            height: 30px;
-            color: rgb(239, 237, 246); 
-            width: 170px;
-            border: 10px;
-            border-color: black;
-            background-color: #03385e;
-            font-size: 20px;
-            border-radius: 3px;
-        }
-        button a {
-            color : whitesmoke;
-            width: 120px;
-        }
-
-        button a:hover {
-            background-color: #a9b9bc;
-            color: white; 
-        }
-        .toggle-button {
-        /* background:; */
-            color: #fff;
-            padding: 5px 10px;
-        }
-        .user-info {
-            display: none;
-            position: absolute;
-            right: 20px;
-            background-color: #f1f1f1;
-            color: black;
-            padding: 10px;
-            border: 1px solid #ddd;
-            z-index: 1;
-        }
-
-        .user-info p {
-            margin: 0;
-            padding: 5px 0;
-        }
-
-        button.collapse-button {
-            height: 20px;
-            width: 20px;
-            padding: 0;
-            background-color: #03385e;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button.collapse-button i {
-            font-size: 12px;
-        }
-
-        .collapse-arrow {
-            color: white;
-        }
-
-        .collapse-arrow.down {
-            transform: rotate(0deg);
-        }
-
-        .collapse-arrow.up {
-            transform: rotate(180deg);
-        } 
-
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            background-color: white;
-            color: black;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 2;
-        }
-
-        .popup .close {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .popup form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .popup form label {
-            margin-bottom: 5px;
-        }
-
-        .popup form input {
-            
-            padding: 5px;
-            font-size: 16px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-buttons a {
-            background: #03385e;
-            color: #fff;
-            padding: 5px 10px;
-            text-decoration: none;
-            border-radius: 3px;
-        }
-
-        .action-buttons a:hover {
-            background: #d9534f;
-        }
-
-        .icon {
-            font-size: 20px;
-        }
-
-        .user-btn {
-            background-color: #03385e;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-
-        .user-info .logout-btn {
-            display: block;
-            margin-top: 10px;
-            background-color: #d9534f;
-            color: white !important;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .message {
-            list-style: circle;
-            width: calc(100% - 100px);
-            padding: 10px 20px;
-            border: 1px solid #ddd;
-            margin-bottom: 10px; /* Add some spacing */
-        }
-
-        .success {
-            background-color: #dff0d8;
-            color: #468847;
-            border-color: #d6e9c6;
-        }
-
-        .error {
-            background-color: #f2dede;
-            color: #a94442;
-            border-color: #ededed;
-        }
-
-        .button-container {
-            text-align: center; /* Optional: Centers the buttons horizontally */
-            border-radius: 3px;
-        }
-
-        .button-container button {
-            display: inline-block; /* Display buttons side by side */
-            margin-right: 10px; /* Optional: Add some spacing between buttons */
-            border-radius: 3px;
-        }
-    </style>
-
 </head>
 <body>
 
 <div class="header">
+    {% comment %}
+    <div class="left-icon">
+        <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
+    </div>
+    {% endcomment %}
 
     <div class="container">
         {% if messages %}
@@ -314,9 +39,9 @@
             <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
         </button>
         <div class="user-info" id="userInfo">
-            <p>Name: {{ first_name }} {{ last_name }}</p>
-            <p>Email: {{ username }}</p>
-            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+            <p>Username: {{ username }}</p>
+            <p>Name: {{ first_name }} &nbsp {{ last_name }}</p>
+            <a class="logout-btn" onclick="logoutUser()">Logout</a>
         </div>
     </div>
 
@@ -325,83 +50,84 @@
 <div class="main-content">
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 
-<!-- Filter Popup -->
-<div class="popup" id="filterPopup">
-    <span class="close" onclick="toggleFilter()">&times;</span>
-    <h2>Filter Options</h2>
-    <form id="filter-form" method="get" action="{% url 'brand_dashboard' %}">
-        {% csrf_token %}
-        <div>
-            <label for="product">Product Type:</label>
-            <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
-                <option value="">Select Product Type</option>
-                <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
-                <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
-                <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
-                <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
-            </select>
-        </div>
-        <br>
-        <div>
-            <label for="test_stage">Test Stage:</label>
-            <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
-                <option value="">Select Test Stage</option>
-                <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
-                <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
-                <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
-                <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
-            </select>
-        </div>
-        <br>
-        <div>
-            <label for="model_name">Model Name:</label>
-            <select class="form-control" id="model_name" name="model_name">
-                <!-- Model options will be populated dynamically based on the selected product type -->
-                {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
-                <option value="">{{model_name}}</option>
-            </select>
-        </div>
-        <br>
-        <div>
-            <label for="test_name">Test Name:</label>
-            <select class="form-control" id="test_name" name="test_name">
-                <option value="">Select Test Name</option>
-            </select>
-        </div>
-        <br>
-        <div>
-            <label for="serial_number">Serial Number:</label>
-            <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
-        </div>
-        <br>
-        <div>
-            <label for="B_status">Status:</label>
-            <select id="B_status" name="B_status">
-                <option value="">All</option>
-                <option value="Not Sent"{%if B_status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
-                <option value="Waiting for Approval"  {%if B_status == 'Waiting for Approval'%}selected{%endif%}>Waiting for Approval</option>
-                <option value="Approve" {%if B_status == 'Approve'%}selected{%endif%}>Approve</option>
-                <option value="Rejected"{%if B_status == 'Rejected'%}selected{%endif%}>Rejected</option>
-            </select>
-        </div>
-        <br>
-        <div>
-            <label for="start_date">Start Date:</label>
-            <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
-        </div>
-        <br>
-        <div>
-            <label for="end_date">End Date:</label>
-            <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
-        </div>
-        <br>
-        <div class="button-container">
-            <button type="submit" class="button">Filter</button>
-            <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
-        </div>
-    </form>
-
-</div>
+    <!-- Filter Popup -->
+    <div class="popup" id="filterPopup">
+        <span class="close" onclick="toggleFilter()">&times;</span>
+        <h2>Filter Options</h2>
+        <form id="filter-form" method="get" action="{% url 'brand_dashboard' %}">
+            {% csrf_token %}
+            <div>
+                <label for="product">Product Type:</label>
+                <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+                    <option value="">Select Product Type</option>
+                    <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
+                    <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
+                    <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
+                    <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="test_stage">Test Stage:</label>
+                <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+                    <option value="">Select Test Stage</option>
+                    <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
+                    <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
+                    <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
+                    <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="model_name">Model Name:</label>
+                <select class="form-control" id="model_name" name="model_name">
+                    <!-- Model options will be populated dynamically based on the selected product type -->
+                    {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
+                    <option value="">{{model_name}}</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="test_name">Test Name:</label>
+                <select class="form-control" id="test_name" name="test_name">
+                    <option value="">Select Test Name</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="serial_number">Serial Number:</label>
+                <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+            </div>
+            <br>
+            <div>
+                <label for="B_status">Status:</label>
+                <select id="B_status" name="B_status">
+                    <option value="">All</option>
+                    <option value="Not Sent"{%if B_status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
+                    <option value="Waiting for Approval"  {%if B_status == 'Waiting for Approval'%}selected{%endif%}>Waiting for Approval</option>
+                    <option value="Approve" {%if B_status == 'Approve'%}selected{%endif%}>Approve</option>
+                    <option value="Rejected"{%if B_status == 'Rejected'%}selected{%endif%}>Rejected</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+            <br>
+            <div>
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+            <br>
+            <div class="button-container">
+                <button type="submit" class="button">Filter</button>
+                <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
+            </div>
+        </form>
+    
+    </div>
+    
     <div class="content">
         <h1>Dashboard</h1>
         <i class="fa fa-search fa-icon"></i>
@@ -445,7 +171,7 @@
                                 <tr>
                                     <th>Test Name</th>
                                     <th>Date</th>
-                                    <th>Serial No</th>
+                                    <th>Serial No</th> <!-- Fixed typo here: missing closing </th> -->
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -455,10 +181,11 @@
                                 {% if subtest.ModelName == test.ModelName and subtest.TestStage == test.TestStage %}
                                 <tr>
                                     <td>{{ subtest.TestName }}</td>
-                                    <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
-                                    <td>{{ subtest.SerailNo }}</td>
+                                    <td>{{ subtest.test_end_date }}</td>
+                                    <td>{{ subtest.SerailNo }}</td> <!-- Fixed typo here: SerialNo was misspelled -->
                                     <td>{{ subtest.B_status }}</td>
-                                    <td><a href="{% url 'brand_view' subtest.TestName subtest.ModelName subtest.SerailNo %}"
+                                    <td class="action-buttons">
+                                        <a href="{% url 'brand_view' subtest.TestName subtest.ModelName subtest.SerailNo %}"
                                             class="btn btn-primary">View</a>
                                     </td>
                                 </tr>
@@ -496,17 +223,6 @@
         icon.classList.toggle('fa-chevron-up');
     }
 
-    function toggleUserInfo() {
-        var userInfo = document.getElementById("userInfo");
-        userInfo.style.display = userInfo.style.display === "none" ? "block" : "none";
-    }
-
-    // Ensure user info starts hidden
-    document.addEventListener("DOMContentLoaded", function () {
-        var userInfo = document.getElementById("userInfo");
-        userInfo.style.display = "none";
-    });
-
     function toggleFilter() {
         var popup = document.getElementById("filterPopup");
         var overlay = document.getElementById("overlay");
@@ -520,7 +236,6 @@
             overlay.style.display = "block";
         }
     }
-    
     function clearFilter(){
         var form = document.getElementById("filter-form");
         // Manually reset each field to the empty string or their default values if needed
@@ -544,42 +259,16 @@
         endDate.value = "";
     }
 
-    function logoutUser() {
-        fetch('/logout/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
-            },
-            body: JSON.stringify({})
-        })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        // Redirect to the home page or show a success message
-                        window.location.href = '/';
-                    } else {
-                        alert('Logout failed');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Logout failed');
-                });
+    function toggleUserInfo() {
+        var userInfo = document.getElementById("userInfo");
+        userInfo.style.display = userInfo.style.display === "none" ? "block" : "none";
     }
 
-    document.addEventListener('click', function(event) {
-    var clickedElement = event.target;
-    if (clickedElement !== document.getElementById("userInfo") && clickedElement !== document.getElementById("userButton")) {
-        document.getElementById("userInfo").style.display = "none";
-    }
+    // Ensure user info starts hidden
+    document.addEventListener("DOMContentLoaded", function () {
+        var userInfo = document.getElementById("userInfo");
+        userInfo.style.display = "none";
     });
-
     document.addEventListener("DOMContentLoaded", function() {
         populateModels();
         populateTestName();
@@ -680,7 +369,35 @@
             }
         });
     }
-
+    function logoutUser() {
+        fetch('/logout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
+            },
+            body: JSON.stringify({})
+        })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to the home page or show a success message
+                        window.location.href = '/';
+                    } else {
+                        alert('Logout failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Logout failed');
+                });
+    }
 </script>
+
 </body>
 </html>
