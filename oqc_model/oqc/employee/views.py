@@ -749,10 +749,31 @@ def MNF(request):
         # Redirect to a success page or render a success message
         # return redirect('/check/')  # Assuming you have a 'success' URL
         if product == 'ac':
-            return render(request, 'AC.html', {'Indkal_model_no': Indkal_model_no})
+            username = request.session['username']
+            employee = Employee.objects.get(username=username)
+            icon = employee.first_name[0] + employee.last_name[0]
+
+            context = {
+            'first_name': employee.first_name,
+            'last_name': employee.last_name,
+            'icon': icon,
+            'username': username,
+            'Indkal_model_no': Indkal_model_no,
+             }
+            return render(request, 'AC.html', context)
        
     # If not a POST request, render the form
-    return render(request, 'productMNFdetail.html')
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
+
+    context = {
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
+    }
+    return render(request, 'productMNFdetail.html',context)
 
 def Test_list_entry(request):
     if request.method == 'POST':
@@ -761,13 +782,12 @@ def Test_list_entry(request):
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
 
-        # Create and save the new TestList instance
-        # s1 = "0000"
-
         # Check if a test with the same name already exists
         existing_test = TestList.objects.filter(TestName=testName, Product=product).first()
-        # if existing_test:
-            # s1 = existing_test.TestStage
+        if existing_test:
+            messages.error(request, "Test name already exists!")
+            return redirect('/dashboard/')
+
         s1 = ""
         if "DVT" in testStages:
             s1 += "1"
@@ -786,25 +806,26 @@ def Test_list_entry(request):
         else:
             s1 += "0"
 
-        if existing_test:
-            existing_test.TestStage = s1
-            existing_test.save()
-        else:
-            new_test = TestList(
-                TestStage=s1,
-                Product=product,
-                TestName=testName,
-            )
-            new_test.save()
+        new_test = TestList(
+            TestStage=s1,
+            Product=product,
+            TestName=testName,
+        )
+        new_test.save()
 
-        # Redirect based on the existence of the test name
-        if existing_test:
-            messages.success(request, "Test info updated!")
-            return redirect('/check/')
-        else:
-            return redirect(reverse('test_protocol_entry', args=[testName, product]))
+        return redirect(reverse('test_protocol_entry', args=[testName, product]))
     # If not a POST request, render the form
-    return render(request, 'Test_list_entry.html')
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
+
+    context = {
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
+    }
+    return render(request, 'Test_list_entry.html',context)
 
 def test_protocol_entry(request, test_name, product):
     if request.method == 'POST':
@@ -844,7 +865,18 @@ def test_protocol_entry(request, test_name, product):
         return redirect('/dashboard/')
 
     # If not a POST request, render the form
-    return render(request, 'test_protocol_entry.html', {'test_name': test_name, 'product': product})
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
+    context = {
+    'first_name': employee.first_name,
+    'last_name': employee.last_name,
+    'icon': icon,
+    'username': username,
+    'test_name': test_name,
+    'product': product,
+     }
+    return render(request, 'test_protocol_entry.html',context)
 
 def update_test_list_entry(request):
     if request.method == 'POST':
@@ -879,8 +911,15 @@ def update_test_list_entry(request):
 
     test_names = TestList.objects.values_list('TestName', flat=True).distinct()
     products = Product_Detail.objects.values_list('ProductType', flat=True).distinct()
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
     context = {
         'test_names': test_names,
         'products': products,
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
     }
     return render(request, 'Update_Test_list_entry.html', context)
