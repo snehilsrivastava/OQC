@@ -6,6 +6,7 @@ from django.shortcuts import render, HttpResponse
 from .models import Product_Detail, TV, AC, Phone, Washing_Machine
 from django.urls import reverse
 from employee.models import TestList
+from authapp.models import Employee
 
 def product_form_view(request):
     if request.method == 'POST':
@@ -82,4 +83,14 @@ def AC_spec(request):
         return redirect('/check/')  # Assuming you have a 'success' URL
 
     # If not a POST request, render the form
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
+
+    context = {
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
+    }
     return render(request, 'AC.html')

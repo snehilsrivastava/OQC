@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	{% load static %}
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Sign Up</title>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="{%static 'css/register_detail.css' %}">
     <!-- <link rel="script" href="{%static 'js/register.js' %}"> -->
 </head>
 <body class="body">
-	<div class="container">
-		<!-- Login form -->
-		<div class="card">
-			<div class="card-header text-center py-4 border-0 no-background">
+    <div class="container">
+        <!-- Login form -->
+        <div class="card">
+            <div class="card-header text-center py-4 border-0 no-background">
 				<img class="Indkal-Logo" src="{%static 'images/Logo.svg' %}" alt="Indka Logo"></img>
-			</div>
+            </div>
             <div class="initial-view">
                 <form id="card-2" class="col-6 mx-auto card-2 p-3" method="post" action="{% url 'register' %}" enctype="multipart/form-data">
 
@@ -123,10 +123,10 @@
                 </form>
             </div>
             <div class="card-footer text-center border-0 no-background element-center"></div>
-                <!-- Link to login page for users who already have an account -->
+            <!-- Link to login page for users who already have an account -->
             <p class="no_wrap">Already have an account? <a href="/au/login/">Sign in</a> </p>
-            </div>
-		</div>
+        </div>
+    </div>
         
 	</div>
 </body>

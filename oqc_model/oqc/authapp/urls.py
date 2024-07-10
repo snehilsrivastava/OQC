@@ -11,6 +11,9 @@ urlpatterns = [
 	path('home/', home, name="recipes"),	 # Home page	
 	path('login/', login_page, name='login_page'), # Login page 
     path('register/', register_page, name='register'),# Registration page
+    path('otp_verification/<str:first_name>/<str:last_name>/<str:username>/<str:password>/', otp_verification, name='otp_verification'),
+
+
   
   
 ]
