@@ -11,7 +11,7 @@ urlpatterns = [
     # path('members/', views.members, name='members'),  
     # path('testdetail/<int:no>/', views.testdetail, name='testdetail'),
     path('check/', views.check, name='check'),
-    path('filter/', views.filter, name='filter'),
+    # path('filter/', views.filter, name='filter'),
     path('dashboard/',views.dashboard,name = 'dashboard'),
     path('logout/',views.logout,name = 'logout'),
     path('submit-product-details', views.submit_product_details_view, name='submit_product_details'),
@@ -31,7 +31,7 @@ urlpatterns = [
     path('delete-test-record/<int:record_id>/', views.delete_test_record, name='delete_test_record'),
     path('remark/<int:id>/',views.remark,name = 'remark'),
     path('remark_owner/<int:id>/',views.owner_remark,name = 'remark_owner'),
-    path('send_report/<int:report_id>/', views.send_report, name='send_report'),
+    # path('send_report/<int:report_id>/', views.send_report, name='send_report'),
     path('view_pdf/<str:test_name>/<str:model_name>/<str:serialno>/', views.view_pdf, name='view_pdf'),
 ]
 
