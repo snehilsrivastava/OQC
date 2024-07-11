@@ -165,7 +165,7 @@ def forgot_password_send_otp(request):
         message = f'Hi {first_name} {last_name},\nYour OTP is {otp}. It expires in 5 minutes.'
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [username]
-        # send_mail(subject, message, email_from, recipient_list)
+        send_mail(subject, message, email_from, recipient_list)
         return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
