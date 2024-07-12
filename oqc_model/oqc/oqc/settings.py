@@ -132,7 +132,7 @@ USE_TZ = True
 
 import os 
 STATIC_URL = '/static/'
-STATIC_ROOT= os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT= os.path.join(BASE_DIR, 'authapp/static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'authapp/static')
 ]
