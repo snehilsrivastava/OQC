@@ -19,18 +19,32 @@ from django.db.models import Q
 def main_page(request):
     return redirect(login_page)
 
+def login_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        next_page = request.original_path
+        if 'username' in request.session:
+            return view_func(request, *args, **kwargs)
+        login_url = '/au/login'
+        return redirect(f"{login_url}?next={next_page}" if next_page else login_url)
+    return wrapper
+
+@login_required
 def delete_test_record(request, record_id):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'employee':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     try:
-        # Get the TestRecord instance
         test_record = get_object_or_404(TestRecord, pk=record_id)
-        # Perform deletion
         test_record.delete()
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
     
-
+@login_required
 def remark(request, id):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'employee':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     TestObjectRemark = get_object_or_404(TestRecord, pk=id)
     test_name = TestObjectRemark.TestName
     model_name = TestObjectRemark.ModelName
@@ -43,7 +57,11 @@ def remark(request, id):
     context = {'TestObjectRemark': TestObjectRemark}
     return render(request, "remark.html", context)
 
+@login_required
 def owner_remark(request, id):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     TestObjectRemark = get_object_or_404(TestRecord, pk=id)
     if request.method == 'POST':
        
@@ -57,9 +75,12 @@ def owner_remark(request, id):
     }
     return render(request, "owner_remark.html", context)
 
+@login_required
 def check(request):
     username = request.session['username']
-    # print(username)
+    user = Employee.objects.get(username=username)
+    if user.user_type != 'employee':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -119,8 +140,12 @@ def check(request):
     }
     return render(request, "dashboard_employee.html", context)
 
+@login_required
 def legal_dashboard(request):
     username = request.session.get('username')
+    user = Employee.objects.get(username=username)
+    if user.user_type != 'employee':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     test = list(TestRecord.objects.values('ProductType','ModelName', 'TestStage').distinct())
     employee = Employee.objects.get(username=username)
     all_tests = TestRecord.objects.all()
@@ -136,7 +161,11 @@ def legal_dashboard(request):
     }
     return render(request, "dashboard_legal.html", context)
 
+@login_required
 def cooling(request, test_name, model_name, serialno):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'employee':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
@@ -145,7 +174,6 @@ def cooling(request, test_name, model_name, serialno):
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
-            # print("random")
             form.save()
         else:
             print(form.errors)
@@ -169,6 +197,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def set_status(request, id):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'employee':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     if request.method == 'POST':
         try:
             test_record = TestRecord.objects.get(id=id)
@@ -181,10 +212,13 @@ def set_status(request, id):
             return JsonResponse({'success': False, 'error': 'Test record not found'})
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
+@login_required
 def dashboard(request):
 
     username = request.session['username']
-
+    user = Employee.objects.get(username=username)
+    if user.user_type != 'owner':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -226,7 +260,7 @@ def dashboard(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     test = list(TestList.objects.all().values())
-    employee = Employee.objects.get(username=username)
+    employee = user
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
         'tests': tests,
@@ -257,17 +291,18 @@ def dashboard(request):
 from django.http import JsonResponse
 from django.contrib.auth import logout as auth_logout
 
+@login_required
 def logout(request):
     if request.method == "POST":
         auth_logout(request)  # Use the correct logout method from django.contrib.auth
         return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
-
-def submit_product_details_view(request):
-    return HttpResponse("Thank you for submitting product details")
-
+@login_required
 def edit(request, test_name, model_name, serialno):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'employee':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
@@ -297,6 +332,7 @@ def edit(request, test_name, model_name, serialno):
     }
     return render(request, "cooling_test.html", context)
 
+@login_required
 def view_pdf(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
@@ -309,6 +345,7 @@ def view_pdf(request, test_name, model_name, serialno):
     }
     return render(request, "view_pdf.html", context)
 
+@login_required
 def pdf_model_stage(request,model_name,test_stage):
     if request.method == 'GET':
         selected_test_records = TestRecord.objects.filter(ModelName=model_name, TestStage=test_stage)
@@ -361,7 +398,11 @@ def merge_pdfs(pdf_list):
     merged_pdf_io.seek(0)
     return merged_pdf_io
 
+@login_required
 def handle_selected_tests(request):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     if request.method == 'POST':
         selected_test_ids = request.POST.getlist('selected_tests')
         action = request.POST.get('action')
@@ -408,7 +449,6 @@ def handle_selected_tests(request):
                 new_status = "Waiting for Approval"
                 test_record.B_status = new_status
                 test_record.save()
-            
 
         elif action == 'send_legal':
             for test_record in selected_test_records:
@@ -416,54 +456,13 @@ def handle_selected_tests(request):
               test_record.L_status = new_status
               test_record.save()
           
-
     return redirect('/dashboard/')
 
-def generate_pdf(request):
-    if request.method == 'POST':
-        selected_test_ids = request.POST.getlist('selected_tests')
-        # Retrieve the selected test records from the database
-        selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids)
-        if not selected_test_records.exists():
-            raise Http404("No test records found")
-        pdf_list = []
-        cumul_page_count, cumul_page_count_list = 3, []
-        test_name_list = []
-        for i, test_record in enumerate(selected_test_records, start=1):
-            model_name = test_record.ModelName
-            test_name = test_record.TestName
-            Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-            models = get_object_or_404(AC, ModelName=model_name)
-            context = {
-                'test': test_record,
-                'model': models,
-                'TestProtocol': Test_protocol,
-            }
-            test_name_list.append(test_name)
-            cumul_page_count_list.append(cumul_page_count)
-            pdf_content, page_count = render_to_pdf('view_pdf.html', context, request)
-            pdf_list.append(BytesIO(pdf_content))
-            cumul_page_count += page_count
-
-        if len(pdf_list) > 1:  # No cover page or table of contents for one test
-            test_record = selected_test_records[0] # assuming all records are for same model
-            model_name = test_record.ModelName
-            MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
-            cover_context = {
-                'MNF_detail': MNF_detail,
-            }
-            pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
-            context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
-            pdf_list.insert(1, BytesIO(render_contents_to_pdf('pdf_contents.html', {'list': context_list}, request)))
-        merged_pdf = merge_pdfs(pdf_list)
-        response = HttpResponse(merged_pdf, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
-        return response
-
-    return HttpResponse("Invalid request method.", status=405)
-
-
+@login_required
 def view(request, test_name, model_name, serialno):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'employee':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
@@ -483,7 +482,11 @@ def view(request, test_name, model_name, serialno):
     }
     return render(request, "view_test_record.html", context)
 
+@login_required
 def owner_view(request, test_name, model_name, serialno):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
@@ -507,7 +510,11 @@ def owner_view(request, test_name, model_name, serialno):
     }
     return render(request, "owner_view.html", context)
 
+@login_required
 def change_status(request, test_id, status):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     test = get_object_or_404(TestRecord, id=test_id)
     if status == 1:
         test.status = 'Waiting for Approval'
@@ -521,7 +528,11 @@ def change_status(request, test_id, status):
     serialno = test.SerailNo
     return redirect('owner_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
+@login_required
 def change_status_legal(request, test_id, status):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'legal':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     test = get_object_or_404(TestRecord, id=test_id)
     if status == 1:
         test.L_status = "Waiting for Approval"
@@ -535,7 +546,11 @@ def change_status_legal(request, test_id, status):
     serialno = test.SerailNo
     return redirect('legal_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
+@login_required
 def change_status_brand(request, test_id, status):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'brand':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     test = get_object_or_404(TestRecord, id=test_id)
     if status == 1:
         test.B_status = "Waiting for Approval"
@@ -549,8 +564,12 @@ def change_status_brand(request, test_id, status):
     serialno = test.SerailNo
     return redirect('brand_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
+@login_required
 def legal_dashboard(request):
     username = request.session['username']
+    user = Employee.objects.get(username=username)
+    if user.user_type != 'legal':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -611,8 +630,12 @@ def legal_dashboard(request):
     }
     return render(request, "dashboard_legal.html", context)
 
+@login_required
 def brand_dashboard(request):
     username = request.session['username']
+    user = Employee.objects.get(username=username)
+    if user.user_type != 'brand':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -673,7 +696,11 @@ def brand_dashboard(request):
     }
     return render(request, "dashboard_brand.html", context)
 
+@login_required
 def legal_view(request, test_name, model_name, serialno):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'legal':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
@@ -696,7 +723,11 @@ def legal_view(request, test_name, model_name, serialno):
     }
     return render(request, "legal_view.html", context)
 
+@login_required
 def brand_view(request, test_name, model_name, serialno):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'brand':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
@@ -719,7 +750,11 @@ def brand_view(request, test_name, model_name, serialno):
     }
     return render(request, "brand_view.html", context)
 
+@login_required
 def MNF(request):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     if request.method == 'POST':
         # Get form data from the request
         customer = request.POST.get('Customer')
@@ -727,7 +762,6 @@ def MNF(request):
         location = request.POST.get('Location')
         brand = request.POST.get('Brand')
         product = request.POST.get('prod')
-        # print(product)
         brand_model_no = request.POST.get('Brand_model_no')
         Indkal_model_no = request.POST.get('Indkal_model_no')
         ODM_model_no = request.POST.get('ORM_model_no')
@@ -775,7 +809,11 @@ def MNF(request):
     }
     return render(request, 'productMNFdetail.html',context)
 
+@login_required
 def Test_list_entry(request):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     if request.method == 'POST':
         # Get form data from the request
         testStages = request.POST.getlist('TestStage')  # Get a list of selected test stages
@@ -816,7 +854,7 @@ def Test_list_entry(request):
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
     # If not a POST request, render the form
     username = request.session['username']
-    employee = Employee.objects.get(username=username)
+    employee = user
     icon = employee.first_name[0] + employee.last_name[0]
 
     context = {
@@ -827,7 +865,11 @@ def Test_list_entry(request):
     }
     return render(request, 'Test_list_entry.html',context)
 
+@login_required
 def test_protocol_entry(request, test_name, product):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     if request.method == 'POST':
         # Get form data from the request
         testName = request.POST.get('TestName')
@@ -866,7 +908,7 @@ def test_protocol_entry(request, test_name, product):
 
     # If not a POST request, render the form
     username = request.session['username']
-    employee = Employee.objects.get(username=username)
+    employee = user
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
     'first_name': employee.first_name,
@@ -878,7 +920,11 @@ def test_protocol_entry(request, test_name, product):
      }
     return render(request, 'test_protocol_entry.html',context)
 
+@login_required
 def update_test_list_entry(request):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner':
+        return render(request, "access_denied.html", {'user_type': user.user_type})
     if request.method == 'POST':
         # Get form data from the request
         testStages = request.POST.getlist('TestStage')  # Get a list of selected test stages
@@ -912,7 +958,7 @@ def update_test_list_entry(request):
     test_names = TestList.objects.values_list('TestName', flat=True).distinct()
     products = Product_Detail.objects.values_list('ProductType', flat=True).distinct()
     username = request.session['username']
-    employee = Employee.objects.get(username=username)
+    employee = user
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
         'test_names': test_names,
