@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-r8&=%bkyoroxzqd+rml6h&rmspq-h@!(k29%(%8cq)rw7a@ll)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["13.127.194.68"]
+ALLOWED_HOSTS = ["13.200.34.116"]
 
 
 # Application definition
@@ -114,13 +114,14 @@ EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'protrack@indkal.com'
 EMAIL_HOST_PASSWORD = 'bngjmomfunuqhrmy'
 
-
+# LOGIN_URL = '/au/login/'
+# AUTH_USER_MODEL = 'authapp.Employee'
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -132,7 +133,7 @@ USE_TZ = True
 
 import os 
 STATIC_URL = '/static/'
-STATIC_ROOT= os.path.join(BASE_DIR, 'authapp/static')
+STATIC_ROOT= os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'authapp/static')
 ]

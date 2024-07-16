@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Sign Up</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="{%static 'css/register_detail.css' %}">
+	<link rel="stylesheet" href="{%static 'css/register_details.css' %}">
     <!-- <link rel="script" href="{%static 'js/register.js' %}"> -->
     <style>
         .final-view {
@@ -25,7 +25,7 @@
                 <form id="card-2" class="col-6 mx-auto card-2 p-3" method="post" action="{% url 'send_otp' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="card-body px-5 py3 border-0 no-background">
-                        <div id="messages"></div>
+                        <div id="messages1"></div>
                         <!-- Display error/success messages -->
                         {% if messages %}
                             {% for message in messages %}
@@ -69,6 +69,7 @@
                 <form id="card-2" class="col-6 mx-auto card-2 p-3" method="post" action="{% url 'register' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="card-body px-5 py3 border-0 no-background">
+                        <div id="messages2"></div>
                         <!-- Display error/success messages -->
                         {% if messages %}
                             {% for message in messages %}
@@ -122,7 +123,7 @@
         const finalView = document.querySelector('.final-view');
         const initialForm = initialView.querySelector('form');
         const finalForm = finalView.querySelector('form');
-        const messagesContainer = document.getElementById('messages');
+        // const messagesContainer = document.getElementById('messages');
     
         sendOtpBtn.addEventListener('click', function(){
             const formData = new FormData(initialForm);
@@ -141,6 +142,7 @@
                 }
                 else if (data.warning) {
                     // Show warning message
+                    const messagesContainer = document.getElementById('messages1');
                     const warningMessage = document.createElement('div');
                     warningMessage.classList.add('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
                     warningMessage.setAttribute('role', 'alert');
@@ -148,6 +150,12 @@
                     messagesContainer.appendChild(warningMessage);                
                 }
                 else if (data.success) {
+                    const messagesContainer = document.getElementById('messages2');
+                    const successMessage = document.createElement('div');
+                    successMessage.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show');
+                    successMessage.setAttribute('role', 'alert');
+                    successMessage.innerHTML = data.message;
+                    messagesContainer.appendChild(successMessage);
                     // Set values in the final form fields
                     finalForm.querySelector('input[name="first_name"]').value = formData.get('first_name');
                     finalForm.querySelector('input[name="last_name"]').value = formData.get('last_name');
