@@ -758,13 +758,13 @@ def MNF(request):
     if request.method == 'POST':
         # Get form data from the request
         customer = request.POST.get('Customer')
-        manufacture = request.POST.get('Manufature')
+        manufacture = request.POST.get('Manufacture')
         location = request.POST.get('Location')
         brand = request.POST.get('Brand')
         product = request.POST.get('prod')
         brand_model_no = request.POST.get('Brand_model_no')
         Indkal_model_no = request.POST.get('Indkal_model_no')
-        ODM_model_no = request.POST.get('ORM_model_no')
+        ODM_model_no = request.POST.get('ODM_model_no')
      
 
         # Create and save a new AC object
