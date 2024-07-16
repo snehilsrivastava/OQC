@@ -21,7 +21,6 @@ def authenticate(username=None, password=None):
 
 # Define a view function for the login page
 def login_page(request):
-    # Check if the HTTP request method is POST (form submission)
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -44,6 +43,9 @@ def login_page(request):
             login(request, user)
             request.session['user_type'] = user.user_type
             request.session['username'] = user.username
+            next_page = request.POST.get('next')
+            if next_page !='None':
+                return redirect(next_page)
             if user.user_type == 'owner':
                 return redirect('/dashboard/')
             elif user.user_type == 'legal':
@@ -52,8 +54,8 @@ def login_page(request):
                 return redirect('/brand_dashboard/')
             else: # Tester
                 return redirect('/check/')
-    # Render the login page template (GET request)
-    return render(request, 'login.html')
+    next_page = request.GET.get('next')
+    return render(request, 'login.html', {'next': next_page})
 
 def generate_otp(length=6):
     return str(randint(10**(length-1), 10**length -1))

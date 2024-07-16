@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <title>Access Denied</title>
+    
+    <body>
+        <h1>Access Denied</h1>
+        <p>You do not have permission to access this page.</p>
+        <br>
+        Click here to return to 
+        {% if user_type == 'owner' %}
+            <a href="{% url 'dashboard' %}">dashboard</a>
+        {% elif user_type == 'brand' %}
+            <a href="{% url 'brand_dashboard' %}">dashboard</a>
+        {% elif user_type == 'legal' %}
+            <a href="{% url 'legal_dashboard' %}">dashboard</a>
+        {% elif user_type == 'employee' %}
+            <a href="{% url 'check' %}">dashboard</a>
+        {% endif %}
+    </body>
+</html>
