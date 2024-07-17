@@ -1,4 +1,4 @@
-./oqc_model/.venv/
+oqc_model/.venv/
 **/__pycache__/
 oqc_model/oqc/*.sqlite3
 oqc_model/oqc/staticfiles

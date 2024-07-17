@@ -57,9 +57,9 @@
             <span class="icon" id="userButtonIcon">{{icon}}</span> <!-- Example downward triangle icon -->
         </button>
         <div class="user-info" id="userInfo">
-            <p>Name: {{ first_name }} {{ last_name }}</p>
-            <p>Email: {{ username }}</p>
-            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+            <p>Username: {{ username }}</p>
+            <p>Name: {{ first_name }} &nbsp {{ last_name }}</p>
+            <a class="logout-btn" onclick="logoutUser()">Logout</a>
         </div>
 
     
@@ -149,6 +149,10 @@
     </div>
 
     <div class="content">
+        <h1>Dashboard</h1>
+        <i class="fa fa-search fa-icon"></i>
+        <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
+        <br><br>
         <h1>Dashboard</h1>
         <i class="fa fa-search fa-icon"></i>
         <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
@@ -400,6 +404,7 @@
     
    
 </script>
+
 
 </body>
 </html>

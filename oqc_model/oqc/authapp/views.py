@@ -9,8 +9,39 @@ from datetime import datetime, timedelta
 from django.db.models import Q
 from random import randint
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives, send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.admin.models import LogEntry
 import re
+
+@receiver(post_save, sender=LogEntry)
+def employee_user_type_changed(sender, instance, created, **kwargs):
+    entry = LogEntry.objects.filter(action_flag=2, change_message="[{\"changed\": {\"fields\": [\"User type\"]}}]").order_by("action_time").last().object_repr.strip()
+    name = Employee.objects.filter(username=entry).first()
+
+    subject = 'Account approved'
+    from_email = settings.EMAIL_HOST_USER
+    to = [entry]
+
+    text_content = 'This is an important message.'
+    html_content = f"""
+    <html>
+    <body>
+        <p>
+            Hi {name.first_name} {name.last_name},<br><br>
+            Your account has been approved for {name.user_type} access.<br><br>
+            Click <a href="http://13.200.34.116/au/login" target="_blank">here</a> to go to login page.
+        </p>
+    </body>
+    </html>
+    """
+
+    msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 # Define custom authenticate function which uses Employee DB
 def authenticate(username=None, password=None):
@@ -21,7 +52,6 @@ def authenticate(username=None, password=None):
 
 # Define a view function for the login page
 def login_page(request):
-    # Check if the HTTP request method is POST (form submission)
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -40,20 +70,26 @@ def login_page(request):
             messages.error(request, "Invalid Password")
             return redirect('/au/login/')
         else:
+            if not Employee.objects.filter(username=username).first().user_type:
+                messages.error(request, 'Account yet to be approved')
+                return redirect('/au/login/')
             # Log in the user and redirect to the home page upon successful login
             login(request, user)
             request.session['user_type'] = user.user_type
             request.session['username'] = user.username
+            next_page = request.POST.get('next')
+            if next_page !='None':
+                return redirect(next_page)
             if user.user_type == 'owner':
                 return redirect('/dashboard/')
             elif user.user_type == 'legal':
                 return redirect('/legal_dashboard/')
             elif user.user_type == 'brand':
                 return redirect('/brand_dashboard/')
-            else: # Tester
+            else: # Employee
                 return redirect('/check/')
-    # Render the login page template (GET request)
-    return render(request, 'login.html')
+    next_page = request.GET.get('next')
+    return render(request, 'login.html', {'next': next_page})
 
 def generate_otp(length=6):
     return str(randint(10**(length-1), 10**length -1))
@@ -104,7 +140,7 @@ def send_otp(request):
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [username]
         send_mail(subject, message, email_from, recipient_list)
-        return JsonResponse({'success': True})
+        return JsonResponse({'success': True, 'message':'OTP sent successfully'})
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
 def validate_password(password):
@@ -139,7 +175,29 @@ def register_page(request):
         match (msg):
             case 1:
                 new_employee.save()
-                messages.success(request, "Account created!")
+                messages.success(request, "Account creation request sent.")
+
+                subject = 'New account approval'
+                from_email = settings.EMAIL_HOST_USER
+                to = ["protrack@indkal.com"]
+
+                text_content = 'This is an important message.'
+                html_content = f"""
+                <html>
+                <body>
+                    <p>
+                        Hi Protrack,
+                        <br><br>You have a new account approval request from {fname} {lname}.
+                        <br>Email: {username}<br><br>
+                        Click <a href="http://13.200.34.116/admin/authapp/employee" target="_blank">here</a> to go to approval page.
+                    </p>
+                </body>
+                </html>
+                """
+
+                msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
                 return redirect('/au/login/')
             case 2:
                 messages.error(request, "Invalid or Expired OTP.")
@@ -148,7 +206,7 @@ def register_page(request):
     return render(request, 'register.html')
 
 def forgot_password(request):
-    return render(request, 'forgot_password.html') 
+    return render(request, 'forgot_password.html')
 
 def forgot_password_send_otp(request):
     if request.method == 'POST':

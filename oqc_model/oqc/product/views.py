@@ -88,7 +88,7 @@ def AC_spec(request):
         new_ac.save()
 
         # Redirect to a success page or render a success message
-        return redirect('/check/')  # Assuming you have a 'success' URL
+        return redirect('/dashboard/')  # Assuming you have a 'success' URL
 
     # If not a POST request, render the form
     username = request.session['username']
