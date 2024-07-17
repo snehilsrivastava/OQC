@@ -6,53 +6,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brand Dashboard</title>
 
-    ]<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
-<div class="header">
-    {% comment %}
-    <div class="left-icon">
-        <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
-    </div>
-    {% endcomment %}
+    <svg style="display: none;">
+        <symbol id="icon-moon" viewBox="0 0 24 24">
+            <path d="M21.75 15.89a8.47 8.47 0 01-11.94-7.94 8.6 8.6 0 0110.67-8.36A8.5 8.5 0 1012 21.75a8.36 8.36 0 009.75-5.86z"></path>
+        </symbol>
+        <symbol id="icon-sun" viewBox="0 0 24 24">
+            <path d="M6.76 4.84l-1.8-1.79L4.93 2.5l1.79 1.8zm10.48-1.79l-1.79 1.8 1.06 1.06 1.8-1.79zM12 6a6 6 0 100 12 6 6 0 000-12zm5.25 13h-2.25v-1.25h2.25zM6.75 17.75H4.5v1.25h2.25zM12 21.25h1.25v2.25H12zm-4.34-.16l-1.79-1.8-1.06 1.06 1.8 1.79zM17.75 19.5h-1.25v1.25h1.25zm1.84-4.33h2.25v-1.25h-2.25zm1.96-4.91l-1.79-1.8-1.06 1.06 1.8 1.79zM19.5 4.5h-1.25v1.25h1.25zm-4.91-1.96L12 2.5v2.25h1.25zM4.5 6.75V4.5H3.25v2.25zm-1.96 4.91H.25v1.25h2.25zm1.96 4.91H3.25V19.5h2.25z"></path>
+        </symbol>
+        
+    </svg>
 
-    <div class="container">
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li class="message {{ message.level_tag }}">
-                {{ message }}
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
+    <div class="header" >
+        <div class="container" >
+           
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="message {{ message.level_tag }}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            
+        </div>
 
+    
+    
     <div class="right-icon">
+        <div id="theme-switcher" class="ml-auto mr-3" style = "float:right;">
+        
+            <svg id="theme-switcher__moon" style="display:none;">
+                <use xlink:href="#icon-moon"></use>
+            </svg>
+            <svg id="theme-switcher__sun">
+                <use xlink:href="#icon-sun"></use>
+            </svg>
+        </div>
+    
         <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
-            <span id="userButtonText"></span>
-            <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
+            <span class="icon" id="userButtonIcon">{{icon}}</span> <!-- Example downward triangle icon -->
         </button>
         <div class="user-info" id="userInfo">
-            <p>Username: {{ username }}</p>
-            <p>Name: {{ first_name }} &nbsp {{ last_name }}</p>
-            <a class="logout-btn" onclick="logoutUser()">Logout</a>
+            <p>Name: {{ first_name }} {{ last_name }}</p>
+            <p>Email: {{ username }}</p>
+            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
         </div>
+
+    
     </div>
-
+  
 </div>
-
 <div class="main-content">
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 
     <!-- Filter Popup -->
     <div class="popup" id="filterPopup">
         <span class="close" onclick="toggleFilter()">&times;</span>
-        <h2>Filter Options</h2>
         <form id="filter-form" method="get" action="{% url 'brand_dashboard' %}">
             {% csrf_token %}
             <div>
@@ -95,28 +113,28 @@
             <br>
             <div>
                 <label for="serial_number">Serial Number:</label>
-                <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+                <input class="form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
             </div>
             <br>
             <div>
                 <label for="B_status">Status:</label>
-                <select id="B_status" name="B_status">
+                <select class="form-control" id="B_status" name="B_status">
                     <option value="">All</option>
                     <option value="Not Sent"{%if B_status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
                     <option value="Waiting for Approval"  {%if B_status == 'Waiting for Approval'%}selected{%endif%}>Waiting for Approval</option>
-                    <option value="Approve" {%if B_status == 'Approve'%}selected{%endif%}>Approve</option>
+                    <option value="Approved" {%if B_status == 'Approved'%}selected{%endif%}>Approved</option>
                     <option value="Rejected"{%if B_status == 'Rejected'%}selected{%endif%}>Rejected</option>
                 </select>
             </div>
             <br>
             <div>
                 <label for="start_date">Start Date:</label>
-                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+                <input class="form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
             </div>
             <br>
             <div>
                 <label for="end_date">End Date:</label>
-                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+                <input class="form-control" type="date" id="end_date" name="end_date" value="{{ end_date }}">
             </div>
             <br>
             <div class="button-container">
@@ -182,14 +200,12 @@
                                     <td>{{ subtest.TestName }}</td>
                                     <td>{{ subtest.test_end_date }}</td>
                                     <td>{{ subtest.SerailNo }}</td> <!-- Fixed typo here: SerialNo was misspelled -->
+                                    <div class = "status-button">
                                     <td>{{ subtest.B_status }}</td>
+                                    <div>
                                     <td class="action-buttons">
-                                        
-                                        
-
                                         <a href="{% url 'brand_view' subtest.TestName subtest.ModelName subtest.SerailNo %}"
                                             class="btn btn-primary">View</a>
-                                        
                                     </td>
                                 </tr>
                                 {% endif %}
@@ -209,73 +225,9 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
 <script>
-    $(document).ready(function () {
-        $('.collapse').on('show.bs.collapse', function () {
-            var target = $(this).prev().find('button i.fas');
-            target.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-        }).on('hide.bs.collapse', function () {
-            var target = $(this).prev().find('button i.fas');
-            target.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-        });
-    });
-
-    function toggleCollapseIcon(button) {
-        var icon = button.querySelector('i.fas');
-        icon.classList.toggle('fa-chevron-down');
-        icon.classList.toggle('fa-chevron-up');
-    }
-
-    function toggleFilter() {
-        var popup = document.getElementById("filterPopup");
-        var overlay = document.getElementById("overlay");
-        var display = popup.style.display;
-
-        if (display === "block") {
-            popup.style.display = "none";
-            overlay.style.display = "none";
-        } else {
-            popup.style.display = "block";
-            overlay.style.display = "block";
-        }
-    }
-    function clearFilter(){
-        var form = document.getElementById("filter-form");
-
-        // Manually reset each field to the empty string or their default values if needed
-        var product = document.getElementById("product");
-        var testStage = document.getElementById("test_stage");
-        var modelName = document.getElementById("model_name");
-        var testName = document.getElementById("test_name");
-        var serialNumber = document.getElementById("serial_number");
-        var B_status = document.getElementById("B_status");
-        var startDate = document.getElementById("start_date");
-        var endDate = document.getElementById("end_date");
-
-    
-        // Set default values
-        product.value = "";
-        testStage.value = "";
-        modelName.value = "";
-        testName.value = "";
-        serialNumber.value = "";
-        B_status.value = "";
-        startDate.value = "";
-        endDate.value = "";
-
-  
-    }
-
-    function toggleUserInfo() {
-        var userInfo = document.getElementById("userInfo");
-        userInfo.style.display = userInfo.style.display === "none" ? "block" : "none";
-    }
-
-    // Ensure user info starts hidden
-    document.addEventListener("DOMContentLoaded", function () {
-        var userInfo = document.getElementById("userInfo");
-        userInfo.style.display = "none";
-    });
+   
     document.addEventListener("DOMContentLoaded", function() {
         populateModels();
         populateTestName();
@@ -288,8 +240,6 @@
             populateTestName();
         });
     });
-    
-    
     
     // JavaScript object to store model data
     const modelsByType = {
@@ -378,6 +328,45 @@
             }
         });
     }
+    
+    
+</script>
+<script>
+    // Check local storage
+    let localS = localStorage.getItem('theme'),
+        themeToSet = localS;
+
+    // If local storage is not set, we check the OS preference
+    if (!localS) {
+        themeToSet = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // Set the correct theme
+    document.documentElement.setAttribute('data-theme', themeToSet);
+
+    // Update the icon visibility based on the current theme
+    const updateIcons = (theme) => {
+        document.getElementById('theme-switcher__sun').style.display = (theme === 'light') ? 'block' : 'none';
+        document.getElementById('theme-switcher__moon').style.display = (theme === 'dark') ? 'block' : 'none';
+    };
+
+    updateIcons(themeToSet);
+
+    // Theme switcher function
+    const switchTheme = () => {
+        const rootElem = document.documentElement;
+        let dataTheme = rootElem.getAttribute('data-theme');
+        let newTheme = (dataTheme === 'light') ? 'dark' : 'light';
+
+        rootElem.setAttribute('data-theme', newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateIcons(newTheme);
+    };
+
+    // Add the event listener for the theme switcher
+    document.querySelector('#theme-switcher').addEventListener('click', switchTheme);
+
+
     function logoutUser() {
         fetch('/logout/', {
             method: 'POST',
@@ -387,26 +376,29 @@
             },
             body: JSON.stringify({})
         })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        // Redirect to the home page or show a success message
-                        window.location.href = '/';
-                    } else {
-                        alert('Logout failed');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Logout failed');
-                });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Redirect to the home page or show a success message
+                window.location.href = '/';
+            } else {
+                alert('Logout failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Logout failed');
+        });
     }
+    
+   
 </script>
+
 
 </body>
 </html>

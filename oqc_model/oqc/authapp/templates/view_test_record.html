@@ -55,7 +55,7 @@
             padding: 10px 20px;
             text-decoration: none;
             color: white;
-            background-color: #333; /* Change color as needed */
+            background-color: #0879cb;  /* Change color as needed */
             border-radius: 5px;
             transition: background-color 0.3s ease;
         }
@@ -310,6 +310,7 @@
         <a id="status-toggle-{{ test.id }}" class="button" onclick="setStatus({{ test.id }})">Send</a>
     {% endif %}
     <a class="button" href="{% url 'remark' test.id %}">Remark</a>
+    
 </div>
 </form>
 </body>

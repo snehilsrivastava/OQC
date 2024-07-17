@@ -2,40 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% load static%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Remarks</title>
-    <style>
-        .section {
-            margin: 20px 0;
-        }
-        .remark-form {
-            display: flex;
-            flex-direction: column;
-        }
-        .remark-form label {
-            margin-bottom: 5px;
-        }
-        .remark-form textarea {
-            margin-bottom: 10px;
-            padding: 10px;
-            resize: vertical;
-            min-height: 100px;
-        }
-        .submit-btn {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .submit-btn:hover {
-            background-color: #555;
-        }
-    </style>
+    <title>Employee Remarks</title>
+    <link rel="stylesheet" href="{% static 'css/remark2.css' %}">
 </head>
 <body>
-    <div class="section">
+    <div class="nav">
+        <div class="container">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="message {{ message.level_tag }}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="right-icon">
+            <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+                <span id="userButtonText"></span>
+                <span class="icon" id="userButtonIcon">{{ icon }}</span> <!-- Example downward triangle icon -->
+            </button>
+            <div class="user-info" id="userInfo">
+                <p>Username: {{ username }}</p>
+                <p>Name: {{ first_name }} {{ last_name }}</p>
+                <a class="logout-btn" onclick="logoutUser()" data-csrf="{{ csrf_token }}">Logout</a>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+    <div class="section employee-remark-class">
         <h2>Product Owner's Remark</h2>
 
         <textarea id="product-owner-remark" name="product-owner-remark" placeholder="">{{TestObjectRemark.owner_remark}}</textarea>
@@ -43,13 +41,17 @@
     </div>
 
     <div class="section">
-        <h2>Employee's Remark</h2>
+        <h2>Test Inspector Remark</h2>
         <form class="remark-form" id="employee-remark-form" method="POST" action="{% url 'remark' id=TestObjectRemark.id %}">
             {% csrf_token %}
-            <label for="employee-remark">Enter Remark:</label>
+           
             <textarea id="employee-remark" name="employee-remark" placeholder="Enter remark for employee..."></textarea>
+            <div class="button-container">
             <button type="submit" class="submit-btn">Submit Remark</button>
+            </div>
         </form>
     </div>
+</div>
+<script type="text/javascript" src="{% static 'js/form.js' %}"></script>
 </body>
 </html>

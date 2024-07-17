@@ -23,7 +23,7 @@ class Model_MNF_detail(models.Model):
 
 
 class Test_core_detail(models.Model):
-    ProductType = models.CharField(max_length=102,default = "None")
+    ProductType = models.CharField(max_length=500,default='None')
     TestName =  models.CharField(max_length=500,default='None')
     Test_Objective = models.CharField(max_length=500,default='None')
     Test_Standard = models.CharField(max_length=500,default='None')
@@ -45,9 +45,9 @@ class TestRecord(models.Model):
     notes = models.CharField(max_length=255, blank=True) 
     employee_remark  = models.TextField(max_length=500,default='',blank=True)
     owner_remark  = models.TextField(max_length=500,default='',blank=True)
-    status = models.CharField(max_length=80,default="Not Sent")
-    L_status = models.CharField(max_length=80,default="Not Sent")
-    B_status = models.CharField(max_length=80,default="Not Sent")
+    status = models.CharField(max_length=50,default="Not Sent")
+    L_status = models.CharField(max_length=50,default="Not Sent")
+    B_status = models.CharField(max_length=50,default="Not Sent")
     ProductType = models.CharField(max_length=102,default = "None")
     ModelName = models.CharField(max_length=100,default = "None")
     SerailNo  = models.CharField(max_length=100,default = "None")
@@ -66,6 +66,3 @@ class TestList(models.Model):
 
     def __str__(self):
      return f"{self.Product} - {self.TestName}"
-    
-
-

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Specification Form</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form2.css' %}">
 </head>
 <body>
     <div class="nav">
@@ -24,7 +24,7 @@
         <div class="right-icon">
             <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
                 <span id="userButtonText"></span>
-                <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
+                <span class="icon" id="userButtonIcon">{{icon}}</span> <!-- Example downward triangle icon -->
             </button>
             <div class="user-info" id="userInfo">
                 <p>Username: {{ username }}</p>
@@ -79,7 +79,7 @@
                 </div>
               
                
-                <button type="submit" class="btn btn-secondary btn-submit">Submit</button>
+                <button type="submit" class="btn btn-primary btn-submit">Submit</button>
             </form>
         </div>
     </div>

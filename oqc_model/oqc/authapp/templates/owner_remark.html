@@ -2,57 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Remarks</title>
-    <style>
-        .section {
-            margin: 20px 0;
-        }
-        .remark-form {
-            display: flex;
-            flex-direction: column;
-        }
-        .remark-form label {
-            margin-bottom: 5px;
-        }
-        .remark-form textarea {
-            margin-bottom: 10px;
-            padding: 10px;
-            resize: vertical;
-            min-height: 100px;
-        }
-        .submit-btn {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .submit-btn:hover {
-            background-color: #555;
-        }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
+    <link rel="stylesheet" href="{% static 'css/remark2.css' %}">
 </head>
 <body>
-    <div class="section">
-
-        <div class="section">
-            <h2>Employee's Remark</h2>
+    <svg style="display: none;">
+        <symbol id="icon-moon" viewBox="0 0 24 24">
+            <path d="M21.75 15.89a8.47 8.47 0 01-11.94-7.94 8.6 8.6 0 0110.67-8.36A8.5 8.5 0 1012 21.75a8.36 8.36 0 009.75-5.86z"></path>
+        </symbol>
+        <symbol id="icon-sun" viewBox="0 0 24 24">
+            <path d="M6.76 4.84l-1.8-1.79L4.93 2.5l1.79 1.8zm10.48-1.79l-1.79 1.8 1.06 1.06 1.8-1.79zM12 6a6 6 0 100 12 6 6 0 000-12zm5.25 13h-2.25v-1.25h2.25zM6.75 17.75H4.5v1.25h2.25zM12 21.25h1.25v2.25H12zm-4.34-.16l-1.79-1.8-1.06 1.06 1.8 1.79zM17.75 19.5h-1.25v1.25h1.25zm1.84-4.33h2.25v-1.25h-2.25zm1.96-4.91l-1.79-1.8-1.06 1.06 1.8 1.79zM19.5 4.5h-1.25v1.25h1.25zm-4.91-1.96L12 2.5v2.25h1.25zM4.5 6.75V4.5H3.25v2.25zm-1.96 4.91H.25v1.25h2.25zm1.96 4.91H3.25V19.5h2.25z"></path>
+        </symbol>
+        
+    </svg>
+    <div class="nav">
+        <div class="container">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="message {{ message.level_tag }}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="right-icon">
+            <div id="theme-switcher" class="ml-auto mr-3" style = "float:right;">
             
-                <textarea id="employee-remark" name="employee-remark" >{{TestObjectRemark.employee_remark}}</textarea>
-            
+                <svg id="theme-switcher__moon" style="display:none;">
+                    <use xlink:href="#icon-moon"></use>
+                </svg>
+                <svg id="theme-switcher__sun">
+                    <use xlink:href="#icon-sun"></use>
+                </svg>
+            </div>
+        
+            <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+                <span class="icon" id="userButtonIcon">{{icon}}</span> <!-- Example downward triangle icon -->
+            </button>
+            <div class="user-info" id="userInfo">
+                <p>Name: {{ first_name }} {{ last_name }}</p>
+                <p>Email: {{ username }}</p>
+                <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+            </div>
+    
+    </div>
+ 
+    <div class="card" style = "margin-left : 30%;">
+        <div class="section employee-remark-class">
+            <h2>Test Inspector Remark</h2>
+            <textarea id="employee-remark" name="employee-remark" readonly>{{ TestObjectRemark.employee_remark }}</textarea>
         </div>
 
-        <h2>Product Owner's Remark</h2>
-        <form class="remark-form" id="product-owner-remark-form" method="POST" action="{% url 'remark_owner' id=TestObjectRemark.id %}">
-            {% csrf_token %}
-            <label for="product-owner-remark">Enter Remark:</label>
-            <textarea id="product-owner-remark" name="product-owner-remark" placeholder="Enter remark for product owner..."></textarea>
-            <button type="submit" class="submit-btn">Submit Remark</button>
-        </form> 
-    </div>
-
+        <div class="section">
+            <h2>Product Owner's Remark</h2>
+            <form class="remark-form" id="product-owner-remark-form" method="POST" action="{% url 'remark_owner' id=TestObjectRemark.id %}">
+                {% csrf_token %}
+                <textarea id="product-owner-remark" name="product-owner-remark" placeholder="Enter remark for product owner..."></textarea>
+                <div class="button-container">
+                    <button type="submit" class="submit-btn">Submit Remark</button>
+                </div>
+            </form> 
+        </div>
+  
+</div>
+    <script type="text/javascript" src="{% static 'js/form.js' %}"></script>
+    <script>
+        // Check local storage
+        let localS = localStorage.getItem('theme'),
+            themeToSet = localS;
     
+        // If local storage is not set, we check the OS preference
+        if (!localS) {
+            themeToSet = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+    
+        // Set the correct theme
+        document.documentElement.setAttribute('data-theme', themeToSet);
+    
+        // Update the icon visibility based on the current theme
+        const updateIcons = (theme) => {
+            document.getElementById('theme-switcher__sun').style.display = (theme === 'light') ? 'block' : 'none';
+            document.getElementById('theme-switcher__moon').style.display = (theme === 'dark') ? 'block' : 'none';
+        };
+    
+        updateIcons(themeToSet);
+    
+        // Theme switcher function
+        const switchTheme = () => {
+            const rootElem = document.documentElement;
+            let dataTheme = rootElem.getAttribute('data-theme');
+            let newTheme = (dataTheme === 'light') ? 'dark' : 'light';
+    
+            rootElem.setAttribute('data-theme', newTheme);
+            localStorage.setItem("theme", newTheme);
+            updateIcons(newTheme);
+        };
+    
+        // Add the event listener for the theme switcher
+        document.querySelector('#theme-switcher').addEventListener('click', switchTheme);
+    
+    
+        function logoutUser() {
+            fetch('/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Redirect to the home page or show a success message
+                    window.location.href = '/';
+                } else {
+                    alert('Logout failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Logout failed');
+            });
+        }
+        
+       
+    </script>
 </body>
 </html>

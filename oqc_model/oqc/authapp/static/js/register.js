@@ -9,3 +9,4 @@ sendOtpBtn.addEventListener('click', () => {
   sendOtpBtn.style.display = 'none';
   otpFields.style.display = 'block';
 });
+

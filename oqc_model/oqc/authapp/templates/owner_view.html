@@ -290,12 +290,12 @@
 
 <div class="action-buttons">
     <a class="btn btn-primary" href="{% url 'dashboard' %}">Return</a>
-    <a class="btn btn-secondary" href="{% url 'remark_owner' test.id %}">Remark</a>
-    <a class="btn btn-primary" href="{% url 'dashboard' %}">Send to Legal</a>
-    <a class="btn btn-primary" href="{% url 'dashboard' %}">Send to Brand</a>
+    <a class="btn btn-primary" href="{% url 'remark_owner' test.id %}">Remark</a>
+    <!-- <a class="btn btn-primary" href="{% url 'dashboard' %}">Send to Legal</a>
+    <a class="btn btn-primary" href="{% url 'dashboard' %}">Send to Brand</a> -->
     
     <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{test.status}}
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">

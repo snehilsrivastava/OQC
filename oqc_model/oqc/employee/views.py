@@ -14,32 +14,21 @@ from io import BytesIO
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from datetime import date
 from django.db.models import Q
 
 def main_page(request):
     return redirect(login_page)
 
-
-def send_report(request, report_id):
-    if request.method == 'GET':
-        report = get_object_or_404(TestRecord, pk=report_id)
-        # Update the report status to indicate it has been sent
-        report.status = 'Sent to Owner'
-        report.save()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
-
 def delete_test_record(request, record_id):
     try:
         # Get the TestRecord instance
         test_record = get_object_or_404(TestRecord, pk=record_id)
-        
         # Perform deletion
         test_record.delete()
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+    
 
 def remark(request, id):
     TestObjectRemark = get_object_or_404(TestRecord, pk=id)
@@ -51,7 +40,19 @@ def remark(request, id):
             TestObjectRemark.employee_remark = request.POST.get('employee-remark')
         TestObjectRemark.save()
         return redirect(reverse('view', args=[test_name, model_name, serialno]))
-    context = {'TestObjectRemark': TestObjectRemark}
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
+
+  
+
+    context = {
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
+        'TestObjectRemark': TestObjectRemark,
+    }
     return render(request, "remark.html", context)
 
 def owner_remark(request, id):
@@ -62,8 +63,18 @@ def owner_remark(request, id):
             TestObjectRemark.owner_remark = request.POST.get('product-owner-remark')
         TestObjectRemark.save()
         return redirect('/dashboard/')
+    
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
+
+  
 
     context = {
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
         'TestObjectRemark': TestObjectRemark,
     }
     return render(request, "owner_remark.html", context)
@@ -80,8 +91,6 @@ def check(request):
     status = request.GET.get('status', '')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
-
-    
     
     # Filter the TestRecord queryset based on the parameters
     completed_tests = TestRecord.objects.filter(employee=username)
@@ -149,7 +158,6 @@ def legal_dashboard(request):
     }
     return render(request, "dashboard_legal.html", context)
 
-
 def cooling(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
@@ -196,19 +204,22 @@ def set_status(request, id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 def dashboard(request):
+
     username = request.session['username']
 
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
-    product = request.GET.get('product', '')
+    product = request.GET.get('product','')
     model_name = request.GET.get('model_name', '')
     serial_number = request.GET.get('serial_number', '')
     status = request.GET.get('status', '')
-    start_date = request.GET.get('start_date', '')
-    end_date = request.GET.get('end_date', '')
     L_status = request.GET.get('L_status','')
     B_status = request.GET.get('B_status','')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+    status_color = {"Not Sent": "#b331a4", "Waiting for Approval": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
+    role_letter = {"L": "Legal Team", "B": "Brand Team", "O": "Product Owner"}
 
     # Filter the TestRecord queryset based on the parameters
     completed_tests = TestRecord.objects.exclude(status="Not Sent")
@@ -251,7 +262,7 @@ def dashboard(request):
         'status': status,
         'L_status' : L_status,
         'B_status' : B_status,
-        'product': product,
+        'product':product,
         'start_date': start_date,
         'end_date': end_date,
         'tv_models': tv_models,
@@ -262,7 +273,9 @@ def dashboard(request):
         'last_name': employee.last_name,
         'icon': icon,
         'username': username,
-        'test': test
+        'test': test,
+        'status_color' : status_color,
+        'role_letter': role_letter
     }
 
     return render(request, 'dashboard_PO.html', context)
@@ -308,7 +321,6 @@ def edit(request, test_name, model_name, serialno):
         'model_name': model_name,
         'serialno': serialno
     }
-
     return render(request, "cooling_test.html", context)
 
 def view_pdf(request, test_name, model_name, serialno):
@@ -436,71 +448,52 @@ def handle_selected_tests(request):
 def generate_pdf(request):
     if request.method == 'POST':
         selected_test_ids = request.POST.getlist('selected_tests')
-        action = request.POST.get('action')
+        # Retrieve the selected test records from the database
         selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids)
-        if action == 'generate_pdf':
-            
-            if not selected_test_records.exists():
-              raise Http404("No test records found")
-            pdf_list = []
-            cumul_page_count, cumul_page_count_list = 3, []
-            test_name_list = []
-            for i, test_record in enumerate(selected_test_records, start=1):
-                model_name = test_record.ModelName
-                test_name = test_record.TestName
-                Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-                models = get_object_or_404(AC, ModelName=model_name)
-                context = {
+        if not selected_test_records.exists():
+            raise Http404("No test records found")
+        pdf_list = []
+        cumul_page_count, cumul_page_count_list = 3, []
+        test_name_list = []
+        for i, test_record in enumerate(selected_test_records, start=1):
+            model_name = test_record.ModelName
+            test_name = test_record.TestName
+            Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
+            models = get_object_or_404(AC, ModelName=model_name)
+            context = {
                 'test': test_record,
                 'model': models,
                 'TestProtocol': Test_protocol,
-                 }
-                test_name_list.append(test_name)
-                cumul_page_count_list.append(cumul_page_count)
-                pdf_content, page_count = render_to_pdf('view_pdf.html', context, request)
-                pdf_list.append(BytesIO(pdf_content))
-                cumul_page_count += page_count
+            }
+            test_name_list.append(test_name)
+            cumul_page_count_list.append(cumul_page_count)
+            pdf_content, page_count = render_to_pdf('view_pdf.html', context, request)
+            pdf_list.append(BytesIO(pdf_content))
+            cumul_page_count += page_count
 
-            if len(pdf_list) > 1:  # No cover page or table of contents for one test
-               test_record = selected_test_records[0] # assuming all records are for same model
-               model_name = test_record.ModelName
-               MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
-               cover_context = {
+        if len(pdf_list) > 1:  # No cover page or table of contents for one test
+            test_record = selected_test_records[0] # assuming all records are for same model
+            model_name = test_record.ModelName
+            MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
+            cover_context = {
                 'MNF_detail': MNF_detail,
-               }
-               pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
-               context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
-               pdf_list.insert(1, BytesIO(render_contents_to_pdf('pdf_contents.html', {'list': context_list}, request)))
-            merged_pdf = merge_pdfs(pdf_list)
-            response = HttpResponse(merged_pdf, content_type='application/pdf')
-            response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
-            return response
+            }
+            pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
+            context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
+            pdf_list.insert(1, BytesIO(render_contents_to_pdf('pdf_contents.html', {'list': context_list}, request)))
+        merged_pdf = merge_pdfs(pdf_list)
+        response = HttpResponse(merged_pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
+        return response
 
-        elif action == 'send_brand':
-           
-            for test_record in selected_test_records:
-             new_status = "Waiting for Approval"
-             test_record.B_status = new_status
-             test_record.save()
-            
-
-        elif action == 'send_legal':
-            for test_record in selected_test_records:
-              new_status = "Waiting for Approval"
-              test_record.L_status = new_status
-              test_record.save()
-          
-
-    return redirect('/dashboard/')
-
-
+    return HttpResponse("Invalid request method.", status=405)
 
 
 def view(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno , TestName =test_name)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')
     paragraphs = soup.find_all('p')
@@ -540,69 +533,53 @@ def owner_view(request, test_name, model_name, serialno):
     }
     return render(request, "owner_view.html", context)
 
+def base(request):
+    return render(request,'base.html')
 
 def change_status(request, test_id, status):
     test = get_object_or_404(TestRecord, id=test_id)
-
-    if status == 2:
-        test.status = "Approve"
-    elif status == 3:
-        test.status = "Rejected"
+    if status == 1:
+        test.status = 'Waiting for Approval'
+    elif status == 2:
+        test.status = 'Approved'
     else:
-        # Handle unexpected status values, could redirect with an error or set a default
-        return redirect('owner_view', test_name=test.TestName, model_name=test.ModelName, serialno=test.SerailNo)
-
+        test.status = 'Rejected'
     test.save()
-
-    # Retrieve parameters for redirection
     test_name = test.TestName
     model_name = test.ModelName
     serialno = test.SerailNo
-
-    return redirect(reverse('owner_view', kwargs={'test_name': test_name, 'model_name': model_name, 'serialno': serialno}))
-
-from django.shortcuts import get_object_or_404, redirect
-from .models import TestRecord
+    return redirect('owner_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
 def change_status_legal(request, test_id, status):
     test = get_object_or_404(TestRecord, id=test_id)
-
-    if status == 2:
-        test.L_status = "Approve"
+    if status == 1:
+        test.L_status = "Waiting for Approval"
+    elif status == 2:
+        test.L_status = "Approved"
     else:
         test.L_status = "Rejected"
-
     test.save()
-
-    # Retrieve parameters for redirection
     test_name = test.TestName
     model_name = test.ModelName
     serialno = test.SerailNo
-
-    # Redirect to legal_view with the retrieved parameters
     return redirect('legal_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
 def change_status_brand(request, test_id, status):
     test = get_object_or_404(TestRecord, id=test_id)
-
-    if status == 2:
-        test.B_status = "Approve"
+    if status == 1:
+        test.B_status = "Waiting for Approval"
+    elif status == 2:
+        test.B_status = "Approved"
     else:
         test.B_status = "Rejected"
-
     test.save()
-
-    # Retrieve parameters for redirection
     test_name = test.TestName
     model_name = test.ModelName
     serialno = test.SerailNo
-
-    # Redirect to legal_view with the retrieved parameters
     return redirect('brand_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
 def legal_dashboard(request):
     username = request.session['username']
-
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -613,13 +590,7 @@ def legal_dashboard(request):
     end_date = request.GET.get('end_date', '')
     L_status = request.GET.get('L_status','')
 
-
-    # # Filter the TestRecord queryset based on the parameters
-    # tests = list(TestRecord.objects.values('ProductType', 'ModelName', 'TestStage').distinct())
-    # tests = tests.exclude(status="Not Sent")
     completed_tests = TestRecord.objects.exclude(L_status="Not Sent")
-    
-    
     if test_name:
         completed_tests = completed_tests.filter(TestName__icontains=test_name)
     if product:
@@ -636,11 +607,9 @@ def legal_dashboard(request):
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
-
     tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
     completed_tests = completed_tests.order_by('-test_date')
-   
-    
+
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
@@ -669,13 +638,10 @@ def legal_dashboard(request):
         'test' : test,
         'username': username
     }
-
-    
-    return render(request, "legal_dashboard.html", context)
+    return render(request, "dashboard_legal.html", context)
 
 def brand_dashboard(request):
     username = request.session['username']
-
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -685,14 +651,7 @@ def brand_dashboard(request):
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
     B_status = request.GET.get('B_status','')
-
-
-    # # Filter the TestRecord queryset based on the parameters
-    # tests = list(TestRecord.objects.values('ProductType', 'ModelName', 'TestStage').distinct())
-    # tests = tests.exclude(status="Not Sent")
     completed_tests = TestRecord.objects.exclude(B_status="Not Sent")
-    
-    
     if test_name:
         completed_tests = completed_tests.filter(TestName__icontains=test_name)
     if product:
@@ -712,7 +671,6 @@ def brand_dashboard(request):
 
     tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
     completed_tests = completed_tests.order_by('-test_date')
-   
     
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
@@ -742,17 +700,20 @@ def brand_dashboard(request):
         'test' : test,
         'username': username
     }
-
-    return render(request, "brand_dashboard.html", context)
-
-
+    return render(request, "dashboard_brand.html", context)
 
 def legal_view(request, test_name, model_name, serialno):
-    # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
-
+    page_break = '''<hr style="border-top: solid black; width: 100%;">'''
+    soup = BeautifulSoup(test_record.additional_details, 'html.parser')
+    paragraphs = soup.find_all('p')
+    page_break_paragraphs = [p for p in paragraphs if p.text.strip().lower() == "pagebreak"]
+    for p in page_break_paragraphs:
+        p.string = ""
+        p.append(BeautifulSoup(page_break, 'html.parser'))
+    test_record.additional_details = str(soup)
     context = {
         'testdetail': test_record,
         'TestProtocol': Test_protocol,
@@ -765,11 +726,17 @@ def legal_view(request, test_name, model_name, serialno):
     return render(request, "legal_view.html", context)
 
 def brand_view(request, test_name, model_name, serialno):
-    # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
-
+    page_break = '''<hr style="border-top: solid black; width: 100%;">'''
+    soup = BeautifulSoup(test_record.additional_details, 'html.parser')
+    paragraphs = soup.find_all('p')
+    page_break_paragraphs = [p for p in paragraphs if p.text.strip().lower() == "pagebreak"]
+    for p in page_break_paragraphs:
+        p.string = ""
+        p.append(BeautifulSoup(page_break, 'html.parser'))
+    test_record.additional_details = str(soup)
     context = {
         'testdetail': test_record,
         'TestProtocol': Test_protocol,
@@ -782,15 +749,17 @@ def brand_view(request, test_name, model_name, serialno):
     return render(request, "brand_view.html", context)
 
 def MNF(request):
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
     if request.method == 'POST':
         # Get form data from the request
-        
         customer = request.POST.get('Customer')
-        Manufacture = request.POST.get('Manufacture')
+        manufacture = request.POST.get('Manufacture')
         location = request.POST.get('Location')
         brand = request.POST.get('Brand')
-        product = request.POST.get('prod')
-        # print(product)
+        Product= request.POST.get('Product')
+        # print(Product)
         brand_model_no = request.POST.get('Brand_model_no')
         Indkal_model_no = request.POST.get('Indkal_model_no')
         ODM_model_no = request.POST.get('ORM_model_no')
@@ -799,10 +768,10 @@ def MNF(request):
         # Create and save a new AC object
         new_mnf = Model_MNF_detail(
            Customer = customer,
-           Manufacture = Manufacture,
+           Manufacture = manufacture,
            Location = location,
            Brand = brand,
-           Product = product,
+           Product= Product,
            Brand_model_no = brand_model_no,
            Indkal_model_no = Indkal_model_no,
            ODM_model_no = ODM_model_no
@@ -811,11 +780,8 @@ def MNF(request):
         new_mnf.save()
         # Redirect to a success page or render a success message
         # return redirect('/check/')  # Assuming you have a 'success' URL
-        if product == 'ac':
-            username = request.session['username']
-            employee = Employee.objects.get(username=username)
-            icon = employee.first_name[0] + employee.last_name[0]
-
+        if Product == 'ac':
+            
             context = {
             'first_name': employee.first_name,
             'last_name': employee.last_name,
@@ -826,9 +792,7 @@ def MNF(request):
             return render(request, 'AC.html', context)
        
     # If not a POST request, render the form
-    username = request.session['username']
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
+
 
     context = {
         'first_name': employee.first_name,
@@ -845,13 +809,12 @@ def Test_list_entry(request):
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
 
-        # Create and save the new TestList instance
-        # s1 = "0000"
-
         # Check if a test with the same name already exists
         existing_test = TestList.objects.filter(TestName=testName, Product=product).first()
-        # if existing_test:
-            # s1 = existing_test.TestStage
+        if existing_test:
+            messages.error(request, "Test name already exists!")
+            return redirect('/dashboard/')
+
         s1 = ""
         if "DVT" in testStages:
             s1 += "1"
@@ -870,24 +833,14 @@ def Test_list_entry(request):
         else:
             s1 += "0"
 
-        if existing_test:
-            existing_test.TestStage = s1
-            existing_test.save()
-        else:
-            new_test = TestList(
-                TestStage=s1,
-                Product=product,
-                TestName=testName,
-            )
-            new_test.save()
+        new_test = TestList(
+            TestStage=s1,
+            Product=product,
+            TestName=testName,
+        )
+        new_test.save()
 
-        # Redirect based on the existence of the test name
-        if existing_test:
-            messages.success(request, "Test info updated!")
-            return redirect('/check/')
-        else:
-            return redirect(reverse('test_protocol_entry', args=[testName, product]))
-
+        return redirect(reverse('test_protocol_entry', args=[testName, product]))
     # If not a POST request, render the form
     username = request.session['username']
     employee = Employee.objects.get(username=username)
@@ -901,8 +854,10 @@ def Test_list_entry(request):
     }
     return render(request, 'Test_list_entry.html',context)
 
-def test_protocol_entry(request,test_name,product):
+def test_protocol_entry(request, test_name, product):
     if request.method == 'POST':
+        # Get form data from the request
+        testName = request.POST.get('TestName')
         testobjective = request.POST.get('Testobjective')
         teststandard = request.POST.get('Teststandard')
         testcondition = request.POST.get('Testcondition')
@@ -940,8 +895,6 @@ def test_protocol_entry(request,test_name,product):
     username = request.session['username']
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
-
-    
     context = {
     'first_name': employee.first_name,
     'last_name': employee.last_name,
@@ -958,14 +911,8 @@ def update_test_list_entry(request):
         testStages = request.POST.getlist('TestStage')  # Get a list of selected test stages
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
-
-        # Create and save the new TestList instance
-        # s1 = "0000"
-
         # Check if a test with the same name already exists
         existing_test = TestList.objects.filter(TestName=testName, Product=product).first()
-        # if existing_test:
-            # s1 = existing_test.TestStage
         s1 = ""
         if "DVT" in testStages:
             s1 += "1"
@@ -987,15 +934,10 @@ def update_test_list_entry(request):
         if existing_test:
             existing_test.TestStage = s1
             existing_test.save()
-       
-
-        # messages.success(request, "Test info updated!")
-
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
 
     test_names = TestList.objects.values_list('TestName', flat=True).distinct()
     products = Product_Detail.objects.values_list('ProductType', flat=True).distinct()
-    
     username = request.session['username']
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
@@ -1007,69 +949,4 @@ def update_test_list_entry(request):
         'icon': icon,
         'username': username,
     }
-    
     return render(request, 'Update_Test_list_entry.html', context)
-
-
-
-def update_test_list_entry(request):
-    if request.method == 'POST':
-        # Get form data from the request
-        testStages = request.POST.getlist('TestStage')  # Get a list of selected test stages
-        product = request.POST.get('Product')
-        testName = request.POST.get('TestName')
-
-        # Create and save the new TestList instance
-        # s1 = "0000"
-
-        # Check if a test with the same name already exists
-        existing_test = TestList.objects.filter(TestName=testName, Product=product).first()
-        # if existing_test:
-            # s1 = existing_test.TestStage
-        s1 = ""
-        if "DVT" in testStages:
-            s1 += "1"
-        else:
-            s1 += "0"
-        if "PP" in testStages:
-            s1 += "1"
-        else:
-            s1 += "0"
-        if "MP" in testStages:
-            s1 += "1"
-        else:
-            s1 += "0"
-        if "PDI" in testStages:
-            s1 += "1"
-        else:
-            s1 += "0"
-
-        if existing_test:
-            existing_test.TestStage = s1
-            existing_test.save()
-       
-
-        # messages.success(request, "Test info updated!")
-
-        return redirect(reverse('test_protocol_entry', args=[testName, product]))
-
-    test_names = TestList.objects.values_list('TestName', flat=True).distinct()
-    products = Product_Detail.objects.values_list('ProductType', flat=True).distinct()
-    
-    username = request.session['username']
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
-    context = {
-        'test_names': test_names,
-        'products': products,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
-    }
-    
-    return render(request, 'Update_Test_list_entry.html', context)
-
-def view_test_records(request):
-    test_records = TestRecord.objects.all()
-    return render(request, 'view.html', {'test_records': test_records})

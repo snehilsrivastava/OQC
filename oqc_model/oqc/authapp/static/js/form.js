@@ -1,31 +1,3 @@
-function logoutUser() {
-    var csrfToken = document.querySelector('.logout-btn').dataset.csrf;
-    fetch('/logout/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify({})
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            window.location.href = '/';
-        } else {
-            alert('Logout failed');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Logout failed');
-    });
-}
 function toggleUserInfo() {
     var sidebar = document.getElementById("userInfo");
     if (sidebar.style.display === "block" || sidebar.style.display === "") {
@@ -34,7 +6,17 @@ function toggleUserInfo() {
         sidebar.style.display = "block";
     }
 }
+
 document.addEventListener("DOMContentLoaded", function() {
     var sidebar = document.getElementById("userInfo");
     sidebar.style.display = "none";
 });
+
+
+document.addEventListener('click', function(event) {
+    var clickedElement = event.target;
+    if (clickedElement !== document.getElementById("userInfo") && clickedElement !== document.getElementById("userButton") && clickedElement !== document.getElementById("userButtonIcon")) {
+        document.getElementById("userInfo").style.display = "none";
+    }
+    });
+
