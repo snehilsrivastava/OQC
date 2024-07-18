@@ -87,7 +87,7 @@ def login_page(request):
             elif user.user_type == 'brand':
                 return redirect('/brand_dashboard/')
             else: # Employee
-                return redirect('/check/')
+                return redirect('/employee_dashboard/')
     next_page = request.GET.get('next')
     return render(request, 'login.html', {'next': next_page})
 

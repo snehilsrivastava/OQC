@@ -21,7 +21,7 @@ def main_page(request):
         username = request.session['username']
         user = Employee.objects.get(username=username)
         if user.user_type == 'employee':
-            return redirect('/check/')
+            return redirect('/employee_dashboard/')
         elif user.user_type == 'owner':
             return redirect('/dashboard/')
         elif user.user_type == 'brand':
@@ -105,7 +105,7 @@ def owner_remark(request, id):
     return render(request, "owner_remark.html", context)
 
 @login_required
-def check(request):
+def employee_dashboard(request):
     username = request.session['username']
     user = Employee.objects.get(username=username)
     if user.user_type != 'employee':
@@ -208,7 +208,7 @@ def cooling(request, test_name, model_name, serialno):
         else:
             print(form.errors)
        
-        return redirect('/check/')  # Redirect to a success page or another view
+        return redirect('/employee_dashboard/')
     else:
         form = TestRecordForm(instance=test_record)
 
@@ -353,7 +353,7 @@ def edit(request, test_name, model_name, serialno):
             print(form.errors)
 
         messages.success(request, 'Test record updated.')
-        return redirect('/check/')
+        return redirect('/employee_dashboard/')
     else:
         form = TestRecordForm(instance=test_record)
     test_record.additional_details = test_record.additional_details.strip()
@@ -818,8 +818,6 @@ def MNF(request):
 
         )
         new_mnf.save()
-        # Redirect to a success page or render a success message
-        # return redirect('/check/')  # Assuming you have a 'success' URL
         if Product == 'ac':
             username = request.session['username']
             employee = Employee.objects.get(username=username)

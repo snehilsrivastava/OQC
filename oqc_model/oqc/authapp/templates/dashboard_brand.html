@@ -45,7 +45,6 @@
     <div class="popup" id="filterPopup">
         <span class="close" onclick="toggleFilter()">&times;</span>
         <form id="filter-form" method="get" action="{% url 'brand_dashboard' %}">
-            {% csrf_token %}
             <div>
                 <label for="product">Product Type:</label>
                 <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
