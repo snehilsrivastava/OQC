@@ -16,7 +16,6 @@ urlpatterns = [
     path('brand_dashboard/',views.brand_dashboard,name = 'brand_dashboard'),
     path('dashboard/',views.dashboard,name = 'dashboard'),
     path('logout/',views.logout,name = 'logout'),
-    path('submit-product-details', views.submit_product_details_view, name='submit_product_details'),
     path('edit/<str:test_name>/<str:model_name>/<str:serialno>/', views.edit, name='edit'),
     path('view/<str:test_name>/<str:model_name>/<str:serialno>/', views.view, name='view'),
     path('owner_view/<str:test_name>/<str:model_name>/<str:serialno>/', views.owner_view, name='owner_view'),

@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'employee.middleware.RequestPathMiddleware'
 ]
 
 ROOT_URLCONF = 'oqc.urls'
@@ -114,13 +115,14 @@ EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'protrack@indkal.com'
 EMAIL_HOST_PASSWORD = 'bngjmomfunuqhrmy'
 
-
+# LOGIN_URL = '/au/login/'
+# AUTH_USER_MODEL = 'authapp.Employee'
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
