@@ -32,7 +32,6 @@ urlpatterns = [
     path('remark_owner/<int:id>/',views.owner_remark,name = 'remark_owner'),
     path('view_pdf/<str:test_name>/<str:model_name>/<str:serialno>/', views.view_pdf, name='view_pdf'),
     path('handle_selected_tests/',views.handle_selected_tests,name = 'handle_selected_tests'),
-    path('base/',views.base,name = 'base'),
 ]
 
 from django.conf import settings

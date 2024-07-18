@@ -23,16 +23,15 @@
                     <use xlink:href="#icon-sun"></use>
                 </svg>
             </div>
-                <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
-                    <span id="userButtonText"></span>
-                    <span class="icon" id="userButtonIcon">{{icon}}</span> <!-- Example downward triangle icon -->
-                </button>
-                <div class="user-info" id="userInfo">
-                    <p>Username: {{ username }}</p>
-                    <p>Name: {{ first_name }} {{ last_name }}</p>
-                    <a class="logout-btn" onclick="logoutUser()" data-csrf="{{ csrf_token }}">Logout</a>
-
-                </div>
+            <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+                <span id="userButtonText"></span>
+                <span class="icon" id="userButtonIcon">{{icon}}</span> <!-- Example downward triangle icon -->
+            </button>
+            <div class="user-info" id="userInfo">
+                <p>Username: {{ username }}</p>
+                <p>Name: {{ first_name }} {{ last_name }}</p>
+                <a class="logout-btn" onclick="logoutUser()" data-csrf="{{ csrf_token }}">Logout</a>
+            </div>
         </div>
     </div>
     <div class="message-container">

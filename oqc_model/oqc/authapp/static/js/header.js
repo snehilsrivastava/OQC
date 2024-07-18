@@ -24,7 +24,6 @@ function logoutUser() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
         },
         body: JSON.stringify({})
     })
@@ -82,32 +81,3 @@ const switchTheme = () => {
 
 // Add the event listener for the theme switcher
 document.querySelector('#theme-switcher').addEventListener('click', switchTheme);
-
-function logoutUser() {
-    fetch('/logout/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
-        },
-        body: JSON.stringify({})
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            // Redirect to the home page or show a success message
-            window.location.href = '/';
-        } else {
-            alert('Logout failed');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Logout failed');
-    });
-}

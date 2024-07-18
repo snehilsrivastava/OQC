@@ -17,7 +17,19 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
 def main_page(request):
-    return redirect(login_page)
+    try:
+        username = request.session['username']
+        user = Employee.objects.get(username=username)
+        if user.user_type == 'employee':
+            return redirect('/check/')
+        elif user.user_type == 'owner':
+            return redirect('/dashboard/')
+        elif user.user_type == 'brand':
+            return redirect('/brand_dashboard/')
+        elif user.user_type == 'legal':
+            return redirect('/legal_dashboard/')
+    except KeyError:
+        return redirect(login_page)
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -45,27 +57,24 @@ def remark(request, id):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'employee':
         return render(request, "access_denied.html", {'user_type': user.user_type})
-    TestObjectRemark = get_object_or_404(TestRecord, pk=id)
-    test_name = TestObjectRemark.TestName
-    model_name = TestObjectRemark.ModelName
-    serialno = TestObjectRemark.SerailNo
+    TestObject = get_object_or_404(TestRecord, pk=id)
+    test_name = TestObject.TestName
+    model_name = TestObject.ModelName
+    serialno = TestObject.SerailNo
     if request.method == 'POST':
-        if 'employee-remark' in request.POST:
-            TestObjectRemark.employee_remark = request.POST.get('employee-remark')
-        TestObjectRemark.save()
+        TestObject.employee_remark = request.POST.get('employee-remark')
+        TestObject.save()
         return redirect(reverse('view', args=[test_name, model_name, serialno]))
     username = request.session['username']
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
-
-  
 
     context = {
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
         'username': username,
-        'TestObjectRemark': TestObjectRemark,
+        'TestObjectRemark': TestObject,
     }
     return render(request, "remark.html", context)
 
@@ -74,26 +83,24 @@ def owner_remark(request, id):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'owner':
         return render(request, "access_denied.html", {'user_type': user.user_type})
-    TestObjectRemark = get_object_or_404(TestRecord, pk=id)
+    TestObject = get_object_or_404(TestRecord, pk=id)
+    test_name = TestObject.TestName
+    model_name = TestObject.ModelName
+    serialno = TestObject.SerailNo
     if request.method == 'POST':
-       
-        if 'product-owner-remark' in request.POST:
-            TestObjectRemark.owner_remark = request.POST.get('product-owner-remark')
-        TestObjectRemark.save()
-        return redirect('/dashboard/')
-    
+        TestObject.owner_remark = request.POST.get('product-owner-remark')
+        TestObject.save()
+        return redirect(reverse('owner_view', args=[test_name, model_name, serialno]))
     username = request.session['username']
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
-
-  
 
     context = {
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
         'username': username,
-        'TestObjectRemark': TestObjectRemark,
+        'TestObjectRemark': TestObject,
     }
     return render(request, "owner_remark.html", context)
 
@@ -321,7 +328,9 @@ from django.contrib.auth import logout as auth_logout
 @login_required
 def logout(request):
     if request.method == "POST":
-        auth_logout(request)  # Use the correct logout method from django.contrib.auth
+        print('trying')
+        auth_logout(request)
+        print('tried')
         return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
@@ -518,7 +527,7 @@ def owner_view(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno, ModelName=model_name, TestName=test_name)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')
     paragraphs = soup.find_all('p')
