@@ -1,16 +1,17 @@
 @import url("color_pallette.css");
 
-.nav {
+.header {
+    z-index: 200;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
+    justify-content: end;
+    align-items: center; /* Align items vertically */
+    padding: 10px 20px;
     background-color: #0879cb;
     color: white;
     width: 100%;
 }
 
-.nav .fa {
+.header .fa {
     margin-right: 10px;
 }
 
@@ -112,7 +113,7 @@ select {
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.9);
 }
 
-.header {
+.form-header {
     text-align: center;
     margin-bottom: 20px;
 }

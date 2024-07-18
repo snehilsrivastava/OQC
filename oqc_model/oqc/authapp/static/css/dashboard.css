@@ -39,14 +39,14 @@ button a:hover {
 }
 
 .header {
+    z-index: 200;
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center; /* Align items vertically */
     padding: 10px 20px;
     background-color: #0879cb;
     color: white;
     width: 100%;
-    
 }
 
 .header .fa {
@@ -124,10 +124,6 @@ th {
     color: white;
 }
 
-/* tr:nth-child(even) {
-    background-color: #f2f2f2;
-} */
-
 button.collapse-button {
     height: 20px;
     width: 20px;
@@ -171,13 +167,32 @@ button.collapse-button i {
     background: #d9534f;
 }
 
-
 .message {
-    list-style: circle;
-    width: calc(100% - 100px);
-    padding: 10px 20px;
+    align-self: center;
+    width: calc(100% - 10px);
+    padding: 4px 5px;
     border: 1px solid #ddd;
-    margin-bottom: 10px;
+    display: block;
+}
+
+.message-container {
+    z-index: 100;
+    width: 30%;
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: top 0.5s ease-in-out;
+    visibility: visible;
+    margin: 0 auto;
+}
+
+.timer-bar {
+    height: 5px;
+    background-color: darkgreen;
+    width: 100%;
+    transition: width 5s linear;
+    display: block;
 }
 
 .success {

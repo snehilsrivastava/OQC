@@ -139,6 +139,7 @@ def check(request):
         'icon': icon,
         'username': username
     }
+    messages.success(request, 'Wow the page is being displayed')
     return render(request, "dashboard_employee.html", context)
 
 def legal_dashboard(request):
@@ -395,7 +396,8 @@ def handle_selected_tests(request):
         if action == 'generate_pdf':
             
             if not selected_test_records.exists():
-                raise Http404("No test records found")
+                messages.error(request, 'No test records selected')
+                return redirect('/dashboard/')
             pdf_list = []
             cumul_page_count, cumul_page_count_list = 3, []
             test_name_list = []
@@ -444,50 +446,6 @@ def handle_selected_tests(request):
           
 
     return redirect('/dashboard/')
-
-def generate_pdf(request):
-    if request.method == 'POST':
-        selected_test_ids = request.POST.getlist('selected_tests')
-        # Retrieve the selected test records from the database
-        selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids)
-        if not selected_test_records.exists():
-            raise Http404("No test records found")
-        pdf_list = []
-        cumul_page_count, cumul_page_count_list = 3, []
-        test_name_list = []
-        for i, test_record in enumerate(selected_test_records, start=1):
-            model_name = test_record.ModelName
-            test_name = test_record.TestName
-            Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-            models = get_object_or_404(AC, ModelName=model_name)
-            context = {
-                'test': test_record,
-                'model': models,
-                'TestProtocol': Test_protocol,
-            }
-            test_name_list.append(test_name)
-            cumul_page_count_list.append(cumul_page_count)
-            pdf_content, page_count = render_to_pdf('view_pdf.html', context, request)
-            pdf_list.append(BytesIO(pdf_content))
-            cumul_page_count += page_count
-
-        if len(pdf_list) > 1:  # No cover page or table of contents for one test
-            test_record = selected_test_records[0] # assuming all records are for same model
-            model_name = test_record.ModelName
-            MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
-            cover_context = {
-                'MNF_detail': MNF_detail,
-            }
-            pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
-            context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
-            pdf_list.insert(1, BytesIO(render_contents_to_pdf('pdf_contents.html', {'list': context_list}, request)))
-        merged_pdf = merge_pdfs(pdf_list)
-        response = HttpResponse(merged_pdf, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
-        return response
-
-    return HttpResponse("Invalid request method.", status=405)
-
 
 def view(request, test_name, model_name, serialno):
     # Fetch the specific Test_core_detail object related to the cooling test

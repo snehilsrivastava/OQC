@@ -22,7 +22,6 @@ urlpatterns = [
     path('owner_view/<str:test_name>/<str:model_name>/<str:serialno>/', views.owner_view, name='owner_view'),
     path('legal_view/<str:test_name>/<str:model_name>/<str:serialno>/', views.legal_view, name='legal_view'),
     path('brand_view/<str:test_name>/<str:model_name>/<str:serialno>/', views.brand_view, name='brand_view'),
-    path('generate-pdf/', views.generate_pdf, name='generate_pdf'),
     path('cooling/<str:test_name>/<str:model_name>/<str:serialno>/', views.cooling, name='cooling'),
     path('mnf/', views.MNF, name='mnf'),
     path('test_list_entry/',views.Test_list_entry,name = 'test_list_entry'),

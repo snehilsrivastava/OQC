@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Specification Form</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/form2.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
     <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
 </head>
 <body>
@@ -114,73 +114,6 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="{% static 'js/form.js' %}"></script>
-    <script>
-        // Check local storage
-        let localS = localStorage.getItem('theme'),
-            themeToSet = localS;
-
-        // If local storage is not set, we check the OS preference
-        if (!localS) {
-            themeToSet = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-
-        // Set the correct theme
-        document.documentElement.setAttribute('data-theme', themeToSet);
-
-        // Update the icon visibility based on the current theme
-        const updateIcons = (theme) => {
-            document.getElementById('theme-switcher__sun').style.display = (theme === 'light') ? 'block' : 'none';
-            document.getElementById('theme-switcher__moon').style.display = (theme === 'dark') ? 'block' : 'none';
-        };
-
-        updateIcons(themeToSet);
-
-        // Theme switcher function
-        const switchTheme = () => {
-            const rootElem = document.documentElement;
-            let dataTheme = rootElem.getAttribute('data-theme');
-            let newTheme = (dataTheme === 'light') ? 'dark' : 'light';
-
-            rootElem.setAttribute('data-theme', newTheme);
-            localStorage.setItem("theme", newTheme);
-            updateIcons(newTheme);
-        };
-
-        // Add the event listener for the theme switcher
-        document.querySelector('#theme-switcher').addEventListener('click', switchTheme);
-    
-
-        function logoutUser() {
-            fetch('/logout/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    // Redirect to the home page or show a success message
-                    window.location.href = '/';
-                } else {
-                    alert('Logout failed');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Logout failed');
-            });
-        }
-        
-       
-    </script>
+    <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 </body>
 </html>
