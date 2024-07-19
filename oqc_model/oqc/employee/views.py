@@ -16,6 +16,32 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
+def access_denied(request):
+    user = request.session['username']
+    employee = Employee.objects.get(username=user)
+    icon = employee.first_name[0] + employee.last_name[0]
+    context = {
+        'user': employee,
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+    }
+    print(context)
+    return render(request, "access_denied.html", context=context)
+
+def custom_404(request, exception):
+    user = request.session['username']
+    employee = Employee.objects.get(username=user)
+    icon = employee.first_name[0] + employee.last_name[0]
+    context = {
+        'user': employee,
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+    }
+    print(context)
+    return render(request, "404_custom.html", context=context)
+
 def main_page(request):
     try:
         username = request.session['username']
@@ -43,8 +69,8 @@ def login_required(view_func):
 @login_required
 def delete_test_record(request, record_id):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'employee':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'employee' and not user.is_superuser:
+        return redirect('/access_denied/')
     try:
         test_record = get_object_or_404(TestRecord, pk=record_id)
         test_record.delete()
@@ -55,8 +81,8 @@ def delete_test_record(request, record_id):
 @login_required
 def remark(request, id):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'employee':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'employee' and not user.is_superuser:
+        return redirect('/access_denied/')
     TestObject = get_object_or_404(TestRecord, pk=id)
     test_name = TestObject.TestName
     model_name = TestObject.ModelName
@@ -81,8 +107,8 @@ def remark(request, id):
 @login_required
 def owner_remark(request, id):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
     TestObject = get_object_or_404(TestRecord, pk=id)
     test_name = TestObject.TestName
     model_name = TestObject.ModelName
@@ -108,8 +134,8 @@ def owner_remark(request, id):
 def employee_dashboard(request):
     username = request.session['username']
     user = Employee.objects.get(username=username)
-    if user.user_type != 'employee':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'employee' and not user.is_superuser:
+        return redirect('/access_denied/')
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -174,8 +200,8 @@ def employee_dashboard(request):
 def legal_dashboard(request):
     username = request.session.get('username')
     user = Employee.objects.get(username=username)
-    if user.user_type != 'employee':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'employee' and not user.is_superuser:
+        return redirect('/access_denied/')
     test = list(TestRecord.objects.values('ProductType','ModelName', 'TestStage').distinct())
     employee = Employee.objects.get(username=username)
     all_tests = TestRecord.objects.all()
@@ -194,8 +220,8 @@ def legal_dashboard(request):
 @login_required
 def cooling(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'employee':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'employee' and not user.is_superuser:
+        return redirect('/access_denied/')
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
@@ -228,8 +254,8 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def set_status(request, id):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'employee':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'employee' and not user.is_superuser:
+        return redirect('/access_denied/')
     if request.method == 'POST':
         try:
             test_record = TestRecord.objects.get(id=id)
@@ -247,8 +273,8 @@ def dashboard(request):
 
     username = request.session['username']
     user = Employee.objects.get(username=username)
-    if user.user_type != 'owner':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -328,17 +354,15 @@ from django.contrib.auth import logout as auth_logout
 @login_required
 def logout(request):
     if request.method == "POST":
-        print('trying')
         auth_logout(request)
-        print('tried')
         return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
 @login_required
 def edit(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'employee':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'employee' and not user.is_superuser:
+        return redirect('/access_denied/')
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
@@ -437,8 +461,8 @@ def merge_pdfs(pdf_list):
 @login_required
 def handle_selected_tests(request):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
     if request.method == 'POST':
         selected_test_ids = request.POST.getlist('selected_tests')
         action = request.POST.get('action')
@@ -498,8 +522,8 @@ def handle_selected_tests(request):
 @login_required
 def view(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'employee':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'employee' and not user.is_superuser:
+        return redirect('/access_denied/')
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
@@ -522,8 +546,8 @@ def view(request, test_name, model_name, serialno):
 @login_required
 def owner_view(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
     # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
@@ -550,8 +574,8 @@ def owner_view(request, test_name, model_name, serialno):
 @login_required
 def change_status(request, test_id, status):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
     test = get_object_or_404(TestRecord, id=test_id)
     if status == 1:
         test.status = 'Waiting for Approval'
@@ -568,8 +592,8 @@ def change_status(request, test_id, status):
 @login_required
 def change_status_legal(request, test_id, status):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'legal':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'legal' and not user.is_superuser:
+        return redirect('/access_denied/')
     test = get_object_or_404(TestRecord, id=test_id)
     if status == 1:
         test.L_status = "Waiting for Approval"
@@ -586,8 +610,8 @@ def change_status_legal(request, test_id, status):
 @login_required
 def change_status_brand(request, test_id, status):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'brand':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'brand' and not user.is_superuser:
+        return redirect('/access_denied/')
     test = get_object_or_404(TestRecord, id=test_id)
     if status == 1:
         test.B_status = "Waiting for Approval"
@@ -605,8 +629,8 @@ def change_status_brand(request, test_id, status):
 def legal_dashboard(request):
     username = request.session['username']
     user = Employee.objects.get(username=username)
-    if user.user_type != 'legal':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'legal' and not user.is_superuser:
+        return redirect('/access_denied/')
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -671,8 +695,8 @@ def legal_dashboard(request):
 def brand_dashboard(request):
     username = request.session['username']
     user = Employee.objects.get(username=username)
-    if user.user_type != 'brand':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'brand' and not user.is_superuser:
+        return redirect('/access_denied/')
     # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
@@ -736,8 +760,8 @@ def brand_dashboard(request):
 @login_required
 def legal_view(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'legal':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'legal' and not user.is_superuser:
+        return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
@@ -763,8 +787,8 @@ def legal_view(request, test_name, model_name, serialno):
 @login_required
 def brand_view(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'brand':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'brand' and not user.is_superuser:
+        return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
@@ -790,8 +814,8 @@ def brand_view(request, test_name, model_name, serialno):
 @login_required
 def MNF(request):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
     if request.method == 'POST':
         # Get form data from the request
         customer = request.POST.get('Customer')
@@ -848,8 +872,8 @@ def MNF(request):
 @login_required
 def Test_list_entry(request):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
     if request.method == 'POST':
         # Get form data from the request
         testStages = request.POST.getlist('TestStage')  # Get a list of selected test stages
@@ -904,8 +928,8 @@ def Test_list_entry(request):
 @login_required
 def test_protocol_entry(request, test_name, product):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
     if request.method == 'POST':
         # Get form data from the request
         testName = request.POST.get('TestName')
@@ -959,8 +983,8 @@ def test_protocol_entry(request, test_name, product):
 @login_required
 def update_test_list_entry(request):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner':
-        return render(request, "access_denied.html", {'user_type': user.user_type})
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
     if request.method == 'POST':
         # Get form data from the request
         testStages = request.POST.getlist('TestStage')  # Get a list of selected test stages

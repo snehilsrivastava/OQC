@@ -96,7 +96,7 @@ def generate_otp(length=6):
 
 def delete_expired_otps():
     expirations_time = datetime.now() - timedelta(minutes=5)
-    OTP.objects.filter(Q(is_verified=True) | Q(created_at__lt=expirations_time)).delete()
+    OTP.objects.filter(Q(created_at__lt=expirations_time)).delete()
     return
 
 def verify_otp(user, otp_code):
@@ -154,7 +154,7 @@ def validate_password(password):
         return ("Passwords must have at least a digit")
     # elif not re.search("[_#@$]" , password):
         # return ("Password must have a special symbol (_, @, #, $)")
-    elif re.search("\s" , password):
+    elif re.search(r"\s", password):
         return ("Password must not have any whitespace characters")
     else:
         return None
