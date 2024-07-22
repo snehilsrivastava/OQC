@@ -55,7 +55,7 @@
             padding: 10px 20px;
             text-decoration: none;
             color: white;
-            background-color: #333; /* Change color as needed */
+            background-color: #0879cb;  /* Change color as needed */
             border-radius: 5px;
             transition: background-color 0.3s ease;
         }
@@ -76,7 +76,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    redirect('/check/');
+                    redirect('/employee_dashboard/');
                 });
             }
         }
@@ -305,11 +305,12 @@
 <div class="additional_details">{{ test.additional_details|safe }}</div>
 
 <div class="action-buttons">
-    <a class="button" href="{% url 'check' %}">Return</a>
+    <a class="button" href="{% url 'employee_dashboard' %}">Return</a>
     {% if test.status == 'Not Sent' or test.status == 'Rejected' %}
         <a id="status-toggle-{{ test.id }}" class="button" onclick="setStatus({{ test.id }})">Send</a>
     {% endif %}
     <a class="button" href="{% url 'remark' test.id %}">Remark</a>
+    
 </div>
 </form>
 </body>
