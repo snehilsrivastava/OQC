@@ -17,49 +17,63 @@
 a:hover {
     color: #007bff;
 }
-.container {
+.containers {
     /* transform: translate(-50%, 50%); */
-    margin-top: 10rem;
-    margin-bottom: 10rem;
+    /* margin-top: 10rem; */
+    /* margin-bottom: 10rem; */
     /* margin-top: 10em; */
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
 .alert-success {
-    background-color:aquamarine;
-    border-color: aqua;
-    width: fit-content;
-    height: fit-content;
+    background-color: aquamarine;
+    border-color: #30b186;
     color: black;
-    padding-top: 1pt;
-    padding-bottom: 1pt;
 }
 
 .alert-error {
-    background-color: rgb(255, 104, 104);
+    background-color: lightcoral;
     border-color: red;
-    width: fit-content;
-    height: fit-content;
-    color: white;
-    padding-top: 1pt;
-    padding-bottom: 1pt;
-    border-width: 0.5px;
+    color: black;
 }
-
 .alert-warning {
     background-color:rgb(255, 255, 159);
     border-color: yellow;
-    width: fit-content;
-    height: fit-content;
     color: black;
-    padding-top: 1pt;
-    padding-bottom: 1pt;
+}
+.alert {
+    border-width: 2px;
+    border-radius: .25rem;
+    padding: 0rem;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 250px;
+    height: max-content;
+    margin-bottom: 5%;
+    flex-wrap: wrap;
+}
+.message-span {
+    width: 225px;
+    padding: 0px 10px;
+}
+.alert-dismissible .close {
+    padding: 0;
+    position: absolute;
+    right: 2%;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    top: inherit;
+    align-items: center;
+    transform: translate(0%, -10%)
 }
 
 .no-background {
-    background-color: #d1dfff00;
+    background-color: #0000;
 }
 body {
     background-image: url("./../images/best_dark.png");
@@ -67,38 +81,52 @@ body {
     background-repeat: no-repeat;
     background-position: center;  
     background-size: cover;
-    height: 100%;
+    height: 100vh;
     background-attachment: fixed;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .card {
     background-color: #6792ab33;
-    transform: translate(0%, -5%);
+    /* transform: translate(0%, -5%); */
     width: 85%;
     max-width: 450px;
     height: 100%;
     margin: 0 20px;
-    padding-top: 50px;
+    /* padding-top: 50px; */
     border-radius: 20px;
     overflow: hidden;
-    box-shadow:0rem 0rem 1rem gray !important
+    box-shadow:0rem 0rem 1rem gray !important;
+    justify-content: center;
+    align-items: center;
 }
 .card-header{
-    transform: translate(0%, -30%);
+    padding: 8% 0% 3%;
 }
 .Indkal-Logo {
     width: 250px;
 }
 #card-2 {
     background-color: #fff0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 .card-body {
-    transform: translate(-8%, -10%);
+    /* transform: translate(-8%, -10%); */
     /* background-color: #d1dfff00; */
-    margin-left: -35pt;
+    /* margin-left: -35pt;
     margin-top: -20pt;
-    margin-bottom: -10pt;
-    width: max-content;
+    margin-bottom: -10pt; */
+    /* width: max-content; */
+    padding: 10% 0% 0%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 #exampleInputEmail1 {
     width: 250px;
@@ -107,12 +135,14 @@ body {
     width: 250px;
 }
 .card-footer {
-    /* display: flex; */
-    transform: translate(-14%, -10%);
+    display: flex;
+    /* transform: translate(-14%, -10%); */
+    flex-direction: column;
     width: fit-content;
     height: fit-content;
     align-items: center;
     justify-content: center;
+    padding: 10% 0% 5%;
 }
 .forgot-password {
     top: 10px
@@ -120,14 +150,15 @@ body {
 .btn-fill {
     background-color: #4C4CFF;
     border-color: #4C4CFF;
-    transform: translate(65%, 0%);
-    display: block;
-    margin: 5pt 0pt 15pt 0pt;
-    border-radius: 10px;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    width: 6em;
-    height: 2em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2.5em;
+    width: max-content;
+    height: 2.5em;
+    margin-bottom: 10%;
+    padding: 0% 8%;
 }
 .btn-fill:hover{
     background-color: #5b5bfd;
@@ -136,8 +167,8 @@ body {
 .no_wrap {
     text-wrap: nowrap;
     color: white;
-    width: 250px;
+    /* width: 250px; */
 }
-span>.no_wrap>p {
-    background-color: white;
+.text-center {
+    margin-bottom: 3%;
 }

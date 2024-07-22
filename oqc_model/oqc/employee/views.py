@@ -16,8 +16,21 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
+
 def main_page(request):
-    return redirect(login_page)
+    try:
+        username = request.session['username']
+        user = Employee.objects.get(username=username)
+        if user.user_type == 'employee':
+            return redirect('/check/')
+        elif user.user_type == 'owner':
+            return redirect('/dashboard/')
+        elif user.user_type == 'brand':
+            return redirect('/brand_dashboard/')
+        elif user.user_type == 'legal':
+            return redirect('/legal_dashboard/')
+    except KeyError:
+        return redirect(login_page)
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
