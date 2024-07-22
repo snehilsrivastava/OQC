@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const finalView = document.querySelector('.final-view');
     const initialForm = initialView.querySelector('form');
     const finalForm = finalView.querySelector('form');
-    const messagesContainer = document.getElementById('messages');
+    // const messagesContainer = document.getElementById('messages');
 
     sendOtpBtn.addEventListener('click', function(){
         const formData = new FormData(initialForm);
@@ -23,13 +23,26 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else if (data.warning) {
                 // Show warning message
+                const messagesContainer = document.getElementById('messages1');
                 const warningMessage = document.createElement('div');
                 warningMessage.classList.add('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
                 warningMessage.setAttribute('role', 'alert');
-                warningMessage.innerHTML = data.message;
+                warningMessage.innerHTML = `<span class="message-span">${data.message}</span>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>`;
                 messagesContainer.appendChild(warningMessage);                
             }
             else if (data.success) {
+                const messagesContainer = document.getElementById('messages2');
+                const successMessage = document.createElement('div');
+                successMessage.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show');
+                successMessage.setAttribute('role', 'alert');
+                successMessage.innerHTML = `<span class="message-span">${data.message}</span>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>`;
+                messagesContainer.appendChild(successMessage);
                 // Set values in the final form fields
                 finalForm.querySelector('input[name="first_name"]').value = formData.get('first_name');
                 finalForm.querySelector('input[name="last_name"]').value = formData.get('last_name');

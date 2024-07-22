@@ -170,7 +170,7 @@ def register_page(request):
         pword = make_password(pword)
         in_otp = request.POST.get('OTP')
         new_employee = Employee(username=username, first_name=fname, last_name=lname, password=pword)
-        # delete_expired_otps()
+        delete_expired_otps()
         msg = verify_otp(username, in_otp)
         match (msg):
             case 1:
@@ -231,7 +231,7 @@ def forgot_password_verify_otp(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         in_otp = request.POST.get('OTP')
-        # delete_expired_otps()
+        delete_expired_otps()
         msg = verify_otp(username, in_otp)
         print(in_otp)
         print(username)

@@ -8,6 +8,7 @@ body {
     color: white;
     font-size: 17px;
     text-decoration-color: whitesmoke;
+    transition: background 0.2s linear;
 }
 
 button {
@@ -16,7 +17,7 @@ button {
     width: 170px;
     border: 10px;
     border-color: black;
-    background-color: #0879cb;
+    background-color: #232f3e;
     font-size: 20px;
     border-radius: 3px;
 }
@@ -44,7 +45,7 @@ button a:hover {
     justify-content: end;
     align-items: center; /* Align items vertically */
     padding: 10px 20px;
-    background-color: #0879cb;
+    background-color: #232f3e;
     color: white;
     width: 100%;
 }
@@ -73,7 +74,7 @@ ul {
     padding: 0;
     width: 300px;
     height: 100vh;
-    background-color: #0879cb;
+    background-color: #232f3e;
     color: white;
     overflow: auto;
 }
@@ -120,7 +121,7 @@ th, td {
 }
 
 th {
-    background-color: #0879cb;
+    background-color: #232f3e;
     color: white;
 }
 
@@ -128,7 +129,7 @@ button.collapse-button {
     height: 20px;
     width: 20px;
     padding: 0;
-    background-color: #0879cb;
+    background-color: #232f3e;
     color: white;
     border: none;
     cursor: pointer;
@@ -156,7 +157,7 @@ button.collapse-button i {
 }
 
 .action-buttons a {
-    background: #0879cb;
+    background: #232f3e;
     color: #fff;
     padding: 5px 10px;
     text-decoration: none;
@@ -241,7 +242,7 @@ button.collapse-button i {
 .popup h2 {
     text-align: center;
     margin-bottom: 20px;
-    color: #0879cb;
+    color: #232f3e;
 }
 
 .popup form {
@@ -285,7 +286,7 @@ button.collapse-button i {
 }
 
 .user-btn {
-    background-color: #0879cb;
+    background-color: #232f3e;
     display: flex;
     color: white;
     border: 1.5px solid white;
@@ -329,7 +330,7 @@ button.collapse-button i {
     border-radius: 3px;
     padding: 10px;
     font-size: 16px;
-    background-color: #0879cb;
+    background-color: #232f3e;
     color: white;
     border: none;
     cursor: pointer;
