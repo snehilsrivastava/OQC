@@ -35,14 +35,22 @@ def product_form_view(request):
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     user = request.session['username']
     test = list(TestList.objects.values('Product', 'TestStage', 'TestName'))
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
 
     context = {
+
         'tv_models': tv_models,
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
         'user': user,
         'test': test,
+         'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
     }
     
     return render(request, 'product.html', context)

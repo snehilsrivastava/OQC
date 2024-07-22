@@ -3,6 +3,8 @@ from . import views
 # from django.conf.urls import url
 from ckeditor_uploader import views as ckeditor_views
 
+handler404 = 'employee.views.custom_404'
+
 urlpatterns = [
     path(r'^ckeditor/upload/', ckeditor_views.upload, name='ckeditor_upload'),
     path(r'^ckeditor/browse/', ckeditor_views.browse, name='ckeditor_browse'),
@@ -10,7 +12,7 @@ urlpatterns = [
     path('change_status_legal/<int:test_id>/<int:status>/', views.change_status_legal, name='change_status_legal'),
     path('change_status_brand/<int:test_id>/<int:status>/', views.change_status_brand, name='change_status_brand'),
     path('', views.main_page, name='main_page'),
-    path('check/', views.check, name='check'),
+    path('employee_dashboard/', views.employee_dashboard, name='employee_dashboard'),
     path('pdf_model_stage/<str:model_name>/<str:test_stage>/',views.pdf_model_stage,name = 'pdf_model_stage'),
     path('legal_dashboard/',views.legal_dashboard,name = 'legal_dashboard'),
     path('brand_dashboard/',views.brand_dashboard,name = 'brand_dashboard'),
@@ -32,6 +34,7 @@ urlpatterns = [
     path('remark_owner/<int:id>/',views.owner_remark,name = 'remark_owner'),
     path('view_pdf/<str:test_name>/<str:model_name>/<str:serialno>/', views.view_pdf, name='view_pdf'),
     path('handle_selected_tests/',views.handle_selected_tests,name = 'handle_selected_tests'),
+    path('access_denied/', views.access_denied, name='access_denied'),
 ]
 
 from django.conf import settings

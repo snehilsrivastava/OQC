@@ -2,413 +2,133 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% load static%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Legal Dashboard</title>
-
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Times New Roman', Times, serif;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            color: white;
-            font-size: 20px;
-            text-decoration-color: whitesmoke;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #03385e;
-            color: white;
-            width: 100%;
-        }
-
-        .header .fa {
-            margin-right: 10px;
-        }
-
-        .main-content {
-            display: flex;
-            flex-grow: 1;
-        }
-
-        ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            width: 300px;
-            height: 100vh;
-            background-color: #03385e;
-            color: white;
-            overflow: auto;
-        }
-
-        .nav .bottom-icon {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            height : 100%;
-        }
-
-        li a {
-            display: flex;
-            align-items: center;
-            color: white;  /* Change text color to white */
-            padding: 8px 16px;
-            text-decoration: none;
-        }
-
-        /* Change the link color on hover */
-        li a:hover {
-            background-color: #a9b9bc;
-            color: white;
-        }
-
-        .fa-icon {
-            margin-right: 10px;
-        }
-
-        .content {
-            flex-grow: 1;
-            padding: 20px;
-            color: black; /* Content text color */
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        table, th, td {
-            border: 1px solid black;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-        }
-        
-        .user-info {
-            display: none;
-            position: absolute;
-            right: 20px;
-            background-color: #f1f1f1;
-            color: black;
-            padding: 10px;
-            border: 1px solid #ddd;
-            z-index: 1;
-        }
-        .user-info p {
-            margin: 0;
-            padding: 5px 0;
-        }
-
-        .user-btn {
-            background-color: #03385e;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-
-        .logout-btn {
-            display: block;
-            margin-top: 10px;
-            background-color: #d9534f;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-
-        th {
-            background-color: #03385e;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        button {
-            height: 30px;
-            color: rgb(239, 237, 246); 
-            width: 170px;
-            border: 10px;
-            border-color: black;
-            background-color: #03385e;
-            font-size: 20px;
-            border-radius: 3px;
-         }
-         button a {
-             color : whitesmoke;
-             width: 120px;
-         }
- 
-         button a:hover {
-             background-color: #a9b9bc;
-             color: white; 
-         }
-
-        button.collapse-button {
-            height: 20px;
-            width: 20px;
-            padding: 0;
-            background-color: #03385e;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button.collapse-button i {
-            font-size: 12px;
-        }
-
-        .collapse-arrow {
-            color: white;
-        }
-
-        .collapse-arrow.down {
-            transform: rotate(0deg);
-        }
-
-        .collapse-arrow.up {
-            transform: rotate(180deg);
-        }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            background-color: white;
-            color: black;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 2;
-        }
-
-        .popup .close {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .popup form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .popup form label {
-            margin-bottom: 5px;
-        }
-
-        .popup form input {
-            
-            padding: 5px;
-            font-size: 16px;
-        }
-
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-buttons a {
-            background: #03385e;
-            color: #fff;
-            padding: 5px 10px;
-            text-decoration: none;
-            border-radius: 3px;
-        }
-
-        .action-buttons a:hover {
-            background: #d9534f;
-        }
-
-        .toggle-button {
-            background:;
-            color: #fff;
-            padding: 5px 10px;
-            text-decoration: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-        .message {
-            list-style: circle;
-            width: calc(100% - 100px);
-            padding: 10px 20px;
-            border: 1px solid #ddd;
-            margin-bottom: 10px; /* Add some spacing */
-        }
-
-        .success {
-            background-color: #dff0d8;
-            color: #468847;
-            border-color: #d6e9c6;
-        }
-
-        .error {
-            background-color: #f2dede;
-            color: #a94442;
-            border-color: #ededed;
-        }
-
-        .button-container {
-            text-align: center; /* Optional: Centers the buttons horizontally */
-            border-radius: 3px;
-        }
-
-        .button-container button {
-            display: inline-block; /* Display buttons side by side */
-            margin-right: 10px; /* Optional: Add some spacing between buttons */
-            border-radius: 3px;
-        }
+    <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    
     </style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-
-<div class="header">
-    {% comment %}
-    <div class="left-icon">
-        <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
+    <div style="display: none;">
+        <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>
+        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>
     </div>
-    {% endcomment %}
-
-    <div class="container">
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li class="message {{ message.level_tag }}">
-                {{ message }}
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
-
-    <div class="right-icon">
-        <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
-            <span id="userButtonText"></span>
-            <span class="icon">{{icon}}</span> <!-- Example downward triangle icon -->
-        </button>
-        <div class="user-info" id="userInfo">
-            <p>Username: {{ username }}</p>
-            <p>Name: {{ first_name }} &nbsp {{ last_name }}</p>
-            <a class="logout-btn" onclick="logoutUser()">Logout</a>
+    <div class="header">
+        <!-- <img class="Indkal-Logo" width="200" src="{%static 'images/Logo.svg' %}" alt="Indka Logo"></img> -->
+        <div class="right-icon">
+            <div id="theme-switcher" class="ml-auto mr-3" style = "float:right;">
+                <svg id="theme-switcher__moon" style="display:none;">
+                    <use xlink:href="#icon-moon"></use>
+                </svg>
+                <svg id="theme-switcher__sun">
+                    <use xlink:href="#icon-sun"></use>
+                </svg>
+            </div>
+            <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+                <span class="icon" id="userButtonIcon">{{icon}}</span>
+            </button>
+            <div class="user-info" id="userInfo">
+                <p>Name: {{ first_name }} {{ last_name }}</p>
+                <p>Email: {{ username }}</p>
+                <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+            </div>
         </div>
     </div>
-    
-
-</div>
-
 <div class="main-content">
-    
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
-
-<!-- Filter Popup -->
-<div class="popup" id="filterPopup">
-    <span class="close" onclick="toggleFilter()">&times;</span>
-    <h2>Filter Options</h2>
-    <form id="filter-form" method="get" action="{% url 'legal_dashboard' %}">
-        {% csrf_token %}
-        <div>
-            <label for="product">Product Type:</label>
-            <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
-                <option value="">Select Product Type</option>
-                <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
-                <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
-                <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
-                <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
-            </select>
-        </div>
-        <br>
-        <div>
-            <label for="test_stage">Test Stage:</label>
-            <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
-                <option value="">Select Test Stage</option>
-                <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
-                <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
-                <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
-                <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
-            </select>
-        </div>
-        <br>
-        <div>
-            <label for="model_name">Model Name:</label>
-            <select class="form-control" id="model_name" name="model_name">
-                <!-- Model options will be populated dynamically based on the selected product type -->
-                {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
-                <option value="">{{model_name}}</option>
-            </select>
-        </div>
-        <br>
-        <div>
-            <label for="test_name">Test Name:</label>
-            <select class="form-control" id="test_name" name="test_name">
-                <option value="">Select Test Name</option>
-            </select>
-        </div>
-        <br>
-        <div>
-            <label for="serial_number">Serial Number:</label>
-            <input type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
-        </div>
-        <br>
-        <div>
-            <label for="L_status">Status:</label>
-            <select id="L_status" name="L_status">
-                <option value="">All</option>
-                <option value="Not Sent"{%if L_status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
-                <option value="Waiting for Approval"  {%if L_status == 'Waiting for Approval'%}selected{%endif%}>Waiting for Approval</option>
-                <option value="Approve" {%if L_status == 'Approve'%}selected{%endif%}>Approve</option>
-                <option value="Rejected"{%if L_status == 'Rejected'%}selected{%endif%}>Rejected</option>
-            </select>
-        </div>
-        <br>
-        <div>
-            <label for="start_date">Start Date:</label>
-            <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
-        </div>
-        <br>
-        <div>
-            <label for="end_date">End Date:</label>
-            <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
-        </div>
-        <br>
-        <div class="button-container">
-            <button type="submit" class="button">Filter</button>
-            <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
-        </div>
-    </form>
-
-</div>
+    <div class="popup" id="filterPopup">
+        <span class="close" onclick="toggleFilter()">&times;</span>
+        <form id="filter-form" method="get" action="{% url 'legal_dashboard' %}">
+            <div>
+                <label for="product">Product Type:</label>
+                <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+                    <option value="">Select Product Type</option>
+                    <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
+                    <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
+                    <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
+                    <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="test_stage">Test Stage:</label>
+                <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+                    <option value="">Select Test Stage</option>
+                    <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
+                    <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
+                    <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
+                    <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="model_name">Model Name:</label>
+                <select class="form-control" id="model_name" name="model_name">
+                    <!-- Model options will be populated dynamically based on the selected product type -->
+                    <option value="">{{model_name}}</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="test_name">Test Name:</label>
+                <select class="form-control" id="test_name" name="test_name">
+                    <option value="">Select Test Name</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="serial_number">Serial Number:</label>
+                <input class="form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+            </div>
+            <br>
+            <div>
+                <label for="L_status">Status:</label>
+                <select class="form-control" id="L_status" name="L_status">
+                    <option value="">All</option>
+                    <option value="Not Sent"{%if L_status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
+                    <option value="Waiting for Approval"  {%if L_status == 'Waiting for Approval'%}selected{%endif%}>Waiting for Approval</option>
+                    <option value="Approved" {%if L_status == 'Approved'%}selected{%endif%}>Approved</option>
+                    <option value="Rejected"{%if L_status == 'Rejected'%}selected{%endif%}>Rejected</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <label for="start_date">Start Date:</label>
+                <input class="form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+            <br>
+            <div>
+                <label for="end_date">End Date:</label>
+                <input class="form-control" type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+            <br>
+            <div class="button-container">
+                <button type="submit" class="button">Filter</button>
+                <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
+            </div>
+        </form>
+    </div>
 
     <div class="content">
+        {% if messages %}
+            <span class="message-container">
+                {% for message in messages %}
+                    <span class="message {{ message.level_tag }}">
+                        {{ message }}
+                    </span>
+                    <div class="timer-bar"></div>
+                {% endfor %}
+            </span>
+        {% endif %}
+        <h1>Dashboard</h1>
+        <i class="fa fa-search fa-icon"></i>
+        <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
+        <br><br>
         <h1>Dashboard</h1>
         <i class="fa fa-search fa-icon"></i>
         <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
@@ -465,10 +185,8 @@
                                     <td>{{ subtest.SerailNo }}</td> <!-- Fixed typo here: SerialNo was misspelled -->
                                     <td>{{ subtest.L_status }}</td>
                                     <td>
-                                        
                                         <a href="{% url 'legal_view' subtest.TestName subtest.ModelName subtest.SerailNo %}"
                                             class="btn btn-primary">View</a>
-                                        
                                     </td>
                                 </tr>
                                 {% endif %}
@@ -488,104 +206,26 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 <script>
-    $(document).ready(function () {
-        $('.collapse').on('show.bs.collapse', function () {
-            var target = $(this).prev().find('button i.fas');
-            target.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-        }).on('hide.bs.collapse', function () {
-            var target = $(this).prev().find('button i.fas');
-            target.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-        });
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        var messageContainer = document.querySelector('.message-container');
+        var timerBar = document.querySelector('.timer-bar');
+        var header = document.querySelector('.header');
 
-    function toggleCollapseIcon(button) {
-        var icon = button.querySelector('i.fas');
-        icon.classList.toggle('fa-chevron-down');
-        icon.classList.toggle('fa-chevron-up');
-    }
+        if (messageContainer && timerBar && header) {
+            var headerRect = header.getBoundingClientRect();
+            var headerHeight = headerRect.height;
+            var headerTop = headerRect.top + window.scrollY;
+            messageContainer.style.top = `${headerTop + headerHeight}px`;
+            timerBar.style.width = '0%';
 
-    function toggleUserInfo() {
-        var sidebar = document.getElementById("userInfo");
-        if (sidebar.style.display === "block" || sidebar.style.display === "") {
-            sidebar.style.display = "none";
-        } else {
-            sidebar.style.display = "block";
+            setTimeout(function() {
+                messageContainer.style.top = `-${messageContainer.offsetHeight}px`;
+            }, 5000);
         }
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        var sidebar = document.getElementById("userInfo");
-        sidebar.style.display = "none";
     });
-
-    function toggleFilter() {
-        var popup = document.getElementById("filterPopup");
-        var overlay = document.getElementById("overlay");
-        var display = popup.style.display;
-
-        if (display === "block") {
-            popup.style.display = "none";
-            overlay.style.display = "none";
-        } else {
-            popup.style.display = "block";
-            overlay.style.display = "block";
-        }
-    }
-
-    function clearFilter(){
-        var form = document.getElementById("filter-form");
-
-        // Manually reset each field to the empty string or their default values if needed
-        var product = document.getElementById("product");
-        var testStage = document.getElementById("test_stage");
-        var modelName = document.getElementById("model_name");
-        var testName = document.getElementById("test_name");
-        var serialNumber = document.getElementById("serial_number");
-        var L_status = document.getElementById("L_status");
-        var startDate = document.getElementById("start_date");
-        var endDate = document.getElementById("end_date");
-
-    
-        // Set default values
-        product.value = "";
-        testStage.value = "";
-        modelName.value = "";
-        testName.value = "";
-        serialNumber.value = "";
-        L_status.value = "";
-        startDate.value = "";
-        endDate.value = "";
-    }
-
-    function logoutUser() {
-        fetch('/logout/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
-            },
-            body: JSON.stringify({})
-        })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        // Redirect to the home page or show a success message
-                        window.location.href = '/';
-                    } else {
-                        alert('Logout failed');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Logout failed');
-                });
-    }
 
     document.addEventListener("DOMContentLoaded", function() {
         populateModels();
@@ -689,6 +329,5 @@
     }
 
 </script>
-
 </body>
 </html>

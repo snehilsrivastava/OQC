@@ -293,12 +293,12 @@
     <a class="btn btn-primary" href="{% url 'brand_dashboard' %}">Return</a>
    
     <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {{test.L_status}}
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{test.B_status}}
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="{% url 'change_status_brand' test.id 1 %}">Waiting for Approval</a>
-            <a class="dropdown-item" href="{% url 'change_status_brand' test.id 2 %}">Approved</a>
+            <a class="dropdown-item" href="{% url 'change_status_brand' test.id 2 %}">Approve</a>
             <a class="dropdown-item" href="{% url 'change_status_brand' test.id 3 %}">Reject</a>
         </div>
     </div>
