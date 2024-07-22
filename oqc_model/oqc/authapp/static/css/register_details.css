@@ -1,4 +1,4 @@
-@import url("color_pallette.css");
+/* @import url("color_pallette.css"); */
 
 .content-wrapper {
     position: fixed;
@@ -149,5 +149,5 @@ body {
     text-wrap: nowrap;
     color: white;
     width: 250px;
-    transform: translate(5%, 0%);
+    align-self: center;
 }

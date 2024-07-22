@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-r8&=%bkyoroxzqd+rml6h&rmspq-h@!(k29%(%8cq)rw7a@ll)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['13.200.34.116', '127.0.0.1']
 
 
 # Application definition
@@ -48,10 +48,11 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'employee.middleware.RequestPathMiddleware'
 ]
 
 ROOT_URLCONF = 'oqc.urls'
@@ -114,13 +115,14 @@ EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'protrack@indkal.com'
 EMAIL_HOST_PASSWORD = 'bngjmomfunuqhrmy'
 
-
+# LOGIN_URL = '/au/login/'
+# AUTH_USER_MODEL = 'authapp.Employee'
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

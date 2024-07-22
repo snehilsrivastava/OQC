@@ -4,55 +4,47 @@
     <meta charset="UTF-8">
     {% load static%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Legal Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-   
+    
+    </style>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-<div style="display: none;">
-    <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>
-    <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>
-</div>
-<div class="header" style="position: relative; right: 40px;">
-    <!-- <img class="Indkal-Logo" width="200" src="{%static 'images/Logo.svg' %}" alt="Indka Logo"></img> -->
-    <div class="right-icon">
-        <div id="theme-switcher" class="ml-auto mr-3" style = "float:right;">
-            <svg id="theme-switcher__moon" style="display:none;">
-                <use xlink:href="#icon-moon"></use>
-            </svg>
-            <svg id="theme-switcher__sun">
-                <use xlink:href="#icon-sun"></use>
-            </svg>
-        </div>
-        <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
-            <span class="icon" id="userButtonIcon">{{icon}}</span>
-        </button>
-        <div class="user-info" id="userInfo">
-            <p>Name: {{ first_name }} {{ last_name }}</p>
-            <p>Email: {{ username }}</p>
-            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+    <div style="display: none;">
+        <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>
+        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>
+    </div>
+    <div class="header">
+        <!-- <img class="Indkal-Logo" width="200" src="{%static 'images/Logo.svg' %}" alt="Indka Logo"></img> -->
+        <div class="right-icon">
+            <div id="theme-switcher" class="ml-auto mr-3" style = "float:right;">
+                <svg id="theme-switcher__moon" style="display:none;">
+                    <use xlink:href="#icon-moon"></use>
+                </svg>
+                <svg id="theme-switcher__sun">
+                    <use xlink:href="#icon-sun"></use>
+                </svg>
+            </div>
+            <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+                <span class="icon" id="userButtonIcon">{{icon}}</span>
+            </button>
+            <div class="user-info" id="userInfo">
+                <p>Name: {{ first_name }} {{ last_name }}</p>
+                <p>Email: {{ username }}</p>
+                <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+            </div>
         </div>
     </div>
-</div>
-{% if messages %}
-    <span class="message-container">
-        {% for message in messages %}
-            <span class="message {{ message.level_tag }}">
-                {{ message }}
-            </span>
-            <div class="timer-bar"></div>
-        {% endfor %}
-    </span>
-{% endif %}
 <div class="main-content">
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
-
     <div class="popup" id="filterPopup">
         <span class="close" onclick="toggleFilter()">&times;</span>
-        <form id="filter-form" method="get" action="{% url 'employee_dashboard' %}">
-          
+        <form id="filter-form" method="get" action="{% url 'legal_dashboard' %}">
+            <div>
                 <label for="product">Product Type:</label>
                 <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
                     <option value="">Select Product Type</option>
@@ -61,9 +53,9 @@
                     <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
                     <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
                 </select>
-           
+            </div>
             <br>
-            
+            <div>
                 <label for="test_stage">Test Stage:</label>
                 <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
                     <option value="">Select Test Stage</option>
@@ -72,106 +64,148 @@
                     <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
                     <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
                 </select>
+            </div>
             <br>
+            <div>
                 <label for="model_name">Model Name:</label>
                 <select class="form-control" id="model_name" name="model_name">
                     <!-- Model options will be populated dynamically based on the selected product type -->
-                    {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
                     <option value="">{{model_name}}</option>
                 </select>
-            
+            </div>
             <br>
-            
+            <div>
                 <label for="test_name">Test Name:</label>
                 <select class="form-control" id="test_name" name="test_name">
                     <option value="">Select Test Name</option>
                 </select>
-           
+            </div>
             <br>
-            
+            <div>
                 <label for="serial_number">Serial Number:</label>
-                <input class = "form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
-       
+                <input class="form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+            </div>
             <br>
-           
-                <label for="status">Status:</label>
-                <select class = "form-control" id="status" name="status">
+            <div>
+                <label for="L_status">Status:</label>
+                <select class="form-control" id="L_status" name="L_status">
                     <option value="">All</option>
-                    <option value="Not Sent"{%if status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
-                    <option value="Waiting for Approval"  {%if status == 'Waiting for Approval'%}selected{%endif%}>Waiting for Approval</option>
-                    <option value="Approved" {%if status == 'Approved'%}selected{%endif%}>Approved</option>
-                    <option value="Rejected"{%if status == 'Rejected'%}selected{%endif%}>Rejected</option>
+                    <option value="Not Sent"{%if L_status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
+                    <option value="Waiting for Approval"  {%if L_status == 'Waiting for Approval'%}selected{%endif%}>Waiting for Approval</option>
+                    <option value="Approved" {%if L_status == 'Approved'%}selected{%endif%}>Approved</option>
+                    <option value="Rejected"{%if L_status == 'Rejected'%}selected{%endif%}>Rejected</option>
                 </select>
-          
+            </div>
             <br>
-            <label for="start_date">Start Date:</label>
-           
-                <input class = "form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
-         
+            <div>
+                <label for="start_date">Start Date:</label>
+                <input class="form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
             <br>
-            <label for="end_date">End Date:</label>
-                <input class = "form-control"  type="date" id="end_date" name="end_date" value="{{ end_date }}">
-    
+            <div>
+                <label for="end_date">End Date:</label>
+                <input class="form-control" type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
             <br>
             <div class="button-container">
                 <button type="submit" class="button">Filter</button>
                 <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
             </div>
         </form>
-    
     </div>
-    
 
     <div class="content">
+        {% if messages %}
+            <span class="message-container">
+                {% for message in messages %}
+                    <span class="message {{ message.level_tag }}">
+                        {{ message }}
+                    </span>
+                    <div class="timer-bar"></div>
+                {% endfor %}
+            </span>
+        {% endif %}
         <h1>Dashboard</h1>
         <i class="fa fa-search fa-icon"></i>
         <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
         <br><br>
-        <i class="fa fa-file fa-icon"></i>
-        <button><a href="{% url 'product' %}">Add new report</a></button>
-        
-        <table>
+        <h1>Dashboard</h1>
+        <i class="fa fa-search fa-icon"></i>
+        <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
+        <br><br>
+        <table class="table table-bordered">
             <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Model Name</th>
-                    <th>Test Name</th>
-                    <th>Stage</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
+            <tr>
+                <th></th>
+                <th>Product</th>
+                <th>Model Name</th>
+                <th>Stage</th>
+                <th>Actions</th>
+                <!-- Column for collapse icon -->
+            </tr>
             </thead>
             <tbody>
-                {% for test in completed_tests %}
-                <tr>
-                    <td>{{ test.ProductType }}</td>
-                    <td>{{ test.ModelName }}</td>
-                    <td>{{ test.TestName }}</td>
-                    <td>{{ test.TestStage }}</td>
-                    <td>{{ test.test_end_date|date:"d/m/Y" }}</td>
-                    <td>
-                        <div class = "status-button">
-                        <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ test.status }}" style = "padding: 5px 10px;border-radius: 3px;">
-                            {{ test.status }}
-                        </span>
-                    </div>
-                    </td>
-                    
-                    <td class="action-buttons">
-                        <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit</a> 
-                        <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
-                        <!-- <a class="button" href="{% url 'remark' test.id %}">Remark</a> -->
-                        <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a>
+            {% for test in tests %}
+            <tr>
+                <td>
+                    <button class="collapse-button" type="button" data-toggle="collapse"
+                            data-target="#testList{{ forloop.counter }}" aria-expanded="false"
+                            aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">
+                        <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
+                    </button>
+                </td>
+                <td>{{ test.ProductType }}</td>
+                <td>{{ test.ModelName }}</td>
+                <td>{{ test.TestStage }}</td>
+                <td class="action-buttons">
+                    <a href="{% url 'pdf_model_stage' model_name=test.ModelName test_stage=test.TestStage %}"
+                       class="btn btn-primary">View PDF</a>
+                </td>
 
-                    </td>
-                </tr>
-                {% endfor %}
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <div class="collapse" id="testList{{ forloop.counter }}">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Test Name</th>
+                                    <th>Date</th>
+                                    <th>Serial No</th> <!-- Fixed typo here: missing closing </th> -->
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subtest in all_tests %}
+                                {% if subtest.ModelName == test.ModelName and subtest.TestStage == test.TestStage %}
+                                <tr>
+                                    <td>{{ subtest.TestName }}</td>
+                                    <td>{{ subtest.test_end_date }}</td>
+                                    <td>{{ subtest.SerailNo }}</td> <!-- Fixed typo here: SerialNo was misspelled -->
+                                    <td>{{ subtest.L_status }}</td>
+                                    <td>
+                                        <a href="{% url 'legal_view' subtest.TestName subtest.ModelName subtest.SerailNo %}"
+                                            class="btn btn-primary">View</a>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+                
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 <script>
@@ -192,6 +226,7 @@
             }, 5000);
         }
     });
+
     document.addEventListener("DOMContentLoaded", function() {
         populateModels();
         populateTestName();
@@ -204,8 +239,6 @@
             populateTestName();
         });
     });
-    
-    
     
     // JavaScript object to store model data
     const modelsByType = {
@@ -234,18 +267,6 @@
             modelsByType[selectedProductType].forEach(model => {
                 const option = document.createElement("option");
                 option.text = model;
-                
-                let localS = localStorage.getItem('theme');
-                if (!localS) {
-                    localS = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                }
-  
-                if (localS === 'light') {
-                option.style.color = 'black';
-                } else {
-                option.style.color = 'white';
-                }
-                
                 modelNameDropdown.appendChild(option);
             });
         }
@@ -306,19 +327,7 @@
             }
         });
     }
-    
-    function deleteTestRecord(recordId) {
-        if (confirm("Are you sure you want to delete this record?")) {
-            fetch(`/delete-test-record/${recordId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({})
-            })
-        }
-    }
+
 </script>
 </body>
 </html>

@@ -1,200 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Product Specification Form</title>
-    <link
-     
-      rel="stylesheet"
-     
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-   
-    />
-    <style>
-      .form-container {
-        width: 50%;
-        margin: auto;
-        margin-top: 50px;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        background-color: #f9f9f9;
-      }
-      .form-title {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      @media print {
-        button {
-          display: none;
-        }
-      }
-      .form-container {
-        width: 50%;
-        margin: auto;
-        margin-top: 50px;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        background-color: #f9f9f9;
-      }
-      .form-title {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      @media print {
-        button {
-          display: none;
-        }
-      }
-    </style>
-  </head>
-  <body>
-  </head>
-  <body>
-    <!-- Header -->
-    <header class="bg-dark text-white text-center py-4 header">
-      <h2>{{ user }}, Please Add Product details !!</h2>
-    </header>
-
-    <br /><br /><br />
-
-    <!-- Product Specification Form -->
-    <div class="form-container">
-      <h1>Add Test Details</h1>
-      <form method="POST" name="product_form" action="{% url 'product' %}">
-        <!-- CSRF token -->
-        {% csrf_token %}
-        <div class="form-group">
-          <label for="ProductType">Product Type:</label>
-          <select
-            class="form-control"
-            id="ProductType"
-            name="ProductType"
-            onchange="populateModels(); populateTestName();"
-          >
-            <option value="TV">TV</option>
-            <option value="AC">AC</option>
-            <option value="Phone">Phone</option>
-            <option value="Washing_Machine">Washing Machine</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="ModelName">Model Name:</label>
-          <select class="form-control" id="ModelName" name="ModelName">
-            <!-- Model options will be populated dynamically based on the selected product type -->
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="TestType">Test Stage</label>
-          <select
-            class="form-control"
-            id="TestStage"
-            name="TestStage"
-            onchange="populateTestName();">
-            <option value="DVT">DVT</option>
-            <option value="PP">PP</option>
-            <option value="PDI">MP</option>
-            <option value="PDI">PDI</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="TestType">Test Name:</label>
-          <select class="form-control" id="TestName" name="TestName"></select>
-        </div>
-        <div class="form-group">
-            <label for="SerailNo">Serial Number:</label>
-            <input
-              type="text"
-              class="form-control"
-              id="SerailNo"
-              name="SerailNo"/>
-          </div>
-        <div style="text-align: center">
-          <button
-            style="text-align: center"
-            type="submit"
-            class="btn btn-secondary mx-auto"
-          >
-            Submit
-          </button>
-        </div>
-      </form>
+        <meta charset="UTF-8" />
+        {% load static%}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Product detail Form</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="{% static 'css/form.css' %}">
+        <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
+    </head>
+<body>
+    <div style="display: none;">
+        <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>
+        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>
     </div>
+    <div class="header">
+        <div class="right-icon">
+            <div id="theme-switcher" class="ml-auto mr-3" style = "float:right;">
+                <svg id="theme-switcher__moon" style="display:none;">
+                    <use xlink:href="#icon-moon"></use>
+                </svg>
+                <svg id="theme-switcher__sun">
+                    <use xlink:href="#icon-sun"></use>
+                </svg>
+            </div>
+            <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+                <span id="userButtonText"></span>
+                <span class="icon" id="userButtonIcon">{{icon}}</span>
+            </button>
+            <div class="user-info" id="userInfo">
+                <p>Username: {{ username }}</p>
+                <p>Name: {{ first_name }} {{ last_name }}</p>
+                <a class="logout-btn" onclick="logoutUser()" data-csrf="{{ csrf_token }}">Logout</a>
+            </div>
+        </div>
+    </div>
+    <div class="message-container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.level_tag }}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1>Add Test Details</h1>
+            <form method="POST" name="product_form" action="{% url 'product' %}">
+                <!-- CSRF token -->
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="ProductType">Product Type:</label>
+                    <select class="form-control" id="ProductType" name="ProductType" onchange="populateModels(); populateTestName();">
+                        <option value="TV">TV</option>
+                        <option value="AC">AC</option>
+                        <option value="Phone">Phone</option>
+                        <option value="Washing_Machine">Washing Machine</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="SerailNo">Serial Number:</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="SerailNo"
+                        name="SerailNo"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="ModelName">Model Name:</label>
+                    <select class="form-control" id="ModelName" name="ModelName">
+                        <!-- Model options will be populated dynamically based on the selected product type -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="TestType">Test Stage</label>
+                    <select
+                        class="form-control"
+                        id="TestStage"
+                        name="TestStage"
+                        onchange="populateTestName();"
+                    >
+                        <option value="DVT">DVT</option>
+                        <option value="PP">PP</option>
+                        <option value="PDI">MP</option>
+                        <option value="PDI">PDI</option>
+                    </select>
+                </div>
 
-    <!-- Footer -->
-
-    <!-- Bootstrap JS -->
+                <div class="form-group">
+                    <label for="TestType">Test Name:</label>
+                    <select class="form-control" id="TestName" name="TestName"></select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit">Submit</button>
+            </form>
+        </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-
+    <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
     <script>
-      // JavaScript object to store model data
-      const modelsByType = {
-        "TV": {{ tv_models|safe }},
-        "AC": {{ ac_models|safe }},
-        "Phone": {{ phone_models|safe }},
-        "Washing_Machine": {{ washing_machine_models|safe }}
-      };
-      // JavaScript function to populate the model list based on the selected product type
-      function populateModels() {
-        const productTypeDropdown = document.getElementById("ProductType");
-        const modelNameDropdown = document.getElementById("ModelName");
-        const selectedProductType = productTypeDropdown.value;
+        // JavaScript object to store model data
+        const modelsByType = {
+            "TV": {{ tv_models|safe }},
+            "AC": {{ ac_models|safe }},
+            "Phone": {{ phone_models|safe }},
+            "Washing_Machine": {{ washing_machine_models|safe }}
+        };
+        // JavaScript function to populate the model list based on the selected product type
+        function populateModels() {
+            const productTypeDropdown = document.getElementById("ProductType");
+            const modelNameDropdown = document.getElementById("ModelName");
+            const selectedProductType = productTypeDropdown.value;
 
-        // Clear existing options
-        modelNameDropdown.innerHTML = "";
+            // Clear existing options
+            modelNameDropdown.innerHTML = "";
 
-        // Populate model options based on the selected product type
-        modelsByType[selectedProductType].forEach(model => {
-          const option = document.createElement("option");
-          option.text = model;
-          modelNameDropdown.appendChild(option);
+            // Populate model options based on the selected product type
+            modelsByType[selectedProductType].forEach(model => {
+                const option = document.createElement("option");
+                option.text = model;
+                modelNameDropdown.appendChild(option);
+            });
+        }
+        // JavaScript function to populate the test names based on the selected product type and test stage
+        function populateTestName() {
+            const testDetail = {{ test|safe }};
+            const productTypeDropdown = document.getElementById("ProductType");
+            const testStageDropdown = document.getElementById("TestStage");
+            const testNameDropdown = document.getElementById("TestName");
+            const selectedProductType = productTypeDropdown.value;
+            const selectedTestStage = testStageDropdown.value;
+
+            // Clear existing options
+            testNameDropdown.innerHTML = "";
+
+            testDetail.forEach(item => {
+                if (item.Product === selectedProductType) {
+                        const s = item.TestStage;
+                        if (s[0] === '1' && selectedTestStage === "DVT" ||
+                                s[1] === '1' && selectedTestStage === "PP" ||
+                                s[2] === '1' && selectedTestStage === "MP" ||
+                                s[3] === '1' && selectedTestStage === "PDI") {
+                                const option = document.createElement("option");
+                                option.text = item.TestName;
+                                testNameDropdown.appendChild(option);
+                        }
+                }
         });
-      }
-      // JavaScript function to populate the test names based on the selected product type and test stage
-      function populateTestName() {
-        const testDetail = {{ test|safe }};
-        const productTypeDropdown = document.getElementById("ProductType");
-        const testStageDropdown = document.getElementById("TestStage");
-        const testNameDropdown = document.getElementById("TestName");
-        const selectedProductType = productTypeDropdown.value;
-        const selectedTestStage = testStageDropdown.value;
+        }
 
-        // Clear existing options
-        testNameDropdown.innerHTML = "";
+        document.addEventListener("DOMContentLoaded", function() {
+            populateModels();
+            populateTestName();
 
-        testDetail.forEach(item => {
-          if (item.Product === selectedProductType) {
-              const s = item.TestStage;
-              if (s[0] === '1' && selectedTestStage === "DVT" ||
-                  s[1] === '1' && selectedTestStage === "PP" ||
-                  s[2] === '1' && selectedTestStage === "MP" ||
-                  s[3] === '1' && selectedTestStage === "PDI") {
-                  const option = document.createElement("option");
-                  option.text = item.TestName;
-                  testNameDropdown.appendChild(option);
-              }
-          }
-      });
-      }
-
-      document.addEventListener("DOMContentLoaded", function() {
-        populateModels();
-        populateTestName();
-
-        document.getElementById("ProductType").addEventListener("change", function() {
-          populateModels();
-          populateTestName(); // Also populate test names when product type changes
+            document.getElementById("ProductType").addEventListener("change", function() {
+                populateModels();
+                populateTestName(); // Also populate test names when product type changes
+            });
+            document.getElementById("TestStage").addEventListener("change", function() {
+                populateTestName();
+            });
         });
-        document.getElementById("TestStage").addEventListener("change", function() {
-          populateTestName();
-        });
-      });
     </script>
-    
-    </body>
+</body>
 </html>

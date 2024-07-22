@@ -6,8 +6,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Sign Up</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="{%static 'css/register_detail.css' %}">
+	<link rel="stylesheet" href="{%static 'css/register_details.css' %}">
     <!-- <link rel="script" href="{%static 'js/register.js' %}"> -->
+    <style>
+        .final-view {
+            display: none;
+        }
+    </style>
 </head>
 <body class="body">
 	<div class="container">
@@ -17,103 +22,87 @@
 				<img class="Indkal-Logo" src="{%static 'images/Logo.svg' %}" alt="Indka Logo"></img>
 			</div>
             <div class="initial-view">
-                <form id="card-2" class="col-6 mx-auto card-2 p-3" method="post" action="{% url 'register' %}" enctype="multipart/form-data">
-
-                    {% csrf_token %} <!-- CSRF token for security -->
-
-                    <!-- Login heading -->
-                    <!-- <h3 class="title">Log in</h3> -->
-                    <!-- <hr> -->
+                <form id="card-2" class="col-6 mx-auto card-2 p-3" method="post" action="{% url 'send_otp' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="card-body px-5 py3 border-0 no-background">
+                        <div id="messages1"></div>
                         <!-- Display error/success messages -->
                         {% if messages %}
-                        <!-- <div class="alert alert-primary" role="alert"> -->
                             {% for message in messages %}
                                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                                     {{ message }}
                                 </div>
                             {% endfor %}
-                        <!-- </div> -->
                         {% endif %}
                         <!-- First Name input field -->
                         <div class="form-group">
-                            <!-- <label for="exampleInputEmail1">First name</label> -->
                             <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                 placeholder="First name" name="first_name" required>
                         </div>
 
                         <!-- Last Name input field -->
                         <div class="form-group">
-                            <!-- <label for="exampleInputEmail1">Last name</label> -->
                             <input type="text" name="last_name" class="form-control" id="exampleInputEmail1"
                                 aria-describedby="emailHelp" placeholder="Last name" required>
                         </div>
 
                         <!-- Username input field -->
                         <div class="form-group">
-                            <!-- <label for="exampleInputEmail1">Username</label> -->
                             <input type="text" class="form-control" name="username" id="exampleInputEmail1"
                                 aria-describedby="emailHelp" placeholder="Email" required>
                         </div>
 
                         <!-- Password input field -->
                         <div class="form-group">
-                            <!-- <label for="exampleInputPassword1">Password</label> -->
                             <input type="password" class="form-control" name="password" id="exampleInputPassword1"
                                 placeholder="Password" required>
                         </div>
                         <div class="button-container">                    
                             <div class="otp-button">
-                                <button id="send-otp-btn" type="submit" name="action" value="send_otp" class="btn btn-primary btn-fill">Send OTP</button>
+                                <button id="send-otp-btn" type="button" name="action" value="send_otp" class="btn btn-primary btn-fill">Send OTP</button>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="final-view" style="display: flex; flex-direction: column;">
+            <div class="final-view">
                 <form id="card-2" class="col-6 mx-auto card-2 p-3" method="post" action="{% url 'register' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="card-body px-5 py3 border-0 no-background">
+                        <div id="messages2"></div>
                         <!-- Display error/success messages -->
                         {% if messages %}
-                        <!-- <div class="alert alert-primary" role="alert"> -->
                             {% for message in messages %}
                                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                                     {{ message }}
                                 </div>
                             {% endfor %}
-                        <!-- </div> -->
                         {% endif %}
                         <!-- First Name input field -->
                         <div class="form-group">
-                            <!-- <label for="exampleInputEmail1">First name</label> -->
                             <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                 placeholder="First name" name="first_name" required value="{{ employee.first_name }}">
                         </div>
 
                         <!-- Last Name input field -->
                         <div class="form-group">
-                            <!-- <label for="exampleInputEmail1">Last name</label> -->
                             <input type="text" name="last_name" class="form-control" id="exampleInputEmail1"
                                 aria-describedby="emailHelp" placeholder="Last name" required value="{{ employee.last_name }}">
                         </div>
 
                         <!-- Username input field -->
                         <div class="form-group">
-                            <!-- <label for="exampleInputEmail1">Username</label> -->
                             <input type="text" class="form-control" name="username" id="exampleInputEmail1"
                                 aria-describedby="emailHelp" placeholder="Email" required value="{{ employee.username }}">
                         </div>
 
                         <!-- Password input field -->
                         <div class="form-group">
-                            <!-- <label for="exampleInputPassword1">Password</label> -->
                             <input type="password" class="form-control" name="password" id="exampleInputPassword1"
                                 placeholder="Password" required value="{{ password }}">
                         </div>
                         <!-- OTP input field -->
                         <div class="form-group">
-                            <!-- <label for="exampleInputOTP1">OTP</label> -->
                             <input type="OTP" class="form-control" name="OTP" id="exampleInputOTP1"
                                 placeholder="OTP" required>
                         </div>
@@ -122,12 +111,76 @@
                     </div>
                 </form>
             </div>
-            <div class="card-footer text-center border-0 no-background element-center"></div>
-                <!-- Link to login page for users who already have an account -->
+            <!-- Link to login page for users who already have an account -->
             <p class="no_wrap">Already have an account? <a href="/au/login/">Sign in</a> </p>
-            </div>
-		</div>
-        
-	</div>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sendOtpBtn = document.getElementById('send-otp-btn');
+        const initialView = document.querySelector('.initial-view');
+        const finalView = document.querySelector('.final-view');
+        const initialForm = initialView.querySelector('form');
+        const finalForm = finalView.querySelector('form');
+        // const messagesContainer = document.getElementById('messages');
+    
+        sendOtpBtn.addEventListener('click', function(){
+            const formData = new FormData(initialForm);
+            fetch('send_otp/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirect_url) {
+                // Redirect to the specified URL
+                window.location.href = data.redirect_url;
+                }
+                else if (data.warning) {
+                    // Show warning message
+                    const messagesContainer = document.getElementById('messages1');
+                    const warningMessage = document.createElement('div');
+                    warningMessage.classList.add('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
+                    warningMessage.setAttribute('role', 'alert');
+                    warningMessage.innerHTML = data.message;
+                    messagesContainer.appendChild(warningMessage);                
+                }
+                else if (data.success) {
+                    const messagesContainer = document.getElementById('messages2');
+                    const successMessage = document.createElement('div');
+                    successMessage.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show');
+                    successMessage.setAttribute('role', 'alert');
+                    successMessage.innerHTML = data.message;
+                    messagesContainer.appendChild(successMessage);
+                    // Set values in the final form fields
+                    finalForm.querySelector('input[name="first_name"]').value = formData.get('first_name');
+                    finalForm.querySelector('input[name="last_name"]').value = formData.get('last_name');
+                    finalForm.querySelector('input[name="username"]').value = formData.get('username');
+                    finalForm.querySelector('input[name="password"]').value = formData.get('password');
+
+                    // Make fields readonly
+                    finalForm.querySelector('input[name="first_name"]').readOnly = true;
+                    finalForm.querySelector('input[name="last_name"]').readOnly = true;
+                    finalForm.querySelector('input[name="username"]').readOnly = true;
+                    finalForm.querySelector('input[name="password"]').readOnly = true;
+                    
+                    // Toggle views
+                    initialView.style.display = 'none';
+                    finalView.style.display = 'block';
+                } 
+                else {
+                    // Handle error
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+    </script>
 </body>
 </html>

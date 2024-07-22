@@ -6,7 +6,7 @@ div.legends{
     color: #f8f8f8;
     font-size: 13px;
     padding: 10px;
-    width: 170px;
+    width: max-content;
     top: -250px; /* Adjust as needed to position above the table */
     left: -95px; /* Adjust as needed to position correctly */
     text-align: left;

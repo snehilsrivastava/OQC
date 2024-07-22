@@ -6,7 +6,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Sign in</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-	<!-- <link rel="stylesheet" href="{%static 'css/style_log0.css' %}"> -->
 	<link rel="stylesheet" href="{%static 'css/login_page.css' %}">
 </head>
 <body class="body">
@@ -23,6 +22,7 @@
 				<!-- Login heading -->
 				<!-- <h3 class="title">Log in</h3> -->
 				<!-- <hr> -->
+				<input type="hidden" name="next" value="{{ next }}">
 				<div class="card-body px-5 py3 border-0 no-background">
 					<!-- Display error/success messages -->
 					{% if messages %}

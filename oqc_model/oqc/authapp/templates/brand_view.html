@@ -287,26 +287,22 @@
 <hr class="page-break-indicator">
 
 <div class="additional_details">{{ test.additional_details|safe }}</div>
+<br><br>
 
 <div class="action-buttons">
-    <a class="btn btn-primary" href="{% url 'dashboard' %}">Return</a>
-    <a class="btn btn-primary" href="{% url 'remark_owner' test.id %}">Remark</a>
-    <!-- <a class="btn btn-primary" href="{% url 'dashboard' %}">Send to Legal</a>
-    <a class="btn btn-primary" href="{% url 'dashboard' %}">Send to Brand</a> -->
-    
+    <a class="btn btn-primary" href="{% url 'brand_dashboard' %}">Return</a>
+   
     <div class="dropdown">
         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {{test.status}}
+        {{test.B_status}}
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="{% url 'change_status' test.id 1 %}">Waiting for Approval</a>
-            <a class="dropdown-item" href="{% url 'change_status' test.id 2 %}">Approve</a>
-            <a class="dropdown-item" href="{% url 'change_status' test.id 3 %}">Reject</a>
+            <a class="dropdown-item" href="{% url 'change_status_brand' test.id 1 %}">Waiting for Approval</a>
+            <a class="dropdown-item" href="{% url 'change_status_brand' test.id 2 %}">Approve</a>
+            <a class="dropdown-item" href="{% url 'change_status_brand' test.id 3 %}">Reject</a>
         </div>
     </div>
 </div>
-
 </form>
-
 </body>
 </html>
