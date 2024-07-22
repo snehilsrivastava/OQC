@@ -35,7 +35,7 @@
             </svg>
         </div>
         <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
-            <span class="icon" id="userButtonIcon">{{icon}}</span> <!-- Example downward triangle icon -->
+            <span class="icon" id="userButtonIcon">{{icon}}</span>
         </button>
         <div class="user-info" id="userInfo">
             <p>Name: {{ first_name }} {{ last_name }}</p>
@@ -106,31 +106,29 @@
             <input class="form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
         </div>
         <br>
-        <div class="status-filter">
-            <label for="status">Product Owner status:</label>
-            <select class="form-control" id="status" name="status">
-                <option value="">All</option>
-                {% for stat, clr in status_color.items %}
-                    <option value="{{stat}}" {% if status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
-                {% endfor %}
-            </select>
-            <br>
-            <label for="L_status">Legal Team status:</label>
-            <select class="form-control" id="L_status" name="L_status">
-                <option value="">All</option>
-                {% for stat, clr in status_color.items %}
-                    <option value="{{stat}}" {% if L_status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
-                {% endfor %}
-            </select>
-            <br>
-            <label for="B_status">Brand Team status:</label>
-            <select class="form-control"  id="B_status" name="B_status">
-                <option value="">All</option>
-                {% for stat, clr in status_color.items %}
-                    <option value="{{stat}}" {% if B_status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
-                {% endfor %}
-            </select>
-        </div>
+        <label for="status">Product Owner status:</label>
+        <select class="form-control" id="status" name="status">
+            <option value="">All</option>
+            {% for stat, clr in status_color.items %}
+                <option value="{{stat}}" {% if status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="L_status">Legal Team status:</label>
+        <select class="form-control" id="L_status" name="L_status">
+            <option value="">All</option>
+            {% for stat, clr in status_color.items %}
+                <option value="{{stat}}" {% if L_status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="B_status">Brand Team status:</label>
+        <select class="form-control"  id="B_status" name="B_status">
+            <option value="">All</option>
+            {% for stat, clr in status_color.items %}
+                <option value="{{stat}}" {% if B_status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
+            {% endfor %}
+        </select>
         <br>
       
         <div>

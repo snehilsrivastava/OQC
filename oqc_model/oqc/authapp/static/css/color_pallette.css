@@ -1,118 +1,112 @@
+:root[data-theme="dark"] {
+    --main-header-bg: var(--gray-shade-60);
+    --top-bar-icon-fill: var(--gray-tint-80);
+    --sidebar-bg: var(--gray-base);
+    --sidebar-icon-fill: var(--gray-tint-50);
+    --sidebar-icon-active-fill: var(--white-base);
+    --sidebar-link-color: var(--gray-tint-50);
+    --sidebar-link-active-color: var(--white-base);
+    --sidebar-menu-heading-color: var(--gray-tint-30);
+    --theme-switcher-bg: var(--gray-shade-60);
+    --theme-switcher-indicator: var(--extras-moon);
+    --theme-switcher-indicator-pos: 3.25rem;
+    --sun-icon-fill: #ffffff;
+    --moon-icon-fill: rgb(0,0,0);
+    --main-header-link-color: var(--gray-tint-80);
+    --barry: #7190ff;
+    --background-area: #2b2b2b;
+    --everywhere: #111827;
+    -webkit-text-fill-color: #ffffff; 
+    --color: #ffffff; 
+    --table-border-color: #ffffff;
+    --table-border-width: 1px;
+    --table-border-style: solid; 
+    --popup-color: rgb(22, 22, 22);
+    --form-color: #3f3f3f;
+}
 
-       :root[data-theme="dark"] {
-            --main-header-bg: var(--gray-shade-60);
-            --top-bar-icon-fill: var(--gray-tint-80);
-            --sidebar-bg: var(--gray-base);
-            --sidebar-icon-fill: var(--gray-tint-50);
-            --sidebar-icon-active-fill: var(--white-base);
-            --sidebar-link-color: var(--gray-tint-50);
-            --sidebar-link-active-color: var(--white-base);
-            --sidebar-menu-heading-color: var(--gray-tint-30);
-            --theme-switcher-bg: var(--gray-shade-60);
-            --theme-switcher-indicator: var(--extras-moon);
-            --theme-switcher-indicator-pos: 3.25rem;
-            --sun-icon-fill: #ffffff;
-            --moon-icon-fill: rgb(0,0,0);
-            --main-header-link-color: var(--gray-tint-80);
-            --barry: #7190ff;
-            --background-area: #2b2b2b;
-            --everywhere: #111827;
-            -webkit-text-fill-color: #ffffff; 
-             color: #ffffff; 
-             --table-border-color: #ffffff; /* Add table border color variable */
-             --table-border-width: 1px; /* Add table border width variable */
-             --table-border-style: solid; 
-             --popup-color: rgb(22, 22, 22);
-             --form-color: #3f3f3f;
+:root[data-theme="light"] {
+    --main-header-bg: var(--gray-tint-80);
+    --top-bar-icon-fill: var(--gray-base);
+    --sidebar-bg: var(--gray-tint-90);
+    --sidebar-icon-fill: var(--gray-tint-50);
+    --sidebar-icon-active-fill: var(--gray-base);
+    --sidebar-link-color: var(--gray-tint-50);
+    --sidebar-link-active-color: var(--gray-base);
+    --sidebar-menu-heading-color: var(--gray-tint-50);
+    --theme-switcher-bg: var(--gray-tint-80);
+    --theme-switcher-indicator: var(--extras-sun);
+    --theme-switcher-indicator-pos: .25rem;
+    --sun-icon-fill: #ffffff;
+    --moon-icon-fill: rgb(0,0,0);
+    --main-header-link-color: var(--gray-base);
+    --barry: #cbd6ff;
+    --background-area: #fdfaf3;
+    --everywhere: #f3f6fd;
+    --color: rgb(0,0,0); 
+    --table-border-color: rgb(0,0,0); 
+    --table-border-width: 1px; 
+    --table-border-style: solid; 
+    --popup-color: #ffffff;
+    --form-color : white;
+}
 
-        }
-
-        :root[data-theme="light"] {
-            --main-header-bg: var(--gray-tint-80);
-            --top-bar-icon-fill: var(--gray-base);
-            --sidebar-bg: var(--gray-tint-90);
-            --sidebar-icon-fill: var(--gray-tint-50);
-            --sidebar-icon-active-fill: var(--gray-base);
-            --sidebar-link-color: var(--gray-tint-50);
-            --sidebar-link-active-color: var(--gray-base);
-            --sidebar-menu-heading-color: var(--gray-tint-50);
-            --theme-switcher-bg: var(--gray-tint-80);
-            --theme-switcher-indicator: var(--extras-sun);
-            --theme-switcher-indicator-pos: .25rem;
-            --sun-icon-fill: #ffffff;
-            --moon-icon-fill: rgb(0,0,0);
-            --main-header-link-color: var(--gray-base);
-            --barry: #cbd6ff;
-            --background-area: #fdfaf3;
-            --everywhere: #f3f6fd;
-             color: rgb(0,0,0); 
-             --table-border-color: rgb(0,0,0); 
-             --table-border-width: 1px; 
-             --table-border-style: solid; 
-             --popup-color: #ffffff;
-             --form-color : white;
-        }
-
-        body {
-            background-color: var(--background-area) !important;
-            color: var(--main-header-link-color);
-        }
+body {
+    background-color: var(--background-area) !important;
+    color: var(--main-header-link-color);
+}
 
 
-        #theme-switcher {
-            display: flex;
-            align-items: left;
-       
-        }
+#theme-switcher {
+    display: flex;
+    align-items: left;
 
-        #theme-switcher svg {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-      
-        }
+}
 
-        #theme-switcher__sun {
-            fill: var(--sun-icon-fill);
-        }
+#theme-switcher svg {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
 
-        #theme-switcher__moon {
-            fill: var(--moon-icon-fill);
-        }
+}
 
-        table {
-            border: var(--table-border-width) var(--table-border-style) var(--table-border-color);
-            
-        } 
-        
-        
-        table th, table td {
-            border: var(--table-border-width) var(--table-border-style) var(--table-border-color);
-           
-        }
+#theme-switcher__sun {
+    fill: var(--sun-icon-fill);
+}
 
-        .popup {
-            background-color: var(--popup-color);
-           
-        }
+#theme-switcher__moon {
+    fill: var(--moon-icon-fill);
+}
 
-       
-        .form-control {
-            background-color : var(--form-color) !important;
-            color : var(color) !important;
-        }
+table {
+    border: var(--table-border-width) var(--table-border-style) var(--table-border-color);
+    
+} 
 
-        .dropdown-menu {
-            background-color : var(--form-color) !important;
-            color : var(color) !important;
-        }
 
-        .user-info{
-            background-color: var(--form-color);
-        }
+table th, table td {
+    border: var(--table-border-width) var(--table-border-style) var(--table-border-color);
+    
+}
 
-        .card {
-            background-color: var(--form-color); 
-        }
-         
-        
+.popup {
+    background-color: var(--popup-color);
+}
+
+.form-control {
+    background-color : var(--form-color) !important;
+    color : var(--color) !important;
+}
+
+.dropdown-menu {
+    background-color : var(--form-color) !important;
+    color : var(--color) !important;
+}
+
+.user-info{
+    background-color: var(--form-color);
+}
+
+.card {
+    background-color: var(--form-color); 
+}

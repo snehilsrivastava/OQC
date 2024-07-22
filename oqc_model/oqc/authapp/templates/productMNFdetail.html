@@ -25,7 +25,7 @@
             </div>
             <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
                 <span id="userButtonText"></span>
-                <span class="icon" id="userButtonIcon">{{icon}}</span> <!-- Example downward triangle icon -->
+                <span class="icon" id="userButtonIcon">{{icon}}</span>
             </button>
             <div class="user-info" id="userInfo">
                 <p>Username: {{ username }}</p>
@@ -70,7 +70,7 @@
                 </div>
                 
                 <label for="Product">Product</label>
-                <select name="Product" id="Product">
+                <select name="Product" id="Product" class="form-control">
                     <option value="" selected disabled hidden>Select the Product</option>
                     <option value="ac">AC</option>
                     <option value="washing_machine">Washing Machine</option>
@@ -79,15 +79,15 @@
                 </select>
 
                 <div class="form-group">
-                    <label>Brand_model_no</label>
+                    <label>Brand model no.</label>
                     <input type="text" class="form-control" id="Brand_model_no" name="Brand_model_no" required>
                 </div>
                 <div class="form-group">
-                    <label>Indkal_model_no</label>
+                    <label>Indkal model no.</label>
                     <input type="text" class="form-control" id="Indkal_model_no" name="Indkal_model_no" required>
                 </div>
                 <div class="form-group">
-                    <label>ODM_model_no</label>
+                    <label>ODM model no.</label>
                     <input type="text" class="form-control" id="ODM_model_no" name="ODM_model_no" required>
                 </div>
                
