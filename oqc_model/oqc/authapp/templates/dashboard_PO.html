@@ -20,7 +20,9 @@
 </div>
 <div class="header">
     <div class="left-icon" style="display: flex; align-items: center;">
-        <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
+        <button class="menu-btn" onclick="toggleMenu()">
+            <i class="fa fa-bars"></i> Menu
+        </button>
     </div>
     <div class="container">
         <!-- <img class="Indkal-Logo" width="200" src="{%static 'images/Logo.svg' %}" alt="Indka Logo"></img> -->
@@ -279,6 +281,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
+    // Ensure user info starts hidden
+    document.addEventListener("DOMContentLoaded", function() {
+        var sidebar = document.getElementById("sidebar");
+        sidebar.style.display = "none";
+    });
+
+    function toggleMenu() {
+        var sidebar = document.getElementById("sidebar");
+        if (sidebar.style.display === "block") {
+            sidebar.style.display = "none";
+        } else {
+            sidebar.style.display = "block";
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         var messageContainer = document.querySelector('.message-container');
         var timerBar = document.querySelector('.timer-bar');

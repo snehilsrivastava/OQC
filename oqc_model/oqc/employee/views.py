@@ -197,27 +197,6 @@ def employee_dashboard(request):
     return render(request, "dashboard_employee.html", context)
 
 @login_required
-def legal_dashboard(request):
-    username = request.session.get('username')
-    user = Employee.objects.get(username=username)
-    if user.user_type != 'employee' and not user.is_superuser:
-        return redirect('/access_denied/')
-    test = list(TestRecord.objects.values('ProductType','ModelName', 'TestStage').distinct())
-    employee = Employee.objects.get(username=username)
-    all_tests = TestRecord.objects.all()
-    all_tests = all_tests.order_by('-test_end_date')
-    icon = employee.first_name[0] + employee.last_name[0]
-    context = {
-        'tests': test,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
-        'all_tests': all_tests,
-    }
-    return render(request, "dashboard_legal.html", context)
-
-@login_required
 def cooling(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'employee' and not user.is_superuser:
@@ -345,7 +324,6 @@ def dashboard(request):
         'status_color' : status_color,
         'role_letter': role_letter
     }
-
     return render(request, 'dashboard_PO.html', context)
 
 from django.http import JsonResponse
