@@ -167,7 +167,6 @@ body {
 .no_wrap {
     text-wrap: nowrap;
     color: white;
-    /* width: 250px; */
 }
 .text-center {
     margin-bottom: 3%;
