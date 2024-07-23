@@ -1,10 +1,6 @@
 function toggleMenu() {
     var sidebar = document.getElementById("sidebar");
-    if (sidebar.style.display === "block") {
-        sidebar.style.display = "none";
-    } else {
-        sidebar.style.display = "block";
-    }
+    sidebar.classList.toggle("visible");
 }
 
 function toggleFilter() {
@@ -56,13 +52,6 @@ function clearFilter() {
     startDate.value = "";
     endDate.value = "";
 }
-    
-// Ensure user info starts hidden
-document.addEventListener("DOMContentLoaded", function() {
-    var sidebar = document.getElementById("userInfo");
-    sidebar.style.display = "none";
-});
-
 
 $(document).ready(function () {
     $('.collapse').on('show.bs.collapse', function () {

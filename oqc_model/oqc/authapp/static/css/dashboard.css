@@ -60,11 +60,23 @@ button a:hover {
 .left-icon {
     display: flex;
 }
-.nav {
+
+#sidebar {
+    display: none;
     position: sticky;
     top: 59.25px;
-    /* left: 10px; */
-    height : calc(100vh-2000px);
+    flex-shrink: 0;
+}
+
+#sidebar.visible {
+    display: block;
+    width: 17%;
+}
+
+@media (max-width: 800px) {
+    #sidebar.visible {
+        width: 70%;
+    }
 }
 
 ul {
