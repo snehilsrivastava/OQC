@@ -1,0 +1,67 @@
+table {
+    border: 1px solid black;
+    border-collapse: collapse;
+    border-bottom: 1px solid black;
+    width: 100%;
+    table-layout: fixed;
+}
+
+td {
+    border: 1px solid black;
+    vertical-align: middle;
+    padding: 1px 3px 1px 5px;
+    line-height: 90%;
+}
+
+.additional_details {
+    font-family: Arial;
+    font-size: 13px;
+}
+
+p {
+    font-family: Arial;
+    font-size: 13px;
+}
+
+span {
+    font-family: Arial;
+    font-size: 13px;
+    /* letter-spacing: 0.015rem; */
+}
+
+.form-container {
+    flex-direction: column;
+    width: 96%;
+    max-width: 700px;
+}
+
+.page-break-indicator {
+    border-top: solid black;
+    width: 100%;
+}
+
+.custom-btn-small {
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.action-buttons .button {
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    background-color: #333;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.action-buttons .button:hover {
+    background-color: #0056b3;
+}

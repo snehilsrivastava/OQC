@@ -193,7 +193,6 @@ def employee_dashboard(request):
         'icon': icon,
         'username': username
     }
-    messages.success(request, 'Wow the page is being displayed')
     return render(request, "dashboard_employee.html", context)
 
 @login_required

@@ -5,7 +5,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
-    color: white;
+    /* color: white; */
     font-size: 17px;
     text-decoration-color: whitesmoke;
 }
@@ -17,16 +17,22 @@ button {
     border: 10px;
     border-color: black;
     background-color: #0879cb;
-    font-size: 20px;
+    font-size: 17px;
     border-radius: 3px;
 }
+
+button:hover {
+    cursor: pointer;
+    background-color: #2989ce;
+}
+
 button a {
     color: whitesmoke;
     width: 120px;
+    text-decoration: none;
 }
 
-button a:hover {
-    background-color: #a9b9bc;
+a:hover {
     color: white;
     text-decoration: none; 
 }
@@ -42,7 +48,7 @@ button a:hover {
     z-index: 200;
     display: flex;
     justify-content: end;
-    align-items: center; /* Align items vertically */
+    align-items: center;
     padding: 10px 20px;
     background-color: #0879cb;
     color: white;
@@ -66,17 +72,14 @@ button a:hover {
     position: sticky;
     top: 59.25px;
     flex-shrink: 0;
+    height: 100vh;
+    overflow: hidden;
 }
 
 #sidebar.visible {
     display: block;
-    width: 17%;
-}
-
-@media (max-width: 800px) {
-    #sidebar.visible {
-        width: 70%;
-    }
+    width: 70%;
+    max-width: 230px;
 }
 
 ul {
@@ -84,7 +87,7 @@ ul {
     margin: 0;
     padding: 0;
     width: 300px;
-    height: 100vh;
+    /* height: 100vh; */
     background-color: #0879cb;
     color: white;
     overflow: auto;
@@ -169,7 +172,7 @@ button.collapse-button i {
 
 .action-buttons a {
     background: #0879cb;
-    color: #fff;
+    color: #fff !important;
     padding: 5px 10px;
     text-decoration: none;
     border-radius: 3px;
@@ -313,14 +316,14 @@ button.collapse-button i {
 .user-info {
     display: none;
     position: absolute;
-    top: 50px; /* Adjust as needed */
+    top: 50px;
     right: 20px;
     color: black;
     padding: 10px 20px;
     border: 1px solid #ddd;
     z-index: 1;
-    max-height: 80vh; /* Maximum height set to 80% of viewport height */
-    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    max-height: 80vh;
+    overflow-y: auto; 
 }
 
 .logout-btn {
@@ -386,9 +389,13 @@ button.collapse-button i {
 }
 
 .status-button {
-    color:white;
+    color: white;
 }
 
 .menu-btn {
     width: 100px;
+}
+
+.menu-btn:hover {
+    background-color: #0879cb;
 }

@@ -1,283 +1,227 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    {% load static%}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cooling Test Form</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <style>
-        table {
-            border: 1px solid black;
-            border-collapse: collapse;
-            border-bottom: 1px solid black;
-        }
-        td {
-            border: 1px solid black;
-            vertical-align: middle;
-            padding: 1px 3px 1px 5px;
-            line-height: 90%;
-        }
-        .additional_details {
-            font-family: Arial;
-            font-size: 13px;
-        }
-        p {
-            font-family: Arial;
-            font-size: 13px;
-        }
-        span {
-            font-family: Arial;
-            font-size: 13px;
-            /* letter-spacing: 0.015rem; */
-        }
-        .form-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .page-break-indicator {
-            border-top: solid black; /* Simulate a dashed page tear effect */
-            width: 100%; /* Stretch across the entire width */
-            /* margin-top: 40px;   */
-            /* margin-bottom: 40px; */
-        }
-        .custom-btn-small {
-            padding: 5px 10px;
-            font-size: 13px;
-        }
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px; /* Adjust the gap between buttons as needed */
-            margin-top: 20px; /* Add margin if needed to position the buttons */
-        }
-        .action-buttons .button {
-            padding: 10px 20px;
-            text-decoration: none;
-            color: white;
-            background-color: #333; /* Change color as needed */
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .action-buttons .button:hover {
-            background-color: #0056b3; /* Change hover color as needed */
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/view_record.css' %}">
 </head>
 <body>
 
-<form class="col-6 mx-auto card p-3 shadow-lg" >
+<form class="mx-auto card p-3 shadow-lg form-container" >
     {% csrf_token %}
     {{ form.media }}
     {{ form.as_p }}
-    <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;font-family:"`;'>{{TestProtocol.TestName}}</span></u></strong></p>
+    <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;'>{{TestProtocol.TestName}}</span></u></strong></p>
     <div style="margin: 6px;"></div>
     <table>
         <tbody>
             <tr>
-                <td style="width:96.4pt;height:5.8pt;">
+                <td>
                     <strong><span class="row_header">Test Objective</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;height:5.8pt;">
+                <td colspan="4">
                     <span>{{TestProtocol.Test_Objective}}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:96.4pt;">
+                <td>
                     <strong><span class="row_header">Model No.</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;">
+                <td colspan="4">
                     <span>{{model.ModelName}}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:96.4pt;">
+                <td>
                     <strong><span class="row_header">Sample Quantity</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;">
+                <td colspan="4">
                     <span>{{test.sample_quantiy}}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:96.4pt;">
+                <td>
                     <strong><span class="row_header">Serial No.</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;">
+                <td colspan="4">
                     <span>{{test.SerailNo}}</span>
                    
                 </td>
             </tr>
             <tr>
-                <td rowspan="10" style="width:96.4pt;">
+                <td rowspan="10">
                     <strong><span class="row_header">Set Details</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;">
+                <td colspan="4">
                     <span>Report verification Date: {{test.test_date|date:"d/m/Y"}}</span>
                 </td>
                 
             </tr>
             <tr>
-                <td colspan="2" style="width:207.0pt;">
+                <td colspan="2">
                     <span>Start Date: {{test.test_start_date|date:"d/m/Y"}}</span>
                 </td>
-                <td colspan="2" style="width:203.65pt;">
+                <td colspan="2">
                     <span>End Date: {{test.test_end_date|date:"d/m/Y"}}</span>
                 </td>
             </tr>
             <tr>
-                <td colspan="2" style="width:207.0pt;">
+                <td colspan="2">
                     <span>Indoor unit details</span>
                 </td>
-                <td colspan="2" style="width:203.65pt;">
+                <td colspan="2">
                     <span>Outdoor unit details</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:58.9pt; ">
+                <td>
                     <span>Model</span>
                 </td>
-                <td style="width:148.1pt;">
+                <td>
                     <span>{{model.ModelName}}</span>
                 </td>
-                <td style="width:75.6pt;">
+                <td>
                     <span>Model</span>
                 </td>
-                <td style="width:128.05pt;">
+                <td>
                     <span>{{model.ModelName}}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:58.9pt; ">
+                <td>
                     <span>S.</span><span>N</span><span>o</span><span>.</span>
                 </td>
-                <td style="width:148.1pt;">
+                <td>
                     <span>N/A</span>
                 </td>
-                <td style="width:75.6pt;">
+                <td>
                     <span>S.</span><span>N</span><span>o</span><span>.</span>
                 </td>
-                <td style="width:128.05pt;">
+                <td>
                     <span>N/A</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:58.9pt; ">
+                <td>
                     <span>Bl. Motor</span>
                 </td>
-                <td style="width:148.1pt;">
+                <td>
                     <span>{{model.BImotor}}</span>
                 </td>
-                <td style="width:75.6pt;">
+                <td>
                     <span>Compressor</span>
                 </td>
-                <td style="width:128.05pt;">
+                <td>
                     <span>{{model.Compressor}}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:58.9pt; ">
+                <td>
                     <span>Blower</span>
                 </td>
-                <td style="width:148.1pt;">
+                <td>
                     <span>{{model.Blower}}</span>
                 </td>
-                <td style="width:75.6pt;">
+                <td>
                     <span>Fan motor</span>
                 </td>
-                <td style="width:128.05pt;">
+                <td>
                     <span>{{model.FanMotor}}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:58.9pt; ">
+                <td>
                     <span>Eva. Coil</span>
                 </td>
-                <td style="width:148.1pt;">
+                <td>
                     <span>{{model.Eva}}</span>
                 </td>
-                <td style="width:75.6pt;">
+                <td>
                     <span>Fan</span>
                 </td>
-                <td style="width:128.05pt;">
+                <td>
                     <span>{{model.Fan}}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:58.9pt; ">
+                <td>
                     <span>Conn. Pipe</span>
                 </td>
-                <td style="width:148.1pt;">
+                <td>
                     <span>{{model.ConPipe}}</span>
                 </td>
-                <td style="width:75.6pt;">
+                <td>
                     <span>Cond. Coil</span>
                 </td>
-                <td style="width:128.05pt;">
+                <td>
                     <span>{{model.CondCoil}}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:58.9pt; ">
+                <td>
                     <span>Ref. Charge</span>
                 </td>
-                <td style="width:148.1pt;">
+                <td>
                     <span>{{model.RefCharge}}</span>
                 </td>
-                <td style="width:75.6pt;">
+                <td>
                     <span>Capillary tube</span>
                 </td>
-                <td style="width:128.05pt;">
+                <td>
                     <span>{{model.Capilary}}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:96.4pt;">
+                <td>
                     <strong><span class="row_header">Test Standard</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;">
+                <td colspan="4">
                     <span>{{TestProtocol.Test_Standard}}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:96.4pt;">
+                <td>
                     <strong><span class="row_header">Test Condition</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;">
+                <td colspan="4">
                     <span> {{TestProtocol.Test_Condition|linebreaksbr }}</span>
                 </td>
             </tr>
             <tr>
-                <td style="width:96.4pt;">
+                <td>
                     <strong><span class="row_header">Test Procedure</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;">
+                <td colspan="4">
                     <span> {{TestProtocol.Test_Procedure|linebreaksbr }}</span> 
                 </td>
             </tr>
             <tr>
-                <td style="width:96.4pt;">
+                <td>
                     <strong><span class="row_header">Judgement Criteria</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;">
+                <td colspan="4">
                     <span> {{TestProtocol.Judgement|linebreaksbr }}</span>  
                 </td>
             </tr>
             <tr>
-                <td style="width:96.4pt;height:14.35pt;">
+                <td>
                     <strong><span class="row_header">Instrument / Equipment used</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;height:14.35pt;">
+                <td colspan="4">
                     <span>{{TestProtocol.Instrument}}</span>
                 </td>
             </tr>
             <tr>
-                <td rowspan="2" style="width:96.4pt;height:12.5pt;">
+                <td rowspan="2">
                     <strong><span class="row_header">Result &amp; Conclusion</span></strong>
                 </td>
-                <td colspan="4" style="width:410.65pt;height:12.5pt;">
+                <td colspan="4">
                     <span>{{test.result|safe}}</span>
                 </td>
             </tr>
@@ -287,7 +231,6 @@
 <hr class="page-break-indicator">
 
 <div class="additional_details">{{ test.additional_details|safe }}</div>
-<br><br>
 
 <div class="action-buttons">
     <a class="btn btn-primary" href="{% url 'brand_dashboard' %}">Return</a>
