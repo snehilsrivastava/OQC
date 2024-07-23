@@ -80,17 +80,6 @@
                                 <span aria-hidden="true">&times;</span>
                             </button> -->
                         </div>
-                        <!-- Display error/success messages -->
-                        {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                    <span class="message-span">{{ message }}</span> 
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
                         <!-- First Name input field -->
                         <div class="form-group">
                             <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
@@ -155,6 +144,7 @@
                 else if (data.warning) {
                     // Show warning message
                     const messagesContainer = document.getElementById('messages1');
+                    messagesContainer.innerHTML = ``;
                     const warningMessage = document.createElement('div');
                     warningMessage.classList.add('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
                     warningMessage.setAttribute('role', 'alert');
@@ -166,6 +156,7 @@
                 }
                 else if (data.success) {
                     const messagesContainer = document.getElementById('messages2');
+                    messagesContainer.innerHTML = ``;   
                     const successMessage = document.createElement('div');
                     successMessage.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show');
                     successMessage.setAttribute('role', 'alert');
