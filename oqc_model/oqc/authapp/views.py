@@ -233,9 +233,6 @@ def forgot_password_verify_otp(request):
         in_otp = request.POST.get('OTP')
         delete_expired_otps()
         msg = verify_otp(username, in_otp)
-        print(in_otp)
-        print(username)
-        print(msg)
         match (msg):
             case 1:
                 return JsonResponse({'success': True})
@@ -243,7 +240,7 @@ def forgot_password_verify_otp(request):
                 return JsonResponse({'error': True, 'message': 'Invalid or Expired OTP.'})
             case 3:
                 return JsonResponse({'error': True, 'message': 'Invalid OTP.'})
-    return JsonResponse({'success': False, 'message': 'Invalid request!!!'}, status=400)
+    return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
 def forgot_password_update(request):
     if request.method == 'POST':

@@ -5,7 +5,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
-    color: white;
+    /* color: white; */
     font-size: 17px;
     text-decoration-color: whitesmoke;
     transition: background 0.2s linear;
@@ -17,17 +17,23 @@ button {
     width: 170px;
     border: 10px;
     border-color: black;
-    background-color: #232f3e;
-    font-size: 20px;
+    background-color: #0879cb;
+    font-size: 17px;
     border-radius: 3px;
 }
+
+button:hover {
+    cursor: pointer;
+    background-color: #2989ce;
+}
+
 button a {
     color: whitesmoke;
     width: 120px;
+    text-decoration: none;
 }
 
-button a:hover {
-    background-color: #a9b9bc;
+a:hover {
     color: white;
     text-decoration: none; 
 }
@@ -43,7 +49,7 @@ button a:hover {
     z-index: 200;
     display: flex;
     justify-content: end;
-    align-items: center; /* Align items vertically */
+    align-items: center;
     padding: 10px 20px;
     background-color: #232f3e;
     color: white;
@@ -61,11 +67,20 @@ button a:hover {
 .left-icon {
     display: flex;
 }
-.nav {
+
+#sidebar {
+    display: none;
     position: sticky;
     top: 59.25px;
-    /* left: 10px; */
-    height : calc(100vh-2000px);
+    flex-shrink: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#sidebar.visible {
+    display: block;
+    width: 70%;
+    max-width: 230px;
 }
 
 ul {
@@ -73,8 +88,8 @@ ul {
     margin: 0;
     padding: 0;
     width: 300px;
-    height: 100vh;
-    background-color: #232f3e;
+    /* height: 100vh; */
+    background-color: #0879cb;
     color: white;
     overflow: auto;
 }
@@ -157,8 +172,8 @@ button.collapse-button i {
 }
 
 .action-buttons a {
-    background: #232f3e;
-    color: #fff;
+    background: #0879cb;
+    color: #fff !important;
     padding: 5px 10px;
     text-decoration: none;
     border-radius: 3px;
@@ -302,14 +317,14 @@ button.collapse-button i {
 .user-info {
     display: none;
     position: absolute;
-    top: 50px; /* Adjust as needed */
+    top: 50px;
     right: 20px;
     color: black;
     padding: 10px 20px;
     border: 1px solid #ddd;
     z-index: 1;
-    max-height: 80vh; /* Maximum height set to 80% of viewport height */
-    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    max-height: 80vh;
+    overflow-y: auto; 
 }
 
 .logout-btn {
@@ -373,7 +388,15 @@ button.collapse-button i {
     justify-content: center;
     align-items: center;
 }
-.status-button{
-    color:white;
+
+.status-button {
+    color: white;
 }
 
+.menu-btn {
+    width: 100px;
+}
+
+.menu-btn:hover {
+    background-color: #0879cb;
+}

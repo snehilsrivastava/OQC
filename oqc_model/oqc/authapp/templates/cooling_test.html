@@ -1,273 +1,240 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    {% load static%}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cooling Test Form</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .form-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .additional_details {
-            width: 650px;
-        }
-        .custom-btn-small {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        .custom-add-page-button {
-            padding: 5px 10px;
-            font-size: 12px;
-            display: block;
-            margin: 10px auto;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .page-break {
-            page-break-before: always;
-            border: 0;
-            height: 1px;
-            background: #333;
-            margin: 20px 0;
-        }
-        .custom-add-page-button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/view_record.css' %}">
 </head>
 <body>
-<form class="col-6 mx-auto card p-3 shadow-lg" method="post" action="{% url 'cooling' test_name=test_name model_name=model_name serialno=serialno %}"  enctype="multipart/form-data">
+<form class="mx-auto card p-3 shadow-lg form-container" method="post" action="{% url 'cooling' test_name=test_name model_name=model_name serialno=serialno %}"  enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.media }}
     <!-- {{ form.as_p }} -->
-<p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:21px;font-family:"Arial",sans-serif;'>{{TestProtocol.TestName}}</span></u></strong></p>
-<table class="table-break" style="border-collapse:collapse;border:none;">
-    <tbody>
-        <tr>
-            <td style="width:96.4pt;border:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:5.8pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Test Objective</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:5.8pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{TestProtocol.Test_Objective}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;border:solid windowtext 1.0pt;border-top:  none;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Model No.</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.ModelName}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;border:solid windowtext 1.0pt;border-top:  none;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Sample Quantity</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{form.sample_quantiy}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;border:solid windowtext 1.0pt;border-top:  none;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Serial No.</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{serialno}}</span></p>
-               
-            </td>
-        </tr>
-        <tr>
-            <td rowspan="10" style="width:96.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Set Details</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Report verification Date :{{form.test_date}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" style="width:207.0pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Start Date: {{form.test_start_date}}</span></p>
-            </td>
-            <td colspan="2" style="width:203.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>End Date: {{form.test_end_date}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" style="width:207.0pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Indoor unit details</span></p>
-            </td>
-            <td colspan="2" style="width:203.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Outdoor unit details</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Model</span></p>
-            </td>
-            <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.ModelName}}</span></p>
-            </td>
-            <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Model</span></p>
-            </td>
-            <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.ModelName}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>S.</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>N</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>o</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>.</span></p>
-            </td>
-            <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>N/A</span></p>
-            </td>
-            <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>S.</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>N</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>o</span><span style='font-size:13px;font-family:"Arial",sans-serif;'>.</span></p>
-            </td>
-            <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>N/A</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Bl. Motor</span></p>
-            </td>
-            <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.BImotor}}</span></p>
-            </td>
-            <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Compressor</span></p>
-            </td>
-            <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.Compressor}} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Blower</span></p>
-            </td>
-            <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.Blower}}</span></p>
-            </td>
-            <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Fan motor</span></p>
-            </td>
-            <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.FanMotor}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Eva. Coil</span></p>
-            </td>
-            <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.Eva}}</span></p>
-            </td>
-            <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Fan</span></p>
-            </td>
-            <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.Fan}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Conn. Pipe</span></p>
-            </td>
-            <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.ConPipe}}</span></p>
-            </td>
-            <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Cond. Coil</span></p>
-            </td>
-            <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.CondCoil}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt;border-top:none;border-left:none;border-bottom:  solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Ref. Charge</span></p>
-            </td>
-            <td style="width:148.1pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.RefCharge}}</span></p>
-            </td>
-            <td style="width:75.6pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>Capillary tube</span></p>
-            </td>
-            <td style="width:128.05pt;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;line-height:12.0pt;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{model.Capilary}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;border:solid windowtext 1.0pt;border-top:  none;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Test Standard</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{TestProtocol.Test_Standard}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;border:solid windowtext 1.0pt;border-top:  none;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Test Condition</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:13px;font-family:"Arial",sans-serif;'> {{TestProtocol.Test_Condition|linebreaksbr }}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;border:solid windowtext 1.0pt;border-top:  none;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Test Procedure</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:13px;font-family:"Arial",sans-serif;'> {{TestProtocol.Test_Procedure|linebreaksbr }}</span></p> 
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;border:solid windowtext 1.0pt;border-top:  none;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Judgement Criteria</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;'><span style='font-size:13px;font-family:"Arial",sans-serif;'> {{TestProtocol.Judgement|linebreaksbr }}</span></p>  
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;border:solid windowtext 1.0pt;border-top:  none;padding:0cm 5.4pt 0cm 5.4pt;height:14.35pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Instrument / Equipment used</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:14.35pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{TestProtocol.Instrument}}</span></p>
-            </td>
-        </tr>
-        <tr>
-            <td rowspan="2" style="width:96.4pt;border:solid windowtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:12.5pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><strong><span style='font-size:12px;font-family:"Arial",sans-serif;'>Result &amp; Conclusion</span></strong></p>
-            </td>
-            <td colspan="4" style="width:410.65pt;border-top:none;border-left:  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:12.5pt;">
-                <p style='margin:0cm;font-size:13px;font-family:"Times New Roman",serif;vertical-align:baseline;'><span style='font-size:13px;font-family:"Arial",sans-serif;'>{{ form.result }}</span></p>
-            </td> 
-        </tr>
-        <tr>
-        </tr>
-    </tbody>
-</table>
-<div style="margin: 10px 0 10px 0;"></div>
-
-<div class="page-break"></div>
+    <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;'>{{TestProtocol.TestName}}</span></u></strong></p>
+    <div style="margin: 6px;"></div>
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Test Objective</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{TestProtocol.Test_Objective}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Model No.</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{model.ModelName}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Sample Quantity</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{form.sample_quantiy}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Serial No.</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{serialno}}</span>
+                   
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="10">
+                    <strong><span class="row_header">Set Details</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>Report verification Date: {{form.test_date}}</span>
+                </td>
+                
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span>Start Date: {{testdetail.test_start_date|date:"d/m/Y"}}</span>
+                </td>
+                <td colspan="2">
+                    <span>End Date: {{testdetail.test_end_date|date:"d/m/Y"}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span>Indoor unit details</span>
+                </td>
+                <td colspan="2">
+                    <span>Outdoor unit details</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Model</span>
+                </td>
+                <td>
+                    <span>{{model.ModelName}}</span>
+                </td>
+                <td>
+                    <span>Model</span>
+                </td>
+                <td>
+                    <span>{{model.ModelName}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>S.</span><span>N</span><span>o</span><span>.</span>
+                </td>
+                <td>
+                    <span>N/A</span>
+                </td>
+                <td>
+                    <span>S.</span><span>N</span><span>o</span><span>.</span>
+                </td>
+                <td>
+                    <span>N/A</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Bl. Motor</span>
+                </td>
+                <td>
+                    <span>{{model.BImotor}}</span>
+                </td>
+                <td>
+                    <span>Compressor</span>
+                </td>
+                <td>
+                    <span>{{model.Compressor}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Blower</span>
+                </td>
+                <td>
+                    <span>{{model.Blower}}</span>
+                </td>
+                <td>
+                    <span>Fan motor</span>
+                </td>
+                <td>
+                    <span>{{model.FanMotor}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Eva. Coil</span>
+                </td>
+                <td>
+                    <span>{{model.Eva}}</span>
+                </td>
+                <td>
+                    <span>Fan</span>
+                </td>
+                <td>
+                    <span>{{model.Fan}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Conn. Pipe</span>
+                </td>
+                <td>
+                    <span>{{model.ConPipe}}</span>
+                </td>
+                <td>
+                    <span>Cond. Coil</span>
+                </td>
+                <td>
+                    <span>{{model.CondCoil}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Ref. Charge</span>
+                </td>
+                <td>
+                    <span>{{model.RefCharge}}</span>
+                </td>
+                <td>
+                    <span>Capillary tube</span>
+                </td>
+                <td>
+                    <span>{{model.Capilary}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Test Standard</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{TestProtocol.Test_Standard}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Test Condition</span></strong>
+                </td>
+                <td colspan="4">
+                    <span> {{TestProtocol.Test_Condition|linebreaksbr }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Test Procedure</span></strong>
+                </td>
+                <td colspan="4">
+                    <span> {{TestProtocol.Test_Procedure|linebreaksbr }}</span> 
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Judgement Criteria</span></strong>
+                </td>
+                <td colspan="4">
+                    <span> {{TestProtocol.Judgement|linebreaksbr }}</span>  
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Instrument / Equipment used</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{TestProtocol.Instrument}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    <strong><span class="row_header">Result &amp; Conclusion</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{form.result}}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+<!-- <div style="margin: 20px;"></div> -->
+<hr class="page-break-indicator">
 
 <!-- this code doesnt work as additional_details isnt a string
  so if condition just defaults to True -->
-{% if form.additional_details %}
+{% if testdetail.additional_details != '' %}
 <div class="additional_details">{{ form.additional_details }}</div>
 {% else %}
-<button id="addPageButton" type="button" class="custom-add-page-button">Add page</button>
+<button id="addPageButton" type="button" class="btn btn-primary custom-btn-small">Add page</button>
 <div class="additional_details" style="display: none;">{{ form.additional_details }}</div>
 {% endif %}
-
+<div style="margin: 10px;"></div>
 <button type="submit" class="btn btn-primary custom-btn-small">Submit</button>
 </form>
 <script>

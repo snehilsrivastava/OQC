@@ -20,7 +20,9 @@
 </div>
 <div class="header">
     <div class="left-icon" style="display: flex; align-items: center;">
-        <i class="fa fa-bars" onclick="toggleMenu()"></i> Menu
+        <button class="menu-btn" onclick="toggleMenu()">
+            <i class="fa fa-bars"></i> Menu
+        </button>
     </div>
     <div class="container">
         <!-- <img class="Indkal-Logo" width="200" src="{%static 'images/Logo.svg' %}" alt="Indka Logo"></img> -->
@@ -40,13 +42,13 @@
         <div class="user-info" id="userInfo">
             <p>Name: {{ first_name }} {{ last_name }}</p>
             <p>Email: {{ username }}</p>
-            <a class="logout-btn"  onclick="logoutUser()" >Logout</a>
+            <a class="logout-btn"  onclick="logoutUser()">Logout</a>
         </div>
     </div>
 </div>
 
 <div class="main-content">
-    <ul class='nav' id="sidebar" style="display:flex; flex-direction:column;">
+    <ul class='nav' id="sidebar">
         <li><a href="{% url 'dashboard' %}"><i class="fa fa-home fa-icon"></i>&nbsp Home</a></li>
         <!-- <li><a href="{% url 'product' %}"><i class="fa fa-file fa-icon"></i>&nbsp Add report</a></li> -->
         <li><a href="{% url 'mnf' %}"><i class="fa fa-file fa-icon"></i>&nbsp Add model detail</a></li>
@@ -162,7 +164,7 @@
         {% endif %}
         <h1>Dashboard</h1>
         <i class="fa fa-search fa-icon"></i>
-        <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
+        <button onclick="toggleFilter()"><a href="javascript:void(0)">Filter</a></button>
         <form method="POST" action="{% url 'handle_selected_tests' %}">
             {% csrf_token %}
         <table class="table table-bordered">
@@ -279,6 +281,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
+    // Ensure user info starts hidden
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     var sidebar = document.getElementById("sidebar");
+    //     sidebar.style.display = "none";
+    // });
+
     document.addEventListener('DOMContentLoaded', function() {
         var messageContainer = document.querySelector('.message-container');
         var timerBar = document.querySelector('.timer-bar');
