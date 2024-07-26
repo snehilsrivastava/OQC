@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     {% load static%}
-    
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Specification Form</title>
+    <title>Update Test Details</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/form.css' %}">
     <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
@@ -38,7 +36,6 @@
                 </div>
         </div>
     </div>
-    </div>
     <div class="message-container">
         {% if messages %}
             <ul class="messages">
@@ -53,7 +50,7 @@
     <div class="container">
         <div class="form-container">
             <div class="form-header">
-                <h1>Product Test Detail Form</h1>
+                <h1>Update Test Details</h1>
             </div>
             <form action="{% url 'update_test_list_entry' %}" method="post">
                 {% csrf_token %}

@@ -317,7 +317,6 @@ def dashboard(request):
     }
     return render(request, 'dashboard_PO.html', context)
 
-from django.http import JsonResponse
 from django.contrib.auth import logout as auth_logout
 
 @login_required
@@ -843,12 +842,6 @@ def Test_list_entry(request):
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
 
-        # Check if a test with the same name already exists
-        existing_test = TestList.objects.filter(TestName=testName, Product=product).first()
-        if existing_test:
-            messages.error(request, "Test name already exists!")
-            return redirect('/dashboard/')
-
         s1 = ""
         if "DVT" in testStages:
             s1 += "1"
@@ -875,11 +868,10 @@ def Test_list_entry(request):
         new_test.save()
 
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
-    # If not a POST request, render the form
+    
     username = request.session['username']
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
-
     context = {
         'first_name': employee.first_name,
         'last_name': employee.last_name,
@@ -894,8 +886,6 @@ def test_protocol_entry(request, test_name, product):
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
-        # Get form data from the request
-        testName = request.POST.get('TestName')
         testobjective = request.POST.get('Testobjective')
         teststandard = request.POST.get('Teststandard')
         testcondition = request.POST.get('Testcondition')
@@ -905,14 +895,15 @@ def test_protocol_entry(request, test_name, product):
 
         # Check if the test detail info already exists
         if Test_core_detail.objects.filter(TestName=test_name, ProductType=product).exists():
-            existing_test = Test_core_detail.objects.filter(TestName=test_name, Product=product).first()
-            existing_test.Test_Objective=testobjective,
-            existing_test.Test_Standard=teststandard,
-            existing_test.Test_Condition=testcondition,
-            existing_test.Test_Procedure=testprocedure,
-            existing_test.Judgement=judgement,
-            existing_test.Instrument=instrument,
+            existing_test = Test_core_detail.objects.filter(TestName=test_name, ProductType=product).first()
+            existing_test.Test_Objective=testobjective
+            existing_test.Test_Standard=teststandard
+            existing_test.Test_Condition=testcondition
+            existing_test.Test_Procedure=testprocedure
+            existing_test.Judgement=judgement
+            existing_test.Instrument=instrument
             existing_test.save()
+            messages.success(request, 'Test protocols updated.')
             return redirect('/dashboard/')  
 
         # Create and save the new Test_core_detail instance
@@ -927,12 +918,16 @@ def test_protocol_entry(request, test_name, product):
             Instrument=instrument,
         )
         test_detail.save()
+        messages.success(request, 'Test protocols added.')
         return redirect('/dashboard/')
 
-    # If not a POST request, render the form
     username = request.session['username']
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
+    try:
+        test_detail = Test_core_detail.objects.get(TestName=test_name, ProductType=product)
+    except Test_core_detail.DoesNotExist:
+        test_detail = None
     context = {
     'first_name': employee.first_name,
     'last_name': employee.last_name,
@@ -940,8 +935,9 @@ def test_protocol_entry(request, test_name, product):
     'username': username,
     'test_name': test_name,
     'product': product,
-     }
-    return render(request, 'test_protocol_entry.html',context)
+    'test_detail': test_detail,
+    }
+    return render(request, 'test_protocol_entry.html', context)
 
 @login_required
 def update_test_list_entry(request):
@@ -949,8 +945,7 @@ def update_test_list_entry(request):
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
-        # Get form data from the request
-        testStages = request.POST.getlist('TestStage')  # Get a list of selected test stages
+        testStages = request.POST.getlist('TestStage')
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
         # Check if a test with the same name already exists

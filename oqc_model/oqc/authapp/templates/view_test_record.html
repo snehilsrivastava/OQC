@@ -235,7 +235,6 @@
 <div class="action-buttons">
     <a class="btn btn-primary" href="{% url 'employee_dashboard' %}">Return</a>
     {% if test.status == 'Not Sent' or test.status == 'Rejected' %}
-        <!-- <a id="status-toggle-{{ test.id }}" class="btn btn-primary" onclick="setStatus({{ test.id }})">Send</a> -->
         <a class="btn btn-primary" href="{% url 'set_status' test.id %}">Send</a>
     {% endif %}
     <a class="btn btn-primary" href="{% url 'remark' test.id %}">Remark</a>
