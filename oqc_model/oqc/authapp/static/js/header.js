@@ -13,9 +13,11 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.addEventListener('click', function(event) {
-    var clickedElement = event.target;
-    if (clickedElement !== document.getElementById("userInfo") && clickedElement !== document.getElementById("userButton") && clickedElement !== document.getElementById("userButtonIcon")) {
-        document.getElementById("userInfo").style.display = "none";
+    var userInfo = document.getElementById("userInfo");
+    var userButton = document.getElementById("userButton");
+    
+    if (!userInfo.contains(event.target) && !userButton.contains(event.target)) {
+        userInfo.style.display = "none";
     }
 });
 

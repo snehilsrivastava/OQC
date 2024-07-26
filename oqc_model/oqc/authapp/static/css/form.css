@@ -123,3 +123,7 @@ select {
 input[type=text]:focus {
     background-color: #f0f9ff;
 }
+
+.form-group textarea {
+    height: 90px;
+}

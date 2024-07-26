@@ -36,9 +36,11 @@ class Test_core_detail(models.Model):
     
 class TestRecord(models.Model):
     employee = models.CharField(max_length=80, default = 'None')
+    employee_name = models.CharField(max_length=80, default = 'None')
     test_date = models.DateField(default=datetime.date.today)
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
+    verification = models.BooleanField(default=False)
     sample_quantiy = models.IntegerField(default=0)
     result = RichTextUploadingField(default="", blank=True)
     additional_details = RichTextUploadingField(default="", blank=True, config_name='full')

@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     {% load static%}
-    
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Specification Form</title>
+    <title>Update Test Details</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/form.css' %}">
     <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
@@ -38,7 +36,6 @@
                 </div>
         </div>
     </div>
-    </div>
     <div class="message-container">
         {% if messages %}
             <ul class="messages">
@@ -53,17 +50,14 @@
     <div class="container">
         <div class="form-container">
             <div class="form-header">
-                <h1>Product Test Detail Form</h1>
+                <h1>Update Test Details</h1>
             </div>
             <form action="{% url 'update_test_list_entry' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="Product">Product</label>
                     <select class="form-control" id="Product" name="Product" required>
-                        <option value="">Select Product</option>
-                        {% comment %} {% for product in products %}
-                            <option value="{{ product }}">{{ product }}</option>
-                        {% endfor %} {% endcomment %}
+                        <option value="" selected disabled hidden>Select Product</option>
                         <option value="TV">TV</option>
                         <option value="AC">AC</option>
                         <option value="Phone">Phone</option>
@@ -80,7 +74,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Test Stage</label><br>
+                    <label>Test Stage</label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="checkbox" id="DVT" name="TestStage" value="DVT">
                         <label class="form-check-label" for="DVT">DVT</label>
