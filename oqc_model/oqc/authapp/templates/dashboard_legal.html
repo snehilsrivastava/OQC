@@ -179,8 +179,14 @@
                                     <td>{{ subtest.TestName }}</td>
                                     <td>{{ subtest.test_end_date }}</td>
                                     <td>{{ subtest.SerailNo }}</td> <!-- Fixed typo here: SerialNo was misspelled -->
-                                    <td>{{ subtest.L_status }}</td>
                                     <td>
+                                        <div class = "status-button">
+                                            <span id="status-toggle-{{ test.id }}" class="toggle-button status-{{ subtest.L_status }}" style = "padding: 5px 10px;border-radius: 3px;">
+                                                {{ subtest.L_status }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="action-buttons">
                                         <a href="{% url 'legal_view' subtest.TestName subtest.ModelName subtest.SerailNo %}"
                                             class="btn btn-primary">View</a>
                                     </td>
