@@ -63,7 +63,6 @@
                     <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
                 </select>
            
-            <br>
             
                 <label for="test_stage">Test Stage:</label>
                 <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
@@ -73,7 +72,6 @@
                     <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
                     <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
                 </select>
-            <br>
                 <label for="model_name">Model Name:</label>
                 <select class="form-control" id="model_name" name="model_name">
                     <!-- Model options will be populated dynamically based on the selected product type -->
@@ -81,19 +79,16 @@
                     <option value="">{{model_name}}</option>
                 </select>
             
-            <br>
             
                 <label for="test_name">Test Name:</label>
                 <select class="form-control" id="test_name" name="test_name">
                     <option value="">Select Test Name</option>
                 </select>
            
-            <br>
             
                 <label for="serial_number">Serial Number:</label>
                 <input class = "form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
        
-            <br>
            
                 <label for="status">Status:</label>
                 <select class = "form-control" id="status" name="status">
@@ -104,16 +99,17 @@
                     <option value="Rejected"{%if status == 'Rejected'%}selected{%endif%}>Rejected</option>
                 </select>
           
-            <br>
-            <label for="start_date">Start Date:</label>
-           
-                <input class = "form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
-         
-            <br>
-            <label for="end_date">End Date:</label>
-                <input class = "form-control"  type="date" id="end_date" name="end_date" value="{{ end_date }}">
+                <span class="date-filter">
+                    <div class="start-date">
+                        <label for="start_date">Start Date:</label>
+                        <input class="form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
+                    </div>
+                    <div class="end-date">
+                        <label for="end_date">End Date:</label>
+                        <input class="form-control" type="date" id="end_date" name="end_date" value="{{ end_date }}">
+                    </div>
+                </span>
     
-            <br>
             <div class="button-container">
                 <button type="submit" class="button">Filter</button>
                 <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
@@ -162,11 +158,9 @@
                     </td>
                     
                     <td class="action-buttons">
-                        <a class="button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}">Edit</a> 
-                        <a class="button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}">View</a>
-                        <!-- <a class="button" href="{% url 'remark' test.id %}">Remark</a> -->
-                        <a class="button" onclick="deleteTestRecord(`{{ test.id }}`)">Delete</a>
-
+                        <a class="edit button" href="{% url 'edit' test.TestName test.ModelName test.SerailNo %}"><img src="{%static 'icons/edit.svg' %}" alt="Icon" width="20" height="20" class="svg-icon"></a> 
+                        <a class="view button" href="{% url 'view' test.TestName test.ModelName test.SerailNo %}"><img src="{%static 'icons/view.svg' %}" alt="Icon" width="20" height="20" class="svg-icon"></a>
+                        <a class="delete button" onclick="deleteTestRecord(`{{ test.id }}`)"><img src="{%static 'icons/delete.svg' %}" alt="Icon" width="20" height="20" class="svg-icon"></a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -178,6 +172,30 @@
 <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select all img elements with the class 'svg-icon'
+        const svgImages = document.querySelectorAll('.svg-icon');
+
+        // Loop through each img element and replace it with the SVG content
+        svgImages.forEach(img => {
+            fetch(img.src)
+                .then(response => response.text())
+                .then(data => {
+                    const parser = new DOMParser();
+                    const svgDoc = parser.parseFromString(data, 'image/svg+xml');
+                    const svgElement = svgDoc.querySelector('svg');
+
+                    // Ensure the SVG takes the same size as the original image
+                    svgElement.setAttribute('width', img.getAttribute('width'));
+                    svgElement.setAttribute('height', img.getAttribute('height'));
+
+                    // Replace the image with the SVG element
+                    img.parentNode.replaceChild(svgElement, img);
+                })
+                .catch(error => console.error('Error fetching SVG:', error));
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         var messageContainer = document.querySelector('.message-container');
         var timerBar = document.querySelector('.timer-bar');
@@ -320,6 +338,7 @@
                 },
                 body: JSON.stringify({})
             })
+            window.location.reload();
         }
     }
 </script>

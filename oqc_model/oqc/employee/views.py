@@ -74,7 +74,7 @@ def delete_test_record(request, record_id):
     try:
         test_record = get_object_or_404(TestRecord, pk=record_id)
         test_record.delete()
-        return JsonResponse({'success': True})
+        return redirect('/employee_dashboard/')
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
     

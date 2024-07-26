@@ -19,12 +19,18 @@ import re
 
 @receiver(post_save, sender=LogEntry)
 def employee_user_type_changed(sender, instance, created, **kwargs):
-    entry = LogEntry.objects.filter(action_flag=2, change_message="[{\"changed\": {\"fields\": [\"User type\"]}}]").order_by("action_time").last().object_repr.strip()
-    name = Employee.objects.filter(username=entry).first()
+    latest_entry = LogEntry.objects.order_by('-action_time').first()
+    if latest_entry.action_flag != 2:
+        return
+    change_msg = latest_entry.change_message
+    change_msg = change_msg.split("\": [")[1].split("\"")
+    if "User type" not in change_msg:
+        return
+    name = Employee.objects.filter(username=latest_entry.object_repr).first()
 
     subject = 'Account approved'
     from_email = settings.EMAIL_HOST_USER
-    to = [entry]
+    to = [latest_entry.object_repr]
 
     text_content = 'This is an important message.'
     html_content = f"""
