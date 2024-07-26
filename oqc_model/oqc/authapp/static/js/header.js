@@ -13,9 +13,11 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.addEventListener('click', function(event) {
-    var clickedElement = event.target;
-    if (clickedElement !== document.getElementById("userInfo") && clickedElement !== document.getElementById("userButton") && clickedElement !== document.getElementById("userButtonIcon")) {
-        document.getElementById("userInfo").style.display = "none";
+    var userInfo = document.getElementById("userInfo");
+    var userButton = document.getElementById("userButton");
+    
+    if (!userInfo.contains(event.target) && !userButton.contains(event.target)) {
+        userInfo.style.display = "none";
     }
 });
 
@@ -47,37 +49,38 @@ function logoutUser() {
     });
 }
 
-// Code for theme change
-// Check local storage
-let localS = localStorage.getItem('theme'),
-    themeToSet = localS;
+document.addEventListener('DOMContentLoaded', () => {
+    // Check local storage
+    let localS = localStorage.getItem('theme'),
+        themeToSet = localS;
 
-// If local storage is not set, we check the OS preference
-if (!localS) {
-    themeToSet = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
+    // If local storage is not set, we check the OS preference
+    if (!localS) {
+        themeToSet = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
 
-// Set the correct theme
-document.documentElement.setAttribute('data-theme', themeToSet);
+    // Set the correct theme
+    document.documentElement.setAttribute('data-theme', themeToSet);
 
-// Update the icon visibility based on the current theme
-const updateIcons = (theme) => {
-    document.getElementById('theme-switcher__sun').style.display = (theme === 'light') ? 'block' : 'none';
-    document.getElementById('theme-switcher__moon').style.display = (theme === 'dark') ? 'block' : 'none';
-};
+    // Update the icon visibility based on the current theme
+    const updateIcons = (theme) => {
+        document.getElementById('theme-switcher__sun').style.display = (theme === 'light') ? 'block' : 'none';
+        document.getElementById('theme-switcher__moon').style.display = (theme === 'dark') ? 'block' : 'none';
+    };
 
-updateIcons(themeToSet);
+    updateIcons(themeToSet);
 
-// Theme switcher function
-const switchTheme = () => {
-    const rootElem = document.documentElement;
-    let dataTheme = rootElem.getAttribute('data-theme');
-    let newTheme = (dataTheme === 'light') ? 'dark' : 'light';
+    // Theme switcher function
+    const switchTheme = () => {
+        const rootElem = document.documentElement;
+        let dataTheme = rootElem.getAttribute('data-theme');
+        let newTheme = (dataTheme === 'light') ? 'dark' : 'light';
 
-    rootElem.setAttribute('data-theme', newTheme);
-    localStorage.setItem("theme", newTheme);
-    updateIcons(newTheme);
-};
+        rootElem.setAttribute('data-theme', newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateIcons(newTheme);
+    };
 
-// Add the event listener for the theme switcher
-document.querySelector('#theme-switcher').addEventListener('click', switchTheme);
+    // Add the event listener for the theme switcher
+    document.querySelector('#theme-switcher').addEventListener('click', switchTheme);
+});

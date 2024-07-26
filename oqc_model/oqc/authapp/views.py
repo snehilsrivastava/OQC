@@ -48,7 +48,7 @@ def employee_user_type_changed(sender, instance, created, **kwargs):
     print(f"Sent email to {latest_entry.object_repr} for account approval")
     msg = EmailMultiAlternatives(subject, text_content, from_email, to)
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    # msg.send()
 
 # Define custom authenticate function which uses Employee DB
 def authenticate(username=None, password=None):

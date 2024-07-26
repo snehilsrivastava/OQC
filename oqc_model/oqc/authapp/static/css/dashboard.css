@@ -54,6 +54,10 @@ a:hover {
     background-color: #232f3e;
     color: white;
     width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
 }
 
 .header .fa {
@@ -70,7 +74,7 @@ a:hover {
 
 #sidebar {
     display: none;
-    position: sticky;
+    /* position: sticky; */
     top: 59.25px;
     flex-shrink: 0;
     height: 100vh;

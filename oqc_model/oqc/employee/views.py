@@ -16,6 +16,16 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
+def login_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        next_page = request.original_path
+        if 'username' in request.session:
+            return view_func(request, *args, **kwargs)
+        login_url = '/au/login'
+        return redirect(f"{login_url}?next={next_page}" if next_page else login_url)
+    return wrapper
+
+@login_required
 def access_denied(request):
     user = request.session['username']
     employee = Employee.objects.get(username=user)
@@ -26,9 +36,9 @@ def access_denied(request):
         'last_name': employee.last_name,
         'icon': icon,
     }
-    print(context)
     return render(request, "access_denied.html", context=context)
 
+@login_required
 def custom_404(request, exception):
     user = request.session['username']
     employee = Employee.objects.get(username=user)
@@ -39,7 +49,6 @@ def custom_404(request, exception):
         'last_name': employee.last_name,
         'icon': icon,
     }
-    print(context)
     return render(request, "404_custom.html", context=context)
 
 def main_page(request):
@@ -57,26 +66,16 @@ def main_page(request):
     except KeyError:
         return redirect(login_page)
 
-def login_required(view_func):
-    def wrapper(request, *args, **kwargs):
-        next_page = request.original_path
-        if 'username' in request.session:
-            return view_func(request, *args, **kwargs)
-        login_url = '/au/login'
-        return redirect(f"{login_url}?next={next_page}" if next_page else login_url)
-    return wrapper
-
 @login_required
 def delete_test_record(request, record_id):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
-    try:
-        test_record = get_object_or_404(TestRecord, pk=record_id)
-        test_record.delete()
-        return JsonResponse({'success': True})
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
+    test_record = get_object_or_404(TestRecord, pk=record_id)
+    if test_record.employee != user.username:
+        return redirect('/access_denied/')
+    test_record.delete()
+    return redirect('/dashboard/')
     
 @login_required
 def remark(request, id):
@@ -204,14 +203,13 @@ def cooling(request, test_name, model_name, serialno):
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestName=test_name, ModelName=model_name)
-
+    if test_record.employee != user.username:
+        return redirect('/access_denied/')
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
             form.save()
-        else:
-            print(form.errors)
-       
+            messages.success(request, 'Test record saved successfully.')
         return redirect('/employee_dashboard/')
     else:
         form = TestRecordForm(instance=test_record)
@@ -227,24 +225,18 @@ def cooling(request, test_name, model_name, serialno):
     }
     return render(request, "cooling_test.html", context)
 
-from django.views.decorators.csrf import csrf_exempt
-
-@csrf_exempt
 def set_status(request, id):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
-    if request.method == 'POST':
-        try:
-            test_record = TestRecord.objects.get(id=id)
-            new_status = "Waiting for Approval"
-            test_record.status = new_status
-            test_record.test_end_date = date.today()
-            test_record.save()
-            return JsonResponse({'success': True, 'new_status': new_status})
-        except TestRecord.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Test record not found'})
-    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+    test_record = TestRecord.objects.get(id=id)
+    if test_record.employee != user.username:
+        return redirect('/access_denied/')
+    test_record.status = "Waiting for Approval"
+    test_record.test_end_date = date.today()
+    test_record.save()
+    messages.success(request, 'Record sent to PO for approval.')
+    return redirect('/employee_dashboard/')
 
 @login_required
 def dashboard(request):
@@ -340,20 +332,19 @@ def edit(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
-    # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
-    # multiple test records might have same serial no.
     test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestName=test_name, ModelName=model_name)
-
+    if test_record.employee != user.username:
+        return redirect('/access_denied/')
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
             form.save()
+            messages.success(request, 'Test record updated.')
         else:
             print(form.errors)
 
-        messages.success(request, 'Test record updated.')
         return redirect('/employee_dashboard/')
     else:
         form = TestRecordForm(instance=test_record)
@@ -794,19 +785,15 @@ def MNF(request):
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
-        # Get form data from the request
         customer = request.POST.get('Customer')
         manufacture = request.POST.get('Manufacture')
         location = request.POST.get('Location')
         brand = request.POST.get('Brand')
         Product= request.POST.get('Product')
-        # print(Product)
         brand_model_no = request.POST.get('Brand_model_no')
         Indkal_model_no = request.POST.get('Indkal_model_no')
         ODM_model_no = request.POST.get('ODM_model_no')
      
-
-        # Create and save a new AC object
         new_mnf = Model_MNF_detail(
            Customer = customer,
            Manufacture = manufacture,
@@ -823,21 +810,20 @@ def MNF(request):
             username = request.session['username']
             employee = Employee.objects.get(username=username)
             icon = employee.first_name[0] + employee.last_name[0]
-
             context = {
             'first_name': employee.first_name,
             'last_name': employee.last_name,
             'icon': icon,
             'username': username,
             'Indkal_model_no': Indkal_model_no,
-             }
+            }
             return render(request, 'AC.html', context)
+        else:
+            return redirect('/access_denied/')
        
-    # If not a POST request, render the form
     username = request.session['username']
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
-
     context = {
         'first_name': employee.first_name,
         'last_name': employee.last_name,

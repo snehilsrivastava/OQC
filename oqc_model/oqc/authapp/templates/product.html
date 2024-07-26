@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         {% load static%}
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Product detail Form</title>
+        <title>Add Test Details</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
         <link rel="stylesheet" href="{% static 'css/form.css' %}">
         <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
@@ -62,15 +62,6 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="SerailNo">Serial Number:</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="SerailNo"
-                        name="SerailNo"
-                    />
-                </div>
-                <div class="form-group">
                     <label for="ModelName">Model Name:</label>
                     <select class="form-control" id="ModelName" name="ModelName">
                         <!-- Model options will be populated dynamically based on the selected product type -->
@@ -94,6 +85,15 @@
                 <div class="form-group">
                     <label for="TestType">Test Name:</label>
                     <select class="form-control" id="TestName" name="TestName"></select>
+                </div>
+                <div class="form-group">
+                    <label for="SerailNo">Serial Number:</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="SerailNo"
+                        name="SerailNo"
+                    />
                 </div>
                 <button type="submit" class="btn btn-primary btn-submit">Submit</button>
             </form>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     {% load static%}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <title>Product Owner Dashboard</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
@@ -247,7 +247,7 @@
                                     </td>
                                     <td>{{ subtest.TestName }}</td>
                                     <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
-                                    <td>{{ subtest.employee }}</td>
+                                    <td>{{ subtest.employee_name }}</td>
                                     <td>{{ subtest.SerailNo }}</td>
                                     <td> <span class="test-status">
                                         <span class="letter">
