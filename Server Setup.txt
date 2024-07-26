@@ -1,0 +1,57 @@
+================================ to be done in root(~) ===============================================
+sudo apt-get update     ---- collect available updates
+sudo apt-get upgrade -y     ---- install the available updates
+sudo apt-get install python3-dev python3-pip python3-setuptools python3-wheel python3-venv libffi-dev libcairo2 libpango-1.0-0 libpangocairo-1.0-0\
+                     libgdk-pixbuf2.0-0 libharfbuzz-dev libjpeg-dev libgif-dev librsvg2-2 librsvg2-common libxml2-dev libxslt1-dev zlib1g-dev       ---- install dependecies
+git clone https://unhappytwo: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@github.com/yaminijha1/OQC.git     ---- clone django project repo
+	@@ -9,34 +9,39 @@ pip install gunicorn (inside .venv)     ---- install engine-application middlewa
+sudo apt-get install supervisor     ---- install supervisor to keep the application running
+=======================================================================================================
+================================= to be done at /etc/supervisor/conf.d ================================
+cd /etc/supervisor/conf.d/      ---- go to supervisor conf folder and add following code to gunicorn.conf file (create new file if not present)
+
+                GUNICORN.CONF:        [program:program_name]                ---- example name would be "project_gunicorn"
+                                        directory=/path/to/project         ---- path where manage.py is
+                                        command=/path/to/venv/bin/gunicorn --workers 3 --bind unix:/path/to/project/program_name.sock project_name.wsgi:application       ---- first path to gunicorn executable in venv and second path where we want to create the socket file for communication with nginx
+                                        user=ubuntu
+                                        autostart=true
+                                        autorestart=true
+                                        stderr_logfile=/var/log/gunicorn/gunicorn.err.log
+                                        stdout_logfile=/var/log/gunicorn/gunicorn.out.log
+
+                                        [group:guni]
+                                        programs:program_name
+sudo mkdir /var/log/gunicorn        ---- create log folder for gunicorn
+sudo supervisorctl reread       ---- enable supervisor to read from gunicorn
+sudo supervisorctl update       ---- make supervisor run gunicorn in background {check if gunicorn started use `sudo supervisorctl status` expected output `guni:gunicorn  RUNNING  pid 1234, uptime hh:mm:ss`}
+=========================================================================================================
+================================== to be done in /etc/nginx =============================================
+cd /etc/nginx/                  ---- go to nginx dir and update "nginx.conf" with following code
+
+                NGINX.CONF:           user www-user; -> user root;            {change only this line}
+=========================================================================================================
+================================== to be done in /etc/nginx/sites-available =============================
+cd /etc/nginx/sites-available   ---- go to sites-available dir and update "django.conf" with following
+
+                DJANGO.CONF:          server{
+                                            listen 80;          ---- port number {http:80, https:443}
+                                            server_name "Public IPv4";
+
+                                            location /static/ {
+                                                alias /path/to/static_dir
+                                            }
+
+                                            location / {
+
+                                                include proxy_params;
+	@@ -46,6 +51,10 @@ cd /etc/nginx/sites-available   ---- go to sites-available dir and update "djang
+ALL SET!!!
+check if everything is fine {use this `sudo nginx -t`}
+
+sudo ln django.conf /etc/nginx/sites-enabled          ---- enable the site to go live
+sudo service nginx restart                              ---- restart web-engine
+===========================================================================================================
+for debuging check:
+
+    nginx logs: /var/log/nginx -> access.log | error.log
+    supervisor logs: /var/log/supervisor -> supervisord.log

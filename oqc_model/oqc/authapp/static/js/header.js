@@ -55,10 +55,20 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToSet = localS;
 
     // If local storage is not set, we check the OS preference
+    console.log(localS);
     if (!localS) {
-        themeToSet = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        if (prefersDarkScheme.matches) {
+            themeToSet = 'dark';
+        } else {
+            themeToSet = 'light';
+        }
     }
 
+    if (themeToSet=="auto") {
+        themeToSet = 'dark';
+    }
+    
     // Set the correct theme
     document.documentElement.setAttribute('data-theme', themeToSet);
 

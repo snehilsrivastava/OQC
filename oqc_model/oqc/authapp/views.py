@@ -20,7 +20,6 @@ import re
 @receiver(post_save, sender=LogEntry)
 def employee_user_type_changed(sender, instance, created, **kwargs):
     latest_entry = LogEntry.objects.order_by('-action_time').first()
-    print(latest_entry)
     if latest_entry.action_flag != 2:
         return
     change_msg = latest_entry.change_message
