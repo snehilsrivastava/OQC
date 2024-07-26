@@ -65,3 +65,26 @@ span {
 .action-buttons .button:hover {
     background-color: #0056b3;
 }
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #fff0; /* Background of the track */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scroll thumb */
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(80, 80, 80);
+}
+
+::-webkit-scrollbar:hover {
+    /* width: 8px; */
+    background: black;
+}

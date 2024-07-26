@@ -18,14 +18,13 @@
 .popup {
     display: none;
     position: fixed;
-    top: 50%;
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
     max-width: 500px;
-    max-height: 80%;
-    
-    color: black;
+    max-height: 85vh;
+    /* color: black; */
     padding: 20px;
     box-shadow: 0 0 5px #fffe;
     z-index: 2;

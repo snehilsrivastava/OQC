@@ -25,10 +25,11 @@ def product_form_view(request):
     if request.method == 'POST':
         product_type = request.POST.get('ProductType')
         model_name = request.POST.get('ModelName')
-        serial_no = request.POST.get('SerailNo')
         test_stage = request.POST.get('TestStage')
         test_name = request.POST.get('TestName')
-        username = request.session['username'].strip()
+        serial_no = request.POST.get('SerailNo')
+        tested_by = request.POST.get('TestedBy')
+        username = request.session['username']
         employee = Employee.objects.get(username=username)
         name = employee.first_name + ' ' + employee.last_name
         new_product_detail = TestRecord(
@@ -39,6 +40,7 @@ def product_form_view(request):
             TestName=test_name,
             employee=username,
             employee_name=name,
+            verification = True if tested_by == 'ODM' else False,
         )
         new_product_detail.save()
         return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name, 'serialno': serial_no}))

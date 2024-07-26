@@ -50,16 +50,20 @@
                    
                 </td>
             </tr>
+            {% if testdetail.verification %}
             <tr>
-                <td rowspan="10">
+                <td rowspan="9">
                     <strong><span class="row_header">Set Details</span></strong>
                 </td>
                 <td colspan="4">
-                    <span>Report verification Date: {{form.test_date}}</span>
+                    <span>Report verification Date: {{testdetail.test_date|date:"d/m/Y"}}</span>
                 </td>
-                
             </tr>
+            {% else %}
             <tr>
+                <td rowspan="9">
+                    <strong><span class="row_header">Set Details</span></strong>
+                </td>
                 <td colspan="2">
                     <span>Start Date: {{testdetail.test_start_date|date:"d/m/Y"}}</span>
                 </td>
@@ -67,6 +71,7 @@
                     <span>End Date: {{testdetail.test_end_date|date:"d/m/Y"}}</span>
                 </td>
             </tr>
+            {% endif %}
             <tr>
                 <td colspan="2">
                     <span>Indoor unit details</span>

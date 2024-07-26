@@ -72,7 +72,7 @@ def delete_test_record(request, record_id):
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
     test_record = get_object_or_404(TestRecord, pk=record_id)
-    if test_record.employee != user.username:
+    if test_record.employee != user.username and not user.is_superuser:
         return redirect('/access_denied/')
     test_record.delete()
     return redirect('/dashboard/')
@@ -135,7 +135,6 @@ def employee_dashboard(request):
     user = Employee.objects.get(username=username)
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
-    # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
     product = request.GET.get('product','')
@@ -145,7 +144,6 @@ def employee_dashboard(request):
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
     
-    # Filter the TestRecord queryset based on the parameters
     completed_tests = TestRecord.objects.filter(employee=username)
 
     if test_name:
@@ -199,11 +197,10 @@ def cooling(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
-    # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestName=test_name, ModelName=model_name)
-    if test_record.employee != user.username:
+    if test_record.employee != user.username and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
@@ -230,10 +227,11 @@ def set_status(request, id):
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
     test_record = TestRecord.objects.get(id=id)
-    if test_record.employee != user.username:
+    if test_record.employee != user.username and not user.is_superuser:
         return redirect('/access_denied/')
     test_record.status = "Waiting for Approval"
     test_record.test_end_date = date.today()
+    test_record.test_date = date.today()
     test_record.save()
     messages.success(request, 'Record sent to PO for approval.')
     return redirect('/employee_dashboard/')
@@ -245,7 +243,6 @@ def dashboard(request):
     user = Employee.objects.get(username=username)
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
-    # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
     product = request.GET.get('product','')
@@ -256,10 +253,9 @@ def dashboard(request):
     B_status = request.GET.get('B_status','')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
-    status_color = {"Not Sent": "#b331a4", "Waiting for Approval": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
-    role_letter = {"L": "Legal Team", "B": "Brand Team", "O": "Product Owner"}
+    status_color = {"Not Sent": "#838383", "Waiting for Approval": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
+    role_letter = {"T": "Test Inspector", "L": "Legal Team", "B": "Brand Team"}
 
-    # Filter the TestRecord queryset based on the parameters
     completed_tests = TestRecord.objects.exclude(status="Not Sent")
     if test_name:
         completed_tests = completed_tests.filter(TestName__icontains=test_name)
@@ -334,9 +330,12 @@ def edit(request, test_name, model_name, serialno):
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestName=test_name, ModelName=model_name)
-    if test_record.employee != user.username:
+    if test_record.employee != user.username and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
+        test_record.test_end_date = date.today()
+        test_record.test_date = date.today()
+        test_record.save()
         form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
             form.save()
@@ -361,7 +360,6 @@ def edit(request, test_name, model_name, serialno):
 
 @login_required
 def view_pdf(request, test_name, model_name, serialno):
-    # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
@@ -491,7 +489,6 @@ def view(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
-    # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno , TestName =test_name)
@@ -515,7 +512,6 @@ def owner_view(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
-    # Fetch the specific Test_core_detail object related to the cooling test
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno, ModelName=model_name, TestName=test_name)
@@ -664,7 +660,6 @@ def brand_dashboard(request):
     user = Employee.objects.get(username=username)
     if user.user_type != 'brand' and not user.is_superuser:
         return redirect('/access_denied/')
-    # Get filter parameters from request
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
     product = request.GET.get('product', '')
@@ -837,8 +832,7 @@ def Test_list_entry(request):
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
-        # Get form data from the request
-        testStages = request.POST.getlist('TestStage')  # Get a list of selected test stages
+        testStages = request.POST.getlist('TestStage')
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
 

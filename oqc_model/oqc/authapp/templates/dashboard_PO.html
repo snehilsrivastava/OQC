@@ -108,7 +108,7 @@
         <!-- <label for="status-filter">Status:</label> -->
         <span class="status-filter" id="status-filter">
             <span class="PO-status">
-                <label for="PO_status">PO Status:</label>
+                <label for="PO_status">Tester Status:</label>
                 <select class="form-control" id="PO_status" name="status">
                     <option value="">All</option>
                     {% for stat, clr in status_color.items %}
@@ -268,12 +268,12 @@
                                             </td>
                                             <td>{{ subtest.TestName }}</td>
                                             <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
-                                            <td>{{ subtest.employee }}</td>
+                                            <td>{{ subtest.employee_name }}</td>
                                             <td>{{ subtest.SerailNo }}</td>
                                             <td> <span class="test-status">
                                                 <span class="letter">
                                                     <span class="color">
-                                                        <span class="circle status-{{subtest.status}}">O</span>
+                                                        <span class="circle status-{{subtest.status}}">T</span>
                                                         <span class="circle status-{{subtest.L_status}}">L</span>
                                                         <span class="circle status-{{subtest.B_status}}">B</span>
                                                     </span>

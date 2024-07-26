@@ -16,13 +16,15 @@
     --barry: #7190ff;
     --background-area: #2b2b2b;
     --everywhere: #111827;
-    -webkit-text-fill-color: #ffffff; 
+    --webkit-text-fill-color: #ffffff; 
     --color: #ffffff; 
     --table-border-color: #ffffff;
     --table-border-width: 1px;
     --table-border-style: solid; 
     --popup-color: rgb(22, 22, 22);
     --form-color: #3f3f3f;
+    --button-color: rgb(65, 65, 65);
+    --button-hover-color: rgb(80, 80, 80);
 }
 
 :root[data-theme="light"] {
@@ -43,12 +45,15 @@
     --barry: #cbd6ff;
     --background-area: #fdfaf3;
     --everywhere: #f3f6fd;
+    --webkit-text-fill-color: black; 
     --color: rgb(0,0,0); 
     --table-border-color: rgb(0,0,0); 
     --table-border-width: 1px; 
     --table-border-style: solid; 
     --popup-color: #ffffff;
     --form-color : white;
+    --button-color: rgb(196, 196, 196);
+    --button-hover-color: rgb(150, 150, 150);
 }
 
 body {
@@ -114,3 +119,26 @@ table th, table td {
 textarea {
     background-color: var(--form-color);
 }   
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #fff0; /* Background of the track */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scroll thumb */
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(80, 80, 80);
+}
+
+::-webkit-scrollbar:hover {
+    /* width: 8px; */
+    background: black;
+}
