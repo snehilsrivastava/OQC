@@ -58,6 +58,7 @@ body {
     font-size: 12px;
     width: 100%;
     box-sizing: border-box; 
+    color: var(--webkit-text-fill-color);
 }
 
 .submit-btn {
@@ -79,7 +80,7 @@ body {
 h2 {
     font-size : 25px;
     margin-bottom: 10px;
-    color: #333;
+    color: var(--webkit-text-fill-color);
 }
 
 .button-container {

@@ -71,6 +71,15 @@ button:focus {
     border: none;
 }
 
+button a {
+    color: var(--webkit-text-fill-color);
+}
+
+button a:hover {
+    color: var(--webkit-text-fill-color);
+    text-decoration: none;
+}
+
 .right-icon{
     display: inline-flex;
     justify-content: center;
@@ -277,7 +286,7 @@ button.collapse-button i {
     position: absolute;
     top: 50px;
     right: 20px;
-    color: black;
+    color: var(--webkit-text-fill-color);
     padding: 10px 20px;
     border: 1px solid #ddd;
     z-index: 1;
@@ -290,7 +299,7 @@ button.collapse-button i {
     display: block;
     margin-top: 10px;
     background-color: #d9534f;
-    color: white;
+    color: white !important;
     border: none;
     padding: 10px 20px;
     text-align: center;
@@ -359,4 +368,9 @@ button.collapse-button i {
 
 .menu-btn:hover {
     background-color: #fff4;
+}
+
+.dropdown-item {
+    color: var(--webkit-text-fill-color);
+    font-size: 16px;
 }

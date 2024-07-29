@@ -70,6 +70,7 @@ li a {
 li a:hover {
     background-color: #a9b9bc;
     color: purple !important;
+    text-decoration: none;
 }
 
 .fa-icon {
