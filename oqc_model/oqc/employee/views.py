@@ -195,7 +195,7 @@ def employee_dashboard(request):
 @login_required
 def cooling(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'employee' and not user.is_superuser:
+    if (user.user_type != 'employee' and user.user_type != 'owner') and not user.is_superuser:
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
     models = get_object_or_404(AC, ModelName=model_name)

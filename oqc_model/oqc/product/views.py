@@ -20,7 +20,7 @@ def login_required(view_func):
 @login_required
 def product_form_view(request):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'employee' and not user.is_superuser:
+    if (user.user_type != 'employee' and user.user_type != 'owner') and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
         product_type = request.POST.get('ProductType')
