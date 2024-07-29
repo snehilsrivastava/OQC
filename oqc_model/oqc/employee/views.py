@@ -341,8 +341,7 @@ def edit(request, test_name, model_name, serialno):
             form.save()
             messages.success(request, 'Test record updated.')
         else:
-            print(form.errors)
-
+            messages.error(request, 'Failed to update test record.')
         return redirect('/employee_dashboard/')
     else:
         form = TestRecordForm(instance=test_record)

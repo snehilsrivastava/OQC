@@ -44,10 +44,9 @@ def employee_user_type_changed(sender, instance, created, **kwargs):
     </body>
     </html>
     """
-    print(f"Sent email to {latest_entry.object_repr} for account approval")
     msg = EmailMultiAlternatives(subject, text_content, from_email, to)
     msg.attach_alternative(html_content, "text/html")
-    # msg.send()
+    msg.send()
 
 # Define custom authenticate function which uses Employee DB
 def authenticate(username=None, password=None):
@@ -56,30 +55,24 @@ def authenticate(username=None, password=None):
         return login_user
     return None
 
-# Define a view function for the login page
 def login_page(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         
-        # Check if a user with the provided username exists
         if not Employee.objects.filter(username=username).exists():
-            # Display an error message if the username does not exist
             messages.error(request, 'Invalid Username')
             return redirect('/au/login/')
         
-        # Authenticate the user with the provided username and password
         user = authenticate(username=username, password=password)
         
         if user is None:
-            # Display an error message if authentication fails (invalid password)
             messages.error(request, "Invalid Password")
             return redirect('/au/login/')
         else:
             if not Employee.objects.filter(username=username).first().user_type:
                 messages.error(request, 'Account yet to be approved')
                 return redirect('/au/login/')
-            # Log in the user and redirect to the home page upon successful login
             login(request, user)
             request.session['user_type'] = user.user_type
             request.session['username'] = user.username
@@ -118,7 +111,6 @@ def verify_otp(user, otp_code):
         except OTP.DoesNotExist:
             return 3
 
-# send OTP button
 def send_otp(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -126,15 +118,12 @@ def send_otp(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # Check if a user with the provided username already exists
         if Employee.objects.filter(username=username).exists():
             messages.warning(request, "Username already exists")
             return JsonResponse({'redirect_url': '/au/login/'})
-        # Check if the email address is valid
         valid_domains = ['indkal.com', 'indkaltechno.onmicrosoft.com']
         if username.split('@')[-1] not in valid_domains:
             return JsonResponse({'warning': True, 'message': 'Please enter a valid email address'})
-        # Check if the password is valid
         validity = validate_password(password)
         if validity:
             return JsonResponse({'warning': True, 'message': validity})
@@ -165,10 +154,8 @@ def validate_password(password):
     else:
         return None
         
-# sign up button
 def register_page(request):
     if request.method == 'POST':
-        # act = request.POST.get('action')
         username = request.POST.get('username')
         fname = request.POST.get('first_name')
         lname = request.POST.get('last_name')
@@ -217,7 +204,6 @@ def forgot_password(request):
 def forgot_password_send_otp(request):
     if request.method == 'POST':
         username = request.POST.get('username')
-        # Check if a user with the provided username already exists
         if not Employee.objects.filter(username=username).exists():
             return JsonResponse({'error': True, 'message': 'Email doesn\'t exist'})
         employee = Employee.objects.get(username=username)
@@ -255,7 +241,6 @@ def forgot_password_update(request):
         confirm_password = request.POST.get('confirm-password')
         validity = validate_password(password)
         if validity:
-            print(validity)
             return JsonResponse({'error': True, 'message': validity})
         if password != confirm_password:
             return JsonResponse({'error': True, 'message': 'Passwords do not match'})
