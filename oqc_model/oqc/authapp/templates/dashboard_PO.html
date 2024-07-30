@@ -185,11 +185,8 @@
                     <thead>
                     <tr>
                         <th>
-                            <button class="collapse-button" type="button" data-toggle="collapse"
-                            data-target="#testList-1" aria-expanded="false"
-                            aria-controls="testList-1" onclick="toggleCollapseIcon(this)"
-                            style="display:inline-flex; justify-content:center; align-items:center;">
-                                <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon-1"></i>
+                            <button class="collapse-button master-collapse-button" type="button" onclick="toggleAllCollapseButtons()">
+                                <i class="fas fa-chevron-down fa-sm"></i>
                             </button>
                         </th>
                         <th>Product</th>
@@ -203,9 +200,8 @@
                     <tr>
                         <td class="coll-btn-cell">
                             <button class="collapse-button" type="button" data-toggle="collapse"
-                            data-target="#testList{{ forloop.counter }}" aria-expanded="false"
-                            aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)"
-                            style="display:inline-flex; justify-content:center; align-items:center;">
+                                    data-target="#testList{{ forloop.counter }}" aria-expanded="false"
+                                    aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">
                                 <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
                             </button>
                         </td>

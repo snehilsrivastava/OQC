@@ -5,7 +5,6 @@
     {% load static%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brand Dashboard</title>
-
     <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
@@ -40,8 +39,6 @@
     </div>
 <div class="main-content">
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
-
-    <!-- Filter Popup -->
     <div class="popup" id="filterPopup">
         <span class="close" onclick="toggleFilter()">&times;</span>
         <form id="filter-form" method="get" action="{% url 'brand_dashboard' %}">
@@ -71,7 +68,6 @@
                 <label for="model_name">Model Name:</label>
                 <select class="form-control" id="model_name" name="model_name">
                     <!-- Model options will be populated dynamically based on the selected product type -->
-                    {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
                     <option value="">{{model_name}}</option>
                 </select>
             </div>
@@ -127,14 +123,20 @@
                 {% endfor %}
             </span>
         {% endif %}
-        <h1>Dashboard</h1>
-        <i class="fa fa-search fa-icon"></i>
-        <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
-        <br><br>
+        <span class="heading">
+            <h1 class="headding">Dashboard</h1>
+            <button onclick="toggleFilter()">
+                <img src="{%static 'icons/filter.svg' %}" alt="Icon" width="20" height="20">Filter
+            </button>
+        </span>
         <table class="table table-bordered">
             <thead>
             <tr>
-                <th></th>
+                <th>
+                    <button class="collapse-button master-collapse-button" type="button" onclick="toggleAllCollapseButtons()">
+                        <i class="fas fa-chevron-down fa-sm"></i>
+                    </button>
+                </th>
                 <th>Product</th>
                 <th>Model Name</th>
                 <th>Stage</th>
@@ -145,7 +147,7 @@
             <tbody>
             {% for test in tests %}
             <tr>
-                <td>
+                <td class="coll-btn-cell">
                     <button class="collapse-button" type="button" data-toggle="collapse"
                             data-target="#testList{{ forloop.counter }}" aria-expanded="false"
                             aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">
@@ -330,77 +332,7 @@
             }
         });
     }
-    
-    
+
 </script>
-<script>
-    // Check local storage
-    let localS = localStorage.getItem('theme'),
-        themeToSet = localS;
-
-    // If local storage is not set, we check the OS preference
-    if (!localS) {
-        themeToSet = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-
-    // Set the correct theme
-    document.documentElement.setAttribute('data-theme', themeToSet);
-
-    // Update the icon visibility based on the current theme
-    const updateIcons = (theme) => {
-        document.getElementById('theme-switcher__sun').style.display = (theme === 'light') ? 'block' : 'none';
-        document.getElementById('theme-switcher__moon').style.display = (theme === 'dark') ? 'block' : 'none';
-    };
-
-    updateIcons(themeToSet);
-
-    // Theme switcher function
-    const switchTheme = () => {
-        const rootElem = document.documentElement;
-        let dataTheme = rootElem.getAttribute('data-theme');
-        let newTheme = (dataTheme === 'light') ? 'dark' : 'light';
-
-        rootElem.setAttribute('data-theme', newTheme);
-        localStorage.setItem("theme", newTheme);
-        updateIcons(newTheme);
-    };
-
-    // Add the event listener for the theme switcher
-    document.querySelector('#theme-switcher').addEventListener('click', switchTheme);
-
-
-    function logoutUser() {
-        fetch('/logout/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}' // Make sure you include CSRF token
-            },
-            body: JSON.stringify({})
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Redirect to the home page or show a success message
-                window.location.href = '/';
-            } else {
-                alert('Logout failed');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Logout failed');
-        });
-    }
-    
-   
-</script>
-
-
 </body>
 </html>

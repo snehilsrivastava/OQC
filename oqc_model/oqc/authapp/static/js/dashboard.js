@@ -68,3 +68,27 @@ function toggleCollapseIcon(button) {
     icon.classList.toggle('fa-chevron-down');
     icon.classList.toggle('fa-chevron-up');
 }
+
+
+function toggleAllCollapseButtons() {
+    var masterButton = document.querySelector('.master-collapse-button');
+    var masterIcon = masterButton.querySelector('i.fas');
+    var isExpanded = masterIcon.classList.contains('fa-chevron-up');
+    masterIcon.classList.toggle('fa-chevron-down', isExpanded);
+    masterIcon.classList.toggle('fa-chevron-up', !isExpanded);
+    var collapseButtons = document.querySelectorAll('.collapse-button:not(.master-collapse-button)');
+
+    collapseButtons.forEach(function(button) {
+        var target = button.getAttribute('data-target');
+        var collapseContent = document.querySelector(target);
+        if (isExpanded) {
+            if (collapseContent.classList.contains('show')) {
+                button.click();
+            }
+        } else {
+            if (!collapseContent.classList.contains('show')) {
+                button.click();
+            }
+        }
+    });
+}

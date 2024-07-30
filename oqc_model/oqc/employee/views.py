@@ -14,7 +14,7 @@ from io import BytesIO
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from django.db.models import Q
+from django.db.models import Min, Max, Case, When, DateField
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -399,8 +399,25 @@ def pdf_model_stage(request,model_name,test_stage):
             test_record = selected_test_records[0] # assuming all records are for same model
             model_name = test_record.ModelName
             MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
+            start_date = selected_test_records.aggregate(
+                min_date=Min(Case(
+                    When(verification=True, then='test_date'),
+                    default='test_start_date',
+                    output_field=DateField()
+                ))
+            )['min_date']
+            end_date = selected_test_records.aggregate(
+                max_date=Max(Case(
+                    When(verification=True, then='test_date'),
+                    default='test_end_date',
+                    output_field=DateField()
+                ))
+            )['max_date']
             cover_context = {
                 'MNF_detail': MNF_detail,
+                'start_date': start_date,
+                'end_date': end_date,
+                'issue_date': date.today(),
             }
             pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
             context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
@@ -459,7 +476,26 @@ def handle_selected_tests(request):
                 test_record = selected_test_records[0] # assuming all records are for same model
                 model_name = test_record.ModelName
                 MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
-                cover_context = {'MNF_detail': MNF_detail}
+                start_date = selected_test_records.aggregate(
+                    min_date=Min(Case(
+                        When(verification=True, then='test_date'),
+                        default='test_start_date',
+                        output_field=DateField()
+                    ))
+                )['min_date']
+                end_date = selected_test_records.aggregate(
+                    max_date=Max(Case(
+                        When(verification=True, then='test_date'),
+                        default='test_end_date',
+                        output_field=DateField()
+                    ))
+                )['max_date']
+                cover_context = {
+                    'MNF_detail': MNF_detail,
+                    'start_date': start_date,
+                    'end_date': end_date,
+                    'issue_date': date.today(),
+                }
                 pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
                 context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
                 pdf_list.insert(1, BytesIO(render_contents_to_pdf('pdf_contents.html', {'list': context_list}, request)))
