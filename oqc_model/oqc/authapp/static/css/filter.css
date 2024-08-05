@@ -1,14 +1,20 @@
-.date-filter, .status-filter {
+.date-filter,
+.status-filter {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: 10px;
 }
-.start-date, .end-date {
+
+.start-date,
+.end-date {
     width: 50%;
 }
-.PO-status, .L-status, .B-status {
+
+.PO-status,
+.L-status,
+.B-status {
     display: flex;
     flex-direction: column;
     justify-content: center;

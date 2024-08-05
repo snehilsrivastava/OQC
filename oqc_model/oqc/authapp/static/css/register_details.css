@@ -1,22 +1,19 @@
-/* @import url("color_pallette.css"); */
-
 .content-wrapper {
     position: fixed;
     top: 50px;
     left: 50%;
     z-index: 1000;
 }
+
 .content {
     width: 100%;
     padding: 0px;
 }
-/* .navbar-custom {
-    background-color: #fff0;
-    height: 100px;
-}   */
+
 a:hover {
     color: #007bff;
 }
+
 .containers {
     display: flex;
     align-items: center;
@@ -36,11 +33,13 @@ a:hover {
     border-color: red;
     color: black;
 }
+
 .alert-warning {
-    background-color:rgb(255, 255, 159);
+    background-color: rgb(255, 255, 159);
     border-color: yellow;
     color: black;
 }
+
 .alert {
     border-width: 2px;
     border-radius: .25rem;
@@ -53,10 +52,12 @@ a:hover {
     margin-bottom: 5%;
     flex-wrap: wrap;
 }
+
 .message-span {
     width: 225px;
     padding: 0px 10px 3px 10px;
 }
+
 .alert-dismissible .close {
     padding: 0;
     position: absolute;
@@ -68,9 +69,11 @@ a:hover {
     align-items: center;
     transform: translate(0%, -10%)
 }
+
 .no-background {
     background-color: #fff0;
 }
+
 body {
     background-image: url("./../images/best_dark.png");
     /* background-color: gray; */
@@ -84,10 +87,12 @@ body {
     justify-content: center;
     align-items: center;
 }
+
 .button-container {
     display: flex;
     justify-content: center;
 }
+
 .card {
     background-color: #6792ab33;
     /* transform: translate(0%, -15%); */
@@ -98,15 +103,18 @@ body {
     /* padding-top: 50px; */
     border-radius: 20px;
     overflow: hidden;
-    box-shadow:0rem 0rem 1rem gray !important
+    box-shadow: 0rem 0rem 1rem gray !important
 }
-.card-header{
+
+.card-header {
     background-color: #fff0;
     padding: 8% 0% 3%;
 }
+
 .Indkal-Logo {
     width: 250px;
 }
+
 .card-body {
     display: flex;
     align-items: center;
@@ -114,29 +122,26 @@ body {
     align-self: center;
     flex-direction: column;
 }
+
 #card-2 {
     background-color: #fff0;
     width: 100%;
     display: flex;
     justify-content: center;
 }
-/* .card-body {
-    transform: translate(-8%, -2%);
-    background-color: #d1dfff00;
-    margin-left: -35pt;
-    margin-top: -20pt;
-    margin-bottom: -10pt;
-    width: max-content;
-} */
+
 .form-group {
     margin-bottom: 4%;
 }
+
 #exampleInputEmail1 {
     width: 250px;
 }
+
 #exampleInputPassword1 {
     width: 250px;
 }
+
 .card-footer {
     /* display: flex; */
     transform: translate(-14%, 2%);
@@ -145,9 +150,11 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 .forgot-password {
     top: 10px
 }
+
 .btn-fill {
     background-color: #4C4CFF;
     border-color: #4C4CFF;
@@ -161,10 +168,12 @@ body {
     /* margin-bottom: 10%; */
     padding: 0% 8%;
 }
-.btn-fill:hover{
+
+.btn-fill:hover {
     background-color: #5b5bfd;
     border-color: #5b5bfd;
 }
+
 .no_wrap {
     /* text-wrap: nowrap; */
     color: white;

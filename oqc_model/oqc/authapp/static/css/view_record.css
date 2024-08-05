@@ -26,7 +26,6 @@ p {
 span {
     font-family: Arial;
     font-size: 13px;
-    /* letter-spacing: 0.015rem; */
 }
 
 .form-container {
@@ -68,15 +67,15 @@ span {
 
 /* WebKit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
-    width: 6px; /* Width of the scrollbar */
+    width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #fff0; /* Background of the track */
+    background: #fff0;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #888; /* Color of the scroll thumb */
+    background: #888;
     border-radius: 3px;
 }
 
@@ -85,6 +84,5 @@ span {
 }
 
 ::-webkit-scrollbar:hover {
-    /* width: 8px; */
     background: black;
 }

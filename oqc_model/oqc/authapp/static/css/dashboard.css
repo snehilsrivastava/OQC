@@ -2,7 +2,6 @@
 @import url('menu.css');
 @import url('header.css');
 
-
 @media only screen and (max-device-width: 600px) {
     .main-table{
         table-layout: fixed;
@@ -33,7 +32,6 @@
         width: 120px;
     }
 }
-
 
 body {
     overflow-x: hidden;
@@ -80,43 +78,18 @@ button a:hover {
     text-decoration: none;
 }
 
-.right-icon{
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 69px;
-    gap: 5px;
-}
-
-.header {
-    z-index: 200;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #2c4f7b;
-    color: white;
-    width: 100vw;
-    position: fixed;
-}
-
-/* .header .fa {
-    margin-right: 10px;
-} */
-
 .main-content {
     display: flex;
     flex-grow: 1;
     padding-top: 53.6px;
 }
-/* .left-icon {
-    display: flex;
-} */
+
 span.heading{
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 span.heading a {
     display: flex;
     gap: 5px;
@@ -130,6 +103,7 @@ span.heading a {
     padding: 20px;
     color: var(--webkit-text-fill-color);
 }
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -138,12 +112,15 @@ table {
     /* overflow-x: auto; */
     /* -webkit-overflow-scrolling: touch; */
 }
+
 /* .main-table {
     table-layout: fixed;
 } */
+
 .table thead th {
     vertical-align: middle;
 }
+
 .coll-btn-cell {
     width: 2rem;
 }
@@ -263,56 +240,6 @@ button.collapse-button i {
 .button-container {
     text-align: center;
 }
-.user-info p {
-    margin: 0;
-    padding: 10px 0;
-}
-
-.user-btn {
-    background-color: #2c4f7b;
-    display: flex;
-    color: white;
-    border: 1.5px solid white;
-    padding: 1px 8px;
-    cursor: pointer;
-    width: max-content;
-    height: fit-content;
-    border-radius: 50% !important;
-    justify-content: center;
-    font-size: 20px;
-}
-
-.user-btn:hover {
-    background-color: #fff2;
-}
-
-.user-info {
-    display: none;
-    position: absolute;
-    top: 50px;
-    right: 20px;
-    color: var(--webkit-text-fill-color);
-    padding: 10px 20px;
-    border: 1px solid #ddd;
-    z-index: 1;
-    max-height: 80vh;
-    overflow-y: auto; 
-    max-width: 50vw;
-}
-
-.logout-btn {
-    display: block;
-    margin-top: 10px;
-    background-color: #d9534f;
-    color: white !important;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    width: max-content;
-    justify-self: center;
-}
 
 .button-container button {
     display: inline-flex;
@@ -364,15 +291,6 @@ button.collapse-button i {
 
 .status-button {
     color: white;
-}
-
-.menu-btn {
-    color: white;
-    background-color: #fff0;
-}
-
-.menu-btn:hover {
-    background-color: #fff4;
 }
 
 .dropdown-item {

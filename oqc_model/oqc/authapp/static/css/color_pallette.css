@@ -58,9 +58,8 @@
 
 body {
     background-color: var(--background-area) !important;
-    color: var(--main-header-link-color);
+    color: var(--webkit-text-fill-color);
 }
-
 
 #theme-switcher {
     display: flex;
@@ -122,15 +121,15 @@ textarea {
 
 /* WebKit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
-    width: 6px; /* Width of the scrollbar */
+    width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #fff0; /* Background of the track */
+    background: #fff0;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #888; /* Color of the scroll thumb */
+    background: #888;
     border-radius: 3px;
 }
 
@@ -139,6 +138,5 @@ textarea {
 }
 
 ::-webkit-scrollbar:hover {
-    /* width: 8px; */
     background: black;
 }

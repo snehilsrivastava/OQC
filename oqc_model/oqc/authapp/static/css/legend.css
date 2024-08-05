@@ -1,4 +1,4 @@
-div.legends{
+div.legends {
     display: none;
     position: absolute;
     background: #919191;
@@ -7,17 +7,21 @@ div.legends{
     font-size: 13px;
     padding: 10px;
     width: max-content;
-    top: -250px; /* Adjust as needed to position above the table */
-    left: -95px; /* Adjust as needed to position correctly */
+    top: -250px;
+    /* Adjust as needed to position above the table */
+    left: -95px;
+    /* Adjust as needed to position correctly */
     text-align: left;
-    z-index: 90; 
+    z-index: 90;
     line-height: 20px;
     box-shadow: #717171;
 }
-#leg{
+
+#leg {
     margin-bottom: 5px;
 }
-.circle{
+
+.circle {
     text-align: center;
     vertical-align: middle;
     height: 20px;
@@ -31,7 +35,8 @@ div.legends{
     font-size: 12px;
     color: black;
 }
-div.legends:after{
+
+div.legends:after {
     content: '';
     position: absolute;
     bottom: -10px;
@@ -43,19 +48,20 @@ div.legends:after{
     border-bottom: 5px solid #717171;
     border-right: 5px solid #717171;
 }
-span.help-legends{
+
+span.help-legends {
     color: black;
     background-color: yellow;
     height: 15px;
     width: 15px;
     border-radius: 50%;
-    margin:3px;
+    margin: 3px;
     font-size: 12px;
-    position:relative;
-    cursor:pointer;
+    position: relative;
+    cursor: pointer;
 }
 
-span.help-legends:hover div{
-    display:flex;
+span.help-legends:hover div {
+    display: flex;
     flex-direction: column;
 }
