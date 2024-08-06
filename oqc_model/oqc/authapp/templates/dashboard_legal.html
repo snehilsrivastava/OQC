@@ -7,8 +7,6 @@
     <title>Legal Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    
-    </style>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
@@ -125,14 +123,20 @@
                 {% endfor %}
             </span>
         {% endif %}
-        <h1>Dashboard</h1>
-        <i class="fa fa-search fa-icon"></i>
-        <button><a href="javascript:void(0)" onclick="toggleFilter()">Filter</a></button>
-        <br><br>
+        <span class="heading">
+            <h1 class="headding">Dashboard</h1>
+            <button onclick="toggleFilter()">
+                <img src="{%static 'icons/filter.svg' %}" alt="Icon" width="20" height="20">Filter
+            </button>
+        </span>
         <table class="table table-bordered">
             <thead>
             <tr>
-                <th></th>
+                <th>
+                    <button class="collapse-button master-collapse-button" type="button" onclick="toggleAllCollapseButtons()">
+                        <i class="fas fa-chevron-down fa-sm"></i>
+                    </button>
+                </th>
                 <th>Product</th>
                 <th>Model Name</th>
                 <th>Stage</th>
@@ -143,7 +147,7 @@
             <tbody>
             {% for test in tests %}
             <tr>
-                <td>
+                <td class="coll-btn-cell">
                     <button class="collapse-button" type="button" data-toggle="collapse"
                             data-target="#testList{{ forloop.counter }}" aria-expanded="false"
                             aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">

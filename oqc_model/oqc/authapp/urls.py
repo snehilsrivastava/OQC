@@ -15,6 +15,8 @@ urlpatterns = [
     path('forgot_password/send_otp/', views.forgot_password_send_otp, name='forgot_password_send_otp'),
     path('forgot_password/verify_otp/', views.forgot_password_verify_otp, name='forgot_password_verify_otp'),
     path('forgot_password/update_password/', views.forgot_password_update, name='forgot_password_update'),	
+    path('admin/', views.admin, name='admin'),
+    path('change_user_type/<str:username>/<str:user_type>/', views.change_user_type, name='change_user_type'),
 ]
 
 # Serve media files if DEBUG is True (development mode)

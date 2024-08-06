@@ -1,7 +1,6 @@
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
 from .models import *
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.hashers import make_password, check_password
@@ -17,37 +16,45 @@ from django.dispatch import receiver
 from django.contrib.admin.models import LogEntry
 import re
 
-@receiver(post_save, sender=LogEntry)
-def employee_user_type_changed(sender, instance, created, **kwargs):
-    latest_entry = LogEntry.objects.order_by('-action_time').first()
-    if latest_entry.action_flag != 2:
-        return
-    change_msg = latest_entry.change_message
-    change_msg = change_msg.split("\": [")[1].split("\"")
-    if "User type" not in change_msg:
-        return
-    name = Employee.objects.get(username=latest_entry.object_repr)
+def login_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        next_page = request.original_path
+        if 'username' in request.session:
+            return view_func(request, *args, **kwargs)
+        login_url = '/au/login'
+        return redirect(f"{login_url}?next={next_page}" if next_page else login_url)
+    return wrapper
 
-    subject = 'Account approved'
-    from_email = settings.EMAIL_HOST_USER
-    to = [latest_entry.object_repr]
+# @receiver(post_save, sender=LogEntry)
+# def employee_user_type_changed(sender, instance, created, **kwargs):
+#     latest_entry = LogEntry.objects.order_by('-action_time').first()
+#     if latest_entry.action_flag != 2:
+#         return
+#     change_msg = latest_entry.change_message
+#     change_msg = change_msg.split("\": [")[1].split("\"")
+#     if "User type" not in change_msg:
+#         return
+#     name = Employee.objects.get(username=latest_entry.object_repr)
 
-    text_content = ''
-    html_content = f"""
-    <html>
-    <body>
-        <p>
-            Hi {name.first_name} {name.last_name},<br><br>
-            Your account has been approved for {name.user_type} access.<br><br>
-            Click <a href="http://13.200.34.116/au/login" target="_blank">here</a> to go to login page.
-        </p>
-    </body>
-    </html>
-    """
-    print(f"Sent email to {latest_entry.object_repr} for account approval")
-    msg = EmailMultiAlternatives(subject, text_content, from_email, to)
-    msg.attach_alternative(html_content, "text/html")
-    # msg.send()
+#     subject = 'Account approved'
+#     from_email = settings.EMAIL_HOST_USER
+#     to = [latest_entry.object_repr]
+
+#     text_content = ''
+#     html_content = f"""
+#     <html>
+#     <body>
+#         <p>
+#             Hi {name.first_name} {name.last_name},<br><br>
+#             Your account has been approved for {name.user_type} access.<br><br>
+#             Click <a href="http://protrackindkal.in/au/login" target="_blank">here</a> to go to login page.
+#         </p>
+#     </body>
+#     </html>
+#     """
+#     msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+#     msg.attach_alternative(html_content, "text/html")
+#     msg.send()
 
 # Define custom authenticate function which uses Employee DB
 def authenticate(username=None, password=None):
@@ -56,30 +63,24 @@ def authenticate(username=None, password=None):
         return login_user
     return None
 
-# Define a view function for the login page
 def login_page(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         
-        # Check if a user with the provided username exists
         if not Employee.objects.filter(username=username).exists():
-            # Display an error message if the username does not exist
             messages.error(request, 'Invalid Username')
             return redirect('/au/login/')
         
-        # Authenticate the user with the provided username and password
         user = authenticate(username=username, password=password)
         
         if user is None:
-            # Display an error message if authentication fails (invalid password)
             messages.error(request, "Invalid Password")
             return redirect('/au/login/')
         else:
             if not Employee.objects.filter(username=username).first().user_type:
                 messages.error(request, 'Account yet to be approved')
                 return redirect('/au/login/')
-            # Log in the user and redirect to the home page upon successful login
             login(request, user)
             request.session['user_type'] = user.user_type
             request.session['username'] = user.username
@@ -118,7 +119,6 @@ def verify_otp(user, otp_code):
         except OTP.DoesNotExist:
             return 3
 
-# send OTP button
 def send_otp(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -126,15 +126,12 @@ def send_otp(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # Check if a user with the provided username already exists
         if Employee.objects.filter(username=username).exists():
             messages.warning(request, "Username already exists")
             return JsonResponse({'redirect_url': '/au/login/'})
-        # Check if the email address is valid
         valid_domains = ['indkal.com', 'indkaltechno.onmicrosoft.com']
         if username.split('@')[-1] not in valid_domains:
             return JsonResponse({'warning': True, 'message': 'Please enter a valid email address'})
-        # Check if the password is valid
         validity = validate_password(password)
         if validity:
             return JsonResponse({'warning': True, 'message': validity})
@@ -165,10 +162,8 @@ def validate_password(password):
     else:
         return None
         
-# sign up button
 def register_page(request):
     if request.method == 'POST':
-        # act = request.POST.get('action')
         username = request.POST.get('username')
         fname = request.POST.get('first_name')
         lname = request.POST.get('last_name')
@@ -195,7 +190,7 @@ def register_page(request):
                         Hi Protrack,
                         <br><br>You have a new account approval request from {fname} {lname}.
                         <br>Email: {username}<br><br>
-                        Click <a href="http://13.200.34.116/admin/authapp/employee" target="_blank">here</a> to go to approval page.
+                        Click <a href="http://protrackindkal.in/au/admin/" target="_blank">here</a> to go to approval page.
                     </p>
                 </body>
                 </html>
@@ -217,7 +212,6 @@ def forgot_password(request):
 def forgot_password_send_otp(request):
     if request.method == 'POST':
         username = request.POST.get('username')
-        # Check if a user with the provided username already exists
         if not Employee.objects.filter(username=username).exists():
             return JsonResponse({'error': True, 'message': 'Email doesn\'t exist'})
         employee = Employee.objects.get(username=username)
@@ -255,7 +249,6 @@ def forgot_password_update(request):
         confirm_password = request.POST.get('confirm-password')
         validity = validate_password(password)
         if validity:
-            print(validity)
             return JsonResponse({'error': True, 'message': validity})
         if password != confirm_password:
             return JsonResponse({'error': True, 'message': 'Passwords do not match'})
@@ -265,3 +258,55 @@ def forgot_password_update(request):
         messages.success(request, "Password changed successfully!")
         return JsonResponse({'redirect_url': '/au/login/'})
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
+
+@login_required
+def admin(request):
+    employee = Employee.objects.get(username=request.session['username'])
+    if not employee.is_superuser:
+        return redirect('/access_denied/')
+    icon = employee.first_name[0] + employee.last_name[0]
+    approved_users = Employee.objects.filter(user_type__isnull=False)
+    approved_users = list(approved_users)[::-1]
+    unapproved_users = Employee.objects.filter(user_type__isnull=True)
+    unapproved_users = list(unapproved_users)[::-1]
+    context = {
+        'username': employee,
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'approved': approved_users,
+        'unapproved': unapproved_users,
+    }
+    return render(request, 'admin.html', context)
+
+@login_required
+def change_user_type(request, username, user_type):
+    user = Employee.objects.get(username=request.session['username'])
+    if not user.is_superuser:
+        return redirect('/access_denied/')
+    change_user = Employee.objects.get(username=username)
+    change_user.user_type = user_type
+    change_user.save()
+
+    # Send email to user
+    subject = 'Account approved'
+    from_email = settings.EMAIL_HOST_USER
+    to = [change_user.username]
+
+    text_content = ''
+    html_content = f"""
+    <html>
+    <body>
+        <p>
+            Hi {change_user.first_name} {change_user.last_name},<br><br>
+            Your account has been approved for {change_user.user_type} access.<br><br>
+            Click <a href="http://protrackindkal.in/au/login" target="_blank">here</a> to go to login page.
+        </p>
+    </body>
+    </html>
+    """
+    msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+    msg.attach_alternative(html_content, "text/html")
+    # msg.send()
+    messages.success(request, 'User type changed successfully.')
+    return redirect('/au/admin/')

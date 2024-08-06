@@ -89,13 +89,13 @@
                
             </td>
         </tr>
-        {% if testdetail.verification %}
+        {% if test.verification %}
         <tr>
             <td rowspan="9" style="width:96.4pt;">
                 <strong><span class="row_header">Set Details</span></strong>
             </td>
             <td colspan="4" style="width:410.65pt;">
-                <span>Report verification Date: {{testdetail.test_date|date:"d/m/Y"}}</span>
+                <span>Report verification Date: {{test.test_date|date:"d/m/Y"}}</span>
             </td>
         </tr>
         {% else %}
@@ -104,10 +104,10 @@
                 <strong><span class="row_header">Set Details</span></strong>
             </td>
             <td colspan="2" style="width:207.0pt;">
-                <span>Start Date: {{testdetail.test_start_date|date:"d/m/Y"}}</span>
+                <span>Start Date: {{test.test_start_date|date:"d/m/Y"}}</span>
             </td>
             <td colspan="2" style="width:203.65pt;">
-                <span>End Date: {{testdetail.test_end_date|date:"d/m/Y"}}</span>
+                <span>End Date: {{test.test_end_date|date:"d/m/Y"}}</span>
             </td>
         </tr>
         {% endif %}

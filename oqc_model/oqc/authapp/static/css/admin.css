@@ -1,0 +1,37 @@
+@import url('header.css');
+
+.heading {
+    padding: 0 0;
+}
+
+.main-content {
+    flex-direction: column;
+}
+
+.content {
+    flex-grow: 0;
+    padding-bottom: 0;
+}
+
+table {
+    margin: 10px auto !important;
+    width: 100%;
+    max-width: 800px;
+}
+
+.dropdown-toggle {
+    width: 150px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-container {
+    display: flex;
+    flex-direction: column;
+}
+
+caption {
+    caption-side: top !important;
+    color: var(--webkit-text-fill-color) !important;
+}
