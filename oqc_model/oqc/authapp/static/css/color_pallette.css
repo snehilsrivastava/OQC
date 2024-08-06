@@ -7,11 +7,10 @@
     --sidebar-link-color: var(--gray-tint-50);
     --sidebar-link-active-color: var(--white-base);
     --sidebar-menu-heading-color: var(--gray-tint-30);
-    --theme-switcher-bg: var(--gray-shade-60);
-    --theme-switcher-indicator: var(--extras-moon);
-    --theme-switcher-indicator-pos: 3.25rem;
-    --sun-icon-fill: #ffffff;
-    --moon-icon-fill: rgb(0,0,0);
+    --theme-switcher-bg: #eee;
+    --theme-switcher-ball: #000;
+    --sun-icon-fill: #fff;
+    --moon-icon-fill: #000;
     --main-header-link-color: var(--gray-tint-80);
     --barry: #7190ff;
     --background-area: #2b2b2b;
@@ -36,9 +35,8 @@
     --sidebar-link-color: var(--gray-tint-50);
     --sidebar-link-active-color: var(--gray-base);
     --sidebar-menu-heading-color: var(--gray-tint-50);
-    --theme-switcher-bg: var(--gray-tint-80);
-    --theme-switcher-indicator: var(--extras-sun);
-    --theme-switcher-indicator-pos: .25rem;
+    --theme-switcher-bg: #111;
+    --theme-switcher-ball: #fff;
     --sun-icon-fill: #ffffff;
     --moon-icon-fill: rgb(0,0,0);
     --main-header-link-color: var(--gray-base);

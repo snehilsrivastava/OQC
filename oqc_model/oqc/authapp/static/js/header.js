@@ -72,13 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set the correct theme
     document.documentElement.setAttribute('data-theme', themeToSet);
 
-    // Update the icon visibility based on the current theme
-    const updateIcons = (theme) => {
-        document.getElementById('theme-switcher__sun').style.display = (theme === 'light') ? 'block' : 'none';
-        document.getElementById('theme-switcher__moon').style.display = (theme === 'dark') ? 'block' : 'none';
-    };
-
-    updateIcons(themeToSet);
+    const checkbox = document.getElementById("theme-checkbox");
+    if (themeToSet=="dark") {
+        checkbox.checked = true;
+    }
 
     // Theme switcher function
     const switchTheme = () => {
@@ -88,9 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         rootElem.setAttribute('data-theme', newTheme);
         localStorage.setItem("theme", newTheme);
-        updateIcons(newTheme);
+        // updateIcons(newTheme);    
     };
 
     // Add the event listener for the theme switcher
-    document.querySelector('#theme-switcher').addEventListener('click', switchTheme);
+    checkbox.addEventListener('change', switchTheme);
 });
