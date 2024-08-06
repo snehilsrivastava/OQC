@@ -3,5 +3,4 @@ oqc_model/.venv/
 oqc_model/oqc/*.sqlite3
 oqc_model/oqc/staticfiles
 oqc_model/oqc/media/
-.vscode
-terminal-setup.txt
+.vscode/
