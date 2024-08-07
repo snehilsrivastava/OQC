@@ -1,9 +1,9 @@
 :root[data-theme="dark"] {
     --main-header-bg: var(--gray-shade-60);
     --top-bar-icon-fill: var(--gray-tint-80);
-    --sidebar-bg: var(--gray-base);
-    --sidebar-icon-fill: var(--gray-tint-50);
-    --sidebar-icon-active-fill: var(--white-base);
+    --sidebar-bg: rgb(73, 73, 73);
+    --sidebar-hover-bg: rgb(90, 90, 90);
+    --sidebar-link-hover: rgb(227, 142, 255);
     --sidebar-link-color: var(--gray-tint-50);
     --sidebar-link-active-color: var(--white-base);
     --sidebar-menu-heading-color: var(--gray-tint-30);
@@ -29,9 +29,9 @@
 :root[data-theme="light"] {
     --main-header-bg: var(--gray-tint-80);
     --top-bar-icon-fill: var(--gray-base);
-    --sidebar-bg: var(--gray-tint-90);
-    --sidebar-icon-fill: var(--gray-tint-50);
-    --sidebar-icon-active-fill: var(--gray-base);
+    --sidebar-bg: rgb(255, 237, 221);
+    --sidebar-hover-bg: rgb(255, 225, 199);
+    --sidebar-link-hover: purple;
     --sidebar-link-color: var(--gray-tint-50);
     --sidebar-link-active-color: var(--gray-base);
     --sidebar-menu-heading-color: var(--gray-tint-50);
@@ -69,7 +69,6 @@ body {
     width: 24px;
     height: 24px;
     cursor: pointer;
-
 }
 
 #theme-switcher__sun {
@@ -82,9 +81,7 @@ body {
 
 table {
     border: var(--table-border-width) var(--table-border-style) var(--table-border-color);
-    
 } 
-
 
 table th, table td {
     border: var(--table-border-width) var(--table-border-style) var(--table-border-color);
@@ -120,6 +117,7 @@ textarea {
 /* WebKit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {

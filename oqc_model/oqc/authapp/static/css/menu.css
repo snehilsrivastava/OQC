@@ -1,10 +1,12 @@
+/* @import url("color_pallette.css"); */
+
 #sidebar {
     display: block;
     position: fixed;
     flex-shrink: 0;
     height: 100%;
     overflow-y: auto;
-    background-color: #474747;
+    background-color: var(--sidebar-bg);
     transform: translate(-100%, 0%);
     transition: transform 0.2s linear;
     width: 70%;
@@ -22,7 +24,6 @@ ul {
     padding: 0;
     width: 300px;
     background-color: #0879cb;
-    color: white;
     overflow: auto;
 }
 
@@ -36,17 +37,23 @@ ul {
 li a {
     display: flex;
     align-items: center;
-    color: white;
+    color: var(--webkit-text-fill-color);
     padding: 8px 16px;
     text-decoration: none;
 }
 
 li a:hover {
-    background-color: #a9b9bc;
-    color: purple !important;
+    background-color: var(--sidebar-hover-bg);
+    color: var(--sidebar-link-hover) !important;
     text-decoration: none;
 }
 
+li a:hover .menu-icon {
+    fill: var(--sidebar-link-hover); 
+}
+li a:hover .icon-stroke :nth-child(2){
+    stroke: var(--sidebar-link-hover);
+}
 .fa-icon {
     margin-right: 10px;
 }

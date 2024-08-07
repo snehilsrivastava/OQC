@@ -229,7 +229,7 @@ def set_status(request, id):
     test_record = TestRecord.objects.get(id=id)
     if test_record.employee != user.username and not user.is_superuser:
         return redirect('/access_denied/')
-    test_record.status = "Waiting for Approval"
+    test_record.status = "Waiting"
     test_record.test_end_date = date.today()
     test_record.test_date = date.today()
     test_record.save()
@@ -253,7 +253,7 @@ def dashboard(request):
     B_status = request.GET.get('B_status','')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
-    status_color = {"Not Sent": "#838383", "Waiting for Approval": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
+    status_color = {"Not Sent": "#838383", "Waiting": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
     role_letter = {"T": "Test Inspector", "L": "Legal Team", "B": "Brand Team"}
 
     completed_tests = TestRecord.objects.exclude(status="Not Sent")
@@ -442,17 +442,21 @@ def merge_pdfs(pdf_list):
 @login_required
 def handle_selected_tests(request):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner' and not user.is_superuser:
+    if user.user_type not in ['owner', 'brand', 'legal'] and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
         selected_test_ids = request.POST.getlist('selected_tests')
         action = request.POST.get('action')
         selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids)
         if action == 'generate_pdf':
-            
             if not selected_test_records.exists():
                 messages.error(request, 'No test records selected')
-                return redirect('/dashboard/')
+                if user.user_type=='owner':      
+                    return redirect('/dashboard/')
+                elif user.user_type=='legal':      
+                    return redirect('/legal_dashboard/')
+                elif user.user_type=='brand':      
+                    return redirect('/brand_dashboard/')
             pdf_list = []
             cumul_page_count, cumul_page_count_list = 3, []
             test_name_list = []
@@ -505,19 +509,33 @@ def handle_selected_tests(request):
             return response
 
         elif action == 'send_brand':
-           
+            if not selected_test_records.exists():
+                messages.error(request, 'No test records selected')
+                return redirect('/dashboard/')   
             for test_record in selected_test_records:
-                new_status = "Waiting for Approval"
-                test_record.B_status = new_status
+                if test_record.B_status != "Approved":
+                    test_record.B_status = "Waiting"
+                test_record.owner_name = user.first_name + " " + user.last_name
                 test_record.save()
+            messages.success(request, 'Sent to Bran d Team for approval.')
 
         elif action == 'send_legal':
+            if not selected_test_records.exists():
+                messages.error(request, 'No test records selected')
+                return redirect('/dashboard/')   
             for test_record in selected_test_records:
-              new_status = "Waiting for Approval"
-              test_record.L_status = new_status
-              test_record.save()
-          
-    return redirect('/dashboard/')
+                if test_record.L_status != "Approved":
+                    test_record.L_status = "Waiting"
+                test_record.owner_name = user.first_name + " " + user.last_name
+                test_record.save()
+            messages.success(request, 'Sent to Legal Team for approval.')
+
+    if user.user_type=='owner':      
+        return redirect('/dashboard/')
+    elif user.user_type=='legal':      
+        return redirect('/legal_dashboard/')
+    elif user.user_type=='brand':      
+        return redirect('/brand_dashboard/')
 
 @login_required
 def view(request, test_name, model_name, serialno):
@@ -576,7 +594,7 @@ def change_status(request, test_id, status):
         return redirect('/access_denied/')
     test = get_object_or_404(TestRecord, id=test_id)
     if status == 1:
-        test.status = 'Waiting for Approval'
+        test.status = 'Waiting'
     elif status == 2:
         test.status = 'Approved'
     else:
@@ -594,7 +612,7 @@ def change_status_legal(request, test_id, status):
         return redirect('/access_denied/')
     test = get_object_or_404(TestRecord, id=test_id)
     if status == 1:
-        test.L_status = "Waiting for Approval"
+        test.L_status = "Waiting"
     elif status == 2:
         test.L_status = "Approved"
     else:
@@ -612,7 +630,7 @@ def change_status_brand(request, test_id, status):
         return redirect('/access_denied/')
     test = get_object_or_404(TestRecord, id=test_id)
     if status == 1:
-        test.B_status = "Waiting for Approval"
+        test.B_status = "Waiting"
     elif status == 2:
         test.B_status = "Approved"
     else:
@@ -835,7 +853,7 @@ def MNF(request):
 
         )
         new_mnf.save()
-        if Product == 'ac':
+        if Product == 'AC':
             username = request.session['username']
             employee = Employee.objects.get(username=username)
             icon = employee.first_name[0] + employee.last_name[0]
@@ -867,6 +885,12 @@ def Test_list_entry(request):
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == "dashboard":
+            if user.user_type=="owner":
+                return redirect('/dashboard/')
+            if user.user_type=="employee":
+                return redirect('/employee_dashboard/')
         testStages = request.POST.getlist('TestStage')
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')

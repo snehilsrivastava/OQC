@@ -248,7 +248,7 @@
         {{test.status}}
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="{% url 'change_status' test.id 1 %}">Waiting for Approval</a>
+            <a class="dropdown-item" href="{% url 'change_status' test.id 1 %}">Waiting</a>
             <a class="dropdown-item" href="{% url 'change_status' test.id 2 %}">Approve</a>
             <a class="dropdown-item" href="{% url 'change_status' test.id 3 %}">Reject</a>
         </div>

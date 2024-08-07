@@ -55,7 +55,7 @@ class TestRecord(models.Model):
     SerailNo  = models.CharField(max_length=100,default = "None")
     TestStage = models.CharField(max_length=20,default="None")
     TestName  = models.CharField(max_length=80,default="None")
-    # mnfDetail = models.ForeignKey(ModelMNFdetail,on_delete= models.CASCADE,related_name = 'test_mnf_detail')
+    owner_name = models.CharField(max_length=80, default = 'None')
 
     def __str__(self):
         return f"{self.SerailNo}"

@@ -20,7 +20,7 @@
         width: 45px;
     }
     .main-table colgroup :nth-child(2){
-        width: 85px;
+        width: 120px;
     }
     .main-table colgroup :nth-child(3){
         width: 150px;
@@ -29,7 +29,83 @@
         width: 80px;
     }
     .main-table colgroup :nth-child(5){
+        width: 325px;
+    }
+    .main-table-bl colgroup :nth-child(2){
+        width: 150px;
+    }
+    .main-table-bl colgroup :nth-child(3){
+        width: 220px;
+    }
+    .main-table-bl colgroup :nth-child(4){
+        width: 100px;
+    }
+    .main-table-bl colgroup :nth-child(5){
+        width: 190px;
+    }
+    .main-table-em colgroup :nth-child(1){
         width: 120px;
+    }
+    .main-table-em colgroup :nth-child(2){
+        width: 140px;
+    }
+    .main-table-em colgroup :nth-child(3){
+        width: 137px;
+    }
+    .main-table-em colgroup :nth-child(4){
+        width: 68px;
+    }
+    .main-table-em colgroup :nth-child(5){
+        width: 111px;
+    }
+    .main-table-em colgroup :nth-child(6){
+        width: 112px;
+    }
+    .main-table-em colgroup :nth-child(7){
+        width: 167px;
+    }
+    .drop-table colgroup :nth-child(6){
+        /* width: max-content !important; */
+        white-space: nowrap !important;
+        overflow-wrap: normal !important;
+    }
+    
+    .drop-table colgroup :nth-child(4){
+        width: 95px;
+    }
+    .employee-name {
+        width: 95px;
+        white-space: nowrap;
+        overflow-x: scroll !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    .test-name {
+        width: 109px;
+        overflow-x: scroll !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    .model-name {
+        width: 116px;
+        overflow-x: scroll !important;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media only screen and (min-device-width: 600px) {
+    .main-table colgroup :nth-child(5){
+        width: 25vw;
+    }
+    .drop-table colgroup :nth-child(3){
+        width: 111.36px;
+    }
+    .drop-table colgroup :nth-child(5){
+        width: 250px;
+    }
+    .drop-table colgroup :nth-child(6){
+        width: 100px;
+    }
+    .drop-table colgroup :nth-child(7){
+        width: 80px;
     }
 }
 
@@ -45,6 +121,10 @@ body {
     text-decoration-color: whitesmoke;
     transition: background 0.2s linear;
     color: var(--webkit-text-fill-color);
+}
+
+p {
+    margin-bottom: 0;
 }
 
 button {
@@ -104,6 +184,19 @@ span.heading a {
     color: var(--webkit-text-fill-color);
 }
 
+.icon {
+    fill: var(--webkit-text-fill-color);
+}
+.icon-stroke :nth-child(2){
+    stroke: var(--webkit-text-fill-color);
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -112,10 +205,6 @@ table {
     /* overflow-x: auto; */
     /* -webkit-overflow-scrolling: touch; */
 }
-
-/* .main-table {
-    table-layout: fixed;
-} */
 
 .table thead th {
     vertical-align: middle;
@@ -140,7 +229,9 @@ th {
     background-color: #2c4f7b;
     color: white;
 }
-
+button.master-collapse-button {
+    color: white !important;
+}
 button.collapse-button {
     height: 20px;
     width: 20px;
@@ -176,8 +267,8 @@ button.collapse-button i {
 }
 
 .action-buttons a {
-    background: #fff2;
-    color: #fff !important;
+    background: var(--button-color);
+    color: var(--webkit-text-fill-color);
     padding: 0px 10px;
     text-decoration: none;
     border-radius: 3px;
@@ -189,7 +280,7 @@ button.collapse-button i {
 }
 
 .action-buttons a:hover {
-    background: #fff4;
+    background: var(--button-hover-color);
     cursor: pointer;
     border-color: #0000;
 }
@@ -219,10 +310,18 @@ button.collapse-button i {
 
 .timer-bar {
     height: 5px;
-    background-color: darkgreen;
     width: 100%;
     transition: width 5s linear;
     display: block;
+}
+.timer-success {
+    background-color: darkgreen;
+}
+.timer-warning {
+    background-color: rgb(164, 164, 0);
+}
+.timer-error {
+    background-color: red;
 }
 
 .success {
@@ -263,7 +362,7 @@ button.collapse-button i {
 .button-container button:last-child {
     margin-right: 0;
 }
-.status-Waiting.for.Approval {
+.status-Waiting {
     color: black !important;
     background: yellow;
 }
@@ -283,10 +382,11 @@ button.collapse-button i {
 
 .status-column {
     /* width: 80px; */
-    text-align: center;
+    /* text-align: center;
     display: flex;
     justify-content: start;
-    align-items: center;
+    align-items: center; */
+    white-space: nowrap;
 }
 
 .status-button {

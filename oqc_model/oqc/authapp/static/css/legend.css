@@ -1,3 +1,15 @@
+@media only screen and (max-device-width: 600px){
+    div.legends {
+        top: 30px !important;
+        left: -92px !important;
+    }
+
+    div.legends:after {
+        transform: translateX(50%) rotate(225deg) !important;
+        top: -8.75px !important;
+    }
+}
+
 div.legends {
     display: none;
     position: absolute;
@@ -7,10 +19,8 @@ div.legends {
     font-size: 13px;
     padding: 10px;
     width: max-content;
-    top: -250px;
-    /* Adjust as needed to position above the table */
-    left: -95px;
-    /* Adjust as needed to position correctly */
+    top: -240px;
+    left: -87px;
     text-align: left;
     z-index: 90;
     line-height: 20px;
@@ -39,7 +49,7 @@ div.legends {
 div.legends:after {
     content: '';
     position: absolute;
-    bottom: -10px;
+    bottom: -8.5px;
     left: 50%;
     transform: translateX(-50%) rotate(45deg);
     width: 10px;
@@ -50,6 +60,9 @@ div.legends:after {
 }
 
 span.help-legends {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     color: black;
     background-color: yellow;
     height: 15px;

@@ -45,11 +45,13 @@
     right: 20px;
     font-size: 24px;
     cursor: pointer;
-    color: #aaa;
+    color: var(--webkit-text-fill-color);
+    text-shadow: none;
+    opacity: 1;
 }
 
 .popup .close:hover {
-    color: #000;
+    color: red;
 }
 
 .popup h2 {

@@ -40,6 +40,7 @@ def product_form_view(request):
             TestName=test_name,
             employee=username,
             employee_name=name,
+            status = "Approved" if user.user_type == "owner" else "Not Sent",
             verification = True if tested_by == 'ODM' else False,
         )
         new_product_detail.save()
