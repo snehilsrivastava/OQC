@@ -44,10 +44,10 @@
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
     <div class="popup" id="filterPopup">
         <span class="close" onclick="toggleFilter()">&times;</span>
-        <form id="filter-form" method="get" action="{% url 'legal_dashboard' %}">
+        <form id="filter-form" method="get" action="{% url 'dashboard' %}">
             <div>
                 <label for="product">Product Type:</label>
-                <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+                <select class="form-control filter-form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
                     <option value="">Select Product Type</option>
                     <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
                     <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
@@ -55,10 +55,9 @@
                     <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
                 </select>
             </div>
-            <br>
             <div>
                 <label for="test_stage">Test Stage:</label>
-                <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+                <select class="form-control filter-form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
                     <option value="">Select Test Stage</option>
                     <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
                     <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
@@ -66,51 +65,49 @@
                     <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
                 </select>
             </div>
-            <br>
             <div>
                 <label for="model_name">Model Name:</label>
-                <select class="form-control" id="model_name" name="model_name">
+                <select class="form-control filter-form-control" id="model_name" name="model_name">
                     <!-- Model options will be populated dynamically based on the selected product type -->
+                    {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
                     <option value="">{{model_name}}</option>
                 </select>
             </div>
-            <br>
             <div>
                 <label for="test_name">Test Name:</label>
-                <select class="form-control" id="test_name" name="test_name">
+                <select class="form-control filter-form-control" id="test_name" name="test_name">
                     <option value="">Select Test Name</option>
                 </select>
             </div>
-            <br>
             <div>
                 <label for="serial_number">Serial Number:</label>
-                <input class="form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+                <input class="form-control filter-form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
             </div>
-            <br>
+            <!-- <label for="status-filter">Status:</label> -->
             <div>
-                <label for="L_status">Status:</label>
-                <select class="form-control" id="L_status" name="L_status">
+                <label for="B_status">Status:</label>
+                <select class="form-control filter-form-control" id="B_status" name="B_status">
                     <option value="">All</option>
-                    <option value="Not Sent"{%if L_status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
-                    <option value="Waiting"  {%if L_status == 'Waiting'%}selected{%endif%}>Waiting</option>
-                    <option value="Approved" {%if L_status == 'Approved'%}selected{%endif%}>Approved</option>
-                    <option value="Rejected"{%if L_status == 'Rejected'%}selected{%endif%}>Rejected</option>
+                    <option value="Not Sent"{%if B_status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
+                    <option value="Waiting"  {%if B_status == 'Waiting'%}selected{%endif%}>Waiting</option>
+                    <option value="Approved" {%if B_status == 'Approved'%}selected{%endif%}>Approved</option>
+                    <option value="Rejected"{%if B_status == 'Rejected'%}selected{%endif%}>Rejected</option>
                 </select>
             </div>
-            <br>
-            <div>
-                <label for="start_date">Start Date:</label>
-                <input class="form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
-            </div>
-            <br>
-            <div>
-                <label for="end_date">End Date:</label>
-                <input class="form-control" type="date" id="end_date" name="end_date" value="{{ end_date }}">
-            </div>
-            <br>
+            <span class="date-filter">
+                <div class="start-date">
+                    <label for="start_date">Start Date:</label>
+                    <input class="form-control filter-form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
+                </div>
+                <div class="end-date">
+                    <label for="end_date">End Date:</label>
+                    <input class="form-control filter-form-control" type="date" id="end_date" name="end_date" value="{{ end_date }}">
+                </div>
+            </span>
+          
             <div class="button-container">
-                <button type="submit" class="button">Filter</button>
-                <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
+                <button type="submit" class="button filter-btn" >Filter</button>
+                <button type="button" class="button filter-btn" onclick="clearFilter()">Clear Filters</button>
             </div>
         </form>
     </div>
@@ -180,7 +177,7 @@
                     <tr>
                         <td colspan="5">
                             <div class="collapse" id="testList{{ forloop.counter }}">
-                                <table class="table drop-table">
+                                <table class="table drop-table drop-table-bl">
                                     <colgroup>
                                         <col>
                                         <col>

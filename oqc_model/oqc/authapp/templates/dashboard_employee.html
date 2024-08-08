@@ -55,7 +55,7 @@
         <form id="filter-form" method="get" action="{% url 'employee_dashboard' %}">
           
                 <label for="product">Product Type:</label>
-                <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+                <select class="form-control filter-form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
                     <option value="">Select Product Type</option>
                     <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
                     <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
@@ -65,7 +65,7 @@
            
             
                 <label for="test_stage">Test Stage:</label>
-                <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+                <select class="form-control filter-form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
                     <option value="">Select Test Stage</option>
                     <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
                     <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
@@ -73,7 +73,7 @@
                     <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
                 </select>
                 <label for="model_name">Model Name:</label>
-                <select class="form-control" id="model_name" name="model_name">
+                <select class="form-control filter-form-control" id="model_name" name="model_name">
                     <!-- Model options will be populated dynamically based on the selected product type -->
                     {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
                     <option value="">{{model_name}}</option>
@@ -81,17 +81,17 @@
             
             
                 <label for="test_name">Test Name:</label>
-                <select class="form-control" id="test_name" name="test_name">
+                <select class="form-control filter-form-control" id="test_name" name="test_name">
                     <option value="">Select Test Name</option>
                 </select>
            
             
                 <label for="serial_number">Serial Number:</label>
-                <input class = "form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+                <input class="form-control filter-form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
        
            
                 <label for="status">Status:</label>
-                <select class = "form-control" id="status" name="status">
+                <select class="form-control filter-form-control" id="status" name="status">
                     <option value="">All</option>
                     <option value="Not Sent"{%if status == 'Not Sent'%}selected{%endif%}>Not Sent</option>
                     <option value="Waiting"  {%if status == 'Waiting'%}selected{%endif%}>Waiting</option>
@@ -102,17 +102,17 @@
                 <span class="date-filter">
                     <div class="start-date">
                         <label for="start_date">Start Date:</label>
-                        <input class="form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
+                        <input class="form-control filter-form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
                     </div>
                     <div class="end-date">
                         <label for="end_date">End Date:</label>
-                        <input class="form-control" type="date" id="end_date" name="end_date" value="{{ end_date }}">
+                        <input class="form-control filter-form-control" type="date" id="end_date" name="end_date" value="{{ end_date }}">
                     </div>
                 </span>
     
             <div class="button-container">
-                <button type="submit" class="button">Filter</button>
-                <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
+                <button type="submit" class="button filter-btn">Filter</button>
+                <button type="button" class="button filter-btn" onclick="clearFilter()">Clear Filters</button>
             </div>
         </form>
     

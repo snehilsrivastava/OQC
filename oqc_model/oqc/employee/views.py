@@ -891,6 +891,10 @@ def Test_list_entry(request):
                 return redirect('/dashboard/')
             if user.user_type=="employee":
                 return redirect('/employee_dashboard/')
+            if user.user_type=="brand":
+                return redirect('/brand_dashboard/')
+            if user.user_type=="legal":
+                return redirect('/legal_dashboard/')
         testStages = request.POST.getlist('TestStage')
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')

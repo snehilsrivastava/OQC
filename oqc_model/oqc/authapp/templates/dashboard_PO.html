@@ -75,7 +75,7 @@
     <form id="filter-form" method="get" action="{% url 'dashboard' %}">
         <div>
             <label for="product">Product Type:</label>
-            <select class="form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+            <select class="form-control filter-form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
                 <option value="">Select Product Type</option>
                 <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
                 <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
@@ -85,7 +85,7 @@
         </div>
         <div>
             <label for="test_stage">Test Stage:</label>
-            <select class="form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+            <select class="form-control filter-form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
                 <option value="">Select Test Stage</option>
                 <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
                 <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
@@ -95,7 +95,7 @@
         </div>
         <div>
             <label for="model_name">Model Name:</label>
-            <select class="form-control" id="model_name" name="model_name">
+            <select class="form-control filter-form-control" id="model_name" name="model_name">
                 <!-- Model options will be populated dynamically based on the selected product type -->
                 {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
                 <option value="">{{model_name}}</option>
@@ -103,40 +103,40 @@
         </div>
         <div>
             <label for="test_name">Test Name:</label>
-            <select class="form-control" id="test_name" name="test_name">
+            <select class="form-control filter-form-control" id="test_name" name="test_name">
                 <option value="">Select Test Name</option>
             </select>
         </div>
         <div>
             <label for="serial_number">Serial Number:</label>
-            <input class="form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
+            <input class="form-control filter-form-control" type="text" id="serial_number" name="serial_number" value="{{ serial_number }}">
         </div>
         <!-- <label for="status-filter">Status:</label> -->
         <span class="status-filter" id="status-filter">
             <span class="PO-status">
                 <label for="PO_status">Tester Status:</label>
-                <select class="form-control" id="PO_status" name="status">
+                <select class="form-control filter-form-control" id="PO_status" name="status">
                     <option value="">All</option>
                     {% for stat, clr in status_color.items %}
-                        <option value="{{stat}}" {% if status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
+                        <option value="{{stat}}" {% if status ==  stat  %}selected{% endif %}>{{stat}}</option>
                     {% endfor %}
                 </select>
             </span>
             <span class="L-status">
                 <label for="L_status">Legal Status:</label>
-                <select class="form-control" id="L_status" name="L_status">
+                <select class="form-control filter-form-control" id="L_status" name="L_status">
                     <option value="">All</option>
                     {% for stat, clr in status_color.items %}
-                        <option value="{{stat}}" {% if L_status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
+                        <option value="{{stat}}" {% if L_status ==  stat  %}selected{% endif %}>{{stat}}</option>
                     {% endfor %}
                 </select>
             </span>
             <span class="B-status">
                 <label for="B_status">Brand Status:</label>
-                <select class="form-control"  id="B_status" name="B_status">
+                <select class="form-control filter-form-control"  id="B_status" name="B_status">
                     <option value="">All</option>
                     {% for stat, clr in status_color.items %}
-                        <option value="{{stat}}" {% if B_status ==  stat  %}selected{% endif %} style="background-color: {{clr}};">{{stat}}</option>
+                        <option value="{{stat}}" {% if B_status ==  stat  %}selected{% endif %}>{{stat}}</option>
                     {% endfor %}
                 </select>
             </span>
@@ -144,17 +144,17 @@
         <span class="date-filter">
             <div class="start-date">
                 <label for="start_date">Start Date:</label>
-                <input class="form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
+                <input class="form-control filter-form-control" type="date" id="start_date" name="start_date" value="{{ start_date }}">
             </div>
             <div class="end-date">
                 <label for="end_date">End Date:</label>
-                <input class="form-control" type="date" id="end_date" name="end_date" value="{{ end_date }}">
+                <input class="form-control filter-form-control" type="date" id="end_date" name="end_date" value="{{ end_date }}">
             </div>
         </span>
       
         <div class="button-container">
-            <button type="submit" class="button" >Filter</button>
-            <button type="button" class="button" onclick="clearFilter()">Clear Filters</button>
+            <button type="submit" class="button filter-btn" >Filter</button>
+            <button type="button" class="button filter-btn" onclick="clearFilter()">Clear Filters</button>
         </div>
     </form>
 </div>
