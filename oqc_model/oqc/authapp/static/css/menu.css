@@ -44,15 +44,15 @@ li a {
 
 li a:hover {
     background-color: var(--sidebar-hover-bg);
-    color: var(--sidebar-link-hover) !important;
+    color: var(--webkit-text-fill-color) !important;
     text-decoration: none;
 }
 
 li a:hover .menu-icon {
-    fill: var(--sidebar-link-hover); 
+    fill: var(--webkit-text-fill-color); 
 }
 li a:hover .icon-stroke :nth-child(2){
-    stroke: var(--sidebar-link-hover);
+    stroke: var(--webkit-text-fill-color);
 }
 .fa-icon {
     margin-right: 10px;

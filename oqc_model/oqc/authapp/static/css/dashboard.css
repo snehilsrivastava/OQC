@@ -69,6 +69,10 @@
         white-space: nowrap !important;
         overflow-wrap: normal !important;
     }
+
+    .drop-table-bl colgroup :nth-child(6){
+        width: 119px !important;
+    }
     
     .drop-table colgroup :nth-child(4){
         width: 95px;
@@ -92,6 +96,9 @@
 }
 
 @media only screen and (min-device-width: 600px) {
+    .main-table colgroup :nth-child(1){
+        width: 45px;
+    }
     .main-table colgroup :nth-child(5){
         width: 25vw;
     }
@@ -102,7 +109,7 @@
         width: 250px;
     }
     .drop-table colgroup :nth-child(6){
-        width: 100px;
+        width: 119px;
     }
     .drop-table colgroup :nth-child(7){
         width: 80px;
@@ -161,7 +168,7 @@ button a:hover {
 .main-content {
     display: flex;
     flex-grow: 1;
-    padding-top: 53.6px;
+    padding-top: 52px;
 }
 
 span.heading{
@@ -283,6 +290,7 @@ button.collapse-button i {
     background: var(--button-hover-color);
     cursor: pointer;
     border-color: #0000;
+    color: var(--webkit-text-fill-color);
 }
 .action-buttons a.delete:hover svg path {
     fill: rgb(193, 0, 0);

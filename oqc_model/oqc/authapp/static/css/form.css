@@ -14,8 +14,8 @@
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 10px;
-    background-color: #444f56;
-    color: white;
+    background-color: var(--form-bg);
+    color: var(--webkit-text-fill-color);
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.9);
 }
 
@@ -61,10 +61,16 @@ select {
     display: block;
     margin: 0 auto;
     width: 40%;
-    background-color: #182935;
+    background-color: var(--form-submit-btn-bg);
     color: white;
     border-radius: 4px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.9);
+    box-shadow: 0px 0px 5px var(--form-submit-btn-shadow);
+    border-color: #0000;
+}
+
+.btn-submit:hover {
+    background-color: var(--form-submit-btn-bg-hover);
+    border-color: #0000;
 }
 
 .form-header {
@@ -78,4 +84,9 @@ input[type=text]:focus {
 
 .form-group textarea {
     height: 90px;
+}
+
+.form-control {
+    background-color : var(--form-field-bg) !important;
+    color : var(--color) !important;
 }

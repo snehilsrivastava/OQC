@@ -7,6 +7,7 @@
     --sidebar-link-color: var(--gray-tint-50);
     --sidebar-link-active-color: var(--white-base);
     --sidebar-menu-heading-color: var(--gray-tint-30);
+    --filter-popup-bg: #494949;
     --theme-switcher-bg: #eee;
     --theme-switcher-ball: #000;
     --sun-icon-fill: #fff;
@@ -21,7 +22,12 @@
     --table-border-width: 1px;
     --table-border-style: solid; 
     --popup-color: rgb(22, 22, 22);
-    --form-color: #3f3f3f;
+    --form-field-bg: #4c4c4c;
+    --filter-field-bg: #363636;
+    --form-bg: #333;
+    --form-submit-btn-bg: #2e5a76;
+    --form-submit-btn-bg-hover: #274559;
+    --form-submit-btn-shadow: #041e2f;
     --button-color: rgb(65, 65, 65);
     --button-hover-color: rgb(80, 80, 80);
 }
@@ -29,12 +35,13 @@
 :root[data-theme="light"] {
     --main-header-bg: var(--gray-tint-80);
     --top-bar-icon-fill: var(--gray-base);
-    --sidebar-bg: rgb(255, 237, 221);
-    --sidebar-hover-bg: rgb(255, 225, 199);
-    --sidebar-link-hover: purple;
+    --sidebar-bg: #e0e7ef;
+    --sidebar-hover-bg: #bbcde1;
+    --sidebar-link-hover: black;
     --sidebar-link-color: var(--gray-tint-50);
     --sidebar-link-active-color: var(--gray-base);
     --sidebar-menu-heading-color: var(--gray-tint-50);
+    --filter-popup-bg: #e0e7ef;
     --theme-switcher-bg: #111;
     --theme-switcher-ball: #fff;
     --sun-icon-fill: #ffffff;
@@ -49,7 +56,12 @@
     --table-border-width: 1px; 
     --table-border-style: solid; 
     --popup-color: #ffffff;
-    --form-color : white;
+    --filter-field-bg: #ffffff;
+    --form-field-bg : #f3f6fa;
+    --form-bg: #e0e7ef;
+    --form-submit-btn-bg: #4172b0;
+    --form-submit-btn-bg-hover: #1b549b;
+    --form-submit-btn-shadow: #235ba1;
     --button-color: rgb(196, 196, 196);
     --button-hover-color: rgb(150, 150, 150);
 }
@@ -93,25 +105,25 @@ table th, table td {
 }
 
 .form-control {
-    background-color : var(--form-color) !important;
+    background-color : var(--form-field-bg) !important;
     color : var(--color) !important;
 }
 
 .dropdown-menu {
-    background-color : var(--form-color) !important;
+    background-color : var(--form-field-bg) !important;
     color : var(--color) !important;
 }
 
 .user-info{
-    background-color: var(--form-color);
+    background-color: var(--form-field-bg);
 }
 
 .card {
-    background-color: var(--form-color); 
+    background-color: var(--form-field-bg); 
 }
 
 textarea {
-    background-color: var(--form-color);
+    background-color: var(--form-field-bg);
 }   
 
 /* WebKit browsers (Chrome, Safari, Edge) */

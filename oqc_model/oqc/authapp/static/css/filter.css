@@ -1,5 +1,4 @@
-.date-filter,
-.status-filter {
+.date-filter, .status-filter {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -7,18 +6,16 @@
     gap: 10px;
 }
 
-.start-date,
-.end-date {
+.start-date, .end-date {
     width: 50%;
 }
 
-.PO-status,
-.L-status,
-.B-status {
+.PO-status, .L-status, .B-status {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: start;
+    width: 100%;
 }
 
 .popup {
@@ -30,7 +27,7 @@
     width: 90%;
     max-width: 500px;
     max-height: 85vh;
-    /* color: black; */
+    background-color: var(--filter-popup-bg);
     padding: 20px;
     box-shadow: 0 0 5px #fffe;
     z-index: 2;
@@ -70,8 +67,7 @@
     font-weight: bold;
 }
 
-.popup form input,
-.popup form select {
+.popup form input, .popup form select {
     /* padding: 5px; */
     font-size: 13px;
     margin-bottom: 10px;
@@ -90,4 +86,16 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1;
+}
+
+.filter-btn {
+    background-color: #2e5a76 !important;
+}
+
+.filter-btn:hover {
+    background-color: #253c4b !important;
+}
+
+.filter-form-control {
+    background-color: var(--filter-field-bg) !important;
 }
