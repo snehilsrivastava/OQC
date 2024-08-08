@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-r8&=%bkyoroxzqd+rml6h&rmspq-h@!(k29%(%8cq)rw7a@ll)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['protrackindkal.in']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
