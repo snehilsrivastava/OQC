@@ -1,6 +1,7 @@
 oqc_model/.venv/
 **/__pycache__/
 oqc_model/oqc/*.sqlite3
-oqc_model/oqc/staticfiles
+oqc_model/oqc/staticfiles/
 oqc_model/oqc/media/
 .vscode/
+oqc_model/oqc/oqc/settings.py
