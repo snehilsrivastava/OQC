@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Specification Form</title>
+    <title>Add Test Details</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/form.css' %}">
@@ -59,7 +59,7 @@
     <div class="container">
         <div class="form-container">
             <div class="form-header">
-                <h1>Product Test Detail Form</h1>
+                <h1>Add Test Details</h1>
             </div>
          
             <form action="{% url 'test_list_entry' %}" method="post">
@@ -69,9 +69,9 @@
                     <select name="Product" id="Product" class="form-control" required>
                         <option value="" selected disabled hidden>Select the Product</option>
                         <option value="AC">AC</option>
-                        <option value="washing_machine">Washing Machine</option>
-                        <option value="tv">TV</option>
-                        <option value="phone">Phone</option>
+                        <option value="Washing Machine">Washing Machine</option>
+                        <option value="TV">TV</option>
+                        <option value="Phone">Phone</option>
                     </select>
                 </div>
                 <div class="form-group">

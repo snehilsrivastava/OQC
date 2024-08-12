@@ -35,14 +35,3 @@ class TV(models.Model):
     Date = models.DateField(default=datetime.date.today)
     def __str__(self):
         return f"{self.no} - {self.Date} - {self.ModelName} "
-    
-class Product_Detail(models.Model):
-    no = models.IntegerField()
-    ProductType = models.CharField(max_length=100)
-    ModelName = models.CharField(max_length=100)
-    SerailNo = models.CharField(max_length=100)
-    TestName = models.CharField(max_length=80, default='')
-    TestStage = models.CharField(max_length=20, default='')
-    def __str__(self):
-        return f"{self.no}- {self.ProductType} - {self.SerailNo} - {self.ModelName} "
-     

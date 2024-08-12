@@ -1,9 +1,6 @@
 from django.db import models
-from authapp.models import Employee
 import datetime
-from product.models import  Product_Detail
 from ckeditor_uploader.fields import RichTextUploadingField
-from ckeditor.fields import RichTextField
 
 # Create your models here.
     

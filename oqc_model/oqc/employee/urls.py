@@ -27,6 +27,7 @@ urlpatterns = [
     path('mnf/', views.MNF, name='mnf'),
     path('test_list_entry/',views.Test_list_entry,name = 'test_list_entry'),
     path('update_test_list_entry/',views.update_test_list_entry,name = 'update_test_list_entry'),
+    path('test_details_view/', views.test_details_view, name='test_details_view'),
     path('test_protocol_entry/<str:test_name>/<str:product>/',views.test_protocol_entry,name = 'test_protocol_entry'),
     path('set_status/<int:id>/', views.set_status, name='set_status'),
     path('delete-test-record/<int:record_id>/', views.delete_test_record, name='delete_test_record'),

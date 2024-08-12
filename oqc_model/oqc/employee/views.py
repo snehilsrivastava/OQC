@@ -1031,7 +1031,7 @@ def update_test_list_entry(request):
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
 
     test_names = TestList.objects.values_list('TestName', flat=True).distinct()
-    products = Product_Detail.objects.values_list('ProductType', flat=True).distinct()
+    products = TestList.objects.values_list('Product', flat=True).distinct()
     username = request.session['username']
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
@@ -1044,3 +1044,36 @@ def update_test_list_entry(request):
         'username': username,
     }
     return render(request, 'Update_Test_list_entry.html', context)
+
+@login_required
+def test_details_view(request):
+    username = request.session['username']
+    user = Employee.objects.get(username=username)
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
+    product_filter = request.GET.get('product_filter', '')
+    testname_filter = request.GET.get('testname_filter', '')
+    products = Test_core_detail.objects.values_list('ProductType', flat=True).distinct()
+    if product_filter:
+        testnames = Test_core_detail.objects.filter(ProductType=product_filter).values_list('TestName', flat=True).distinct()
+    else:
+        testnames = Test_core_detail.objects.values_list('TestName', flat=True).distinct()
+    filtered_tests = Test_core_detail.objects.all()
+    if product_filter:
+        filtered_tests = filtered_tests.filter(ProductType=product_filter)
+    if testname_filter:
+        filtered_tests = filtered_tests.filter(TestName=testname_filter)
+
+    icon = user.first_name[0] + user.last_name[0]
+    context = {
+        'tests': filtered_tests,
+        'products': products,
+        'testnames': testnames,
+        'product_filter': product_filter,
+        'testname_filter': testname_filter,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'icon': icon,
+        'username': username,
+    }
+    return render(request, 'test_details_view.html', context)

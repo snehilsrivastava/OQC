@@ -149,6 +149,7 @@ CKEDITOR_CONFIGS = {
         'allowedContent': True,
         'width': '500px',
         'skin': 'moono-lisa',
+        'removeDialogTabs': 'image:Link;image:advanced',
         'toolbar': [
             {'items': ['Table', 'Image',]},
         ],
@@ -157,6 +158,7 @@ CKEDITOR_CONFIGS = {
         'allowedContent': True,
         'width': '650px',
         'skin': 'moono-lisa',
+        'removeDialogTabs': 'image:Link;image:advanced',
         'toolbar': [
             {'items': ['Table', 'Image',]},
         ]

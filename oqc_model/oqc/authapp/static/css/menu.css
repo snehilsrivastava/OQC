@@ -18,6 +18,20 @@
     transform: none;
 }
 
+.chevron-icon {
+    transition: transform 0.1s ease;
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+.sidebar-dropdown {
+    background-color: var(--sidebar-bg);
+    font-size: 15px;
+    width: 100%;
+}
+
 ul {
     list-style-type: none;
     margin: 0;

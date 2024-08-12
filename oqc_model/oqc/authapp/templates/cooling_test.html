@@ -243,6 +243,19 @@
 <button type="submit" class="btn btn-primary custom-btn-small">Submit</button>
 </form>
 <script>
+    CKEDITOR.on('dialogDefinition', function (ev) {
+        var dialogName = ev.data.name;
+        var dialogDefinition = ev.data.definition;
+
+        if (dialogName == 'image') {
+            var infoTab = dialogDefinition.getContents('info');
+            infoTab.remove('txtAlt');
+            infoTab.remove('txtBorder');
+            infoTab.remove('txtHSpace');
+            infoTab.remove('txtVSpace');
+        }
+    });
+
     const addPageButton = document.getElementById("addPageButton");
     const additionalDetails = document.querySelector(".additional_details"); // Use querySelector for class
 
