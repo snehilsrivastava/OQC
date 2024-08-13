@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     {% load static%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes">
-    <title>View Test Details</title>
+    <title>View Model Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
@@ -58,7 +58,7 @@
     <div class="main-content">
         <div class="content">
             <div style="padding: 10px 20px 0px 20px;">
-                <h1>Test Details</h1>
+                <h1>Model Details</h1>
                 <form method="GET">
                     <div class="inline">
                         <label for="product_filter">Product:</label>
@@ -72,12 +72,12 @@
                         </select>
                     </div>
                     <div class="inline">
-                        <label for="testname_filter">Test Name:</label>
-                        <select class="filter-dropdown" name="testname_filter" onchange="this.form.submit()">
-                            <option value="">All Test Names</option>
-                            {% for testname in testnames %}
-                                <option value="{{ testname }}" {% if testname == request.GET.testname_filter %}selected{% endif %}>
-                                    {{ testname }}
+                        <label for="model_filter">Model Name:</label>
+                        <select class="filter-dropdown" name="model_filter" onchange="this.form.submit()">
+                            <option value="">All Models</option>
+                            {% for modelname in modelnames %}
+                                <option value="{{ modelname }}" {% if model == request.GET.model_filter %}selected{% endif %}>
+                                    {{ modelname }}
                                 </option>
                             {% endfor %}
                         </select>
@@ -90,34 +90,34 @@
                     <thead>
                         <tr>
                             {% if not product_filter %}
-                            <th>Product Type</th>
+                            <th>Product</th>
                             {% endif %}
-                            {% if not testname_filter %}
-                            <th>Test Name</th>
+                            {% if not model_filter %}
+                            <th>Model No.</th>
                             {% endif %}
-                            <th>Objective</th>
-                            <th>Standard</th>
-                            <th>Condition</th>
-                            <th>Procedure</th>
-                            <th>Judgement</th>
-                            <th>Instrument</th>
+                            <th>Customer</th>
+                            <th>Manufacturer</th>
+                            <th>Location</th>
+                            <th>Brand</th>
+                            <th>Brand Model No.</th>
+                            <th>ODM Model No.</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for test in tests %}
+                        {% for model in models %}
                         <tr>
                             {% if not product_filter %}
-                            <td>{{ test.ProductType }}</td>
+                            <td>{{ model.Product }}</td>
                             {% endif %}
-                            {% if not testname_filter %}
-                            <td>{{ test.TestName }}</td>
+                            {% if not model_filter %}
+                            <td>{{ model.Indkal_model_no }}</td>
                             {% endif %}
-                            <td>{{ test.Test_Objective }}</td>
-                            <td>{{ test.Test_Standard }}</td>
-                            <td>{{ test.Test_Condition }}</td>
-                            <td>{{ test.Test_Procedure }}</td>
-                            <td>{{ test.Judgement }}</td>
-                            <td>{{ test.Instrument }}</td>
+                            <td>{{ model.Customer }}</td>
+                            <td>{{ model.Manufacture }}</td>
+                            <td>{{ model.Location }}</td>
+                            <td>{{ model.Brand }}</td>
+                            <td>{{ model.Brand_model_no }}</td>
+                            <td>{{ model.ODM_model_no }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

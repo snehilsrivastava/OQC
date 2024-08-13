@@ -25,6 +25,7 @@ urlpatterns = [
     path('brand_view/<str:test_name>/<str:model_name>/<str:serialno>/', views.brand_view, name='brand_view'),
     path('cooling/<str:test_name>/<str:model_name>/<str:serialno>/', views.cooling, name='cooling'),
     path('mnf/', views.MNF, name='mnf'),
+    path('model_details_view/', views.model_details_view, name='model_details_view'),
     path('test_list_entry/',views.Test_list_entry,name = 'test_list_entry'),
     path('update_test_list_entry/',views.update_test_list_entry,name = 'update_test_list_entry'),
     path('test_details_view/', views.test_details_view, name='test_details_view'),

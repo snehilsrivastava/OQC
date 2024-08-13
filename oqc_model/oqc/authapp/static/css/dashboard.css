@@ -12,7 +12,7 @@
     }
     .table-containers {
         margin-top: -10px;
-        max-width: 85vw;
+        max-width: 100vw;
         overflow-x: scroll !important;
         -webkit-overflow-scrolling: touch;
     }
@@ -175,6 +175,8 @@ span.heading{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px 20px 0px 20px;
+    width: calc(100% - 25px) !important;
 }
 
 span.heading a {
@@ -187,7 +189,7 @@ span.heading a {
 
 .content {
     flex-grow: 1;
-    padding: 20px;
+    /* padding: 20px; */
     color: var(--webkit-text-fill-color);
 }
 
@@ -205,8 +207,9 @@ span.heading a {
 }
 
 table {
-    width: 100%;
+    width: calc(100% - 40px) !important;
     border-collapse: collapse;
+    margin: 20px;
     margin-top: 20px;
     color: var(--webkit-text-fill-color) !important;
     /* overflow-x: auto; */
@@ -404,4 +407,11 @@ button.collapse-button i {
 .dropdown-item {
     color: var(--webkit-text-fill-color);
     font-size: 16px;
+}
+
+.table-containers {
+    width: 100vw;
+    margin-right: 25px;
+    overflow-x: scroll !important;
+    -webkit-overflow-scrolling: touch;
 }

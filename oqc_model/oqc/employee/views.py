@@ -880,6 +880,46 @@ def MNF(request):
     return render(request, 'productMNFdetail.html',context)
 
 @login_required
+def model_details_view(request):
+    username = request.session['username']
+    user = Employee.objects.get(username=username)
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
+    if 'clear_filters' in request.GET:
+        return redirect('model_details_view')
+    product_filter = request.GET.get('product_filter', '')
+    model_filter = request.GET.get('model_filter', '')
+    products = Model_MNF_detail.objects.values_list('Product', flat=True).distinct()
+    if product_filter:
+        models = Model_MNF_detail.objects.filter(Product=product_filter).values_list('Indkal_model_no', flat=True).distinct()
+    else:
+        models = Model_MNF_detail.objects.values_list('Indkal_model_no', flat=True).distinct()
+    filtered_models = Model_MNF_detail.objects.all()
+    if product_filter:
+        filtered_models = filtered_models.filter(Product=product_filter)
+        if model_filter and not Model_MNF_detail.objects.filter(Product=product_filter, Indkal_model_no=model_filter).exists():
+            model_filter = ''
+            query_params = request.GET.copy()
+            query_params['model_filter'] = ''
+            return redirect(f"{request.path}?{query_params.urlencode()}")
+    if model_filter:
+        filtered_models = filtered_models.filter(Indkal_model_no=model_filter)
+
+    icon = user.first_name[0] + user.last_name[0]
+    context = {
+        'modelnames': models,
+        'products': products,
+        'models': filtered_models,
+        'product_filter': product_filter,
+        'model_filter': model_filter,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'icon': icon,
+        'username': username,
+    }
+    return render(request, 'model_details_view.html', context)
+
+@login_required
 def Test_list_entry(request):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'owner' and not user.is_superuser:
@@ -1054,7 +1094,7 @@ def test_details_view(request):
     if 'clear_filters' in request.GET:
         return redirect('test_details_view')
     product_filter = request.GET.get('product_filter', '')
-    testname_filter = request.GET.get('testname_filter', '')
+    model_filter = request.GET.get('model_filter', '')
     products = Test_core_detail.objects.values_list('ProductType', flat=True).distinct()
     if product_filter:
         testnames = Test_core_detail.objects.filter(ProductType=product_filter).values_list('TestName', flat=True).distinct()
@@ -1063,13 +1103,13 @@ def test_details_view(request):
     filtered_tests = Test_core_detail.objects.all()
     if product_filter:
         filtered_tests = filtered_tests.filter(ProductType=product_filter)
-        if testname_filter and not Test_core_detail.objects.filter(ProductType=product_filter, TestName=testname_filter).exists():
-            testname_filter = ''
+        if model_filter and not Test_core_detail.objects.filter(ProductType=product_filter, TestName=model_filter).exists():
+            model_filter = ''
             query_params = request.GET.copy()
-            query_params['testname_filter'] = ''
+            query_params['model_filter'] = ''
             return redirect(f"{request.path}?{query_params.urlencode()}")
-    if testname_filter:
-        filtered_tests = filtered_tests.filter(TestName=testname_filter)
+    if model_filter:
+        filtered_tests = filtered_tests.filter(TestName=model_filter)
 
     icon = user.first_name[0] + user.last_name[0]
     context = {
@@ -1077,7 +1117,7 @@ def test_details_view(request):
         'products': products,
         'testnames': testnames,
         'product_filter': product_filter,
-        'testname_filter': testname_filter,
+        'model_filter': model_filter,
         'first_name': user.first_name,
         'last_name': user.last_name,
         'icon': icon,
