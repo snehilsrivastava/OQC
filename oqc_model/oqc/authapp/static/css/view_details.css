@@ -1,0 +1,55 @@
+@import url('color_pallette.css');
+
+.filter-dropdown {
+    color: var(--webkit-text-fill-color);
+    background-color: var(--form-field-bg);
+    border-radius: 5px;
+    border-width: 1px;
+    padding-left: 9px;
+}
+
+@media only screen and (min-device-width: 600px) {
+    form {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .filter-dropdown {
+        width: 200px;
+        margin: 0 10px;
+    }
+}
+
+@media only screen and (max-device-width: 600px) {
+    .table-containers {
+        /* margin-top: -10px; */
+        max-width: 85vw;
+        overflow-x: scroll !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .inline {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    label {
+        margin: 0 5px;
+    }
+
+    .filter-dropdown {
+        width: 200px;
+        align-content: flex-end;
+    }
+
+    .clear-btn {
+        align-self: center;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+}

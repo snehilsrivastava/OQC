@@ -2,7 +2,7 @@ from datetime import date
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
-from django.http import Http404
+from django.http import Http404, QueryDict
 from .forms import *
 from .models import *
 from .renderers import *
@@ -1051,6 +1051,8 @@ def test_details_view(request):
     user = Employee.objects.get(username=username)
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
+    if 'clear_filters' in request.GET:
+        return redirect('test_details_view')
     product_filter = request.GET.get('product_filter', '')
     testname_filter = request.GET.get('testname_filter', '')
     products = Test_core_detail.objects.values_list('ProductType', flat=True).distinct()
@@ -1061,6 +1063,11 @@ def test_details_view(request):
     filtered_tests = Test_core_detail.objects.all()
     if product_filter:
         filtered_tests = filtered_tests.filter(ProductType=product_filter)
+        if testname_filter and not Test_core_detail.objects.filter(ProductType=product_filter, TestName=testname_filter).exists():
+            testname_filter = ''
+            query_params = request.GET.copy()
+            query_params['testname_filter'] = ''
+            return redirect(f"{request.path}?{query_params.urlencode()}")
     if testname_filter:
         filtered_tests = filtered_tests.filter(TestName=testname_filter)
 

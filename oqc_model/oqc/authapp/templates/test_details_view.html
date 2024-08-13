@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     {% load static%}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes">
     <title>View Test Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/header.css' %}">
-    <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-
+    <link rel="stylesheet" href="{% static 'css/view_details.css' %}">
 </head>
 <body>
     <div class="header">
@@ -61,25 +59,31 @@
         <div class="content">
             <h1>Test Details</h1>
             <form method="GET">
-                <select name="product_filter" onchange="this.form.submit()">
-                    <option value="">All Products</option>
-                    {% for product in products %}
-                        <option value="{{ product }}" {% if product == request.GET.product_filter %}selected{% endif %}>
-                            {{ product }}
-                        </option>
-                    {% endfor %}
-                </select>
-            
-                <select name="testname_filter" onchange="this.form.submit()">
-                    <option value="">All Test Names</option>
-                    {% for testname in testnames %}
-                        <option value="{{ testname }}" {% if testname == request.GET.testname_filter %}selected{% endif %}>
-                            {{ testname }}
-                        </option>
-                    {% endfor %}
-                </select>
+                <div class="inline">
+                    <label for="product_filter">Product:</label>
+                    <select class="filter-dropdown" name="product_filter" onchange="this.form.submit()">
+                        <option value="">All Products</option>
+                        {% for product in products %}
+                            <option value="{{ product }}" {% if product == request.GET.product_filter %}selected{% endif %}>
+                                {{ product }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="inline">
+                    <label for="testname_filter">Test Name:</label>
+                    <select class="filter-dropdown" name="testname_filter" onchange="this.form.submit()">
+                        <option value="">All Test Names</option>
+                        {% for testname in testnames %}
+                            <option value="{{ testname }}" {% if testname == request.GET.testname_filter %}selected{% endif %}>
+                                {{ testname }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="clear-btn" name="clear_filters" value="true">Clear</button>
             </form>
-            <div class="table-container">
+            <div class="table-containers">
                 <table>
                     <thead>
                         <tr>
@@ -115,7 +119,7 @@
                         </tr>
                         {% endfor %}
                     </tbody>
-                </table>                
+                </table>    
             </div>
         </div>
     </div>
