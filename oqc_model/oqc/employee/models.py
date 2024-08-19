@@ -17,11 +17,10 @@ class Model_MNF_detail(models.Model):
     def __str__(self):
         return f"{self.Product} - {self.Indkal_model_no}"
 
-
-
 class Test_core_detail(models.Model):
     ProductType = models.CharField(max_length=500,default='None')
     TestName =  models.CharField(max_length=500,default='None')
+    TestStage = models.CharField(max_length=20,default='None')
     Test_Objective = models.CharField(max_length=500,default='None')
     Test_Standard = models.CharField(max_length=500,default='None')
     Test_Condition = models.TextField(max_length=500,default='None')
@@ -56,12 +55,3 @@ class TestRecord(models.Model):
 
     def __str__(self):
         return f"{self.SerailNo}"
-
-
-class TestList(models.Model):
-    TestStage = models.CharField(max_length=20,default='None')
-    Product = models.CharField(max_length=35,default='None')
-    TestName = models.CharField(max_length=80,default='None')
-
-    def __str__(self):
-     return f"{self.Product} - {self.TestName}"

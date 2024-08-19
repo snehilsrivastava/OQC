@@ -297,14 +297,14 @@
                 }
             } else if (selectedTestStage === "") {
                 // If only product type is selected, filter by product type
-                if (item.Product === selectedProductType) {
+                if (item.ProductType === selectedProductType) {
                     const option = document.createElement("option");
                     option.text = item.TestName;
                     testNameDropdown.appendChild(option);
                 }
             } else {
                 // If both product type and test stage are selected, filter by both
-                if (item.Product === selectedProductType && (
+                if (item.ProductType === selectedProductType && (
                     (s[0] === '1' && selectedTestStage === "DVT") ||
                     (s[1] === '1' && selectedTestStage === "PP") ||
                     (s[2] === '1' && selectedTestStage === "MP") ||

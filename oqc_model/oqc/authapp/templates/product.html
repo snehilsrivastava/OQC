@@ -64,11 +64,11 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="ProductType">Product Type:</label>
-                    <select class="form-control" id="ProductType" name="ProductType" onchange="populateModels(); populateTestName();" required>
+                    <select class="form-control" id="ProductType" name="ProductType" onchange="populateTestName(); populateModels();" required>
                         <option value="TV">TV</option>
                         <option value="AC">AC</option>
                         <option value="Phone">Phone</option>
-                        <option value="Washing_Machine">Washing Machine</option>
+                        <option value="Washing Machine">Washing Machine</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -151,18 +151,21 @@
             testNameDropdown.innerHTML = "";
 
             testDetail.forEach(item => {
-                if (item.Product === selectedProductType) {
-                        const s = item.TestStage;
-                        if (s[0] === '1' && selectedTestStage === "DVT" ||
-                                s[1] === '1' && selectedTestStage === "PP" ||
-                                s[2] === '1' && selectedTestStage === "MP" ||
-                                s[3] === '1' && selectedTestStage === "PDI") {
-                                const option = document.createElement("option");
-                                option.text = item.TestName;
-                                testNameDropdown.appendChild(option);
+                console.log(item.ProductType);
+                console.log(selectedProductType);
+                if (item.ProductType === selectedProductType) {
+                    
+                    const s = item.TestStage;
+                    if (s[0] === '1' && selectedTestStage === "DVT" ||
+                        s[1] === '1' && selectedTestStage === "PP" ||
+                        s[2] === '1' && selectedTestStage === "MP" ||
+                        s[3] === '1' && selectedTestStage === "PDI") {
+                            const option = document.createElement("option");
+                            option.text = item.TestName;
+                            testNameDropdown.appendChild(option);
                         }
                 }
-        });
+            });
         }
 
         document.addEventListener("DOMContentLoaded", function() {

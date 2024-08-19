@@ -167,7 +167,6 @@ def employee_dashboard(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
-    test = list(TestList.objects.all().values())
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
@@ -184,7 +183,6 @@ def employee_dashboard(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'test': test,
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
@@ -283,7 +281,6 @@ def dashboard(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
-    test = list(TestList.objects.all().values())
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
@@ -307,7 +304,6 @@ def dashboard(request):
         'last_name': employee.last_name,
         'icon': icon,
         'username': username,
-        'test': test,
         'status_color' : status_color,
         'role_letter': role_letter
     }
@@ -681,7 +677,6 @@ def legal_dashboard(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
-    test = list(TestList.objects.all().values())
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
@@ -702,7 +697,6 @@ def legal_dashboard(request):
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
-        'test' : test,
         'username': username
     }
     return render(request, "dashboard_legal.html", context)
@@ -746,7 +740,6 @@ def brand_dashboard(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
-    test = list(TestList.objects.all().values())
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
@@ -767,7 +760,6 @@ def brand_dashboard(request):
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
-        'test' : test,
         'username': username
     }
     return render(request, "dashboard_brand.html", context)
@@ -956,13 +948,17 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
-
-        new_test = TestList(
-            TestStage=s1,
-            Product=product,
-            TestName=testName,
-        )
-        new_test.save()
+        existing_test = Test_core_detail.objects.filter(TestName=testName, Product=product).first()
+        if existing_test:
+            existing_test.TestStage = s1
+            existing_test.save()
+        else:
+            new_test = Test_core_detail(
+                TestStage=s1,
+                Product=product,
+                TestName=testName,
+            )
+            new_test.save()
 
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
     
@@ -1000,10 +996,10 @@ def test_protocol_entry(request, test_name, product):
             existing_test.Judgement=judgement
             existing_test.Instrument=instrument
             existing_test.save()
-            messages.success(request, 'Test protocols updated.')
+            messages.success(request, 'Test protocols added.')
             return redirect('/dashboard/')  
 
-        # Create and save the new Test_core_detail instance
+        # never going to be executed ?
         test_detail = Test_core_detail(
             ProductType=product,
             TestName=test_name,
@@ -1013,9 +1009,10 @@ def test_protocol_entry(request, test_name, product):
             Test_Procedure=testprocedure,
             Judgement=judgement,
             Instrument=instrument,
+            TestStage="1111",
         )
         test_detail.save()
-        messages.success(request, 'Test protocols added.')
+        messages.success(request, 'Test protocols added!')
         return redirect('/dashboard/')
 
     username = request.session['username']
@@ -1046,7 +1043,7 @@ def update_test_list_entry(request):
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
         # Check if a test with the same name already exists
-        existing_test = TestList.objects.filter(TestName=testName, Product=product).first()
+        existing_test = Test_core_detail.objects.filter(TestName=testName, Product=product).first()
         s1 = ""
         if "DVT" in testStages:
             s1 += "1"
@@ -1070,8 +1067,8 @@ def update_test_list_entry(request):
             existing_test.save()
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
 
-    test_names = TestList.objects.values_list('TestName', flat=True).distinct()
-    products = TestList.objects.values_list('Product', flat=True).distinct()
+    test_names = Test_core_detail.objects.values_list('TestName', flat=True).distinct()
+    products = Model_MNF_detail.objects.values_list('ProductType', flat=True).distinct()
     username = request.session['username']
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]

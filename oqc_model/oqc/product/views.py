@@ -1,11 +1,9 @@
 from django.shortcuts import render,redirect
 from .models import *
-from django.http import HttpResponse
-from employee.models import TestRecord
-from django.shortcuts import render, HttpResponse
+from employee.models import TestRecord, Test_core_detail
+from django.shortcuts import render
 from .models import TV, AC, Phone, Washing_Machine
 from django.urls import reverse
-from employee.models import TestList
 from authapp.models import Employee
 
 def login_required(view_func):
@@ -51,7 +49,7 @@ def product_form_view(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
     user = request.session['username']
-    test = list(TestList.objects.values('Product', 'TestStage', 'TestName'))
+    test = list(Test_core_detail.objects.values('ProductType', 'TestStage', 'TestName'))
     username = request.session['username']
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
