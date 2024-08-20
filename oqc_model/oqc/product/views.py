@@ -47,7 +47,7 @@ def product_form_view(request):
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     user = request.session['username']
     test = list(Test_core_detail.objects.values('ProductType', 'TestStage', 'TestName'))
     username = request.session['username']

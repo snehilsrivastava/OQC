@@ -75,7 +75,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'qms-database',
         'USER': 'protrack',
-        'PASSWORD': 'Protrack2024',
+        'PASSWORD': 'Protrack#2024',
         'HOST': 'qms-database.cx2su2waigj7.ap-south-1.rds.amazonaws.com',
         'PORT': '5432',
     }
