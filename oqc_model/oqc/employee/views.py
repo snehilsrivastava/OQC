@@ -166,7 +166,7 @@ def employee_dashboard(request):
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
@@ -280,7 +280,7 @@ def dashboard(request):
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
@@ -676,7 +676,7 @@ def legal_dashboard(request):
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
@@ -739,7 +739,7 @@ def brand_dashboard(request):
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(Washing_Machine.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
@@ -859,15 +859,17 @@ def MNF(request):
             return render(request, 'AC.html', context)
         else:
             return redirect('/access_denied/')
-       
+    
     username = request.session['username']
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
+    products = Test_core_detail.objects.values_list('ProductType', flat=True).distinct()
     context = {
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
         'username': username,
+        'products': products,
     }
     return render(request, 'productMNFdetail.html',context)
 

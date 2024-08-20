@@ -15,23 +15,23 @@ class AC(models.Model):
     Capilary = models.CharField(max_length=100,default='')
     Compressor  = models.CharField(max_length=100,default='')
 
-class Washing_Machine(models.Model):
-    no = models.IntegerField()
-    ModelName = models.CharField(max_length=100)
-    Date = models.DateField(default=datetime.date.today)
+class WM_FATL(models.Model):
+    ModelName = models.CharField(max_length=100,default='')
+    Type =  models.CharField(max_length=100,default='Fully Automatic Top Load Washing Machine')
+    RatedCapacity = models.CharField(max_length=100,default='')
+    RatedPower = models.CharField(max_length=100,default='')
+    RatedSupply = models.CharField(max_length=100,default='')
+    RatedFrequency = models.CharField(max_length=100,default='')
+    RatedRPM = models.CharField(max_length=100,default='')
     def __str__(self):
-        return f"{self.no} - {self.Date} - {self.ModelName} "
+        return f"{self.ModelName} - {self.Type}"
     
 class Phone(models.Model):
-    no = models.IntegerField()
     ModelName = models.CharField(max_length=100)
-    Date = models.DateField(default=datetime.date.today)
     def __str__(self):
-        return f"{self.no} - {self.Date} - {self.ModelName} "
+        return f"{self.ModelName} "
     
 class TV(models.Model):
-    no = models.IntegerField()
     ModelName = models.CharField(max_length=100)
-    Date = models.DateField(default=datetime.date.today)
     def __str__(self):
-        return f"{self.no} - {self.Date} - {self.ModelName} "
+        return f"{self.ModelName} "
