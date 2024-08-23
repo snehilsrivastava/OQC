@@ -25,37 +25,6 @@ def login_required(view_func):
         return redirect(f"{login_url}?next={next_page}" if next_page else login_url)
     return wrapper
 
-# @receiver(post_save, sender=LogEntry)
-# def employee_user_type_changed(sender, instance, created, **kwargs):
-#     latest_entry = LogEntry.objects.order_by('-action_time').first()
-#     if latest_entry.action_flag != 2:
-#         return
-#     change_msg = latest_entry.change_message
-#     change_msg = change_msg.split("\": [")[1].split("\"")
-#     if "User type" not in change_msg:
-#         return
-#     name = Employee.objects.get(username=latest_entry.object_repr)
-
-#     subject = 'Account approved'
-#     from_email = settings.EMAIL_HOST_USER
-#     to = [latest_entry.object_repr]
-
-#     text_content = ''
-#     html_content = f"""
-#     <html>
-#     <body>
-#         <p>
-#             Hi {name.first_name} {name.last_name},<br><br>
-#             Your account has been approved for {name.user_type} access.<br><br>
-#             Click <a href="http://protrackindkal.in/au/login" target="_blank">here</a> to go to login page.
-#         </p>
-#     </body>
-#     </html>
-#     """
-#     msg = EmailMultiAlternatives(subject, text_content, from_email, to)
-#     msg.attach_alternative(html_content, "text/html")
-#     msg.send()
-
 # Define custom authenticate function which uses Employee DB
 def authenticate(username=None, password=None):
     login_user = Employee.objects.get(username=username)
@@ -180,7 +149,7 @@ def register_page(request):
 
                 subject = 'New account approval'
                 from_email = settings.EMAIL_HOST_USER
-                to = ["protrack@indkal.com"]
+                to = ["qmsindkal@gmail.com"]
 
                 text_content = 'This is an important message.'
                 html_content = f"""
@@ -307,6 +276,6 @@ def change_user_type(request, username, user_type):
     """
     msg = EmailMultiAlternatives(subject, text_content, from_email, to)
     msg.attach_alternative(html_content, "text/html")
-    # msg.send()
+    msg.send()
     messages.success(request, 'User type changed successfully.')
     return redirect('/au/admin/')

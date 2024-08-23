@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Cooling Test Form</title>
+    <title>Report Form</title>
     <style>
         .page_break {
             page-break-before: always;
@@ -56,215 +56,367 @@
 <div style="margin: 20px;"></div>
 <table>
     <tbody>
-        <tr>
-            <td style="width:96.4pt;height:5.8pt;">
-                <strong><span class="row_header">Test Objective</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;height:5.8pt;">
-                <span>{{TestProtocol.Test_Objective}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;">
-                <strong><span class="row_header">Model No.</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;">
-                <span>{{model.ModelName}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;">
-                <strong><span class="row_header">Sample Quantity</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;">
-                <span>{{test.sample_quantiy}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;">
-                <strong><span class="row_header">Serial No.</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;">
-                <span>{{test.SerailNo}}</span>
-               
-            </td>
-        </tr>
-        {% if test.verification %}
-        <tr>
-            <td rowspan="9" style="width:96.4pt;">
-                <strong><span class="row_header">Set Details</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;">
-                <span>Report verification Date: {{test.test_date|date:"d/m/Y"}}</span>
-            </td>
-        </tr>
-        {% else %}
-        <tr>
-            <td rowspan="9" style="width:96.4pt;">
-                <strong><span class="row_header">Set Details</span></strong>
-            </td>
-            <td colspan="2" style="width:207.0pt;">
-                <span>Start Date: {{test.test_start_date|date:"d/m/Y"}}</span>
-            </td>
-            <td colspan="2" style="width:203.65pt;">
-                <span>End Date: {{test.test_end_date|date:"d/m/Y"}}</span>
-            </td>
-        </tr>
+        {% if testdetail.ProductType == 'AC' %}
+            <tr>
+                <td style="max-width: 110px;">
+                    <strong><span class="row_header">Test Objective</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{ TestProtocol.Test_Objective }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Model No.</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{ model.ModelName }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Sample Quantity</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{ test.sample_quantiy }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Serial No.</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{ test.SerailNo }}</span>
+                </td>
+            </tr>
+            {% if testdetail.verification %}
+            <tr>
+                <td rowspan="9">
+                    <strong><span class="row_header">Set Details</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>Report verification Date: {{testdetail.test_date|date:"d/m/Y"}}</span>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td rowspan="9">
+                    <strong><span class="row_header">Set Details</span></strong>
+                </td>
+                <td colspan="2">
+                    <span>Start Date: {{testdetail.test_start_date|date:"d/m/Y"}}</span>
+                </td>
+                <td colspan="2">
+                    <span>End Date: {{testdetail.test_end_date|date:"d/m/Y"}}</span>
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td colspan="2">
+                    <span>Indoor unit details</span>
+                </td>
+                <td colspan="2">
+                    <span>Outdoor unit details</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Model</span>
+                </td>
+                <td>
+                    <span>{{model.ModelName}}</span>
+                </td>
+                <td>
+                    <span>Model</span>
+                </td>
+                <td>
+                    <span>{{model.ModelName}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>S.</span><span>N</span><span>o</span><span>.</span>
+                </td>
+                <td>
+                    <span>N/A</span>
+                </td>
+                <td>
+                    <span>S.</span><span>N</span><span>o</span><span>.</span>
+                </td>
+                <td>
+                    <span>N/A</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Bl. Motor</span>
+                </td>
+                <td>
+                    <span>{{model.BImotor}}</span>
+                </td>
+                <td>
+                    <span>Compressor</span>
+                </td>
+                <td>
+                    <span>{{model.Compressor}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Blower</span>
+                </td>
+                <td>
+                    <span>{{model.Blower}}</span>
+                </td>
+                <td>
+                    <span>Fan motor</span>
+                </td>
+                <td>
+                    <span>{{model.FanMotor}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Eva. Coil</span>
+                </td>
+                <td>
+                    <span>{{model.Eva}}</span>
+                </td>
+                <td>
+                    <span>Fan</span>
+                </td>
+                <td>
+                    <span>{{model.Fan}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Conn. Pipe</span>
+                </td>
+                <td>
+                    <span>{{model.ConPipe}}</span>
+                </td>
+                <td>
+                    <span>Cond. Coil</span>
+                </td>
+                <td>
+                    <span>{{model.CondCoil}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Ref. Charge</span>
+                </td>
+                <td>
+                    <span>{{model.RefCharge}}</span>
+                </td>
+                <td>
+                    <span>Capillary tube</span>
+                </td>
+                <td>
+                    <span>{{model.Capilary}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Test Standard</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{TestProtocol.Test_Standard}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Test Condition</span></strong>
+                </td>
+                <td colspan="4">
+                    <span> {{TestProtocol.Test_Condition|linebreaksbr }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Test Procedure</span></strong>
+                </td>
+                <td colspan="4">
+                    <span> {{TestProtocol.Test_Procedure|linebreaksbr }}</span> 
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Judgement Criteria</span></strong>
+                </td>
+                <td colspan="4">
+                    <span> {{TestProtocol.Judgement|linebreaksbr }}</span>  
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Instrument / Equipment used</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{TestProtocol.Instrument}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="4">
+                    <strong><span class="row_header">Result &amp; Conclusion</span></strong>
+                </td>
+                <td colspan="4">
+                    <span>{{test.result|safe}}</span>
+                </td>
+            </tr>
+        {% elif testdetail.ProductType == 'WM - FATL' %}
+            <tr>
+                <td style="width: 110px;">
+                    <strong><span class="row_header">Test Objective</span></strong>
+                </td>
+                <td colspan="2">
+                    <span>{{ TestProtocol.Test_Objective }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Model No.</span></strong>
+                </td>
+                <td colspan="2">
+                    <span>{{ model.ModelName }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Sample Quantity</span></strong>
+                </td>
+                <td colspan="2">
+                    <span>{{ test.sample_quantiy }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Serial No.</span></strong>
+                </td>
+                <td colspan="2">
+                    <span>{{ test.SerailNo }}</span>
+                </td>
+            </tr>
+            {% if testdetail.verification %}
+            <tr>
+                <td rowspan="7">
+                    <strong><span class="row_header">Set Details</span></strong>
+                </td>
+                <td colspan="2">
+                    <span>Report verification Date: {{testdetail.test_date|date:"d/m/Y"}}</span>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td rowspan="7">
+                    <strong><span class="row_header">Set Details</span></strong>
+                </td>
+                <td>
+                    <span>Test Start Date: {{testdetail.test_start_date|date:"d/m/Y"}}</span>
+                </td>
+                <td>
+                    <span>Test End Date: {{testdetail.test_end_date|date:"d/m/Y"}}</span>
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>
+                    <span>Type</span>
+                </td>
+                <td>
+                    <span>Fully Automatic Top Load Washing Machine</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Rated Capacity</span>
+                </td>
+                <td>
+                    <span>{{model.RatedCapacity}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Rated Power</span>
+                </td>
+                <td>
+                    <span>{{model.RatedPower}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Rated Supply</span>
+                </td>
+                <td>
+                    <span>{{model.RatedSupply}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Rated Frequency</span>
+                </td>
+                <td>
+                    <span>{{model.RatedFrequency}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>RatedRPM</span>
+                </td>
+                <td>
+                    <span>{{model.RatedRPM}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Test Standard</span></strong>
+                </td>
+                <td colspan="2">
+                    <span>{{TestProtocol.Test_Standard}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Test Condition</span></strong>
+                </td>
+                <td colspan="2">
+                    <span> {{TestProtocol.Test_Condition|linebreaksbr }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Test Procedure</span></strong>
+                </td>
+                <td colspan="2">
+                    <span> {{TestProtocol.Test_Procedure|linebreaksbr }}</span> 
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Judgement Criteria</span></strong>
+                </td>
+                <td colspan="2">
+                    <span> {{TestProtocol.Judgement|linebreaksbr }}</span>  
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong><span class="row_header">Instrument / Equipment used</span></strong>
+                </td>
+                <td colspan="2">
+                    <span>{{TestProtocol.Instrument}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    <strong><span class="row_header">Result &amp; Conclusion</span></strong>
+                </td>
+                <td colspan="2">
+                    <span>{{test.result}}</span>
+                </td>
+            </tr>
         {% endif %}
-        <tr>
-            <td colspan="2" style="width:207.0pt;">
-                <span>Indoor unit details</span>
-            </td>
-            <td colspan="2" style="width:203.65pt;">
-                <span>Outdoor unit details</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt; ">
-                <span>Model</span>
-            </td>
-            <td style="width:148.1pt;">
-                <span>{{model.ModelName}}</span>
-            </td>
-            <td style="width:75.6pt;">
-                <span>Model</span>
-            </td>
-            <td style="width:128.05pt;">
-                <span>{{model.ModelName}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt; ">
-                <span>S.</span><span>N</span><span>o</span><span>.</span>
-            </td>
-            <td style="width:148.1pt;">
-                <span>N/A</span>
-            </td>
-            <td style="width:75.6pt;">
-                <span>S.</span><span>N</span><span>o</span><span>.</span>
-            </td>
-            <td style="width:128.05pt;">
-                <span>N/A</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt; ">
-                <span>Bl. Motor</span>
-            </td>
-            <td style="width:148.1pt;">
-                <span>{{model.BImotor}}</span>
-            </td>
-            <td style="width:75.6pt;">
-                <span>Compressor</span>
-            </td>
-            <td style="width:128.05pt;">
-                <span>{{model.Compressor}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt; ">
-                <span>Blower</span>
-            </td>
-            <td style="width:148.1pt;">
-                <span>{{model.Blower}}</span>
-            </td>
-            <td style="width:75.6pt;">
-                <span>Fan motor</span>
-            </td>
-            <td style="width:128.05pt;">
-                <span>{{model.FanMotor}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt; ">
-                <span>Eva. Coil</span>
-            </td>
-            <td style="width:148.1pt;">
-                <span>{{model.Eva}}</span>
-            </td>
-            <td style="width:75.6pt;">
-                <span>Fan</span>
-            </td>
-            <td style="width:128.05pt;">
-                <span>{{model.Fan}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt; ">
-                <span>Conn. Pipe</span>
-            </td>
-            <td style="width:148.1pt;">
-                <span>{{model.ConPipe}}</span>
-            </td>
-            <td style="width:75.6pt;">
-                <span>Cond. Coil</span>
-            </td>
-            <td style="width:128.05pt;">
-                <span>{{model.CondCoil}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:58.9pt; ">
-                <span>Ref. Charge</span>
-            </td>
-            <td style="width:148.1pt;">
-                <span>{{model.RefCharge}}</span>
-            </td>
-            <td style="width:75.6pt;">
-                <span>Capillary tube</span>
-            </td>
-            <td style="width:128.05pt;">
-                <span>{{model.Capilary}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;">
-                <strong><span class="row_header">Test Standard</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;">
-                <span>{{TestProtocol.Test_Standard}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;">
-                <strong><span class="row_header">Test Condition</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;">
-                <span> {{TestProtocol.Test_Condition|linebreaksbr }}</span>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;">
-                <strong><span class="row_header">Test Procedure</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;">
-                <span> {{TestProtocol.Test_Procedure|linebreaksbr }}</span> 
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;">
-                <strong><span class="row_header">Judgement Criteria</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;">
-                <span> {{TestProtocol.Judgement|linebreaksbr }}</span>  
-            </td>
-        </tr>
-        <tr>
-            <td style="width:96.4pt;height:14.35pt;">
-                <strong><span class="row_header">Instrument / Equipment used</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;height:14.35pt;">
-                <span>{{TestProtocol.Instrument}}</span>
-            </td>
-        </tr>
-        <tr>
-            <td rowspan="2" style="width:96.4pt;height:12.5pt;">
-                <strong><span class="row_header">Result &amp; Conclusion</span></strong>
-            </td>
-            <td colspan="4" style="width:410.65pt;height:12.5pt;">
-                <span>{{test.result|safe}}</span>
-            </td>
-        </tr>
     </tbody>
 </table>
 

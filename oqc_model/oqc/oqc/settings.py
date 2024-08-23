@@ -101,13 +101,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # OTP Email
+# temporarily using gmail account
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = 'protrack@indkal.com'
-EMAIL_HOST_PASSWORD = 'Ptrack@2024'
+EMAIL_HOST_USER = 'qmsindkal@gmail.com'
+EMAIL_HOST_PASSWORD = 'xslc bjcv crdh zwdi'
 
 # LOGIN_URL = '/au/login/'
 # AUTH_USER_MODEL = 'authapp.Employee'

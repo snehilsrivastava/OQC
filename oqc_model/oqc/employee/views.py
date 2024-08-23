@@ -191,12 +191,16 @@ def employee_dashboard(request):
     return render(request, "dashboard_employee.html", context)
 
 @login_required
-def cooling(request, test_name, model_name, serialno):
+def report(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if (user.user_type != 'employee' and user.user_type != 'owner') and not user.is_superuser:
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    models = get_object_or_404(AC, ModelName=model_name)
+    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    if product == 'AC':
+        models = get_object_or_404(AC, ModelName=model_name)
+    elif product == 'WM - FATL':
+        models = get_object_or_404(WM_FATL, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestName=test_name, ModelName=model_name)
     if test_record.employee != user.username and not user.is_superuser:
         return redirect('/access_denied/')
@@ -218,7 +222,7 @@ def cooling(request, test_name, model_name, serialno):
         'model_name': model_name,
         'serialno': serialno
     }
-    return render(request, "cooling_test.html", context)
+    return render(request, "report.html", context)
 
 def set_status(request, id):
     user = Employee.objects.get(username=request.session['username'])
@@ -324,7 +328,11 @@ def edit(request, test_name, model_name, serialno):
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    models = get_object_or_404(AC, ModelName=model_name)
+    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    if product == 'AC':
+        models = get_object_or_404(AC, ModelName=model_name)
+    elif product == 'WM - FATL':
+        models = get_object_or_404(WM_FATL, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestName=test_name, ModelName=model_name)
     if test_record.employee != user.username and not user.is_superuser:
         return redirect('/access_denied/')
@@ -351,17 +359,22 @@ def edit(request, test_name, model_name, serialno):
         'model_name': model_name,
         'serialno': serialno
     }
-    return render(request, "cooling_test.html", context)
+    return render(request, "report.html", context)
 
 @login_required
 def view_pdf(request, test_name, model_name, serialno):
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    models = get_object_or_404(AC, ModelName=model_name)
+    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    if product == 'AC':
+        models = get_object_or_404(AC, ModelName=model_name)
+    elif product == 'WM - FATL':
+        models = get_object_or_404(WM_FATL, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
     context = {
         'TestProtocol': Test_protocol,
         'model': models,
         'test': test_record,
+        'testdetail': test_record,
     }
     return render(request, "view_pdf.html", context)
 
@@ -379,11 +392,16 @@ def pdf_model_stage(request,model_name,test_stage):
             model_name = test_record.ModelName
             test_name = test_record.TestName
             Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-            models = get_object_or_404(AC, ModelName=model_name)
+            product = TestRecord.objects.filter(ModelName=model_name, TestName=test_name).first().ProductType
+            if product == 'AC':
+                models = get_object_or_404(AC, ModelName=model_name)
+            elif product == 'WM - FATL':
+                models = get_object_or_404(WM_FATL, ModelName=model_name)
             context = {
                 'test': test_record,
                 'model': models,
                 'TestProtocol': Test_protocol,
+                'testdetail': test_record,
             }
             test_name_list.append(test_name)
             cumul_page_count_list.append(cumul_page_count)
@@ -460,11 +478,16 @@ def handle_selected_tests(request):
                 model_name = test_record.ModelName
                 test_name = test_record.TestName
                 Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-                models = get_object_or_404(AC, ModelName=model_name)
+                product = TestRecord.objects.filter(ModelName=model_name, TestName=test_name).first().ProductType
+                if product == 'AC':
+                    models = get_object_or_404(AC, ModelName=model_name)
+                elif product == 'WM - FATL':
+                    models = get_object_or_404(WM_FATL, ModelName=model_name)
                 context = {
                 'test': test_record,
                 'model': models,
                 'TestProtocol': Test_protocol,
+                'testdetail': test_record,
                 }
                 test_name_list.append(test_name)
                 cumul_page_count_list.append(cumul_page_count)
@@ -539,7 +562,11 @@ def view(request, test_name, model_name, serialno):
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    models = get_object_or_404(AC, ModelName=model_name)
+    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    if product == 'AC':
+        models = get_object_or_404(AC, ModelName=model_name)
+    elif product == 'WM - FATL':
+        models = get_object_or_404(WM_FATL, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno , TestName =test_name)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')
@@ -553,6 +580,7 @@ def view(request, test_name, model_name, serialno):
         'TestProtocol': Test_protocol,
         'model': models,
         'test': test_record,
+        'testdetail': test_record,
     }
     return render(request, "view_test_record.html", context)
 
@@ -562,7 +590,11 @@ def owner_view(request, test_name, model_name, serialno):
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    models = get_object_or_404(AC, ModelName=model_name)
+    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    if product == 'AC':
+        models = get_object_or_404(AC, ModelName=model_name)
+    elif product == 'WM - FATL':
+        models = get_object_or_404(WM_FATL, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno, ModelName=model_name, TestName=test_name)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')
@@ -770,7 +802,11 @@ def legal_view(request, test_name, model_name, serialno):
     if user.user_type != 'legal' and not user.is_superuser:
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    models = get_object_or_404(AC, ModelName=model_name)
+    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    if product == 'AC':
+        models = get_object_or_404(AC, ModelName=model_name)
+    elif product == 'WM - FATL':
+        models = get_object_or_404(WM_FATL, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')
@@ -797,7 +833,11 @@ def brand_view(request, test_name, model_name, serialno):
     if user.user_type != 'brand' and not user.is_superuser:
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    models = get_object_or_404(AC, ModelName=model_name)
+    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    if product == 'AC':
+        models = get_object_or_404(AC, ModelName=model_name)
+    elif product == 'WM - FATL':
+        models = get_object_or_404(WM_FATL, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, SerailNo=serialno)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')

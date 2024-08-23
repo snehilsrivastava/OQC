@@ -6,17 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Form</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/view_record.css' %}">
+    <style>
+        
+    </style>
 </head>
 <body>
-
-<form class="mx-auto card p-3 shadow-lg form-container" >
+<form class="mx-auto card p-3 shadow-lg form-container" method="post" action="{% url 'report' test_name=test_name model_name=model_name serialno=serialno %}"  enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.media }}
-    {{ form.as_p }}
+    <!-- {{ form.as_p }} -->
     <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;'>{{TestProtocol.TestName}}</span></u></strong></p>
     <div style="margin: 6px;"></div>
     <table>
@@ -387,16 +386,38 @@
 <!-- <div style="margin: 20px;"></div> -->
 <hr class="page-break-indicator">
 
-<div class="additional_details">{{ test.additional_details|safe }}</div>
-
-<div class="action-buttons">
-    <a class="btn btn-primary" href="{% url 'employee_dashboard' %}">Return</a>
-    {% if test.status == 'Not Sent' or test.status == 'Rejected' %}
-        <a class="btn btn-primary" href="{% url 'set_status' test.id %}">Send</a>
-    {% endif %}
-    <a class="btn btn-primary" href="{% url 'remark' test.id %}">Remark</a>
-    
-</div>
+<!-- this code doesnt work as additional_details isnt a string
+ so if condition just defaults to True -->
+{% if testdetail.additional_details != '' %}
+<div class="additional_details">{{ form.additional_details }}</div>
+{% else %}
+<button id="addPageButton" type="button" class="btn btn-primary custom-btn-small">Add page</button>
+<div class="additional_details" style="display: none;">{{ form.additional_details }}</div>
+{% endif %}
+<div style="margin: 10px;"></div>
+<button type="submit" class="btn btn-primary custom-btn-small">Submit</button>
 </form>
+<script>
+    CKEDITOR.on('dialogDefinition', function (ev) {
+        var dialogName = ev.data.name;
+        var dialogDefinition = ev.data.definition;
+
+        if (dialogName == 'image') {
+            var infoTab = dialogDefinition.getContents('info');
+            infoTab.remove('txtAlt');
+            infoTab.remove('txtBorder');
+            infoTab.remove('txtHSpace');
+            infoTab.remove('txtVSpace');
+        }
+    });
+
+    const addPageButton = document.getElementById("addPageButton");
+    const additionalDetails = document.querySelector(".additional_details"); // Use querySelector for class
+
+    addPageButton.addEventListener("click", function() {
+        additionalDetails.style.display = "block";
+        addPageButton.style.display = "none";
+    });
+</script>
 </body>
 </html>

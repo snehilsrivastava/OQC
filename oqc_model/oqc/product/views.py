@@ -42,7 +42,7 @@ def product_form_view(request):
             verification = True if tested_by == 'ODM' else False,
         )
         new_product_detail.save()
-        return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name, 'serialno': serial_no}))
+        return redirect(reverse('report', kwargs={'test_name': test_name, 'model_name': model_name, 'serialno': serial_no}))
 
     tv_models = list(TV.objects.values_list('ModelName', flat=True).distinct())
     ac_models = list(AC.objects.values_list('ModelName', flat=True).distinct())
