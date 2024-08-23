@@ -967,11 +967,13 @@ def Test_list_entry(request):
     username = request.session['username']
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
+    products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
     context = {
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
         'username': username,
+        'products': products,
     }
     return render(request, 'Test_list_entry.html',context)
 

@@ -24,11 +24,11 @@ class Test_core_detail(models.Model):
     Test_Objective = models.CharField(max_length=500,default='None')
     Test_Standard = models.CharField(max_length=500,default='None')
     Test_Condition = models.TextField(max_length=500,default='None')
-    Test_Procedure = models.TextField(max_length=500,default='None')
+    Test_Procedure = models.TextField(max_length=700,default='None')
     Judgement = models.TextField(max_length=500,default='None')
     Instrument = models.CharField(max_length=500,default='None')
     def __str__(self):
-        return f"{self.TestName}"
+        return f"{self.ProductType} | {self.TestName}"
     
 class TestRecord(models.Model):
     employee = models.CharField(max_length=80, default = 'None')

@@ -64,11 +64,7 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="ProductType">Product Type:</label>
-                    <select class="form-control" id="ProductType" name="ProductType" onchange="populateTestName(); populateModels();" required>
-                        <option value="TV">TV</option>
-                        <option value="AC">AC</option>
-                        <option value="Phone">Phone</option>
-                        <option value="Washing Machine">Washing Machine</option>
+                    <select class="form-control" id="ProductType" name="ProductType" required>
                     </select>
                 </div>
                 <div class="form-group">
@@ -78,7 +74,7 @@
                 </div>
                 <div class="form-group">
                     <label for="TestType">Test Stage</label>
-                    <select class="form-control" id="TestStage" name="TestStage" onchange="populateTestName();" required>
+                    <select class="form-control" id="TestStage" name="TestStage" required>
                         <option value="DVT">DVT</option>
                         <option value="PP">PP</option>
                         <option value="PDI">MP</option>
@@ -115,29 +111,56 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
     <script>
-        // JavaScript object to store model data
+        const products = {{ products|safe }};
+
+        function populateProducts() {
+            const productSelect = document.getElementById("ProductType");
+
+            // Clear existing options
+            productSelect.innerHTML = "";
+
+            // Create a default option
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.text = "Select the Product";
+            defaultOption.selected = true;
+            defaultOption.disabled = true;
+            defaultOption.hidden = true;
+            productSelect.appendChild(defaultOption);
+
+            // Populate options from the products data
+            products.forEach(product => {
+                const option = document.createElement("option");
+                option.value = product;
+                option.text = product;
+                productSelect.appendChild(option);
+            });
+        }
+
         const modelsByType = {
             "TV": {{ tv_models|safe }},
             "AC": {{ ac_models|safe }},
             "Phone": {{ phone_models|safe }},
-            "Washing_Machine": {{ washing_machine_models|safe }}
+            "WM - FATL": {{ washing_machine_models|safe }}
         };
-        // JavaScript function to populate the model list based on the selected product type
+
         function populateModels() {
             const productTypeDropdown = document.getElementById("ProductType");
             const modelNameDropdown = document.getElementById("ModelName");
             const selectedProductType = productTypeDropdown.value;
-
+            console.log(selectedProductType);
             // Clear existing options
             modelNameDropdown.innerHTML = "";
 
             // Populate model options based on the selected product type
             modelsByType[selectedProductType].forEach(model => {
+                console.log(model);
                 const option = document.createElement("option");
                 option.text = model;
                 modelNameDropdown.appendChild(option);
             });
         }
+
         // JavaScript function to populate the test names based on the selected product type and test stage
         function populateTestName() {
             const testDetail = {{ test|safe }};
@@ -151,26 +174,29 @@
             testNameDropdown.innerHTML = "";
 
             testDetail.forEach(item => {
-                console.log(item.ProductType);
-                console.log(selectedProductType);
+                
                 if (item.ProductType === selectedProductType) {
-                    
                     const s = item.TestStage;
-                    if (s[0] === '1' && selectedTestStage === "DVT" ||
-                        s[1] === '1' && selectedTestStage === "PP" ||
-                        s[2] === '1' && selectedTestStage === "MP" ||
-                        s[3] === '1' && selectedTestStage === "PDI") {
-                            const option = document.createElement("option");
-                            option.text = item.TestName;
-                            testNameDropdown.appendChild(option);
-                        }
+                    console.log(s);
+                    console.log(selectedTestStage);
+                    if (selectedTestStage === 'None' ||
+                    (s[0] === '1' && selectedTestStage === "DVT") ||
+                    (s[1] === '1' && selectedTestStage === "PP") ||
+                    (s[2] === '1' && selectedTestStage === "MP") ||
+                    (s[3] === '1' && selectedTestStage === "PDI")) {
+                        console.log(6);
+                        const option = document.createElement("option");
+                        option.text = item.TestName;
+                        testNameDropdown.appendChild(option);
+                    }
                 }
             });
         }
 
         document.addEventListener("DOMContentLoaded", function() {
-            populateModels();
-            populateTestName();
+            // populateModels();
+            // populateTestName();
+            populateProducts();
 
             document.getElementById("ProductType").addEventListener("change", function() {
                 populateModels();

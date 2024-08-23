@@ -67,11 +67,6 @@
                 <div class="form-group">
                     <label for="Product">Product</label>
                     <select name="Product" id="Product" class="form-control" required>
-                        <option value="" selected disabled hidden>Select the Product</option>
-                        <option value="AC">AC</option>
-                        <option value="Washing Machine">Washing Machine</option>
-                        <option value="TV">TV</option>
-                        <option value="Phone">Phone</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -101,6 +96,37 @@
             </form>
         </div>
     </div>
+    <script>
+        const products = {{ products|safe }};
+
+        function populateProducts() {
+            const productSelect = document.getElementById("Product");
+
+            // Clear existing options
+            productSelect.innerHTML = "";
+
+            // Create a default option
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.text = "Select the Product";
+            defaultOption.selected = true;
+            defaultOption.disabled = true;
+            defaultOption.hidden = true;
+            productSelect.appendChild(defaultOption);
+
+            // Populate options from the products data
+            products.forEach(product => {
+                const option = document.createElement("option");
+                option.value = product;
+                option.text = product;
+                productSelect.appendChild(option);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            populateProducts();
+        });
+    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

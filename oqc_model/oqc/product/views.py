@@ -44,12 +44,13 @@ def product_form_view(request):
         new_product_detail.save()
         return redirect(reverse('cooling', kwargs={'test_name': test_name, 'model_name': model_name, 'serialno': serial_no}))
 
-    tv_models = list(TV.objects.values_list('ModelName', flat=True))
-    ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
+    tv_models = list(TV.objects.values_list('ModelName', flat=True).distinct())
+    ac_models = list(AC.objects.values_list('ModelName', flat=True).distinct())
+    phone_models = list(Phone.objects.values_list('ModelName', flat=True).distinct())
+    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True).distinct())
     user = request.session['username']
     test = list(Test_core_detail.objects.values('ProductType', 'TestStage', 'TestName'))
+    products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
     username = request.session['username']
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
@@ -60,6 +61,7 @@ def product_form_view(request):
         'washing_machine_models': washing_machine_models,
         'user': user,
         'test': test,
+        'products': products,
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
