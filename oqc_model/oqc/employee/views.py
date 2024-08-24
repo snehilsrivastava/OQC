@@ -1112,7 +1112,7 @@ def update_test_list_entry(request):
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
 
     test_names = Test_core_detail.objects.values_list('TestName', flat=True).distinct()
-    products = Model_MNF_detail.objects.values_list('ProductType', flat=True).distinct()
+    products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
     username = request.session['username']
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
