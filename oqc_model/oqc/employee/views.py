@@ -285,9 +285,11 @@ def dashboard(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
+    test = list(TestRecord.objects.all())
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
+        'test': test,
         'tests': tests,
         'all_tests': completed_tests,
         'test_name': test_name,
@@ -897,6 +899,18 @@ def MNF(request):
             'Indkal_model_no': Indkal_model_no,
             }
             return render(request, 'AC.html', context)
+        elif Product == 'WM - FATL':
+            username = request.session['username']
+            employee = Employee.objects.get(username=username)
+            icon = employee.first_name[0] + employee.last_name[0]
+            context = {
+            'first_name': employee.first_name,
+            'last_name': employee.last_name,
+            'icon': icon,
+            'username': username,
+            'Indkal_model_no': Indkal_model_no,
+            }
+            return render(request, 'WM-FATL.html', context)
         else:
             return redirect('/access_denied/')
     
@@ -909,7 +923,7 @@ def MNF(request):
         'last_name': employee.last_name,
         'icon': icon,
         'username': username,
-        'products': products,
+        'products': list(products),
     }
     return render(request, 'productMNFdetail.html',context)
 
@@ -1116,7 +1130,9 @@ def update_test_list_entry(request):
     username = request.session['username']
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
+    test = list(Test_core_detail.objects.all().values())
     context = {
+        'test': test,
         'test_names': test_names,
         'products': products,
         'first_name': employee.first_name,

@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    {% load static %}
+    {% load static%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Model Form</title>
+    <title>Product Specification Form</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/form.css' %}">
@@ -58,54 +58,37 @@
     </div>
     <div class="container">
         <div class="form-container">
-            <div class="form-header">
-                <h1>Add Model Form</h1>
+            
+            <div class="header-form" style = "padding: 5px 30px; "> 
+                <h1>Specification Form For WM - FATL</h1>
             </div>
-            <form action="{% url 'mnf' %}" method="post">
+
+            <form action="{% url 'WM-FATL' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="Product">Product</label>
-                    <select name="Product" id="Product" class="form-control" required>
-                        <option value="" selected disabled hidden>Select the Product</option>
-                    </select>
+                    <label for="ModelName">Model Number</label>
+                    <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ Indkal_model_no }}" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Name and Address of Customer</label>
-                    <textarea class="form-control" id="Customer" name="Customer" required>
-INDKAL TECHNOLOGIES PRIVATE LIMITED
-1, C-102, Hinduja Lake Front Estate, Hullimavu Bennerghatta Rd,
-Bangalore, Bengaluru (Bangalore) Urban, Karnataka, 560076</textarea>
+                    <label for="RatedCapacity">Rated Capacity</label>
+                    <input type="text" class="form-control" id="RatedCapacity" name="RatedCapacity" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Name and Address of Manufacturer</label>
-                    <textarea class="form-control" id="Manufacture" name="Manufacture" required></textarea>
+                    <label for="RatedPower">Rated Power</label>
+                    <input type="text" class="form-control" id="RatedPower" name="RatedPower" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Test Location</label>
-                    <textarea class="form-control" id="Location" name="Location" required></textarea>
+                    <label for="RatedSupply">Rated Supply</label>
+                    <input type="text" class="form-control" id="RatedSupply" name="RatedSupply" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Brand</label>
-                    <select name="Brand" id="Brand" class="form-control" required>
-                        <option value="" selected disabled hidden>Select Brand</option>
-                        <option value="Acer">Acer</option>
-                        <option value="BLACK + DECKER">BLACK + DECKER</option>
-                        <option value="Wobble">Wobble</option>
-                    </select>
+                    <label for="RatedFrequency">Rated Frequency</label>
+                    <input type="text" class="form-control" id="RatedFrequency" name="RatedFrequency" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Brand Model No.</label>
-                    <input type="text" class="form-control" id="Brand_model_no" name="Brand_model_no" required>
+                    <label for="RatedRPM">Rated RPM</label>
+                    <input type="text" class="form-control" id="RatedRPM" name="RatedRPM" readonly>
                 </div>
-                <div class="form-group">
-                    <label>Indkal Model No.</label>
-                    <input type="text" class="form-control" id="Indkal_model_no" name="Indkal_model_no" required>
-                </div>
-                <div class="form-group">
-                    <label>ODM Model No.</label>
-                    <input type="text" class="form-control" id="ODM_model_no" name="ODM_model_no" required>
-                </div>
-               
                 <button type="submit" class="btn btn-primary btn-submit">Submit</button>
             </form>
         </div>
@@ -115,21 +98,5 @@ Bangalore, Bengaluru (Bangalore) Urban, Karnataka, 560076</textarea>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            populateProducts();
-        });
-        function populateProducts() {
-            const productSelect = document.getElementById("Product");
-            productSelect.innerHTML = "";
-            const productsData = {{ products|safe }};
-            // Populate options from the products data
-            productsData.forEach(product => {
-                const option = document.createElement("option");
-                option.text = product;
-                productSelect.appendChild(option);
-            });
-        }
-    </script>
 </body>
 </html>

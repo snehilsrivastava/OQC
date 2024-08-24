@@ -54,4 +54,4 @@ class TestRecord(models.Model):
     owner_name = models.CharField(max_length=80, default = 'None')
 
     def __str__(self):
-        return f"{self.SerailNo}"
+        return f"{self.ProductType} - {self.ModelName} - {self.TestName}"

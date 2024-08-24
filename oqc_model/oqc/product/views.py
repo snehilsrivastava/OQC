@@ -100,6 +100,7 @@ def AC_spec(request):
             Compressor=compressor
         )
         new_ac.save()
+        messages.success(request, 'AC model saved')
         return redirect('/dashboard/')
 
     username = request.session['username']
@@ -112,3 +113,38 @@ def AC_spec(request):
         'username': username,
     }
     return render(request, 'AC.html', context=context)
+
+@login_required
+def WM_FATL(request):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
+    if request.method == 'POST':
+        model_name = request.POST.get('ModelName')
+        rated_capacity = request.POST.get('RatedCapacity')
+        rated_power = request.POST.get('RatedPower')
+        rated_supply = request.POST.get('RatedSupply')
+        rated_frequency = request.POST.get('RatedFrequency')
+        rated_rpm = request.POST.get('RatedRPM')
+        new_WM_FATL = WM_FATL(
+            ModelName=model_name,
+            RatedCapacity = rated_capacity
+            RatedPower = rated_power
+            RatedSupply = rated_supply
+            RatedFrequency = rated_frequency
+            RatedRPM = rated_rpm
+        )
+        new_WM_FATL.save()
+        messages.success(request, 'Washing Machine model saved')
+        return redirect('/dashboard/')
+
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
+    context = {
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
+    }
+    return render(request, 'WM-FATL.html', context=context)
