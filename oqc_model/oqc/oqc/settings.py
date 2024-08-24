@@ -85,7 +85,7 @@ POSTGRESQL = {
 }
 
 DATABASES = {
-    'default': SQLITE3
+    'default': POSTGRESQL
 }
 
 # Password validation

@@ -116,7 +116,7 @@ def AC_spec(request):
     return render(request, 'AC.html', context=context)
 
 @login_required
-def WM_FATL(request):
+def WM_FATL_spec(request):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')

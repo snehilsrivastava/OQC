@@ -870,23 +870,28 @@ def MNF(request):
         manufacture = request.POST.get('Manufacture')
         location = request.POST.get('Location')
         brand = request.POST.get('Brand')
-        Product= request.POST.get('Product')
+        Product = request.POST.get('Product')
         brand_model_no = request.POST.get('Brand_model_no')
         Indkal_model_no = request.POST.get('Indkal_model_no')
         ODM_model_no = request.POST.get('ODM_model_no')
-     
+
+        existing_mnf = Model_MNF_detail.objects.filter(Indkal_model_no=Indkal_model_no, Product=Product).first()
+        if existing_mnf:
+            messages.error(request, 'Model details already exist')
+            return redirect('/dashboard/')
+
         new_mnf = Model_MNF_detail(
            Customer = customer,
            Manufacture = manufacture,
            Location = location,
            Brand = brand,
-           Product= Product,
+           Product = Product,
            Brand_model_no = brand_model_no,
            Indkal_model_no = Indkal_model_no,
            ODM_model_no = ODM_model_no
-
         )
         new_mnf.save()
+
         if Product == 'AC':
             username = request.session['username']
             employee = Employee.objects.get(username=username)
