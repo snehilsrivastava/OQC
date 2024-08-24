@@ -990,14 +990,14 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
-        existing_test = Test_core_detail.objects.filter(TestName=testName, Product=product).first()
+        existing_test = Test_core_detail.objects.filter(TestName=testName, ProductType=product).first()
         if existing_test:
             existing_test.TestStage = s1
             existing_test.save()
         else:
             new_test = Test_core_detail(
                 TestStage=s1,
-                Product=product,
+                ProductType=product,
                 TestName=testName,
             )
             new_test.save()
@@ -1087,7 +1087,7 @@ def update_test_list_entry(request):
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
         # Check if a test with the same name already exists
-        existing_test = Test_core_detail.objects.filter(TestName=testName, Product=product).first()
+        existing_test = Test_core_detail.objects.filter(TestName=testName, ProductType=product).first()
         s1 = ""
         if "DVT" in testStages:
             s1 += "1"

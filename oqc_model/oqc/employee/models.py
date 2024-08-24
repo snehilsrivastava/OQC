@@ -19,14 +19,14 @@ class Model_MNF_detail(models.Model):
 
 class Test_core_detail(models.Model):
     ProductType = models.CharField(max_length=500,default='None')
-    TestName =  models.CharField(max_length=500,default='None')
-    TestStage = models.CharField(max_length=20,default='None')
-    Test_Objective = models.CharField(max_length=500,default='None')
-    Test_Standard = models.CharField(max_length=500,default='None')
-    Test_Condition = models.TextField(max_length=500,default='None')
-    Test_Procedure = models.TextField(max_length=700,default='None')
-    Judgement = models.TextField(max_length=500,default='None')
-    Instrument = models.CharField(max_length=500,default='None')
+    TestName =  models.CharField(max_length=500,default='')
+    TestStage = models.CharField(max_length=20,default='')
+    Test_Objective = models.CharField(max_length=500,default='')
+    Test_Standard = models.CharField(max_length=500,default='')
+    Test_Condition = models.TextField(max_length=500,default='')
+    Test_Procedure = models.TextField(max_length=700,default='')
+    Judgement = models.TextField(max_length=500,default='')
+    Instrument = models.CharField(max_length=500,default='')
     def __str__(self):
         return f"{self.ProductType} | {self.TestName}"
     
