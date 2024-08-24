@@ -5,4 +5,3 @@ oqc_model/oqc/staticfiles/
 oqc_model/oqc/media/
 .vscode/
 **/migrations/
-oqc_model/oqc/oqc/settings.py

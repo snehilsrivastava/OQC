@@ -5,6 +5,7 @@ from django.shortcuts import render
 from .models import TV, AC, Phone, WM_FATL
 from django.urls import reverse
 from authapp.models import Employee
+from django.contrib import messages
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -128,11 +129,11 @@ def WM_FATL(request):
         rated_rpm = request.POST.get('RatedRPM')
         new_WM_FATL = WM_FATL(
             ModelName=model_name,
-            RatedCapacity = rated_capacity
-            RatedPower = rated_power
-            RatedSupply = rated_supply
-            RatedFrequency = rated_frequency
-            RatedRPM = rated_rpm
+            RatedCapacity = rated_capacity,
+            RatedPower = rated_power,
+            RatedSupply = rated_supply,
+            RatedFrequency = rated_frequency,
+            RatedRPM = rated_rpm,
         )
         new_WM_FATL.save()
         messages.success(request, 'Washing Machine model saved')
