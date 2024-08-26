@@ -153,6 +153,9 @@ CKEDITOR_CONFIGS = {
         'toolbar': [
             {'items': ['Table', 'Image',]},
         ],
+        'filebrowserUploadUrl': '/ckeditor_image_upload/',
+        'filebrowserBrowseUrl': '/server_media_browse/',
+        'filebrowserImageBrowseUrl': '/server_media_browse/?type=Images',
     },
     'full': {
         'allowedContent': True,
@@ -161,6 +164,9 @@ CKEDITOR_CONFIGS = {
         'removeDialogTabs': 'image:Link;image:advanced',
         'toolbar': [
             {'items': ['Table', 'Image',]},
-        ]
+        ],
+        'filebrowserUploadUrl': '/ckeditor_image_upload/',
+        'filebrowserImageBrowseUrl': '/server_media_browse/?type=Images',
+        'filebrowserBrowseUrl': '/server_media_browse/'
     }
 }
