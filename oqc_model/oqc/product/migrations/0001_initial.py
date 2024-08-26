@@ -39,18 +39,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Product_Detail',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('no', models.IntegerField()),
-                ('ProductType', models.CharField(max_length=100)),
-                ('ModelName', models.CharField(max_length=100)),
-                ('SerailNo', models.CharField(max_length=100)),
-                ('TestName', models.CharField(default='', max_length=80)),
-                ('TestStage', models.CharField(default='', max_length=20)),
-            ],
-        ),
-        migrations.CreateModel(
             name='TV',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),

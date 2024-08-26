@@ -3,7 +3,7 @@ from .models import *
 from django.http import HttpResponse
 from employee.models import TestRecord
 from django.shortcuts import render, HttpResponse
-from .models import Product_Detail, TV, AC, Phone, Washing_Machine
+from .models import TV, AC, Phone, Washing_Machine
 from django.urls import reverse
 from employee.models import TestList
 from authapp.models import Employee

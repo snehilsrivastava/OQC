@@ -228,21 +228,37 @@
             </tr>
         </tbody>
     </table>
-<!-- <div style="margin: 20px;"></div> -->
-<hr class="page-break-indicator">
 
-<!-- this code doesnt work as additional_details isnt a string
- so if condition just defaults to True -->
-{% if testdetail.additional_details != '' %}
-<div class="additional_details">{{ form.additional_details }}</div>
-{% else %}
-<button id="addPageButton" type="button" class="btn btn-primary custom-btn-small">Add page</button>
-<div class="additional_details" style="display: none;">{{ form.additional_details }}</div>
-{% endif %}
-<div style="margin: 10px;"></div>
-<button type="submit" class="btn btn-primary custom-btn-small">Submit</button>
+    <!-- <div style="margin: 20px;"></div> -->
+    <hr class="page-break-indicator">
+
+    <!-- this code doesnt work as additional_details isnt a string
+    so if condition just defaults to True -->
+    {% if testdetail.additional_details != '' %}
+    <div class="additional_details">{{ form.additional_details }}</div>
+    {% else %}
+    <button id="addPageButton" type="button" class="btn btn-primary custom-btn-small">Add page</button>
+    <div class="additional_details" style="display: none;">{{ form.additional_details }}</div>
+    {% endif %}
+    <div style="margin: 10px;"></div>
+    <button type="submit" class="btn btn-primary custom-btn-small">Submit</button>
 </form>
-<script>
+<script src="{% static 'js/ckeditor/customImageUpload.js' %}"></script>
+<script src="{% static 'js/ckeditor/customImageInfo.js' %}"></script>
+<script>    
+    CKEDITOR.on('dialogDefinition', function (ev) {
+        var dialogName = ev.data.name;
+        var dialogDefinition = ev.data.definition;
+
+        if (dialogName == 'image') {
+            var infoTab = dialogDefinition.getContents('info');
+            infoTab.remove('txtAlt');
+            infoTab.remove('txtBorder');
+            infoTab.remove('txtHSpace');
+            infoTab.remove('txtVSpace');
+        }
+    });
+
     const addPageButton = document.getElementById("addPageButton");
     const additionalDetails = document.querySelector(".additional_details"); // Use querySelector for class
 

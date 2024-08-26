@@ -1,8 +1,8 @@
-from datetime import date
-from django.shortcuts import render
-from django.http import HttpResponse
+import os
+from datetime import date, datetime as dt
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, JsonResponse, Http404
 from django.conf import settings
-from django.http import Http404
 from .forms import *
 from .models import *
 from .renderers import *
@@ -12,9 +12,9 @@ from authapp.views import login_page
 import PyPDF2
 from io import BytesIO
 from django.contrib import messages
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from django.db.models import Min, Max, Case, When, DateField
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -1031,7 +1031,7 @@ def update_test_list_entry(request):
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
 
     test_names = TestList.objects.values_list('TestName', flat=True).distinct()
-    products = Product_Detail.objects.values_list('ProductType', flat=True).distinct()
+    products = TestList.objects.values_list('Product', flat=True).distinct()
     username = request.session['username']
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
@@ -1044,3 +1044,94 @@ def update_test_list_entry(request):
         'username': username,
     }
     return render(request, 'Update_Test_list_entry.html', context)
+
+@login_required
+def test_details_view(request):
+    username = request.session['username']
+    user = Employee.objects.get(username=username)
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
+    product_filter = request.GET.get('product_filter', '')
+    testname_filter = request.GET.get('testname_filter', '')
+    products = Test_core_detail.objects.values_list('ProductType', flat=True).distinct()
+    if product_filter:
+        testnames = Test_core_detail.objects.filter(ProductType=product_filter).values_list('TestName', flat=True).distinct()
+    else:
+        testnames = Test_core_detail.objects.values_list('TestName', flat=True).distinct()
+    filtered_tests = Test_core_detail.objects.all()
+    if product_filter:
+        filtered_tests = filtered_tests.filter(ProductType=product_filter)
+    if testname_filter:
+        filtered_tests = filtered_tests.filter(TestName=testname_filter)
+
+    icon = user.first_name[0] + user.last_name[0]
+    context = {
+        'tests': filtered_tests,
+        'products': products,
+        'testnames': testnames,
+        'product_filter': product_filter,
+        'testname_filter': testname_filter,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'icon': icon,
+        'username': username,
+    }
+    return render(request, 'test_details_view.html', context)
+
+def ckeditor_image_upload(request):
+    user = request.session['username']
+    if request.method == 'POST' and request.FILES:
+        if request.FILES['ckeditor_image_upload'].content_type.startswith('image/'):
+            file = request.FILES['ckeditor_image_upload']
+            today = dt.now()
+            upload_dir = os.path.join('ckeditor', user, str(today.year), str(today.month), str(today.day))
+            os.makedirs(upload_dir, exist_ok=True)
+            file_name = default_storage.save(os.path.join(upload_dir, file.name), ContentFile(file.read()))
+            file_url = default_storage.url(file_name)
+            response = {
+                'uploaded': True,
+                'url': file_url
+            }
+            return JsonResponse(response)
+        print("didn't run upload request")
+        return JsonResponse({'error': 'Invalid file type. Only images are allowed.'}, status=422)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def server_media_browse(request):
+    username = request.session['username']
+    user_dir = os.path.join(settings.MEDIA_ROOT, 'ckeditor', username)
+
+    # Filtering files by date (if date filter is applied)
+    filter_date = request.GET.get('date')
+    files = []
+    
+    for root, dirs, filenames in os.walk(user_dir):
+        for filename in filenames:
+            file_path = os.path.join(root, filename)
+            file_url = os.path.relpath(file_path, settings.MEDIA_ROOT)
+            file_stat = os.stat(file_path)
+            file_date = dt.fromtimestamp(file_stat.st_mtime)
+            
+            if filter_date and file_date.strftime('%Y-%m-%d') != filter_date:
+                continue
+
+            files.append({
+                'name': filename,
+                'url': file_url.replace('\\', '/'),
+                'date': file_date,
+                'size': file_stat.st_size / 1024,
+            })
+    
+    # Sorting files by date or name
+    sort_by = 'date'  # Only sorting by date as per requirement
+    reverse = request.GET.get('order', 'desc') == 'desc'
+    files.sort(key=lambda x: x[sort_by], reverse=reverse)
+
+    context = {
+        'MEDIA_URL': settings.MEDIA_URL,
+        'files': files,
+        'filter_date': filter_date,
+        'order': 'asc' if not reverse else 'desc',
+    }
+    
+    return render(request, 'media_browse.html', context)

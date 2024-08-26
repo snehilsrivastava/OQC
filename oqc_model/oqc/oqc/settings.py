@@ -149,16 +149,24 @@ CKEDITOR_CONFIGS = {
         'allowedContent': True,
         'width': '500px',
         'skin': 'moono-lisa',
+        'removeDialogTabs': 'image:Link;image:advanced',
         'toolbar': [
             {'items': ['Table', 'Image',]},
         ],
+        'filebrowserUploadUrl': '/ckeditor_image_upload/',
+        'filebrowserBrowseUrl': '/server_media_browse/',
+        'filebrowserImageBrowseUrl': '/server_media_browse/?type=Images',
     },
     'full': {
         'allowedContent': True,
         'width': '650px',
         'skin': 'moono-lisa',
+        'removeDialogTabs': 'image:Link;image:advanced',
         'toolbar': [
             {'items': ['Table', 'Image',]},
-        ]
+        ],
+        'filebrowserUploadUrl': '/ckeditor_image_upload/',
+        'filebrowserImageBrowseUrl': '/server_media_browse/?type=Images',
+        'filebrowserBrowseUrl': '/server_media_browse/'
     }
 }

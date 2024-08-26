@@ -27,6 +27,7 @@ urlpatterns = [
     path('mnf/', views.MNF, name='mnf'),
     path('test_list_entry/',views.Test_list_entry,name = 'test_list_entry'),
     path('update_test_list_entry/',views.update_test_list_entry,name = 'update_test_list_entry'),
+    path('test_details_view/', views.test_details_view, name='test_details_view'),
     path('test_protocol_entry/<str:test_name>/<str:product>/',views.test_protocol_entry,name = 'test_protocol_entry'),
     path('set_status/<int:id>/', views.set_status, name='set_status'),
     path('delete-test-record/<int:record_id>/', views.delete_test_record, name='delete_test_record'),
@@ -35,6 +36,8 @@ urlpatterns = [
     path('view_pdf/<str:test_name>/<str:model_name>/<str:serialno>/', views.view_pdf, name='view_pdf'),
     path('handle_selected_tests/',views.handle_selected_tests,name = 'handle_selected_tests'),
     path('access_denied/', views.access_denied, name='access_denied'),
+	path('ckeditor_image_upload/', views.ckeditor_image_upload, name='ckeditor_image_upload'),
+    path('server_media_browse/', views.server_media_browse, name="server_media_browse"),
 ]
 
 from django.conf import settings
