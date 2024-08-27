@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Model Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
+</head>
+<body>
+    <div class="header">
+        <form action="{% url 'test_list_entry' %}" method="post">
+            <div class="left-icon">
+                <form action=""></form>
+                <button class="dashboard-btn" name="action" value="dashboard" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+                        <path d="M 200 -120 q -33 0 -56.5 -23.5 T 120 -200 v -560 q 0 -33 23.5 -56.5 T 200 -840 h 560 q 33 0 56.5 23.5 T 840 -760 v 560 q 0 33 -23.5 56.5 T 760 -120 H 200 Z m 0 -80 h 240 v -560 H 200 v 560 Z m 320 0 h 240 v -280 H 520 v 280 Z m 0 -360 h 240 v -200 H 520 v 200 Z"/>
+                    </svg>&nbsp;Dashboard
+                </button>
+            </div>
+        </form>
+        <div class="right-icon">
+            <div class="theme-toggle-btn">
+                <input type="checkbox" class="theme-checkbox" id="theme-checkbox">
+                <label style="margin-bottom: 0px;" for="theme-checkbox" class="theme-checkbox-label">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                    <span class="theme-ball"></span>
+                </label>
+            </div>
+            <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
+                <span class="icon" id="userButtonIcon">{{icon}}</span>
+            </button>
+            <div class="user-info" id="userInfo">
+                <span>
+                    <p class="name">Name: {{ first_name }} {{ last_name }}</p>
+                    <p class="mail">Email: {{ username }}</p>
+                </span>
+                <span style="display: flex; align-items: center; justify-content: center;">
+                    <a class="logout-btn"  onclick="logoutUser()">Logout</a>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="message-container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.level_tag }}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Add Model Form</h1>
+            </div>
+            <form action="{% url 'model_details_update' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="Product">Product</label>
+                    <select name="Product" id="Product" class="form-control" required onchange="populateModels()">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="Indkal_model_no">Indkal Model No.</label>
+                    <select name="Indkal_model_no" id="Indkal_model_no" class="form-control" required onchange="populateFields()">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Name and Address of Customer</label>
+                    <textarea class="form-control" id="Customer" name="Customer" required>
+INDKAL TECHNOLOGIES PRIVATE LIMITED
+1, C-102, Hinduja Lake Front Estate, Hullimavu Bennerghatta Rd,
+Bangalore, Bengaluru (Bangalore) Urban, Karnataka, 560076</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Name and Address of Manufacturer</label>
+                    <textarea class="form-control" id="Manufacture" name="Manufacture" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Test Location</label>
+                    <textarea class="form-control" id="Location" name="Location" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Brand</label>
+                    <select name="Brand" id="Brand" class="form-control" required>
+                        <option value="" selected disabled hidden>Select Brand</option>
+                        <option value="Acer">Acer</option>
+                        <option value="BLACK + DECKER">BLACK + DECKER</option>
+                        <option value="Wobble">Wobble</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Brand Model No.</label>
+                    <input type="text" class="form-control" id="Brand_model_no" name="Brand_model_no" required>
+                </div>
+                <div class="form-group">
+                    <label>ODM Model No.</label>
+                    <input type="text" class="form-control" id="ODM_model_no" name="ODM_model_no" required>
+                </div>
+               
+                <button type="submit" class="btn btn-primary btn-submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            populateProducts();
+            populateModels();
+        });
+
+        function populateProducts() {
+            const productSelect = document.getElementById("Product");
+            productSelect.innerHTML = "";
+            const productsData = {{ products|safe }};
+            
+            // Default option 
+            const option = document.createElement("option");
+            option.text = "Select the product";
+            option.selected = true;
+            option.disabled = true;
+            option.hidden = true;
+            productSelect.appendChild(option);
+
+            // Populate options from the products data
+            productsData.forEach(product => {
+                const option = document.createElement("option");
+                option.text = product;
+                productSelect.appendChild(option);
+            });
+        }
+        
+        function populateModels() {
+            const productSelect = document.getElementById("Product");
+            const modelSelect = document.getElementById("Indkal_model_no");
+            modelSelect.innerHTML = "";
+
+            const modelsData = {{ models|safe }};
+            const selectedProduct = productSelect.value;
+
+            // Default option
+            const defaultOption = document.createElement("option");
+            defaultOption.text = "Select the model";
+            defaultOption.selected = true;
+            defaultOption.disabled = true;
+            defaultOption.hidden = true;
+            modelSelect.appendChild(defaultOption);
+
+            // Filter models based on the selected product and populate the dropdown
+            modelsData.forEach(model => {
+                if (model.Product === selectedProduct || selectedProduct == "Select the product") {
+                    const option = document.createElement("option");
+                    option.text = model.Indkal_model_no;
+                    modelSelect.appendChild(option);
+                }
+            });
+        }
+
+        function populateFields() {
+            const modelSelect = document.getElementById("Indkal_model_no");
+            const selectedModel = modelSelect.value;
+            
+            const modelsData = {{ models|safe }};  // Assuming models is passed directly from Django
+            
+            // Find the selected model in the modelsData
+            const modelInfo = modelsData.find(model => model.Indkal_model_no === selectedModel);
+
+            if (modelInfo) {
+                document.getElementById("Customer").value = modelInfo.Customer || "";
+                document.getElementById("Manufacture").value = modelInfo.Manufacture || "";
+                document.getElementById("Location").value = modelInfo.Location || "";
+                document.getElementById("Brand").value = modelInfo.Brand || "";
+                document.getElementById("Brand_model_no").value = modelInfo.Brand_model_no || "";
+                document.getElementById("ODM_model_no").value = modelInfo.ODM_model_no || "";
+            }
+        }
+    </script>
+</body>
+</html>

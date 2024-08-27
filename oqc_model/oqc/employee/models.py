@@ -5,7 +5,6 @@ from ckeditor_uploader.fields import RichTextUploadingField
 # Create your models here.
     
 class Model_MNF_detail(models.Model):
-
     Customer = models.CharField(max_length=500,default='None')
     Manufacture = models.CharField(max_length=500,default='None')
     Location = models.CharField(max_length=100,default='None')

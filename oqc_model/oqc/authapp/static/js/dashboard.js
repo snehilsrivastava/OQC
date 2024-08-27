@@ -53,16 +53,6 @@ function clearFilter() {
     endDate.value = "";
 }
 
-$(document).ready(function () {
-    $('.collapse').on('show.bs.collapse', function () {
-        var target = $(this).prev().find('button i.fas');
-        target.removeClass('fa-chevron-down').addClass('fa-chevron-up');
-    }).on('hide.bs.collapse', function () {
-        var target = $(this).prev().find('button i.fas');
-        target.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-    });
-});
-
 function toggleCollapseIcon(button) {
     var icon = button.querySelector('i.fas');
     icon.classList.toggle('fa-chevron-down');

@@ -15,6 +15,8 @@ from django.contrib import messages
 from django.db.models import Min, Max, Case, When, DateField
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -169,7 +171,9 @@ def employee_dashboard(request):
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
+    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     context = {
+        'test': test,
         'completed_tests': completed_tests,
         'test_name': test_name,
         'test_stage': test_stage,
@@ -240,7 +244,6 @@ def set_status(request, id):
 
 @login_required
 def dashboard(request):
-
     username = request.session['username']
     user = Employee.objects.get(username=username)
     if user.user_type != 'owner' and not user.is_superuser:
@@ -285,7 +288,7 @@ def dashboard(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
-    test = list(TestRecord.objects.all())
+    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
@@ -532,31 +535,26 @@ def handle_selected_tests(request):
         elif action == 'send_brand':
             if not selected_test_records.exists():
                 messages.error(request, 'No test records selected')
-                return redirect('/dashboard/')   
+                return redirect('/dashboard/')
             for test_record in selected_test_records:
-                if test_record.B_status != "Approved":
+                if test_record.B_status != "Approved" and test_record.status == "Approved":
                     test_record.B_status = "Waiting"
                 test_record.owner_name = user.first_name + " " + user.last_name
                 test_record.save()
-            messages.success(request, 'Sent to Bran d Team for approval.')
+            messages.success(request, 'Sent to Brand Team for approval.')
 
         elif action == 'send_legal':
             if not selected_test_records.exists():
                 messages.error(request, 'No test records selected')
-                return redirect('/dashboard/')   
+                return redirect('/dashboard/')
             for test_record in selected_test_records:
-                if test_record.L_status != "Approved":
+                if test_record.L_status != "Approved" and test_record.status == "Approved":
                     test_record.L_status = "Waiting"
                 test_record.owner_name = user.first_name + " " + user.last_name
                 test_record.save()
             messages.success(request, 'Sent to Legal Team for approval.')
 
-    if user.user_type=='owner':      
-        return redirect('/dashboard/')
-    elif user.user_type=='legal':      
-        return redirect('/legal_dashboard/')
-    elif user.user_type=='brand':      
-        return redirect('/brand_dashboard/')
+    return redirect('/dashboard/')
 
 @login_required
 def view(request, test_name, model_name, serialno):
@@ -713,7 +711,9 @@ def legal_dashboard(request):
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
+    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     context = {
+        'test': test,
         'tests': tests,
         'all_tests': completed_tests,
         'test_name': test_name,
@@ -776,7 +776,9 @@ def brand_dashboard(request):
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
+    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     context = {
+        'test': test,
         'tests': tests,
         'all_tests': completed_tests,
         'test_name': test_name,
@@ -931,6 +933,82 @@ def MNF(request):
         'products': list(products),
     }
     return render(request, 'productMNFdetail.html',context)
+
+@login_required
+def model_details_update(request):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
+    if request.method == 'POST':
+        customer = request.POST.get('Customer')
+        manufacture = request.POST.get('Manufacture')
+        location = request.POST.get('Location')
+        brand = request.POST.get('Brand')
+        Product = request.POST.get('Product')
+        brand_model_no = request.POST.get('Brand_model_no')
+        Indkal_model_no = request.POST.get('Indkal_model_no')
+        ODM_model_no = request.POST.get('ODM_model_no')
+
+        existing_mnf = Model_MNF_detail.objects.get(Indkal_model_no=Indkal_model_no, Product=Product)
+        if existing_mnf:
+            existing_mnf.Customer = customer
+            existing_mnf.Manufacture = manufacture
+            existing_mnf.Location = location
+            existing_mnf.Brand = brand
+            existing_mnf.Product = Product
+            existing_mnf.Brand_model_no = brand_model_no
+            existing_mnf.Indkal_model_no = Indkal_model_no
+            existing_mnf.ODM_model_no = ODM_model_no
+            existing_mnf.save()
+        else:
+            messages.error(request, 'Model details do not exist')
+            return redirect('/dashboard/')
+
+        if Product == 'AC':
+            username = request.session['username']
+            employee = Employee.objects.get(username=username)
+            icon = employee.first_name[0] + employee.last_name[0]
+            AC_model = AC.objects.get(ModelName=Indkal_model_no)
+            context = {
+            'first_name': employee.first_name,
+            'last_name': employee.last_name,
+            'icon': icon,
+            'username': username,
+            'Indkal_model_no': Indkal_model_no,
+            'AC_model': AC_model,
+            }
+            return render(request, 'AC.html', context)
+        elif Product == 'WM - FATL':
+            username = request.session['username']
+            employee = Employee.objects.get(username=username)
+            icon = employee.first_name[0] + employee.last_name[0]
+            WM_model = WM_FATL.objects.get(ModelName=Indkal_model_no)
+            context = {
+            'first_name': employee.first_name,
+            'last_name': employee.last_name,
+            'icon': icon,
+            'username': username,
+            'Indkal_model_no': Indkal_model_no,
+            'WM_model': WM_model,
+            }
+            return render(request, 'WM-FATL.html', context)
+        else:
+            return redirect('/access_denied/')
+    
+    username = request.session['username']
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
+    products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
+    models = list(Model_MNF_detail.objects.values())
+    context = {
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
+        'products': products,
+        'models': models,
+    }
+    return render(request, 'model_details_update.html',context)
 
 @login_required
 def model_details_view(request):
