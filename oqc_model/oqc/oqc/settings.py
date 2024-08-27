@@ -2,6 +2,9 @@ from pathlib import Path
 import os 
 import django
 from django.utils.encoding import force_str
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,13 +82,16 @@ POSTGRESQL = {
     'ENGINE': 'django.db.backends.postgresql',
     'NAME': 'qms-database',
     'USER': 'protrack',
-    'PASSWORD': 'Protrack#2024',
+    'PASSWORD': os.environ.get("pg_pass"),
     'HOST': 'qms-database.cx2su2waigj7.ap-south-1.rds.amazonaws.com',
     'PORT': '5432',
 }
 
+DB = {"POSTGRESQL": POSTGRESQL, "SQLITE3": SQLITE3}
+db_type = os.environ.get("db_type")
+
 DATABASES = {
-    'default': SQLITE3
+    'default': DB[db_type]
 }
 
 # Password validation
@@ -114,7 +120,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'qmsindkal@gmail.com'
-EMAIL_HOST_PASSWORD = 'xslc bjcv crdh zwdi'
+EMAIL_HOST_PASSWORD = os.environ.get("email_pass")
 
 # LOGIN_URL = '/au/login/'
 # AUTH_USER_MODEL = 'authapp.Employee'
