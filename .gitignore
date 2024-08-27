@@ -5,3 +5,4 @@ oqc_model/oqc/staticfiles/
 oqc_model/oqc/media/
 .vscode/
 **/migrations/
+.env
