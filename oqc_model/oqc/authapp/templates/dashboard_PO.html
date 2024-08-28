@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     {% load static%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes">
+    <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
     <title>Product Owner Dashboard</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
@@ -189,13 +190,22 @@
                 {% endfor %}
             </span>
         {% endif %}
-        <span class="heading">
-            <h1 class="headding">Dashboard</h1>
-            <button class="action-button" onclick="toggleFilter()">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/>
-                </svg>Filter
-            </button>
-        </span>
+        <div class="sub-header">
+            <span class="heading">
+                <h1 class="headding">Dashboard</h1>
+                <button class="action-button" onclick="toggleFilter()">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/>
+                    </svg>Filter
+                </button>
+            </span>
+            <div class="summary">
+                <table>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
         <form method="POST" action="{% url 'handle_selected_tests' %}">
             {% csrf_token %}
             <div class="table-containers">
@@ -273,7 +283,7 @@
                                                     <div class="legends">
                                                         <span class="color">
                                                             {% for status, color in status_color.items %}
-                                                                <span class="circle" name="{{status}}" id="leg" style="background-color: {{color}};"></span> : {{status}}<br>
+                                                                <span class="circle" name="{{status}}" id="leg" style="background-color: '{{color}}';"></span> : {{status}}<br>
                                                             {% endfor %}
                                                         </span>
                                                         <br>

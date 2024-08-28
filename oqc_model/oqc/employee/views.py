@@ -15,6 +15,8 @@ from django.contrib import messages
 from django.db.models import Min, Max, Case, When, DateField
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -130,67 +132,6 @@ def owner_remark(request, id):
     return render(request, "owner_remark.html", context)
 
 @login_required
-def employee_dashboard(request):
-    username = request.session['username']
-    user = Employee.objects.get(username=username)
-    if user.user_type != 'employee' and not user.is_superuser:
-        return redirect('/access_denied/')
-    test_name = request.GET.get('test_name', '')
-    test_stage = request.GET.get('test_stage', '')
-    product = request.GET.get('product','')
-    model_name = request.GET.get('model_name', '')
-    serial_number = request.GET.get('serial_number', '')
-    status = request.GET.get('status', '')
-    start_date = request.GET.get('start_date', '')
-    end_date = request.GET.get('end_date', '')
-    
-    completed_tests = TestRecord.objects.filter(employee=username)
-
-    if test_name:
-        completed_tests = completed_tests.filter(TestName=test_name)
-    if product:
-        completed_tests = completed_tests.filter(ProductType=product)
-    if test_stage:
-        completed_tests = completed_tests.filter(TestStage=test_stage)
-    if model_name:
-        completed_tests = completed_tests.filter(ModelName=model_name)
-    if serial_number:
-        completed_tests = completed_tests.filter(SerailNo=serial_number)
-    if status:
-        completed_tests = completed_tests.filter(status=status)
-    if start_date:
-        completed_tests = completed_tests.filter(test_date__gte=start_date)
-    if end_date:
-        completed_tests = completed_tests.filter(test_date__lte=end_date)
-    completed_tests = completed_tests.order_by('-test_end_date')
-    tv_models = list(TV.objects.values_list('ModelName', flat=True))
-    ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
-    context = {
-        'completed_tests': completed_tests,
-        'test_name': test_name,
-        'test_stage': test_stage,
-        'model_name': model_name,
-        'serial_number': serial_number,
-        'status': status,
-        'product': product,
-        'start_date': start_date,
-        'end_date': end_date,
-        'tv_models': tv_models,
-        'ac_models': ac_models,
-        'phone_models': phone_models,
-        'washing_machine_models': washing_machine_models,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username
-    }
-    return render(request, "dashboard_employee.html", context)
-
-@login_required
 def report(request, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if (user.user_type != 'employee' and user.user_type != 'owner') and not user.is_superuser:
@@ -237,83 +178,6 @@ def set_status(request, id):
     test_record.save()
     messages.success(request, 'Record sent to PO for approval.')
     return redirect('/employee_dashboard/')
-
-@login_required
-def dashboard(request):
-
-    username = request.session['username']
-    user = Employee.objects.get(username=username)
-    if user.user_type != 'owner' and not user.is_superuser:
-        return redirect('/access_denied/')
-    test_name = request.GET.get('test_name', '')
-    test_stage = request.GET.get('test_stage', '')
-    product = request.GET.get('product','')
-    model_name = request.GET.get('model_name', '')
-    serial_number = request.GET.get('serial_number', '')
-    status = request.GET.get('status', '')
-    L_status = request.GET.get('L_status','')
-    B_status = request.GET.get('B_status','')
-    start_date = request.GET.get('start_date', '')
-    end_date = request.GET.get('end_date', '')
-    status_color = {"Not Sent": "#838383", "Waiting": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
-    role_letter = {"T": "Test Inspector", "L": "Legal Team", "B": "Brand Team"}
-
-    completed_tests = TestRecord.objects.exclude(status="Not Sent")
-    if test_name:
-        completed_tests = completed_tests.filter(TestName__icontains=test_name)
-    if product:
-        completed_tests = completed_tests.filter(ProductType__icontains=product)
-    if test_stage:
-        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
-    if model_name:
-        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
-    if serial_number:
-        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
-    if status:
-        completed_tests = completed_tests.filter(status=status)
-    if L_status:
-        completed_tests = completed_tests.filter(L_status= L_status)
-    if B_status:
-        completed_tests = completed_tests.filter(B_status= B_status)
-    if start_date:
-        completed_tests = completed_tests.filter(test_date__gte=start_date)
-    if end_date:
-        completed_tests = completed_tests.filter(test_date__lte=end_date)
-    tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
-    completed_tests = completed_tests.order_by('-test_end_date')
-    tv_models = list(TV.objects.values_list('ModelName', flat=True))
-    ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
-    test = list(TestRecord.objects.all())
-    employee = user
-    icon = employee.first_name[0] + employee.last_name[0]
-    context = {
-        'test': test,
-        'tests': tests,
-        'all_tests': completed_tests,
-        'test_name': test_name,
-        'test_stage': test_stage,
-        'model_name': model_name,
-        'serial_number': serial_number,
-        'status': status,
-        'L_status' : L_status,
-        'B_status' : B_status,
-        'product':product,
-        'start_date': start_date,
-        'end_date': end_date,
-        'tv_models': tv_models,
-        'ac_models': ac_models,
-        'phone_models': phone_models,
-        'washing_machine_models': washing_machine_models,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
-        'status_color' : status_color,
-        'role_letter': role_letter
-    }
-    return render(request, 'dashboard_PO.html', context)
 
 from django.contrib.auth import logout as auth_logout
 
@@ -672,6 +536,146 @@ def change_status_brand(request, test_id, status):
     return redirect('brand_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
 @login_required
+def dashboard(request):
+
+    username = request.session['username']
+    user = Employee.objects.get(username=username)
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
+    test_name = request.GET.get('test_name', '')
+    test_stage = request.GET.get('test_stage', '')
+    product = request.GET.get('product','')
+    model_name = request.GET.get('model_name', '')
+    serial_number = request.GET.get('serial_number', '')
+    status = request.GET.get('status', '')
+    L_status = request.GET.get('L_status','')
+    B_status = request.GET.get('B_status','')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+    status_color = {"Not Sent": "#838383", "Waiting": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
+    role_letter = {"T": "Test Inspector", "L": "Legal Team", "B": "Brand Team"}
+
+    completed_tests = TestRecord.objects.exclude(status="Not Sent")
+    if test_name:
+        completed_tests = completed_tests.filter(TestName__icontains=test_name)
+    if product:
+        completed_tests = completed_tests.filter(ProductType__icontains=product)
+    if test_stage:
+        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
+    if model_name:
+        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
+    if serial_number:
+        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
+    if status:
+        completed_tests = completed_tests.filter(status=status)
+    if L_status:
+        completed_tests = completed_tests.filter(L_status= L_status)
+    if B_status:
+        completed_tests = completed_tests.filter(B_status= B_status)
+    if start_date:
+        completed_tests = completed_tests.filter(test_date__gte=start_date)
+    if end_date:
+        completed_tests = completed_tests.filter(test_date__lte=end_date)
+    tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
+    completed_tests = completed_tests.order_by('-test_end_date')
+    tv_models = list(TV.objects.values_list('ModelName', flat=True))
+    ac_models = list(AC.objects.values_list('ModelName', flat=True))
+    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
+    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
+    employee = user
+    icon = employee.first_name[0] + employee.last_name[0]
+    context = {
+        'test': test,
+        'tests': tests,
+        'all_tests': completed_tests,
+        'test_name': test_name,
+        'test_stage': test_stage,
+        'model_name': model_name,
+        'serial_number': serial_number,
+        'status': status,
+        'L_status' : L_status,
+        'B_status' : B_status,
+        'product':product,
+        'start_date': start_date,
+        'end_date': end_date,
+        'tv_models': tv_models,
+        'ac_models': ac_models,
+        'phone_models': phone_models,
+        'washing_machine_models': washing_machine_models,
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username,
+        'status_color' : status_color,
+        'role_letter': role_letter
+    }
+    return render(request, 'dashboard_PO.html', context)
+
+@login_required
+def employee_dashboard(request):
+    username = request.session['username']
+    user = Employee.objects.get(username=username)
+    if user.user_type != 'employee' and not user.is_superuser:
+        return redirect('/access_denied/')
+    test_name = request.GET.get('test_name', '')
+    test_stage = request.GET.get('test_stage', '')
+    product = request.GET.get('product','')
+    model_name = request.GET.get('model_name', '')
+    serial_number = request.GET.get('serial_number', '')
+    status = request.GET.get('status', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+    
+    completed_tests = TestRecord.objects.filter(employee=username)
+
+    if test_name:
+        completed_tests = completed_tests.filter(TestName=test_name)
+    if product:
+        completed_tests = completed_tests.filter(ProductType=product)
+    if test_stage:
+        completed_tests = completed_tests.filter(TestStage=test_stage)
+    if model_name:
+        completed_tests = completed_tests.filter(ModelName=model_name)
+    if serial_number:
+        completed_tests = completed_tests.filter(SerailNo=serial_number)
+    if status:
+        completed_tests = completed_tests.filter(status=status)
+    if start_date:
+        completed_tests = completed_tests.filter(test_date__gte=start_date)
+    if end_date:
+        completed_tests = completed_tests.filter(test_date__lte=end_date)
+    completed_tests = completed_tests.order_by('-test_end_date')
+    tv_models = list(TV.objects.values_list('ModelName', flat=True))
+    ac_models = list(AC.objects.values_list('ModelName', flat=True))
+    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
+    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
+    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
+    employee = Employee.objects.get(username=username)
+    icon = employee.first_name[0] + employee.last_name[0]
+    context = {
+        'test': test,
+        'completed_tests': completed_tests,
+        'test_name': test_name,
+        'test_stage': test_stage,
+        'model_name': model_name,
+        'serial_number': serial_number,
+        'status': status,
+        'product': product,
+        'start_date': start_date,
+        'end_date': end_date,
+        'tv_models': tv_models,
+        'ac_models': ac_models,
+        'phone_models': phone_models,
+        'washing_machine_models': washing_machine_models,
+        'first_name': employee.first_name,
+        'last_name': employee.last_name,
+        'icon': icon,
+        'username': username
+    }
+    return render(request, "dashboard_employee.html", context)
+
+@login_required
 def legal_dashboard(request):
     username = request.session['username']
     user = Employee.objects.get(username=username)
@@ -711,9 +715,11 @@ def legal_dashboard(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
+    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
+        'test': test,
         'tests': tests,
         'all_tests': completed_tests,
         'test_name': test_name,
@@ -774,9 +780,11 @@ def brand_dashboard(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
+    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
+        'test': test,
         'tests': tests,
         'all_tests': completed_tests,
         'test_name': test_name,

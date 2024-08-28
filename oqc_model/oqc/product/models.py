@@ -1,5 +1,8 @@
+from typing import Iterable
 from django.db import models
 import datetime
+from employee.models import Model_MNF_detail
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 class AC(models.Model):
@@ -14,6 +17,8 @@ class AC(models.Model):
     RefCharge = models.CharField(max_length=100,default='')
     Capilary = models.CharField(max_length=100,default='')
     Compressor  = models.CharField(max_length=100,default='')
+    def __str__(self):
+        return f"AC - {self.ModelName}"
 
 class WM_FATL(models.Model):
     ModelName = models.CharField(max_length=100,default='')
@@ -35,3 +40,23 @@ class TV(models.Model):
     ModelName = models.CharField(max_length=100)
     def __str__(self):
         return f"{self.ModelName} "
+
+def default_data():
+    return {'DVT': [], 'PP': [], 'MP': []}
+
+class Model_Test_Name_Details(models.Model):
+    Model_Name = models.ForeignKey(Model_MNF_detail, to_field="Indkal_model_no", on_delete=models.CASCADE)
+    Test_Names = models.JSONField(default=default_data)
+    Test_Count = models.JSONField(default=default_data)
+    def save(self, *args, **kwargs):
+        if self.Test_Names:
+            self.Test_Count = {key: len(val) for key, val in self.Test_Names.items()}
+        return super().save(*args, **kwargs)
+    def __str__(self):
+        return f"{self.Model_Name}"
+    
+class Product_Test_Name_Details(models.Model):
+    Product = models.CharField(max_length=80, blank=True, null=True)
+    Test_Names = models.JSONField(default=default_data)
+    def __str__(self):
+        return f"{self.Product}"

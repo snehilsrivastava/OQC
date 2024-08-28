@@ -55,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToSet = localS;
 
     // If local storage is not set, we check the OS preference
-    console.log(localS);
     if (!localS) {
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
         if (prefersDarkScheme.matches) {
