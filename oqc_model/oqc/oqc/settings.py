@@ -72,12 +72,6 @@ WSGI_APPLICATION = 'oqc.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-SQLITE3 = {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': BASE_DIR / 'db.sqlite3',
-}
-
 SERVER_PSQL = {
     'ENGINE': 'django.db.backends.postgresql',
     'NAME': 'qms-database',
@@ -91,7 +85,7 @@ LOCAL_PSQL = {
     'ENGINE': 'django.db.backends.postgresql',
     'NAME': 'QMS',
     'USER': 'QMS_Admin',
-    'PASSWORD': '2610',
+    'PASSWORD': os.environ.get("local_psql_pass"),
     'HOST': 'localhost',
     'PORT': '5432',
 }

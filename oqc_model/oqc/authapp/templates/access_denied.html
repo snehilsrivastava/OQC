@@ -6,6 +6,10 @@
         .inline {
             display: inline;
         }
+        .main-content {
+            position: relative;
+            top: 60px;
+        }
     </style>
     {% load static%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +17,6 @@
     <title>Access Denied</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/remark.css' %}">
-    
     <body>
         <div class="header">
             <div></div>
@@ -40,21 +43,22 @@
                 </div>
             </div>
         </div>
-        <h1>Access Denied</h1>
-        <p>You do not have permission to access this page.</p>
-        <br>
-        <span class="inline">Click here to return to 
-        {% if user.user_type == 'owner' %}
-            <a href="{% url 'dashboard' %}">dashboard</a>
-        {% elif user.user_type == 'brand' %}
-            <a href="{% url 'brand_dashboard' %}">dashboard</a>
-        {% elif user.user_type == 'legal' %}
-            <a href="{% url 'legal_dashboard' %}">dashboard</a>
-        {% elif user.user_type == 'employee' %}
-            <a href="{% url 'employee_dashboard' %}">dashboard</a>
-        {% endif %}
-        </span>
-
+        <div class="main-content">
+            <h1>Access Denied</h1>
+            <p>You do not have permission to access this page.</p>
+            <br>
+            <span class="inline">Click here to return to 
+            {% if user.user_type == 'owner' %}
+                <a href="{% url 'dashboard' %}">dashboard</a>
+            {% elif user.user_type == 'brand' %}
+                <a href="{% url 'brand_dashboard' %}">dashboard</a>
+            {% elif user.user_type == 'legal' %}
+                <a href="{% url 'legal_dashboard' %}">dashboard</a>
+            {% elif user.user_type == 'employee' %}
+                <a href="{% url 'employee_dashboard' %}">dashboard</a>
+            {% endif %}
+            </span>
+        </div>
     <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
     </body>
 </html>

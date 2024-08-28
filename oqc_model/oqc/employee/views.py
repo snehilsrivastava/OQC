@@ -152,6 +152,8 @@ def report(request, test_name, model_name, serialno):
         if form.is_valid():
             form.save()
             messages.success(request, 'Test record saved successfully.')
+        if user.user_type == 'owner':
+            return redirect('/dashboard/')
         return redirect('/employee_dashboard/')
     else:
         form = TestRecordForm(instance=test_record)
@@ -214,6 +216,8 @@ def edit(request, test_name, model_name, serialno):
             messages.success(request, 'Test record updated.')
         else:
             messages.error(request, 'Failed to update test record.')
+        if user.user_type == 'owner':
+            return redirect('/dashboard/')
         return redirect('/employee_dashboard/')
     else:
         form = TestRecordForm(instance=test_record)
@@ -600,6 +604,7 @@ def dashboard(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
+        'employee': employee,
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,
