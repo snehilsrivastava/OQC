@@ -78,7 +78,7 @@ SQLITE3 = {
     'NAME': BASE_DIR / 'db.sqlite3',
 }
 
-POSTGRESQL = {
+SERVER_PSQL = {
     'ENGINE': 'django.db.backends.postgresql',
     'NAME': 'qms-database',
     'USER': 'protrack',
@@ -87,11 +87,19 @@ POSTGRESQL = {
     'PORT': '5432',
 }
 
-DB = {"POSTGRESQL": POSTGRESQL, "SQLITE3": SQLITE3}
-db_type = os.environ.get("db_type")
+LOCAL_PSQL = {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': 'QMS',
+    'USER': 'QMS_Admin',
+    'PASSWORD': '2610',
+    'HOST': 'localhost',
+    'PORT': '5432',
+}
+
+DB = {"SERVER": SERVER_PSQL, "LOCAL": LOCAL_PSQL}
 
 DATABASES = {
-    'default': DB[db_type]
+    'default': DB[os.environ.get("db_type")]
 }
 
 # Password validation

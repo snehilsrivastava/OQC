@@ -11,7 +11,7 @@ class Model_MNF_detail(models.Model):
     Brand = models.CharField(max_length=80,default='None')
     Product = models.CharField(max_length=80,default='None')
     Brand_model_no = models.CharField(max_length=80,default='None')
-    Indkal_model_no = models.CharField(max_length=80,default='None')
+    Indkal_model_no = models.CharField(max_length=80,default='None', unique=True)
     ODM_model_no = models.CharField(max_length=80,default='None')
     def __str__(self):
         return f"{self.Product} - {self.Indkal_model_no}"

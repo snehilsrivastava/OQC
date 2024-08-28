@@ -8,8 +8,8 @@
     <title>Product Specification Form</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUa1zX+8Hk5uvz/2BifflkLvKZon43Z7qD5C5xQzGtvT0PCZfFj5x0zJb3ln" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/form.css' %}">
-    <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
 </head>
 <body>
     <div class="header">
@@ -64,52 +64,39 @@
                 <h1>Specification Form For AC</h1>
             </div>
 
-            <form action="{% url 'AC' %}" method="post">
+            <form action="{% url 'AC_TestNames' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
+                    <label for="Product">Product</label>
+                    <input type="text" class="form-control" id="Product" name="Product" value="{{ product }}" readonly>
+                </div>
+                <div class="form-group">
                     <label for="ModelName">Model Number</label>
-                    <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ Indkal_model_no }}" readonly>
+                    <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ model_name }}" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="BImotor">BI Motor</label>
-                    <input type="text" class="form-control" id="BImotor" name="BImotor" value="{{ AC_model.BImotor }}" required>
+                    <label for="dvt-options">DVT Tests</label>
+                    <select id="dvt-options" name="dvt-options" data-placeholder="Select dvt-options" multiple data-multi-select>
+                        {% for t in DVT %}
+                            <option value="{{ t }}">{{ t }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="Compressor">Compressor</label>
-                    <input type="text" class="form-control" id="Compressor" name="Compressor" value="{{ AC_model.Compressor }}" required>
+                    <label for="pp-options">PP Tests</label>
+                    <select id="pp-options" name="pp-options" data-placeholder="Select pp-options" multiple data-multi-select>
+                        {% for t in PP %}
+                            <option value="{{ t }}">{{ t }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="Blower">Blower</label>
-                    <input type="text" class="form-control" id="Blower" name="Blower" value="{{ AC_model.Blower }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="FanMotor">Fan Motor</label>
-                    <input type="text" class="form-control" id="FanMotor" name="FanMotor" value="{{ AC_model.FanMotor }}" required>
-                </div>
-            
-                <div class="form-group">
-                    <label for="Fan">Fan</label>
-                    <input type="text" class="form-control" id="Fan" name="Fan" value="{{ AC_model.Fan }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="Eva">Eva</label>
-                    <input type="text" class="form-control" id="Eva" name="Eva" value="{{ AC_model.Eva }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="ConPipe">Con Pipe</label>
-                    <input type="text" class="form-control" id="ConPipe" name="ConPipe" value="{{ AC_model.ConPipe }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="CondCoil">Cond Coil</label>
-                    <input type="text" class="form-control" id="CondCoil" name="CondCoil" value="{{ AC_model.CondCoil }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="RefCharge">Ref Charge</label>
-                    <input type="text" class="form-control" id="RefCharge" name="RefCharge" value="{{ AC_model.RefCharge }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="Capilary">Capilary Tube</label>
-                    <input type="text" class="form-control" id="Capilary" name="Capilary" value="{{ AC_model.Capilary }}" required>
+                    <label for="mp-options">MP Tests</label>
+                    <select id="mp-options" name="mp-options" data-placeholder="Select mp-options" multiple data-multi-select>
+                        {% for t in MP %}
+                            <option value="{{ t }}">{{ t }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <button type="submit" class="btn btn-primary btn-submit">Submit</button>
             </form>
@@ -120,5 +107,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
+    <script src="{% static 'js/multiselect.js' %}"></script>
 </body>
 </html>

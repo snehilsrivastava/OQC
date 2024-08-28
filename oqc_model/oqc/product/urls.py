@@ -4,5 +4,6 @@ from . import views
 urlpatterns = [
     path('product/', views.product_form_view, name='product'),
     path('AC/', views.AC_spec, name='AC'),
+    path('AC_TestNames/', views.AC_TestNames, name='AC_TestNames'),
     path('WM-FATL/', views.WM_FATL_spec, name='WM-FATL'),
 ]
