@@ -126,6 +126,11 @@
     .drop-table colgroup :nth-child(8){
         width: 80px;
     }
+    .multiple-actions {
+        width: 100px !important;
+        display: flex;
+        gap: 5px;
+    }
 }
 
 body {
@@ -197,6 +202,10 @@ span.heading a {
     justify-content: center;
     align-items: center;
     width: max-content;
+}
+.filter-buttons {
+    display: flex;
+    gap: 5px;
 }
 
 .content {

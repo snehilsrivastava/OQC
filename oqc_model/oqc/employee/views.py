@@ -537,9 +537,56 @@ def change_status_brand(request, test_id, status):
     serialno = test.SerailNo
     return redirect('brand_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
+def summary(request):
+    ret = []
+    status_colors = {"Uploading": "Red", "Uploaded": "Yellow", "Completed": "Green"}
+    PType = Product_Test_Name_Details.objects.values('Product')
+    ProductType = [_['Product'] for _ in PType]
+    for P in ProductType:
+        Models = Model_Test_Name_Details.objects.filter(Product=P)
+        for M in Models:
+            TestCount = M.Test_Count
+            if TestCount['MP']:
+                stage='MP'
+                total_count = TestCount['MP']
+            elif TestCount['PP']:
+                stage='PP'
+                total_count = TestCount['PP']
+            else:
+                stage='DVT'
+                total_count = TestCount['DVT']
+            print(P, M.Model_Name.Indkal_model_no, stage)
+            TestRecords = TestRecord.objects.filter(ProductType=P, ModelName=M.Model_Name.Indkal_model_no, TestStage=stage)
+            PS, BS, LS = "Completed", "Completed", "Completed"
+            Approved, Uploaded, Uploading = 0, 0, 0
+            for T in TestRecords:
+                POS = T.status
+                BTS = T.B_status
+                LTS = T.L_status
+                if POS=="Approved":
+                    Approved += 1
+                elif POS=="Not Sent":
+                    Uploading += 1
+                elif POS=="Waiting":
+                    Uploaded += 1
+                if POS=="Waiting" and PS=="Completed":
+                    PS = "Uploaded"
+                elif POS=="Not Sent" and (PS=="Completed" or PS=="Uploaded"):
+                    PS = "Uploading"
+                if BTS=="Waiting" and BS=="Completed":
+                    BS = "Uploaded"
+                elif BTS=="Not Sent" and (BS=="Completed" or BS=="Uploaded"):
+                    BS = "Uploading"
+                if LTS=="Waiting" and LS=="Completed":
+                    LS = "Uploaded"
+                elif LTS=="Not Sent" and (LS=="Completed" or LS=="Uploaded"):
+                    LS = "Uploading"
+            ret.append({"Meta": [P, M.Model_Name.Indkal_model_no, stage], "Count": [total_count, Uploaded, Approved, Uploading], "Status":[status_colors[PS], status_colors[BS], status_colors[LS]]})
+    print(ret)
+    return ret
+
 @login_required
 def dashboard(request):
-
     username = request.session['username']
     user = Employee.objects.get(username=username)
     if user.user_type != 'owner' and not user.is_superuser:
@@ -587,6 +634,7 @@ def dashboard(request):
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
+    summary_data = summary(request)
     context = {
         'test': test,
         'tests': tests,
@@ -611,7 +659,8 @@ def dashboard(request):
         'icon': icon,
         'username': username,
         'status_color' : status_color,
-        'role_letter': role_letter
+        'role_letter': role_letter,
+        'summary_data': summary_data
     }
     return render(request, 'dashboard_PO.html', context)
 
