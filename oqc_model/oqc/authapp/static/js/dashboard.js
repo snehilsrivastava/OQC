@@ -82,3 +82,29 @@ function toggleAllCollapseButtons() {
         }
     });
 }
+
+document.querySelectorAll('.dropdown-toggle').forEach(item => {
+    item.addEventListener('click', function(e) {
+        e.preventDefault();
+        let target = document.querySelector(this.getAttribute('href'));
+        let icon = this.querySelector('.chevron-icon');
+
+        if (target.classList.contains('show')) {
+            target.classList.remove('show');
+            icon.style.transform = 'rotate(0deg)';
+        } else {
+            target.classList.add('show');
+            icon.style.transform = 'rotate(90deg) translateX(10%) translateY(-5%)';
+        }
+    });
+});
+
+function handleOutsideClick(event) {
+    const sidebar = document.getElementById("sidebar");
+    const header = document.querySelector(".header");
+
+    if (sidebar.classList.contains("visible") && !sidebar.contains(event.target) && !header.contains(event.target)) {
+        sidebar.classList.remove("visible");
+    }
+}
+document.addEventListener("click", handleOutsideClick);

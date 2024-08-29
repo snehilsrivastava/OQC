@@ -2,7 +2,6 @@ from django.shortcuts import render,redirect
 from .models import *
 from employee.models import TestRecord, Test_core_detail
 from django.shortcuts import render
-from .models import TV, AC, Phone, WM_FATL, Model_Test_Name_Details, Product_Test_Name_Details
 from django.urls import reverse
 from authapp.models import Employee
 from django.contrib import messages
@@ -117,50 +116,14 @@ def AC_spec(request):
             'icon': icon,
             'username': request.session['username'],
         }
-        return render(request, 'AC_TestNames.html', context)
-    
-    context = {
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'icon': icon,
-        'username': request.session['username'],
-    }
-    return render(request, 'AC.html', context=context)
-
-@login_required
-def AC_TestNames(request):
-    user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner' and not user.is_superuser:
-        return redirect('/access_denied/')
-    if request.method == 'POST':
-        model_name = request.POST.get('ModelName')
-        product = request.POST.get('Product')
-        dvt = request.POST.getlist('dvt-options')
-        pp = request.POST.getlist('pp-options')
-        mp = request.POST.getlist('mp-options')
-        model_test_names = {"DVT": dvt, "PP": pp, "MP": mp}
-        new_model_test_name_details = Model_Test_Name_Details(
-            Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name),
-            Test_Names=model_test_names
-        )
-        new_model_test_name_details.save()
-        messages.success(request, 'AC model saved')
-        return redirect('/dashboard/')
-    
-    username = request.session['username']
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
-    context = {
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
-    }
-    return render(request, 'AC_TestNames.html', context=context)
+        return render(request, 'TestNames.html', context)
+    messages.error(request, 'Invalid request')
+    return redirect('/dashboard/')
 
 @login_required
 def WM_FATL_spec(request):
     user = Employee.objects.get(username=request.session['username'])
+    icon = user.first_name[0] + user.last_name[0]
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
@@ -179,16 +142,43 @@ def WM_FATL_spec(request):
             RatedRPM = rated_rpm,
         )
         new_WM_FATL.save()
-        messages.success(request, 'Washing Machine model saved')
-        return redirect('/dashboard/')
+        test_names = Product_Test_Name_Details.objects.get(Product="WM - FATL").Test_Names
+        dvt = test_names['DVT']
+        pp = test_names['PP']
+        mp = test_names['MP']
+        context = {
+            'model_name': model_name,
+            'product': "WM - FATL",
+            'DVT': dvt,
+            'PP': pp,
+            'MP': mp,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'icon': icon,
+            'username': request.session['username'],
+        }
+        return render(request, 'TestNames.html', context)
+    messages.error(request, 'Invalid request')
+    return redirect('/dashboard/')
 
-    username = request.session['username']
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
-    context = {
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
-    }
-    return render(request, 'WM-FATL.html', context=context)
+@login_required
+def TestNames(request):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
+    if request.method == 'POST':
+        model_name = request.POST.get('ModelName')
+        product = request.POST.get('Product')
+        dvt = request.POST.getlist('dvt-options')
+        pp = request.POST.getlist('pp-options')
+        mp = request.POST.getlist('mp-options')
+        model_test_names = {"DVT": dvt, "PP": pp, "MP": mp}
+        new_model_test_name_details = Model_Test_Name_Details(
+            Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name),
+            Test_Names=model_test_names
+        )
+        new_model_test_name_details.save()
+        messages.success(request, 'Model saved')
+        return redirect('/dashboard/')
+    messages.error(request, 'Invalid request')
+    return redirect('/dashboard/')

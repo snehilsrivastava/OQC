@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     {% load static%}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
-    <title>View Test Details</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <title>Add Tests for Model</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUa1zX+8Hk5uvz/2BifflkLvKZon43Z7qD5C5xQzGtvT0PCZfFj5x0zJb3ln" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/view_details.css' %}">
     <link rel="stylesheet" href="{% static 'css/menu.css' %}">
 </head>
 <body>
@@ -86,105 +87,65 @@
             </li>
         </ul>
     </div>
-    {% if messages %}
-        <span class="message-container">
-            {% for message in messages %}
-                <span class="message {{ message.level_tag }}">
-                    {{ message }}
-                </span>
-                <div class="timer-bar"></div>
-            {% endfor %}
-        </span>
-    {% endif %}
-    <div class="content">
-        <div style="padding: 10px 20px 0px 20px;">
-            <h1>Test Details</h1>
-            <form method="GET">
-                <div class="inline">
-                    <label for="product_filter">Product:</label>
-                    <select class="filter-dropdown" name="product_filter" onchange="this.form.submit()">
-                        <option value="">All Products</option>
-                        {% for product in products %}
-                            <option value="{{ product }}" {% if product == request.GET.product_filter %}selected{% endif %}>
-                                {{ product }}
-                            </option>
+    <div class="message-container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.level_tag }}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <div class="header-form" style = "padding: 5px 30px; "> 
+                <h1>Add Tests for Model</h1>
+            </div>
+            <form action="{% url 'TestNames' %}" method="post">
+                <div class="form-group">
+                    <label for="Product">Product</label>
+                    <input type="text" class="form-control" id="Product" name="Product" value="{{ product }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="ModelName">Model Number</label>
+                    <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ model_name }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="dvt-options">DVT Tests</label>
+                    <select id="dvt-options" name="dvt-options" data-placeholder="Select dvt-options" multiple data-multi-select>
+                        {% for t in DVT %}
+                            <option value="{{ t }}">{{ t }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="inline">
-                    <label for="testname_filter">Test Name:</label>
-                    <select class="filter-dropdown" name="testname_filter" onchange="this.form.submit()">
-                        <option value="">All Test Names</option>
-                        {% for testname in testnames %}
-                            <option value="{{ testname }}" {% if testname == request.GET.testname_filter %}selected{% endif %}>
-                                {{ testname }}
-                            </option>
+                <div class="form-group">
+                    <label for="pp-options">PP Tests</label>
+                    <select id="pp-options" name="pp-options" data-placeholder="Select pp-options" multiple data-multi-select>
+                        {% for t in PP %}
+                            <option value="{{ t }}">{{ t }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <button type="submit" class="clear-btn" name="clear_filters" value="true">Clear</button>
+                <div class="form-group">
+                    <label for="mp-options">MP Tests</label>
+                    <select id="mp-options" name="mp-options" data-placeholder="Select mp-options" multiple data-multi-select>
+                        {% for t in MP %}
+                            <option value="{{ t }}">{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit">Submit</button>
             </form>
-        </div>
-        <div class="table-containers">
-            <table>
-                <thead>
-                    <tr>
-                        {% if not product_filter %}
-                        <th>Product Type</th>
-                        {% endif %}
-                        {% if not testname_filter %}
-                        <th>Test Name</th>
-                        {% endif %}
-                        <th>Objective</th>
-                        <th>Standard</th>
-                        <th>Condition</th>
-                        <th>Procedure</th>
-                        <th>Judgement</th>
-                        <th>Instrument</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for test in tests %}
-                    <tr>
-                        {% if not product_filter %}
-                        <td>{{ test.ProductType }}</td>
-                        {% endif %}
-                        {% if not testname_filter %}
-                        <td>{{ test.TestName }}</td>
-                        {% endif %}
-                        <td>{{ test.Test_Objective }}</td>
-                        <td>{{ test.Test_Standard }}</td>
-                        <td>{{ test.Test_Condition }}</td>
-                        <td>{{ test.Test_Procedure }}</td>
-                        <td>{{ test.Judgement }}</td>
-                        <td>{{ test.Instrument }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>    
         </div>
     </div>
 
-<script type="text/javascript" src="{% static 'js/header.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var messageContainer = document.querySelector('.message-container');
-        var timerBar = document.querySelector('.timer-bar');
-        var header = document.querySelector('.header');
-
-        if (messageContainer && timerBar && header) {
-            var headerRect = header.getBoundingClientRect();
-            var headerHeight = headerRect.height;
-            var headerTop = headerRect.top + window.scrollY;
-            messageContainer.style.top = `${headerTop + headerHeight}px`;
-            timerBar.style.width = '0%';
-
-            setTimeout(function() {
-                messageContainer.style.top = `-${messageContainer.offsetHeight}px`;
-            }, 5000);
-        }
-    });
-</script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
+    <script src="{% static 'js/multiselect.js' %}"></script>
 </body>
 </html>
