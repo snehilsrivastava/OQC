@@ -35,7 +35,7 @@ function clearFilter() {
     var testName = document.getElementById("test_name");
     var serialNumber = document.getElementById("serial_number");
     var B_status = document.getElementById("B_status");
-    var status = document.getElementById("status");
+    var PO_status = document.getElementById("PO_status");
     var L_status = document.getElementById("L_status");
     var startDate = document.getElementById("start_date");
     var endDate = document.getElementById("end_date");
@@ -48,9 +48,15 @@ function clearFilter() {
     serialNumber.value = "";
     B_status.value = "";
     L_status.value = "";
-    status.value = "";
+    PO_status.value = "";
     startDate.value = "";
     endDate.value = "";
+}
+
+function deactivateFilter() {
+    var form = document.getElementById("filter-form");
+    clearFilter();
+    form.submit();
 }
 
 function toggleCollapseIcon(button) {

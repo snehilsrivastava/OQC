@@ -5,7 +5,8 @@
     position: fixed;
     flex-shrink: 0;
     height: 100%;
-    overflow-y: auto;
+    max-height: calc(100vh - 52px);
+    overflow-y: scroll !important;
     background-color: var(--sidebar-bg);
     transform: translate(-100%, 0%);
     transition: transform 0.2s linear;

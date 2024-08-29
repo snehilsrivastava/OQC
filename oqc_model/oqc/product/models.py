@@ -46,9 +46,12 @@ def default_data():
 
 class Model_Test_Name_Details(models.Model):
     Model_Name = models.ForeignKey(Model_MNF_detail, to_field="Indkal_model_no", on_delete=models.CASCADE)
+    Product = models.CharField(max_length=100, blank=True, null=True)
     Test_Names = models.JSONField(default=default_data)
     Test_Count = models.JSONField(default=default_data)
     def save(self, *args, **kwargs):
+        if self.Model_Name:
+            self.Product = self.Model_Name.Product
         if self.Test_Names:
             self.Test_Count = {key: len(val) for key, val in self.Test_Names.items()}
         return super().save(*args, **kwargs)
@@ -56,7 +59,7 @@ class Model_Test_Name_Details(models.Model):
         return f"{self.Model_Name}"
     
 class Product_Test_Name_Details(models.Model):
-    Product = models.CharField(max_length=80, blank=True, null=True)
+    Product = models.CharField(max_length=100, blank=True, null=True)
     Test_Names = models.JSONField(default=default_data)
     def __str__(self):
         return f"{self.Product}"

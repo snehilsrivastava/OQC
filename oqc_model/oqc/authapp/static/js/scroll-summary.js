@@ -1,7 +1,19 @@
-// function which defines what happens on clicking the cards
-// function navigateToPage(pageUrl) {
-//     window.location.href = pageUrl;
-// }
+function navigateToPage(card) {
+    const productName = card.querySelector('.card-prod').textContent.trim();
+    const stageName = card.querySelector('.card-heading .stage').textContent.trim();
+    const modelName = card.querySelector('.card-heading .model').textContent.trim();
+
+    const filterForm = document.querySelector('#filter-form');
+    const filterProdField = filterForm.querySelector('select#product');
+    const filterStageField = filterForm.querySelector('select#test_stage');
+    const filterModelField = filterForm.querySelector('select#model_name');
+
+    filterProdField.value = productName;
+    filterStageField.value = stageName;
+    populateModels();
+    filterModelField.value = modelName;
+    filterForm.submit();
+}
 
 function isTouchScreenDevice() {
     return 'ontouchstart' in window;
