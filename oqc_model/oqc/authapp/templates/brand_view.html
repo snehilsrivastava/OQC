@@ -44,7 +44,7 @@
                         <strong><span class="row_header">Sample Quantity</span></strong>
                     </td>
                     <td colspan="4">
-                        <span>{{ form.sample_quantiy }}</span>
+                        <span>{{ test.sample_quantiy }}</span>
                     </td>
                 </tr>
                 <tr>
@@ -228,7 +228,7 @@
                         <strong><span class="row_header">Result &amp; Conclusion</span></strong>
                     </td>
                     <td colspan="4">
-                        <span>{{form.result}}</span>
+                        <span>{{test.result|safe}}</span>
                     </td>
                 </tr>
             {% elif testdetail.ProductType == 'WM - FATL' %}
@@ -253,7 +253,7 @@
                         <strong><span class="row_header">Sample Quantity</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>{{ form.sample_quantiy }}</span>
+                        <span>{{ test.sample_quantiy }}</span>
                     </td>
                 </tr>
                 <tr>
@@ -379,7 +379,7 @@
                         <strong><span class="row_header">Result &amp; Conclusion</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>{{form.result}}</span>
+                        <span>{{test.result|safe}}</span>
                     </td>
                 </tr>
             {% endif %}

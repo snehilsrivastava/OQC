@@ -36,6 +36,7 @@ def access_denied(request):
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
         'user': employee,
+        'username': user,
         'first_name': employee.first_name,
         'last_name': employee.last_name,
         'icon': icon,

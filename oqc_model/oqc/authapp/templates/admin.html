@@ -12,36 +12,10 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
     <link rel="stylesheet" href="{% static 'css/admin.css' %}">
-
 </head>
 <body>
-    <div class="header">
-        <div></div>
-        <div class="right-icon">
-            <div class="theme-toggle-btn">
-                <input type="checkbox" class="theme-checkbox" id="theme-checkbox">
-                <label style="margin-bottom: 0px;" for="theme-checkbox" class="theme-checkbox-label">
-                    <i class="fas fa-moon"></i>
-                    <i class="fas fa-sun"></i>
-                    <span class="theme-ball"></span>
-                </label>
-            </div>
-            <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
-                <span class="icon" id="userButtonIcon">{{icon}}</span>
-            </button>
-            <div class="user-info" id="userInfo">
-                <span>
-                    <p class="name">Name: {{ first_name }} {{ last_name }}</p>
-                    <p class="mail">Email: {{ username }}</p>
-                </span>
-                <span style="display: flex; align-items: center; justify-content: center;">
-                    <a class="logout-btn"  onclick="logoutUser()">Logout</a>
-                </span>
-            </div>
-        </div>
-    </div>
+    {% include "header_PO.html" %}
     {% if messages %}
         <span class="message-container">
             {% for message in messages %}
@@ -52,9 +26,9 @@
             {% endfor %}
         </span>
     {% endif %}
-    <div class="main-content">
+    <div class="main-content" style="padding-top: 10px;">
         <div class="content">
-            <h1>Admin</h1>
+            <h1 style="text-align: center;">Admin</h1>
             {% if unapproved %}
             <div class="table-container">
                 <table>

@@ -7,8 +7,9 @@
             display: inline;
         }
         .main-content {
+            text-align: center;
+            flex-direction: column;
             position: relative;
-            top: 60px;
         }
     </style>
     {% load static%}
@@ -16,10 +17,9 @@
     <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
     <title>Access Denied</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/remark.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <body>
-        <div class="header">
-            <div></div>
+        <div class="header" style="justify-content: flex-end;">
             <div class="right-icon">
                 <div class="theme-toggle-btn">
                     <input type="checkbox" class="theme-checkbox" id="theme-checkbox">

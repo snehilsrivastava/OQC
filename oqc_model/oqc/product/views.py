@@ -55,6 +55,7 @@ def product_form_view(request):
     employee = Employee.objects.get(username=username)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
+        'employee': employee,
         'tv_models': tv_models,
         'ac_models': ac_models,
         'phone_models': phone_models,
@@ -86,21 +87,23 @@ def AC_spec(request):
         cond_coil = request.POST.get('CondCoil')
         ref_charge = request.POST.get('RefCharge')
         capilary = request.POST.get('Capilary')
-        compressor = request.POST.get('Compressor') 
-        new_ac = AC(
-            ModelName=model_name,
-            BImotor=bi_motor,
-            Blower=blower,
-            FanMotor=fan_motor,
-            Eva=eva,
-            Fan=fan,
-            ConPipe=con_pipe,
-            CondCoil=cond_coil,
-            RefCharge=ref_charge,
-            Capilary=capilary,
-            Compressor=compressor
-        )
-        new_ac.save()
+        compressor = request.POST.get('Compressor')
+        existing_AC = AC.objects.filter(ModelName=model_name)
+        if not existing_AC:
+            new_ac = AC(
+                ModelName=model_name,
+                BImotor=bi_motor,
+                Blower=blower,
+                FanMotor=fan_motor,
+                Eva=eva,
+                Fan=fan,
+                ConPipe=con_pipe,
+                CondCoil=cond_coil,
+                RefCharge=ref_charge,
+                Capilary=capilary,
+                Compressor=compressor
+            )
+            new_ac.save()
         test_names = Product_Test_Name_Details.objects.get(Product="AC").Test_Names
         dvt = test_names['DVT']
         pp = test_names['PP']
@@ -133,15 +136,17 @@ def WM_FATL_spec(request):
         rated_supply = request.POST.get('RatedSupply')
         rated_frequency = request.POST.get('RatedFrequency')
         rated_rpm = request.POST.get('RatedRPM')
-        new_WM_FATL = WM_FATL(
-            ModelName=model_name,
-            RatedCapacity = rated_capacity,
-            RatedPower = rated_power,
-            RatedSupply = rated_supply,
-            RatedFrequency = rated_frequency,
-            RatedRPM = rated_rpm,
-        )
-        new_WM_FATL.save()
+        existing_WM_FATL = WM_FATL.objects.filter(ModelName=model_name)
+        if not existing_WM_FATL:
+            new_WM_FATL = WM_FATL(
+                ModelName=model_name,
+                RatedCapacity = rated_capacity,
+                RatedPower = rated_power,
+                RatedSupply = rated_supply,
+                RatedFrequency = rated_frequency,
+                RatedRPM = rated_rpm,
+            )
+            new_WM_FATL.save()
         test_names = Product_Test_Name_Details.objects.get(Product="WM - FATL").Test_Names
         dvt = test_names['DVT']
         pp = test_names['PP']

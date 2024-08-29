@@ -71,3 +71,33 @@ li a:hover .icon-stroke :nth-child(2){
 .fa-icon {
     margin-right: 10px;
 }
+
+.icon {
+    fill: var(--webkit-text-fill-color);
+}
+.icon-stroke :nth-child(2){
+    stroke: var(--webkit-text-fill-color);
+}
+
+button:focus {
+    outline: none !important;
+    border: none !important;
+}
+
+.main-content {
+    display: flex;
+    /* flex-grow: 1; */
+    padding-top: 52px;
+}
+
+.menu-btn {
+    height: 30px;
+    /* color: var(--webkit-text-fill-color); */
+    width: max-content;
+    padding: 0px 10px;
+    border: 10px;
+    border-color: black;
+    /* background-color: var(--button-color); */
+    font-size: 17px;
+    border-radius: 3px !important;
+}
