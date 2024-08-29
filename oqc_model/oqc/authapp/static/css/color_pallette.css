@@ -30,6 +30,7 @@
     --form-submit-btn-shadow: #041e2f;
     --button-color: rgb(65, 65, 65);
     --button-hover-color: rgb(80, 80, 80);
+    --stage-btn-bg: #eee5;
 }
 
 :root[data-theme="light"] {
@@ -64,6 +65,7 @@
     --form-submit-btn-shadow: #235ba1;
     --button-color: rgb(196, 196, 196);
     --button-hover-color: rgb(150, 150, 150);
+    --stage-btn-bg: #1113;
 }
 
 body {

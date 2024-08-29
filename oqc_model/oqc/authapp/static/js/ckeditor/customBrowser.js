@@ -1,13 +1,9 @@
 let urlParams = new URLSearchParams(window.location.search);
 let CKEditorFuncNum = urlParams.get('CKEditorFuncNum');
 let selectedFile;
-console.log('CKEditorFuncNum:', CKEditorFuncNum);
 function selectFile() {
-    console.log('URL:', selectedFile);
     if (selectedFile) {
-        console.log('entered if');
         if (CKEditorFuncNum) {
-            console.log('function found');
             window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, selectedFile);
             window.close();  // Close the file manager window after selection
         } else {
@@ -23,7 +19,6 @@ function previewImg(url, name) {
     img.src = url;
     img.alt = name;
     selectedFile = url;
-    console.log("selectedFile:", selectedFile);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

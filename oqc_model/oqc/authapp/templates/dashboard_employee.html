@@ -71,7 +71,6 @@
                     <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
                     <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
                     <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
-                    <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
                 </select>
                 <label for="model_name">Model Name:</label>
                 <select class="form-control filter-form-control" id="model_name" name="model_name">
@@ -290,8 +289,7 @@
                 // If only test stage is selected, filter by test stage
                 if ((s[0] === '1' && selectedTestStage === "DVT") ||
                     (s[1] === '1' && selectedTestStage === "PP") ||
-                    (s[2] === '1' && selectedTestStage === "MP") ||
-                    (s[3] === '1' && selectedTestStage === "PDI")) {
+                    (s[2] === '1' && selectedTestStage === "MP")) {
                     const option = document.createElement("option");
                     option.text = item.TestName;
                     testNameDropdown.appendChild(option);
@@ -308,8 +306,7 @@
                 if (item.ProductType === selectedProductType && (
                     (s[0] === '1' && selectedTestStage === "DVT") ||
                     (s[1] === '1' && selectedTestStage === "PP") ||
-                    (s[2] === '1' && selectedTestStage === "MP") ||
-                    (s[3] === '1' && selectedTestStage === "PDI"))) {
+                    (s[2] === '1' && selectedTestStage === "MP"))) {
                     const option = document.createElement("option");
                     option.text = item.TestName;
                     testNameDropdown.appendChild(option);

@@ -8,11 +8,7 @@
     <title>Product Owner Dashboard</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
-    <link rel="stylesheet" href="{% static 'css/legend.css' %}">
-    <link rel="stylesheet" href="{% static 'css/theme_switcher.css' %}">
 </head>
 <body>
 <div class="header">
@@ -110,7 +106,6 @@
                 <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
                 <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
                 <option value="MP"{%if test_stage == 'MP'%}selected{%endif%}>MP</option>
-                <option value="PDI" {%if test_stage == 'PDI'%}selected{%endif%}>PDI</option>
             </select>
         </div>
         <div>
@@ -199,11 +194,32 @@
                 </button>
             </span>
             <div class="summary">
-                <table>
-                    <tr>
-                        <td></td>
-                    </tr>
-                </table>
+                <div class="scroll-container">
+                    <div class="scrollcontainer">
+                        <div class="card" onclick="navigateToPage('page1.html')">
+                            <div class="card-heading">
+                                <span class="model">N12094</span>
+                                <span class="stage">DVT</span>
+                            </div>
+                            <div class="card-content">
+                                <span class="test-count">
+                                    <ul>
+                                        <li>Total: 10</li>
+                                        <li>Submitted: 8</li>
+                                        <li>Approved: 3</li>
+                                    </ul>
+                                </span>
+                                <span class="status-info">
+                                    <ul>
+                                        <li>Product</li>
+                                        <li>Brand</li>
+                                        <li>Legal</li>
+                                    </ul>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <form method="POST" action="{% url 'handle_selected_tests' %}">
@@ -242,17 +258,25 @@
                         </td>
                         <td>{{ test.ProductType }}</td>
                         <td><p class="model-name">{{ test.ModelName }}</p></td>
-                        <td>{{ test.TestStage }}</td>
-                        <td style="display: flex; gap: 5px">
-                            <button class="action-button" name="action" value="generate_pdf" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
-                                <path d="M360-460h40v-80h40q17 0 28.5-11.5T480-580v-40q0-17-11.5-28.5T440-660h-80v200Zm40-120v-40h40v40h-40Zm120 120h80q17 0 28.5-11.5T640-500v-120q0-17-11.5-28.5T600-660h-80v200Zm40-40v-120h40v120h-40Zm120 40h40v-80h40v-40h-40v-40h40v-40h-80v200ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
-                                </svg>&nbsp;Download</button>
-                            <button class="action-button" name="action" value="send_legal" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed" transform="rotate(-45 0 0)">
-                                <path d="M792-443 176-183q-20 8-38-3.5T120-220v-520q0-22 18-33.5t38-3.5l616 260q25 11 25 37t-25 37ZM200-280l474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
-                                </svg>Legal</button>
-                            <button class="action-button" name="action" value="send_brand" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed" transform="rotate(-45 0 0)">
-                                <path d="M792-443 176-183q-20 8-38-3.5T120-220v-520q0-22 18-33.5t38-3.5l616 260q25 11 25 37t-25 37ZM200-280l474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
-                                </svg>Brand</button>
+                        <td>
+                            <div class="stage-btn">
+                                <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'DVT')">DVT</button>
+                                <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'PP')">PP</button>
+                                <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'MP')">MP</button>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 5px">
+                                <button class="action-button" name="action" value="generate_pdf" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+                                    <path d="M360-460h40v-80h40q17 0 28.5-11.5T480-580v-40q0-17-11.5-28.5T440-660h-80v200Zm40-120v-40h40v40h-40Zm120 120h80q17 0 28.5-11.5T640-500v-120q0-17-11.5-28.5T600-660h-80v200Zm40-40v-120h40v120h-40Zm120 40h40v-80h40v-40h-40v-40h40v-40h-80v200ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
+                                    </svg>&nbsp;Download</button>
+                                <button class="action-button" name="action" value="send_legal" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed" transform="rotate(-45 0 0)">
+                                    <path d="M792-443 176-183q-20 8-38-3.5T120-220v-520q0-22 18-33.5t38-3.5l616 260q25 11 25 37t-25 37ZM200-280l474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
+                                    </svg>Legal</button>
+                                <button class="action-button" name="action" value="send_brand" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed" transform="rotate(-45 0 0)">
+                                    <path d="M792-443 176-183q-20 8-38-3.5T120-220v-520q0-22 18-33.5t38-3.5l616 260q25 11 25 37t-25 37ZM200-280l474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
+                                    </svg>Brand</button>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -267,6 +291,7 @@
                                         <col>
                                         <col>
                                         <col>
+                                        <col>
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -274,6 +299,7 @@
                                                 <input type="checkbox" id="select-all-{{ forloop.counter }}">
                                             </th>
                                             <th>Test Name</th>
+                                            <th>Stage</th>
                                             <th>Date</th>
                                             <th>Test Inspector</th>
                                             <th>Serial No</th>
@@ -283,7 +309,7 @@
                                                     <div class="legends">
                                                         <span class="color">
                                                             {% for status, color in status_color.items %}
-                                                                <span class="circle" name="{{status}}" id="leg" style="background-color: '{{color}}';"></span> : {{status}}<br>
+                                                                <span class="circle" name="{{status}}" id="leg" style="background-color: {{color}};"></span> : {{status}}<br>
                                                             {% endfor %}
                                                         </span>
                                                         <br>
@@ -299,12 +325,13 @@
                                     </thead>
                                     <tbody>
                                         {% for subtest in all_tests %}
-                                        {% if subtest.ModelName == test.ModelName and subtest.TestStage == test.TestStage %}
+                                        {% if subtest.ModelName == test.ModelName %}
                                         <tr>
                                             <td class="checkbox-cell">
                                                 <input type="checkbox" name="selected_tests" value="{{ subtest.id }}">
                                             </td>
                                             <td><p class="test-name">{{ subtest.TestName }}</p></td>
+                                            <td>{{ subtest.TestStage }}</td>
                                             <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
                                             <td><p class="employee-name">{{ subtest.employee_name }}</p></td>
                                             <td>{{ subtest.SerailNo }}</td>
@@ -338,6 +365,7 @@
 
 <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/scroll-summary.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -460,8 +488,7 @@
                 // If only test stage is selected, filter by test stage
                 if ((s[0] === '1' && selectedTestStage === "DVT") ||
                     (s[1] === '1' && selectedTestStage === "PP") ||
-                    (s[2] === '1' && selectedTestStage === "MP") ||
-                    (s[3] === '1' && selectedTestStage === "PDI")) {
+                    (s[2] === '1' && selectedTestStage === "MP")) {
                     const option = document.createElement("option");
                     option.text = item.TestName;
                     testNameDropdown.appendChild(option);
@@ -478,8 +505,7 @@
                 if (item.ProductType === selectedProductType && (
                     (s[0] === '1' && selectedTestStage === "DVT") ||
                     (s[1] === '1' && selectedTestStage === "PP") ||
-                    (s[2] === '1' && selectedTestStage === "MP") ||
-                    (s[3] === '1' && selectedTestStage === "PDI"))) {
+                    (s[2] === '1' && selectedTestStage === "MP"))) {
                     const option = document.createElement("option");
                     option.text = item.TestName;
                     testNameDropdown.appendChild(option);

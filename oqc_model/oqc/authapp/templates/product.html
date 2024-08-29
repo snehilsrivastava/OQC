@@ -78,8 +78,7 @@
                     <select class="form-control" id="TestStage" name="TestStage" required>
                         <option value="DVT">DVT</option>
                         <option value="PP">PP</option>
-                        <option value="PDI">MP</option>
-                        <option value="PDI">PDI</option>
+                        <option value="MP">MP</option>
                     </select>
                 </div>
 
@@ -149,13 +148,11 @@
             const productTypeDropdown = document.getElementById("ProductType");
             const modelNameDropdown = document.getElementById("ModelName");
             const selectedProductType = productTypeDropdown.value;
-            console.log(selectedProductType);
             // Clear existing options
             modelNameDropdown.innerHTML = "";
 
             // Populate model options based on the selected product type
             modelsByType[selectedProductType].forEach(model => {
-                console.log(model);
                 const option = document.createElement("option");
                 option.text = model;
                 modelNameDropdown.appendChild(option);
@@ -178,14 +175,10 @@
                 
                 if (item.ProductType === selectedProductType) {
                     const s = item.TestStage;
-                    console.log(s);
-                    console.log(selectedTestStage);
                     if (selectedTestStage === 'None' ||
                     (s[0] === '1' && selectedTestStage === "DVT") ||
                     (s[1] === '1' && selectedTestStage === "PP") ||
-                    (s[2] === '1' && selectedTestStage === "MP") ||
-                    (s[3] === '1' && selectedTestStage === "PDI")) {
-                        console.log(6);
+                    (s[2] === '1' && selectedTestStage === "MP")) {
                         const option = document.createElement("option");
                         option.text = item.TestName;
                         testNameDropdown.appendChild(option);

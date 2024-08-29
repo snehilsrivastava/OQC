@@ -92,3 +92,38 @@ function toggleAllCollapseButtons() {
         }
     });
 }
+
+function filterOnStage(button, stage) {
+    const parentRow = button.closest('tr');
+    const collapseRow = parentRow.nextElementSibling;
+    const collapseTable = collapseRow.querySelector('.drop-table');
+    const collapseBody = collapseTable.querySelector('tbody');
+    const rows = collapseBody.querySelectorAll('tr');
+    const isFiltered = button.getAttribute('data-filtered') === 'true';
+
+    if (isFiltered) {
+        // Clear the filter and reset the button state
+        rows.forEach(row => {
+            row.style.display = '';
+        });
+        button.setAttribute('data-filtered', false);
+        button.classList.remove('stage-filter-btn-active');
+    } else {
+        // Remove the active state from all buttons in the same row
+        const buttons = button.closest('td').querySelectorAll('button');
+        buttons.forEach(btn => {
+            btn.classList.remove('stage-filter-btn-active');
+            btn.setAttribute('data-filtered', false); // Reset all other buttons' state
+        });
+
+        // Apply the new filter
+        rows.forEach(row => {
+            const stageValue = row.cells[2].textContent.trim();
+            row.style.display = stageValue === stage ? '' : 'none';
+        });
+
+        // Set the active state for the clicked button
+        button.setAttribute('data-filtered', true);
+        button.classList.add('stage-filter-btn-active');
+    }
+}

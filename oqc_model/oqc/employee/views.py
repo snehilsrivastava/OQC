@@ -552,7 +552,7 @@ def dashboard(request):
     B_status = request.GET.get('B_status','')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
-    status_color = {"Not Sent": "#838383", "Waiting": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
+    status_color = {"Not Sent": "#cfcfcf", "Waiting": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
     role_letter = {"T": "Test Inspector", "L": "Legal Team", "B": "Brand Team"}
 
     completed_tests = TestRecord.objects.exclude(status="Not Sent")
@@ -576,7 +576,7 @@ def dashboard(request):
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
-    tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
+    tests = completed_tests.values('ProductType', 'ModelName').distinct()
     completed_tests = completed_tests.order_by('-test_end_date')
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
@@ -1013,21 +1013,20 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
-        if "PDI" in testStages:
-            s1 += "1"
-        else:
-            s1 += "0"
-        existing_test = Test_core_detail.objects.filter(TestName=testName, ProductType=product).first()
-        if existing_test:
-            existing_test.TestStage = s1
-            existing_test.save()
-        else:
-            new_test = Test_core_detail(
-                TestStage=s1,
-                ProductType=product,
-                TestName=testName,
-            )
-            new_test.save()
+        existingProd = Product_Test_Name_Details.objects.get(Product=product)
+        T = list(map(bool, [int(_) for _ in s1]))
+        S = ['DVT', 'PP', 'MP']
+        stages = [_ for i, _ in enumerate(S) if T[i]]
+        for s in stages:
+            if testName not in existingProd.Test_Names[s]:
+                existingProd.Test_Names[s].append(testName)
+        existingProd.save()
+        new_test = Test_core_detail(
+            TestStage=s1,
+            ProductType=product,
+            TestName=testName,
+        )
+        new_test.save()
 
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
     
@@ -1057,42 +1056,21 @@ def test_protocol_entry(request, test_name, product):
         judgement = request.POST.get('judgement')
         instrument = request.POST.get('instrument')
 
-        # Check if the test detail info already exists
-        if Test_core_detail.objects.filter(TestName=test_name, ProductType=product).exists():
-            existing_test = Test_core_detail.objects.filter(TestName=test_name, ProductType=product).first()
-            existing_test.Test_Objective=testobjective
-            existing_test.Test_Standard=teststandard
-            existing_test.Test_Condition=testcondition
-            existing_test.Test_Procedure=testprocedure
-            existing_test.Judgement=judgement
-            existing_test.Instrument=instrument
-            existing_test.save()
-            messages.success(request, 'Test protocols added.')
-            return redirect('/dashboard/')  
-
-        # never going to be executed ?
-        test_detail = Test_core_detail(
-            ProductType=product,
-            TestName=test_name,
-            Test_Objective=testobjective,
-            Test_Standard=teststandard,
-            Test_Condition=testcondition,
-            Test_Procedure=testprocedure,
-            Judgement=judgement,
-            Instrument=instrument,
-            TestStage="1111",
-        )
-        test_detail.save()
-        messages.success(request, 'Test protocols added!')
-        return redirect('/dashboard/')
+        existing_test = Test_core_detail.objects.filter(TestName=test_name, ProductType=product).first()
+        existing_test.Test_Objective=testobjective
+        existing_test.Test_Standard=teststandard
+        existing_test.Test_Condition=testcondition
+        existing_test.Test_Procedure=testprocedure
+        existing_test.Judgement=judgement
+        existing_test.Instrument=instrument
+        existing_test.save()
+        messages.success(request, 'Test protocols added.')
+        return redirect('/dashboard/')  
 
     username = request.session['username']
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
-    try:
-        test_detail = Test_core_detail.objects.get(TestName=test_name, ProductType=product)
-    except Test_core_detail.DoesNotExist:
-        test_detail = None
+    test_detail = Test_core_detail.objects.get(TestName=test_name, ProductType=product)
     context = {
     'first_name': employee.first_name,
     'last_name': employee.last_name,
@@ -1125,10 +1103,6 @@ def update_test_list_entry(request):
         else:
             s1 += "0"
         if "MP" in testStages:
-            s1 += "1"
-        else:
-            s1 += "0"
-        if "PDI" in testStages:
             s1 += "1"
         else:
             s1 += "0"

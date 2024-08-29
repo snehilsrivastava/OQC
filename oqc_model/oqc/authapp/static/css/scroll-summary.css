@@ -1,0 +1,127 @@
+@import url('color_pallette.css');
+
+.summary {
+    display: flex;
+    justify-content: center;
+    width: calc(100% - 25px);
+}
+
+.scroll-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.scrollcontainer {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: var(--sidebar-bg);
+    border-radius: 10px;
+    width: 95vw; /* Ensures container uses the full width of the parent */
+    max-width: 95vw; /* Adjust the maximum width to hold more cards */
+    /* Hide the scrollbar */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.scrollcontainer::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.card {
+    flex: 0 0 auto;
+    min-width: 180px;
+    height: min-content;
+    margin-right: 20px;
+    color: #fafafa !important;
+    padding: 10px;
+    background-color: #3f69ad !important;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.scrollcontainer .card:last-child {
+    margin: 0;
+}
+
+.card h3 {
+    margin: 10px 0;
+}
+
+.card p {
+    font-size: 14px;
+    color: #fafafa;
+    margin: 0;
+    max-height: 4.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    /* -webkit-line-clamp: 3; Number of lines to show */
+    -webkit-box-orient: vertical;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.scroll-btn {
+    /* Hide the buttons initially */
+    background-color: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.scroll-btn.left {
+    left: 0;
+}
+
+.scroll-btn.right {
+    right: 0;
+}
+
+.card-heading {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+}
+
+.card-content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.test-count ul, .status-info ul {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: start;
+    width: min-content;
+    font-size: 11px !important;
+    background-color: #0000;
+}
+
+.status-info ul li {
+    padding: 0px 2px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #5AA33F;
+    width: 43.6px;
+}
