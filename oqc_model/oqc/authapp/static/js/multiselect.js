@@ -1,7 +1,6 @@
 class MultiSelect {
 
     constructor(element, options = {}) {
-        console.log('Constructing MultiSelect');
         let defaults = {
             placeholder: 'Select item(s)',
             max: null,
@@ -98,7 +97,6 @@ class MultiSelect {
                             headerElement.insertAdjacentHTML('afterbegin', `<span class="multi-select-header-option" data-value="${option.dataset.value}">${option.querySelector('.multi-select-option-text').innerHTML}</span>`);
                         }
                     }
-                    console.log(this.name, option.dataset.value);
                     this.element.querySelector('.multi-select').insertAdjacentHTML('afterbegin', `<input type="hidden" name="${this.name}" value="${option.dataset.value}">`);
                     this.data.filter(data => data.value == option.dataset.value)[0].selected = true;
                 } else {
