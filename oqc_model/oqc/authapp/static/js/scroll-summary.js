@@ -79,3 +79,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+function displayStatusPerTeam(button, event, sum) {
+    event.stopPropagation();
+    const team = button.textContent.trim();
+    const testCounts = button.parentElement.parentElement.parentElement.previousElementSibling;
+    
+    if (team === "Product") {
+        lists = testCounts.querySelectorAll('li');
+        lists.forEach((testCount, index) => {
+            let splitText = testCount.textContent.split(': ');
+            testCount.textContent = splitText[0] + ": " + sum.Count.PO[index];
+        });
+    } else if (team === "Brand") {
+        lists = testCounts.querySelectorAll('li');
+        lists.forEach((testCount, index) => {
+            let splitText = testCount.textContent.split(': ');
+            testCount.textContent = splitText[0] + ": " + sum.Count.BT[index];
+        });
+    } else if (team === "Legal") {
+        lists = testCounts.querySelectorAll('li');
+        lists.forEach((testCount, index) => {
+            let splitText = testCount.textContent.split(': ');
+            testCount.textContent = splitText[0] + ": " + sum.Count.LT[index];
+        });
+    }
+}

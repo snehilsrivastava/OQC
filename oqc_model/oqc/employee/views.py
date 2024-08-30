@@ -557,17 +557,31 @@ def summary(request):
                 total_count = TestCount['DVT']
             TestRecords = TestRecord.objects.filter(ProductType=P, ModelName=M.Model_Name.Indkal_model_no, TestStage=stage)
             PS, BS, LS = "Completed", "Completed", "Completed"
-            Approved, Uploaded, Uploading = 0, 0, 0
+            PO_Approved, PO_Uploaded, PO_Uploading = 0, 0, 0
+            BT_Approved, BT_Uploaded, BT_Uploading = 0, 0, 0
+            LT_Approved, LT_Uploaded, LT_Uploading = 0, 0, 0
             for T in TestRecords:
                 POS = T.status
                 BTS = T.B_status
                 LTS = T.L_status
                 if POS=="Approved":
-                    Approved += 1
+                    PO_Approved += 1
                 elif POS=="Not Sent":
-                    Uploading += 1
+                    PO_Uploading += 1
                 elif POS=="Waiting":
-                    Uploaded += 1
+                    PO_Uploaded += 1
+                if BTS=="Approved":
+                    BT_Approved += 1
+                elif BTS=="Not Sent":
+                    BT_Uploading += 1
+                elif BTS=="Waiting":
+                    BT_Uploaded += 1
+                if LTS=="Approved":
+                    LT_Approved += 1
+                elif LTS=="Not Sent":
+                    LT_Uploading += 1
+                elif LTS=="Waiting":
+                    LT_Uploaded += 1
                 if POS=="Waiting" and PS=="Completed":
                     PS = "Uploaded"
                 elif POS=="Not Sent" and (PS=="Completed" or PS=="Uploaded"):
@@ -580,7 +594,8 @@ def summary(request):
                     LS = "Uploaded"
                 elif LTS=="Not Sent" and (LS=="Completed" or LS=="Uploaded"):
                     LS = "Uploading"
-            ret.append({"Meta": [P, M.Model_Name.Indkal_model_no, stage], "Count": [total_count, Uploaded, Approved, Uploading], "Status":[status_colors[PS], status_colors[BS], status_colors[LS]]})
+            combined_count = {"PO": [total_count, PO_Approved, PO_Uploaded, PO_Uploading], "BT": [total_count, BT_Approved, BT_Uploaded, BT_Uploading], "LT": [total_count, LT_Approved, LT_Uploaded, LT_Uploading]}
+            ret.append({"Meta": [P, M.Model_Name.Indkal_model_no, stage], "Count": combined_count, "Status":[status_colors[PS], status_colors[BS], status_colors[LS]]})
     return ret
 
 @login_required

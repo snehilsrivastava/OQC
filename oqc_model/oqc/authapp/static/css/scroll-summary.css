@@ -112,10 +112,26 @@
     background-color: #0000;
 }
 
-.status-info ul li {
+/* .status-info ul li {
     padding: 0px 2px;
     border: 1px solid black;
     border-radius: 5px;
     background-color: #5AA33F;
     width: 43.6px;
+} */
+.card-status-button {
+    width: 50.6px !important;
+    height: 22px !important;
+    font-size: 11px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 1px solid black;
+    border-radius: 5px;
+    &:hover {
+        filter: brightness(120%);
+    }
+    &:focus {
+        outline: none;
+        border: 1px solid black !important;
+    }
 }
