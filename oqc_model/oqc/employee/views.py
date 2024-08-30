@@ -539,7 +539,7 @@ def change_status_brand(request, test_id, status):
 
 def summary(request):
     ret = []
-    status_colors = {"Uploading": "Red", "Uploaded": "Yellow", "Completed": "Green"}
+    status_colors = {"Uploading": "Maroon", "Uploaded": "#989800", "Completed": "Green"}
     PType = Product_Test_Name_Details.objects.values('Product')
     ProductType = [_['Product'] for _ in PType]
     for P in ProductType:

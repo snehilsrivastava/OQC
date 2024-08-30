@@ -41,24 +41,41 @@
                     <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ model_name }}" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="dvt-options">DVT Tests</label>
-                    <select id="dvt-options" name="dvt-options" data-placeholder="Select dvt-options" multiple data-multi-select>
+                    <label for="single-select-container" style="margin-bottom: 0;">Stages</label>
+                    <div class="single-select-container">
+                        <span style="gap: 5px; display: flex; align-items: center;">
+                            <input type="checkbox" id="stage-dvt" name="single-select-options" class="single-select-checkboxes" value="DVT" onclick="singleSelect(this)">
+                            DVT<label for="stage-dvt"></label>
+                        </span>
+                        <span style="gap: 5px; display: flex; align-items: center;">
+                            <input type="checkbox" id="stage-pp" name="single-select-options" class="single-select-checkboxes" value="PP" onclick="singleSelect(this)">
+                            PP<label for="stage-pp"></label>
+                        </span>
+                        <span style="gap: 5px; display: flex; align-items: center;">
+                            <input type="checkbox" id="stage-mp" name="single-select-options" class="single-select-checkboxes" value="MP" onclick="singleSelect(this)">
+                            MP<label for="stage-mp"></label>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>DVT Tests</label>
+                    <select id="dvt-options" name="dvt-options" data-placeholder="Select DVT Tests" multiple data-multi-select>
                         {% for t in DVT %}
                             <option value="{{ t }}">{{ t }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="pp-options">PP Tests</label>
-                    <select id="pp-options" name="pp-options" data-placeholder="Select pp-options" multiple data-multi-select>
+                    <label>PP Tests</label>
+                    <select id="pp-options" name="pp-options" data-placeholder="Select PP Tests" multiple data-multi-select>
                         {% for t in PP %}
                             <option value="{{ t }}">{{ t }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="mp-options">MP Tests</label>
-                    <select id="mp-options" name="mp-options" data-placeholder="Select mp-options" multiple data-multi-select>
+                    <label>MP Tests</label>
+                    <select id="mp-options" name="mp-options" data-placeholder="Select MP Tests" multiple data-multi-select>
                         {% for t in MP %}
                             <option value="{{ t }}">{{ t }}</option>
                         {% endfor %}

@@ -251,4 +251,52 @@ class MultiSelect {
     }
 
 }
+
+function singleSelect(selectedBox) {
+    const checkboxes = document.querySelectorAll('.single-select-checkboxes');
+    checkboxes.forEach(checkbox => {
+        if (checkbox !== selectedBox) {
+            checkbox.checked = false;
+        }
+    });
+
+    const stage_id = selectedBox.getAttribute('id');
+    const multiSelect = document.querySelectorAll('.multi-select');
+    if (selectedBox.checked) {
+        if (stage_id === 'stage-dvt') {
+            multiSelect.forEach(multiSel => {
+                if (multiSel.id !=='dvt-options') {
+                    multiSel.parentElement.parentElement.style.display = 'none';
+                } else {
+                    multiSel.parentElement.parentElement.style.display = 'block';
+                }
+            });
+        }
+        else if (stage_id === 'stage-pp') {
+            multiSelect.forEach(multiSel => {
+                if (multiSel.id !=='pp-options') {
+                    multiSel.parentElement.parentElement.style.display = 'none';
+                } else {
+                    multiSel.parentElement.parentElement.style.display = 'block';
+                }
+            });
+        }
+        else if (stage_id === 'stage-mp') {
+            multiSelect.forEach(multiSel => {
+                if (multiSel.id !=='mp-options') {
+                    multiSel.parentElement.parentElement.style.display = 'none';
+                } else {
+                    multiSel.parentElement.parentElement.style.display = 'block';
+                }
+            });
+        }
+    }
+    else {
+        multiSelect.forEach(multiSel => {
+            multiSel.parentElement.parentElement.style.display = 'none';
+        });
+    }
+}
+
 document.querySelectorAll('[data-multi-select]').forEach(select => new MultiSelect(select));
+document.querySelectorAll('.multi-select').forEach(ms => ms.parentElement.parentElement.style.display = 'none');
