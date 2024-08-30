@@ -555,7 +555,6 @@ def summary(request):
             else:
                 stage='DVT'
                 total_count = TestCount['DVT']
-            print(P, M.Model_Name.Indkal_model_no, stage)
             TestRecords = TestRecord.objects.filter(ProductType=P, ModelName=M.Model_Name.Indkal_model_no, TestStage=stage)
             PS, BS, LS = "Completed", "Completed", "Completed"
             Approved, Uploaded, Uploading = 0, 0, 0
@@ -582,7 +581,6 @@ def summary(request):
                 elif LTS=="Not Sent" and (LS=="Completed" or LS=="Uploaded"):
                     LS = "Uploading"
             ret.append({"Meta": [P, M.Model_Name.Indkal_model_no, stage], "Count": [total_count, Uploaded, Approved, Uploading], "Status":[status_colors[PS], status_colors[BS], status_colors[LS]]})
-    print(ret)
     return ret
 
 @login_required
