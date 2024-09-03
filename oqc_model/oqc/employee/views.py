@@ -617,7 +617,9 @@ def dashboard(request):
     status_color = {"Not Sent": "#cfcfcf", "Waiting": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
     role_letter = {"T": "Test Inspector", "L": "Legal Team", "B": "Brand Team"}
 
+    user_ProdType = [k for k in user.product_type if user.product_type[k]]
     completed_tests = TestRecord.objects.exclude(status="Not Sent")
+    completed_tests = completed_tests.filter(ProductType__in=user_ProdType)
     if test_name:
         completed_tests = completed_tests.filter(TestName__icontains=test_name)
     if product:
@@ -648,6 +650,10 @@ def dashboard(request):
     employee = user
     icon = employee.first_name[0] + employee.last_name[0]
     summary_data = summary(request)
+    summary_ = []
+    for sum in summary_data:
+        if sum['Meta'][0] in user_ProdType:
+            summary_.append(sum)
     context = {
         'test': test,
         'tests': tests,
@@ -673,7 +679,7 @@ def dashboard(request):
         'username': username,
         'status_color' : status_color,
         'role_letter': role_letter,
-        'summary_data': summary_data
+        'summary_data': summary_
     }
     return render(request, 'dashboard_PO.html', context)
 

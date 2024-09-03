@@ -132,3 +132,7 @@ table.owner {
 .icon-delete {
     fill: white !important;
 }
+
+colgroup :last-child {
+    width: 184px !important;
+}

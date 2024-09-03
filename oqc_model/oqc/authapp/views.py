@@ -242,10 +242,6 @@ def admin(request):
     user_types = ['Product Owner', 'Tester', 'Brand', 'Legal']
     product_types = list(Product_Test_Name_Details.objects.values_list('Product', flat=True))
     context = {
-        'username': employee,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
         'approved': approved_users,
         'unapproved': unapproved_users,
         'user_types': user_types,
@@ -268,25 +264,25 @@ def approveUser(request):
             user.product_type[pt] = True
         user.save()
         # Send email to user
-        subject = 'Account approved'
-        from_email = settings.EMAIL_HOST_USER
-        to = [user.username]
+        # subject = 'Account approved'
+        # from_email = settings.EMAIL_HOST_USER
+        # to = [user.username]
 
-        text_content = ''
-        html_content = f"""
-        <html>
-        <body>
-            <p>
-                Hi {user.first_name} {user.last_name},<br><br>
-                Your account has been approved for {userTypes[user.user_type]} access.<br><br>
-                Click <a href="http://protrackindkal.in/au/login" target="_blank">here</a> to go to login page.
-            </p>
-        </body>
-        </html>
-        """
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        # text_content = ''
+        # html_content = f"""
+        # <html>
+        # <body>
+        #     <p>
+        #         Hi {user.first_name} {user.last_name},<br><br>
+        #         Your account has been approved for {userTypes[user.user_type]} access.<br><br>
+        #         Click <a href="http://protrackindkal.in/au/login" target="_blank">here</a> to go to login page.
+        #     </p>
+        # </body>
+        # </html>
+        # """
+        # msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+        # msg.attach_alternative(html_content, "text/html")
+        # msg.send()
         messages.success(request, 'User approved.')
         return HttpResponse(status=200)
 
