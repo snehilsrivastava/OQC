@@ -41,6 +41,7 @@ urlpatterns = [
 	path('ckeditor_image_upload/', views.ckeditor_image_upload, name='ckeditor_image_upload'),
     path('server_media_browse/', views.server_media_browse, name="server_media_browse"),
     path('handle_notification/', views.handle_notification, name="handle_notification"),
+    path('clear_notification/', views.clear_notification, name="clear_notification"),
     path('notifications/', views.notifications, name="notifications"),
 ]
 

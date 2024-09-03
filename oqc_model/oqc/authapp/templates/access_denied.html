@@ -25,13 +25,13 @@
             <p>You do not have permission to access this page.</p>
             <br>
             <span class="inline">Click here to return to 
-            {% if user.user_type == 'owner' %}
+            {% if employee.user_type == 'owner' %}
                 <a href="{% url 'dashboard' %}">dashboard</a>
-            {% elif user.user_type == 'brand' %}
+            {% elif employee.user_type == 'brand' %}
                 <a href="{% url 'brand_dashboard' %}">dashboard</a>
-            {% elif user.user_type == 'legal' %}
+            {% elif employee.user_type == 'legal' %}
                 <a href="{% url 'legal_dashboard' %}">dashboard</a>
-            {% elif user.user_type == 'employee' %}
+            {% elif employee.user_type == 'employee' %}
                 <a href="{% url 'employee_dashboard' %}">dashboard</a>
             {% endif %}
             </span>

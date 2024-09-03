@@ -33,11 +33,6 @@ def access_denied(request):
     employee = Employee.objects.get(username=user)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
-        'user': employee,
-        'username': user,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
     }
     return render(request, "access_denied.html", context=context)
 
@@ -47,10 +42,6 @@ def custom_404(request, exception):
     employee = Employee.objects.get(username=user)
     icon = employee.first_name[0] + employee.last_name[0]
     context = {
-        'user': employee,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
     }
     return render(request, "404_custom.html", context=context)
 
@@ -93,15 +84,7 @@ def remark(request, id):
         TestObject.employee_remark = request.POST.get('employee-remark')
         TestObject.save()
         return redirect(reverse('view', args=[test_name, model_name, serialno]))
-    username = request.session['username']
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
-
     context = {
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
         'TestObjectRemark': TestObject,
     }
     return render(request, "remark.html", context)
@@ -119,15 +102,7 @@ def owner_remark(request, id):
         TestObject.owner_remark = request.POST.get('product-owner-remark')
         TestObject.save()
         return redirect(reverse('owner_view', args=[test_name, model_name, serialno]))
-    username = request.session['username']
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
-
     context = {
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
         'TestObjectRemark': TestObject,
     }
     return render(request, "owner_remark.html", context)
@@ -424,11 +399,15 @@ def handle_selected_tests(request):
                     }
                     if count == 1:
                         notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval. "
+                        notification_dict["display_full_content"] = f"Sent a report for product: {test_record.ProductType}, model: {test_record.ModelName}, stage: {test_record.TestStage} and test name: {test_record.TestName}."
                         notification_dict["metadata"]["test"] = test_record.TestName
+                        notification_dict["metadata"]["serialno"] = test_record.SerailNo
                         notification_dict["action"] = "sent-1"
                     else:
                         notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent {count} reports for approval."
+                        notification_dict["display_full_content"] = f"Sent {count} reports for product: {test_record.ProductType}, model: {test_record.ModelName} and stage: {test_record.TestStage}."
                         notification_dict["action"] = "sent"
+                    notification_dict["from"] = user.first_name + " " + user.last_name
                     notification.notification.append(notification_dict)
                     notification.unread_count += 1
                     notification.save()
@@ -460,17 +439,19 @@ def handle_selected_tests(request):
                     }
                     if count == 1:
                         notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval. "
+                        notification_dict["display_full_content"] = f"Sent a report for product: {test_record.ProductType}, model: {test_record.ModelName}, stage: {test_record.TestStage} and test name: {test_record.TestName}."
                         notification_dict["metadata"]["test"] = test_record.TestName
                         notification_dict["metadata"]["serialno"] = test_record.SerailNo
                         notification_dict["action"] = "sent-1"
                     else:
                         notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent {count} reports for approval."
+                        notification_dict["display_full_content"] = f"Sent {count} reports for product: {test_record.ProductType}, model: {test_record.ModelName} and stage: {test_record.TestStage}."
                         notification_dict["action"] = "sent"
+                    notification_dict["from"] = user.first_name + " " + user.last_name
                     notification.notification.append(notification_dict)
                     notification.unread_count += 1
                     notification.save()
                 messages.success(request, 'Sent to Legal Team for approval.')
-
 
     return redirect('/dashboard/')
 
@@ -761,8 +742,6 @@ def employee_dashboard(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
     context = {
         'test': test,
         'completed_tests': completed_tests,
@@ -778,10 +757,6 @@ def employee_dashboard(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username
     }
     return render(request, "dashboard_employee.html", context)
 
@@ -826,8 +801,6 @@ def legal_dashboard(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     context = {
         'test': test,
@@ -845,10 +818,6 @@ def legal_dashboard(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username
     }
     return render(request, "dashboard_legal.html", context)
 
@@ -1007,41 +976,20 @@ def MNF(request):
         new_mnf.save()
 
         if Product == 'AC':
-            username = request.session['username']
-            employee = Employee.objects.get(username=username)
-            icon = employee.first_name[0] + employee.last_name[0]
             context = {
-            'first_name': employee.first_name,
-            'last_name': employee.last_name,
-            'icon': icon,
-            'username': username,
             'Indkal_model_no': Indkal_model_no,
             }
             return render(request, 'AC.html', context)
         elif Product == 'WM - FATL':
-            username = request.session['username']
-            employee = Employee.objects.get(username=username)
-            icon = employee.first_name[0] + employee.last_name[0]
             context = {
-            'first_name': employee.first_name,
-            'last_name': employee.last_name,
-            'icon': icon,
-            'username': username,
             'Indkal_model_no': Indkal_model_no,
             }
             return render(request, 'WM-FATL.html', context)
         else:
             return redirect('/access_denied/')
     
-    username = request.session['username']
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
     products = Test_core_detail.objects.values_list('ProductType', flat=True).distinct()
     context = {
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
         'products': list(products),
     }
     return render(request, 'productMNFdetail.html',context)
@@ -1077,46 +1025,24 @@ def model_details_update(request):
             return redirect('/dashboard/')
 
         if Product == 'AC':
-            username = request.session['username']
-            employee = Employee.objects.get(username=username)
-            icon = employee.first_name[0] + employee.last_name[0]
             AC_model = AC.objects.get(ModelName=Indkal_model_no)
             context = {
-            'first_name': employee.first_name,
-            'last_name': employee.last_name,
-            'icon': icon,
-            'username': username,
             'Indkal_model_no': Indkal_model_no,
             'AC_model': AC_model,
             }
             return render(request, 'AC.html', context)
         elif Product == 'WM - FATL':
-            username = request.session['username']
-            employee = Employee.objects.get(username=username)
-            icon = employee.first_name[0] + employee.last_name[0]
             WM_model = WM_FATL.objects.get(ModelName=Indkal_model_no)
             context = {
-            'first_name': employee.first_name,
-            'last_name': employee.last_name,
-            'icon': icon,
-            'username': username,
             'Indkal_model_no': Indkal_model_no,
             'WM_model': WM_model,
             }
             return render(request, 'WM-FATL.html', context)
         else:
             return redirect('/access_denied/')
-    
-    username = request.session['username']
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
     products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
     models = list(Model_MNF_detail.objects.values())
     context = {
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
         'products': products,
         'models': models,
     }
@@ -1124,8 +1050,7 @@ def model_details_update(request):
 
 @login_required
 def model_details_view(request):
-    username = request.session['username']
-    user = Employee.objects.get(username=username)
+    user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     if 'clear_filters' in request.GET:
@@ -1147,18 +1072,12 @@ def model_details_view(request):
             return redirect(f"{request.path}?{query_params.urlencode()}")
     if model_filter:
         filtered_models = filtered_models.filter(Indkal_model_no=model_filter)
-
-    icon = user.first_name[0] + user.last_name[0]
     context = {
         'modelnames': models,
         'products': products,
         'models': filtered_models,
         'product_filter': product_filter,
         'model_filter': model_filter,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'icon': icon,
-        'username': username,
     }
     return render(request, 'model_details_view.html', context)
 
@@ -1209,18 +1128,10 @@ def Test_list_entry(request):
             TestName=testName,
         )
         new_test.save()
-
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
-    
-    username = request.session['username']
-    employee = user
-    icon = employee.first_name[0] + employee.last_name[0]
+
     products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
     context = {
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
         'products': products,
     }
     return render(request, 'Test_list_entry.html',context)
@@ -1248,16 +1159,8 @@ def test_protocol_entry(request, test_name, product):
         existing_test.save()
         messages.success(request, 'Test protocols added.')
         return redirect('/dashboard/')  
-
-    username = request.session['username']
-    employee = user
-    icon = employee.first_name[0] + employee.last_name[0]
     test_detail = Test_core_detail.objects.get(TestName=test_name, ProductType=product)
     context = {
-    'first_name': employee.first_name,
-    'last_name': employee.last_name,
-    'icon': icon,
-    'username': username,
     'test_name': test_name,
     'product': product,
     'test_detail': test_detail,
@@ -1296,25 +1199,17 @@ def update_test_list_entry(request):
 
     test_names = Test_core_detail.objects.values_list('TestName', flat=True).distinct()
     products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
-    username = request.session['username']
-    employee = user
-    icon = employee.first_name[0] + employee.last_name[0]
     test = list(Test_core_detail.objects.all().values())
     context = {
         'test': test,
         'test_names': test_names,
         'products': products,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
     }
     return render(request, 'Update_Test_list_entry.html', context)
 
 @login_required
 def test_details_view(request):
-    username = request.session['username']
-    user = Employee.objects.get(username=username)
+    user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     if 'clear_filters' in request.GET:
@@ -1336,18 +1231,12 @@ def test_details_view(request):
             return redirect(f"{request.path}?{query_params.urlencode()}")
     if model_filter:
         filtered_tests = filtered_tests.filter(TestName=model_filter)
-
-    icon = user.first_name[0] + user.last_name[0]
     context = {
         'tests': filtered_tests,
         'products': products,
         'testnames': testnames,
         'product_filter': product_filter,
         'model_filter': model_filter,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'icon': icon,
-        'username': username,
     }
     return render(request, 'test_details_view.html', context)
 
@@ -1439,5 +1328,24 @@ def handle_notification(request):
         return JsonResponse({'redirect_url': redirect_url})
     return HttpResponse('Invalid request method')
 
+def clear_notification(request):
+    if request.method == 'POST':
+        inc_notif = json.loads(request.body)["notification"]
+        user = Employee.objects.get(username=request.session['username'])
+        notification = Notification.objects.get(employee=user.username)
+        latest_notif = notification.notification[::-1]
+        for notif in latest_notif:
+            if inc_notif == 'all' or (notif["metadata"] == inc_notif["metadata"] and notif['action'] == inc_notif['action']):
+                notif['is_cleared'] = True
+        notification.save()
+        return HttpResponse('Notification cleared successfully')
+    return HttpResponse('Invalid request method')
+
+@login_required
 def notifications(request):
-    return render(request, 'notifications.html')
+    notification = Notification.objects.get(employee=request.session['username'])
+    latest_notifications = notification.notification[::-1]
+    context = {
+        'notifications': latest_notifications,
+    }
+    return render(request, 'notifications.html', context=context)

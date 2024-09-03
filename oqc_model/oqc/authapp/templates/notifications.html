@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static%}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes">
+    <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
+    <title>Notifications</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/notification.css' %}">
+</head>
+<body>
+    {% if user.user_type == 'owner' %}
+        {% include "header_PO.html" %}
+    {% else %}
+        {% include "header.html" %}
+    {% endif %}
+    <div class="content">
+        <h1>Notifications</h1>
+        <table class="notification-table">
+        {% for notification in notifications %}
+            {% if notification.is_read %}
+            <tr class="read" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }})">
+            {% else %}
+            <tr class="unread" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }})">
+            {% endif %}
+                <td>{{ notification.metadata.from }}</td>
+                <td>{{ notification.display_full_content }}</td>
+                <td>{{ notification.created_at }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+
+    </div>
+<script type="text/javascript" src="{% static 'js/header.js' %}"></script>
+</body>
+</html>

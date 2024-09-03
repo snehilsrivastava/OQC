@@ -19,7 +19,7 @@
             </button>
             <div class="notif-info" id="notifInfo">
                 <div class="notif-actions">
-                    <div class="clear-notif-btn" onclick="clearNotifications()">
+                    <div class="clear-notif-btn" onclick="clearNotifications('all')">
                         <svg class="icon" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M120-280v-80h560v80H120Zm80-160v-80h560v80H200Zm80-160v-80h560v80H280Z"/></svg>
                     </div>
                     <a class="notif-view-all" href="/notifications/">View all</a>
@@ -45,12 +45,12 @@
             </label>
         </div>
         <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
-            <span class="icon" id="userButtonIcon">{{icon}}</span>
+            <span class="icon" id="userButtonIcon">{{ employee.first_name.0 }}{{ employee.last_name.0 }}</span>
         </button>
         <div class="user-info" id="userInfo">
             <span>
-                <p class="name">Name: {{ first_name }} {{ last_name }}</p>
-                <p class="mail">Email: {{ username }}</p>
+                <p class="name">Name: {{ employee.first_name }} {{ employee.last_name }}</p>
+                <p class="mail">Email: {{ employee.username }}</p>
             </span>
             <span style="display: flex; align-items: center; justify-content: center;">
                 <a class="logout-btn"  onclick="logoutUser()">Logout</a>

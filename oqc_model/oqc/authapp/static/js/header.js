@@ -106,7 +106,6 @@ function handleNotification(action, metadata) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
         if (data.redirect_url) {
             window.location.href = data.redirect_url;
         } else {
@@ -115,7 +114,7 @@ function handleNotification(action, metadata) {
     });
 }
 
-function clearNotifications() {
+function clearNotifications(notifications) {
     const notifClickElements = document.querySelectorAll('.notif-click');
     
     notifClickElements.forEach(element => {
@@ -123,6 +122,13 @@ function clearNotifications() {
         element.addEventListener('transitionend', () => {
             element.remove();
         });
+    });
+    fetch('/clear_notification/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({notification: notifications})
     });
 }
 

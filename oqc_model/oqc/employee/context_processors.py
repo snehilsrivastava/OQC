@@ -25,13 +25,13 @@ def header_context(request):
         if time_diff.seconds < 60 and time_diff.days == 0:
             latest_notifications[i]['created_at'] = "A few seconds ago"
         elif time_diff.seconds < 3600 and time_diff.days == 0:
-            latest_notifications[i]['created_at'] = f"{time_diff.seconds // 60} minutes ago"
+            latest_notifications[i]['created_at'] = f"{time_diff.seconds // 60} min ago"
         elif time_diff.days == 0:
             latest_notifications[i]['created_at'] = f"{time_diff.seconds // 3600} hours ago"
         elif time_diff.days == 1:
-            latest_notifications[i]['created_at'] = f"Yesterday at {created_at.strftime('%I:%M %p')}"
+            latest_notifications[i]['created_at'] = "Yesterday"
         else:
-            latest_notifications[i]['created_at'] = created_at.strftime("%d %b at %I:%M %p")
+            latest_notifications[i]['created_at'] = created_at.strftime("%d %b")
     return {
         'latest_notifications': latest_notifications,
         'notification': notification,

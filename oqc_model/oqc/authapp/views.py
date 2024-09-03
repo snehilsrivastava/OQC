@@ -234,7 +234,6 @@ def admin(request):
     employee = Employee.objects.get(username=request.session['username'])
     if not employee.is_superuser:
         return redirect('/access_denied/')
-    icon = employee.first_name[0] + employee.last_name[0]
     approved_users = Employee.objects.filter(user_type__isnull=False)
     approved_users = list(approved_users)[::-1]
     unapproved_users = Employee.objects.filter(user_type__isnull=True)
@@ -242,10 +241,6 @@ def admin(request):
     user_types = ['Product Owner', 'Tester', 'Brand', 'Legal']
     product_types = list(Product_Test_Name_Details.objects.values_list('Product', flat=True))
     context = {
-        'username': employee,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
         'approved': approved_users,
         'unapproved': unapproved_users,
         'user_types': user_types,
