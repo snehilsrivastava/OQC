@@ -299,4 +299,4 @@ function singleSelect(selectedBox) {
 }
 
 document.querySelectorAll('[data-multi-select]').forEach(select => new MultiSelect(select));
-document.querySelectorAll('.multi-select').forEach(ms => ms.parentElement.parentElement.style.display = 'none');
+document.querySelectorAll('.form-group div .multi-select').forEach(ms => ms.parentElement.parentElement.style.display = 'none');

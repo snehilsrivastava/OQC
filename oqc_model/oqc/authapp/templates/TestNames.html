@@ -59,7 +59,7 @@
                 </div>
                 <div class="form-group">
                     <label>DVT Tests</label>
-                    <select id="dvt-options" name="dvt-options" data-placeholder="Select DVT Tests" multiple data-multi-select>
+                    <select class="multiple-selections" id="dvt-options" name="dvt-options" data-placeholder="Select DVT Tests" multiple data-multi-select>
                         {% for t in DVT %}
                             <option value="{{ t }}">{{ t }}</option>
                         {% endfor %}
@@ -67,7 +67,7 @@
                 </div>
                 <div class="form-group">
                     <label>PP Tests</label>
-                    <select id="pp-options" name="pp-options" data-placeholder="Select PP Tests" multiple data-multi-select>
+                    <select class="multiple-selections" id="pp-options" name="pp-options" data-placeholder="Select PP Tests" multiple data-multi-select>
                         {% for t in PP %}
                             <option value="{{ t }}">{{ t }}</option>
                         {% endfor %}
@@ -75,7 +75,7 @@
                 </div>
                 <div class="form-group">
                     <label>MP Tests</label>
-                    <select id="mp-options" name="mp-options" data-placeholder="Select MP Tests" multiple data-multi-select>
+                    <select class="multiple-selections" id="mp-options" name="mp-options" data-placeholder="Select MP Tests" multiple data-multi-select>
                         {% for t in MP %}
                             <option value="{{ t }}">{{ t }}</option>
                         {% endfor %}

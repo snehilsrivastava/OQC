@@ -42,7 +42,8 @@
 .multi-select .multi-select-header .multi-select-header-option {
     display: inline-flex;
     align-items: center;
-    background-color: #f3f4f7;
+    color: var(--webkit-text-fill-color);
+    background-color: var(--form-bg);
     font-size: 14px;
     padding: 3px 8px;
     border-radius: 5px;

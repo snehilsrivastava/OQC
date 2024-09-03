@@ -16,6 +16,9 @@ urlpatterns = [
     path('forgot_password/verify_otp/', views.forgot_password_verify_otp, name='forgot_password_verify_otp'),
     path('forgot_password/update_password/', views.forgot_password_update, name='forgot_password_update'),	
     path('admin/', views.admin, name='admin'),
+    path('approveUser/', views.approveUser, name='approveUser'),
+    path('updateUser/', views.updateUser, name='updateUser'),
+    path('removeUser/<str:removal_type>/', views.removeUser, name='removeUser'),
     path('change_user_type/<str:username>/<str:user_type>/', views.change_user_type, name='change_user_type'),
 ]
 
