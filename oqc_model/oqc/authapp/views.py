@@ -15,6 +15,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.admin.models import LogEntry
 import re
+import json
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -238,6 +239,8 @@ def admin(request):
     approved_users = list(approved_users)[::-1]
     unapproved_users = Employee.objects.filter(user_type__isnull=True)
     unapproved_users = list(unapproved_users)[::-1]
+    user_types = ['Product Owner', 'Tester', 'Brand', 'Legal']
+    product_types = list(Product_Test_Name_Details.objects.values_list('Product', flat=True))
     context = {
         'username': employee,
         'first_name': employee.first_name,
@@ -245,8 +248,118 @@ def admin(request):
         'icon': icon,
         'approved': approved_users,
         'unapproved': unapproved_users,
+        'user_types': user_types,
+        'product_types': product_types
     }
     return render(request, 'admin.html', context)
+
+userTypes = {'owner': 'Product Owner', 'employee': 'Tester', 'brand': 'Brand Team', 'legal': 'Legal Team'}
+
+@login_required
+def approveUser(request):
+    session_user = Employee.objects.get(username=request.session['username'])
+    if not session_user.is_superuser:
+        return redirect('/access_denied/')
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user = Employee.objects.get(username=data.get('username'))
+        user.user_type = data.get('userType')
+        for pt in data.get('productTypes'):
+            user.product_type[pt] = True
+        user.save()
+        # Send email to user
+        subject = 'Account approved'
+        from_email = settings.EMAIL_HOST_USER
+        to = [user.username]
+
+        text_content = ''
+        html_content = f"""
+        <html>
+        <body>
+            <p>
+                Hi {user.first_name} {user.last_name},<br><br>
+                Your account has been approved for {userTypes[user.user_type]} access.<br><br>
+                Click <a href="http://protrackindkal.in/au/login" target="_blank">here</a> to go to login page.
+            </p>
+        </body>
+        </html>
+        """
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+        messages.success(request, 'User approved.')
+        return HttpResponse(status=200)
+
+@login_required
+def updateUser(request):
+    session_user = Employee.objects.get(username=request.session['username'])
+    if not session_user.is_superuser:
+        return redirect('/access_denied/')
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user = Employee.objects.get(username=data.get('username'))
+        old_user_type = user.user_type
+        user.user_type = data.get('userType')
+        if data.get('productTypes'):
+            for pt in data.get('productTypes'):
+                user.product_type[pt] = True
+        else:
+            for pt in user.product_type.keys():
+                user.product_type[pt] = False
+        user.save()
+        if (old_user_type != user.user_type):
+            # Send email to user
+            subject = 'Account updated'
+            from_email = settings.EMAIL_HOST_USER
+            to = [user.username]
+
+            text_content = ''
+            html_content = f"""
+            <html>
+            <body>
+                <p>
+                    Hi {user.first_name} {user.last_name},<br><br>
+                    Your account has been updated for {userTypes[user.user_type]} access.<br><br>
+                    Click <a href="http://protrackindkal.in/au/login" target="_blank">here</a> to go to login page.
+                </p>
+            </body>
+            </html>
+            """
+            msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+        messages.success(request, 'Successfully updated user.')
+        return HttpResponse(status=200)
+
+@login_required
+def removeUser(request, removal_type):
+    session_user = Employee.objects.get(username=request.session['username'])
+    if not session_user.is_superuser:
+        return redirect('/access_denied/')
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user = Employee.objects.get(username=data.get('username'))
+        subject = f'Account {removal_type}'
+        from_email = settings.EMAIL_HOST_USER
+        to = [user.username]
+
+        text_content = ''
+        html_content = f"""
+        <html>
+        <body>
+            <p>
+                Hi {user.first_name} {user.last_name},<br><br>
+                Your account has been {removal_type}.<br><br>
+            </p>
+        </body>
+        </html>
+        """
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+        user.delete()
+        messages.success(request, 'Successfully removed user.')
+        return HttpResponse(status=200)
 
 @login_required
 def change_user_type(request, username, user_type):

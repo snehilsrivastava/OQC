@@ -147,17 +147,17 @@
                             <div class="card-content">
                                 <span class="test-count">
                                     <ul>
-                                        <li>Total: {{sum.Count.0}}</li>
-                                        <li style="color: yellow;">Submitted: {{sum.Count.1}}</li>
-                                        <li style="color: lime;">Approved: {{sum.Count.2}}</li>
-                                        <li style="color: red;">Not Submitted: {{sum.Count.3}}</li>
+                                        <li>Total: {{sum.Count.PO.0}}</li>
+                                        <li style="color: lime;">Approved: {{sum.Count.PO.1}}</li>
+                                        <li style="color: yellow;">Unapproved: {{sum.Count.PO.2}}</li>
+                                        <li style="color: #ff5959;">Not Submitted: {{sum.Count.PO.3}}</li>
                                     </ul>
                                 </span>
                                 <span class="status-info">
                                     <ul>
-                                        <li style="background-color: {{sum.Status.0}};">Product</li>
-                                        <li style="background-color: {{sum.Status.1}};">Brand</li>
-                                        <li style="background-color: {{sum.Status.2}};">Legal</li>
+                                        <li><button class="card-status-button" style="background-color: {{sum.Status.0}};" onclick="displayStatusPerTeam(this, event, {{sum}})">Product</button></li>
+                                        <li><button class="card-status-button" style="background-color: {{sum.Status.1}};" onclick="displayStatusPerTeam(this, event, {{sum}})">Brand</button></li>
+                                        <li><button class="card-status-button" style="background-color: {{sum.Status.2}};" onclick="displayStatusPerTeam(this, event, {{sum}})">Legal</button></li>
                                     </ul>
                                 </span>
                             </div>

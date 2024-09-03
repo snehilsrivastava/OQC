@@ -1,9 +1,15 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 from datetime import datetime as dt
+from product.models import Product_Test_Name_Details
+from django.contrib.postgres.fields import ArrayField
+
+def product_choice():
+    return {k: False for k in Product_Test_Name_Details.objects.values_list('Product', flat=True)}
+
 # Create your models here.
 class Employee(models.Model):
     user_type = models.CharField(max_length=50, null=True, choices=[("employee", "Employee"), ("owner", "Owner"), ("legal", "Legal"), ("brand", "Brand")], blank=True)
+    product_type = models.JSONField(default=product_choice)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     username  = models.CharField(max_length=255, unique=True)

@@ -21,15 +21,14 @@
     border: 1px solid #ccc;
     background-color: var(--sidebar-bg);
     border-radius: 10px;
-    width: 95vw; /* Ensures container uses the full width of the parent */
-    max-width: 95vw; /* Adjust the maximum width to hold more cards */
-    /* Hide the scrollbar */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+    width: 95vw;
+    max-width: 95vw;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .scrollcontainer::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
 }
 
 .card {
@@ -59,7 +58,6 @@
 }
 
 .scroll-btn {
-    /* Hide the buttons initially */
     background-color: transparent;
     border: none;
     font-size: 24px;
@@ -112,10 +110,20 @@
     background-color: #0000;
 }
 
-.status-info ul li {
-    padding: 0px 2px;
+.card-status-button {
+    width: 50.6px !important;
+    height: 22px !important;
+    font-size: 11px !important;
+    padding: 0 !important;
+    margin: 0 !important;
     border: 1px solid black;
     border-radius: 5px;
-    background-color: #5AA33F;
-    width: 43.6px;
+    color: #eee !important;
+    &:hover {
+        filter: brightness(120%);
+    }
+    &:focus {
+        outline: none;
+        border: 1px solid black !important;
+    }
 }

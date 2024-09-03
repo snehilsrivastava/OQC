@@ -206,6 +206,10 @@ span.heading a {
 .filter-buttons {
     display: flex;
     gap: 5px;
+    .action-button {
+        font-size: 15px;
+        padding: 0px 5px;
+    }
 }
 
 .content {
