@@ -139,18 +139,19 @@ def register_page(request):
         pword = request.POST.get('password')
         pword = make_password(pword)
         in_otp = request.POST.get('OTP')
-        new_employee = Employee(username=username, first_name=fname, last_name=lname, password=pword)
         delete_expired_otps()
         msg = verify_otp(username, in_otp)
         match (msg):
             case 1:
+                new_employee = Employee(username=username, first_name=fname, last_name=lname, password=pword)
                 new_employee.save()
+                new_notification = Notification(employee=new_employee, notification=[])
+                new_notification.save()
                 messages.success(request, "Account creation request sent.")
 
                 subject = 'New account approval'
                 from_email = settings.EMAIL_HOST_USER
                 to = ["qmsindkal@gmail.com"]
-
                 text_content = 'This is an important message.'
                 html_content = f"""
                 <html>
@@ -164,7 +165,6 @@ def register_page(request):
                 </body>
                 </html>
                 """
-
                 msg = EmailMultiAlternatives(subject, text_content, from_email, to)
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()

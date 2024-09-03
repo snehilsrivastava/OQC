@@ -14,40 +14,7 @@
    
 </head>
 <body>
-<div class="header" style="justify-content: flex-end;">
-    <div class="right-icon">
-        <div class="theme-toggle-btn">
-            <input type="checkbox" class="theme-checkbox" id="theme-checkbox">
-            <label style="margin-bottom: 0px;" for="theme-checkbox" class="theme-checkbox-label">
-                <i class="fas fa-moon"></i>
-                <i class="fas fa-sun"></i>
-                <span class="theme-ball"></span>
-            </label>
-        </div>
-        <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
-            <span class="icon" id="userButtonIcon">{{icon}}</span>
-        </button>
-        <div class="user-info" id="userInfo">
-            <span>
-                <p class="name">Name: {{ first_name }} {{ last_name }}</p>
-                <p class="mail">Email: {{ username }}</p>
-            </span>
-            <span style="display: flex; align-items: center; justify-content: center;">
-                <a class="logout-btn"  onclick="logoutUser()">Logout</a>
-            </span>
-        </div>
-    </div>
-</div>
-{% if messages %}
-    <span class="message-container">
-        {% for message in messages %}
-            <span class="message {{ message.level_tag }}">
-                {{ message }}
-            </span>
-            <div class="timer-bar timer-{{ message.level_tag }}"></div>
-        {% endfor %}
-    </span>
-{% endif %}
+{% include "header_plain.html" %}
 <div class="main-content">
     <div class="overlay" id="overlay" onclick="toggleFilter()"></div>
 

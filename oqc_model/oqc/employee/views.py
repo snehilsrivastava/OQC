@@ -7,7 +7,7 @@ from .forms import *
 from .models import *
 from .renderers import *
 from product.views import *
-from authapp.models import Employee
+from authapp.models import Employee, Notification, default_notification
 from authapp.views import login_page
 import PyPDF2
 from io import BytesIO
@@ -17,14 +17,12 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import json
 from django.core.serializers.json import DjangoJSONEncoder
-import json
-from django.core.serializers.json import DjangoJSONEncoder
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
-        next_page = request.original_path
         if 'username' in request.session:
             return view_func(request, *args, **kwargs)
+        next_page = request.original_path
         login_url = '/au/login'
         return redirect(f"{login_url}?next={next_page}" if next_page else login_url)
     return wrapper
@@ -404,23 +402,75 @@ def handle_selected_tests(request):
             if not selected_test_records.exists():
                 messages.error(request, 'No test records selected')
                 return redirect('/dashboard/')
+            count = 0
             for test_record in selected_test_records:
                 if test_record.B_status != "Approved" and test_record.status == "Approved":
+                    count += 1
                     test_record.B_status = "Waiting"
-                test_record.owner_name = user.first_name + " " + user.last_name
-                test_record.save()
-            messages.success(request, 'Sent to Brand Team for approval.')
+                    test_record.owner_name = user.first_name + " " + user.last_name
+                    test_record.save()
+            if count == 0:
+                messages.warning(request, 'No tests sent to Brand Team.')
+            else:
+                brand_employees = Employee.objects.filter(user_type='brand')
+                for employee in brand_employees:
+                    notification = Notification.objects.get(employee=employee)
+                    notification_dict = default_notification()
+                    test_record = selected_test_records[0]
+                    notification_dict["metadata"] = {
+                        "product": test_record.ProductType,
+                        "model": test_record.ModelName,
+                        "stage": test_record.TestStage,
+                    }
+                    if count == 1:
+                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval. "
+                        notification_dict["metadata"]["test"] = test_record.TestName
+                        notification_dict["action"] = "sent-1"
+                    else:
+                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent {count} reports for approval."
+                        notification_dict["action"] = "sent"
+                    notification.notification.append(notification_dict)
+                    notification.unread_count += 1
+                    notification.save()
+                messages.success(request, 'Sent to Brand Team for approval.')
 
         elif action == 'send_legal':
             if not selected_test_records.exists():
                 messages.error(request, 'No test records selected')
                 return redirect('/dashboard/')
+            count = 0
             for test_record in selected_test_records:
                 if test_record.L_status != "Approved" and test_record.status == "Approved":
+                    count += 1
                     test_record.L_status = "Waiting"
-                test_record.owner_name = user.first_name + " " + user.last_name
-                test_record.save()
-            messages.success(request, 'Sent to Legal Team for approval.')
+                    test_record.owner_name = user.first_name + " " + user.last_name
+                    test_record.save()
+            if count == 0:
+                messages.warning(request, 'No tests sent to Legal Team.')
+            else:
+                legal_employees = Employee.objects.filter(user_type='legal')
+                for employee in legal_employees:
+                    notification = Notification.objects.get(employee=employee)
+                    notification_dict = default_notification()
+                    test_record = selected_test_records[0]
+                    notification_dict["metadata"] = {
+                        "product": test_record.ProductType,
+                        "model": test_record.ModelName,
+                        "stage": test_record.TestStage,
+                    }
+                    if count == 1:
+                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval. "
+                        notification_dict["metadata"]["test"] = test_record.TestName
+                        notification_dict["metadata"]["serialno"] = test_record.SerailNo
+                        notification_dict["action"] = "sent-1"
+                    else:
+                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent {count} reports for approval."
+                        notification_dict["action"] = "sent"
+                    notification.notification.append(notification_dict)
+                    notification.unread_count += 1
+                    notification.save()
+                messages.success(request, 'Sent to Legal Team for approval.')
+
 
     return redirect('/dashboard/')
 
@@ -653,11 +703,6 @@ def dashboard(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'employee': employee,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
         'status_color' : status_color,
         'role_letter': role_letter,
         'summary_data': summary_data
@@ -834,9 +879,6 @@ def brand_dashboard(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
-    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     context = {
         'test': test,
         'tests': tests,
@@ -853,9 +895,6 @@ def brand_dashboard(request):
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
         'username': username
     }
     return render(request, "dashboard_brand.html", context)
@@ -1356,3 +1395,36 @@ def server_media_browse(request):
     }
     
     return render(request, 'media_browse.html', context)
+
+@login_required
+def handle_notification(request):
+    if request.method == 'POST':
+        inc_notif = json.loads(request.body)
+        user = Employee.objects.get(username=request.session['username'])
+        notification = Notification.objects.get(employee=user.username)
+        latest_notif = notification.notification[::-1]
+        for notif in latest_notif:
+            if notif["metadata"] == inc_notif["metadata"] and notif['action'] == inc_notif['action'] and not notif['is_read']:
+                notification.unread_count -= 1
+                notif['is_read'] = True
+                break
+        notification.save()
+        if user.user_type == 'owner':
+            return
+        elif user.user_type == 'tester':
+            return
+        elif user.user_type == 'brand':
+            if inc_notif['action'] == 'sent':
+                redirect_url = f'/brand_dashboard/?product={inc_notif["metadata"]["product"]}&test_stage={inc_notif["metadata"]["stage"]}&model_name={inc_notif["metadata"]["model"]}'
+            elif inc_notif['action'] == 'sent-1':
+                redirect_url = f'/brand_view/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
+        elif user.user_type == 'legal':
+            if inc_notif['action'] == 'sent':
+                redirect_url = f'/legal_dashboard/?product={inc_notif["metadata"]["product"]}&test_stage={inc_notif["metadata"]["stage"]}&model_name={inc_notif["metadata"]["model"]}'
+            elif inc_notif['action'] == 'sent-1':
+                redirect_url = f'/legal_view/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
+        return JsonResponse({'redirect_url': redirect_url})
+    return HttpResponse('Invalid request method')
+
+def notifications(request):
+    return render(request, 'notifications.html')

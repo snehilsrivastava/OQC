@@ -1,18 +1,13 @@
 <div class="header">
-    <form action="{% url 'test_list_entry' %}" method="post">
-        <div class="left-icon">
-            <form action=""></form>
-            <button class="dashboard-btn" name="action" value="dashboard" type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
-                    <path d="M 200 -120 q -33 0 -56.5 -23.5 T 120 -200 v -560 q 0 -33 23.5 -56.5 T 200 -840 h 560 q 33 0 56.5 23.5 T 840 -760 v 560 q 0 33 -23.5 56.5 T 760 -120 H 200 Z m 0 -80 h 240 v -560 H 200 v 560 Z m 320 0 h 240 v -280 H 520 v 280 Z m 0 -360 h 240 v -200 H 520 v 200 Z"/>
-                </svg>&nbsp;Dashboard
-            </button>
-        </div>
-    </form>
+    <div></div>
     <div class="right-icon">
         <div class="notifications">
             <button class="notif-toggle-btn" id="notifButton" onclick="toggleNotifications()">
+                {% if latest_notifications %}
                 <i class="fas fa-bell"></i>
+                {% else %}
+                <i class="far fa-bell"></i>
+                {% endif %}
                 {% if notification.unread_count > 0 %}
                 <span class="badge" id="unreadCountBadge">{{ notification.unread_count }}</span>
                 {% endif %}
@@ -45,12 +40,12 @@
             </label>
         </div>
         <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
-            <span class="icon" id="userButtonIcon">{{icon}}</span>
+            <span class="icon" id="userButtonIcon">{{ employee.first_name.0 }}{{ employee.last_name.0 }}</span>
         </button>
         <div class="user-info" id="userInfo">
             <span>
-                <p class="name">Name: {{ first_name }} {{ last_name }}</p>
-                <p class="mail">Email: {{ username }}</p>
+                <p class="name">Name: {{ employee.first_name }} {{ employee.last_name }}</p>
+                <p class="mail">Email: {{ employee.username }}</p>
             </span>
             <span style="display: flex; align-items: center; justify-content: center;">
                 <a class="logout-btn"  onclick="logoutUser()">Logout</a>
@@ -58,3 +53,13 @@
         </div>
     </div>
 </div>
+{% if messages %}
+    <span class="message-container">
+        {% for message in messages %}
+            <span class="message {{ message.level_tag }}">
+                {{ message }}
+            </span>
+            <div class="timer-bar timer-{{ message.level_tag }}"></div>
+        {% endfor %}
+    </span>
+{% endif %}

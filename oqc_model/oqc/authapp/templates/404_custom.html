@@ -15,31 +15,7 @@
     <link rel="stylesheet" href="{% static 'css/remark.css' %}">
     
     <body>
-        <div class="header">
-            <div></div>
-            <div class="right-icon">
-                <div class="theme-toggle-btn">
-                    <input type="checkbox" class="theme-checkbox" id="theme-checkbox">
-                    <label style="margin-bottom: 0px;" for="theme-checkbox" class="theme-checkbox-label">
-                        <i class="fas fa-moon"></i>
-                        <i class="fas fa-sun"></i>
-                        <span class="theme-ball"></span>
-                    </label>
-                </div>
-                <button class="user-btn" id="userButton" onclick="toggleUserInfo()">
-                    <span class="icon" id="userButtonIcon">{{icon}}</span>
-                </button>
-                <div class="user-info" id="userInfo">
-                    <span>
-                        <p class="name">Name: {{ first_name }} {{ last_name }}</p>
-                        <p class="mail">Email: {{ username }}</p>
-                    </span>
-                    <span style="display: flex; align-items: center; justify-content: center;">
-                        <a class="logout-btn"  onclick="logoutUser()">Logout</a>
-                    </span>
-                </div>
-            </div>
-        </div>
+        {% include "header_plain.html" %}
         <h1>Page Not Found</h1>
         <p>We could not find the page you were looking for.</p>
         <br>

@@ -4,3 +4,4 @@ from .models import *
 # Register your models here.
 admin.site.register(Employee)
 admin.site.register(OTP)
+admin.site.register(Notification)
