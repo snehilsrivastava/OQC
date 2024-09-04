@@ -140,18 +140,19 @@ def register_page(request):
         pword = request.POST.get('password')
         pword = make_password(pword)
         in_otp = request.POST.get('OTP')
-        new_employee = Employee(username=username, first_name=fname, last_name=lname, password=pword)
         delete_expired_otps()
         msg = verify_otp(username, in_otp)
         match (msg):
             case 1:
+                new_employee = Employee(username=username, first_name=fname, last_name=lname, password=pword)
                 new_employee.save()
+                new_notification = Notification(employee=new_employee, notification=[])
+                new_notification.save()
                 messages.success(request, "Account creation request sent.")
 
                 subject = 'New account approval'
                 from_email = settings.EMAIL_HOST_USER
                 to = ["qmsindkal@gmail.com"]
-
                 text_content = 'This is an important message.'
                 html_content = f"""
                 <html>
@@ -165,7 +166,6 @@ def register_page(request):
                 </body>
                 </html>
                 """
-
                 msg = EmailMultiAlternatives(subject, text_content, from_email, to)
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
@@ -234,7 +234,6 @@ def admin(request):
     employee = Employee.objects.get(username=request.session['username'])
     if not employee.is_superuser:
         return redirect('/access_denied/')
-    icon = employee.first_name[0] + employee.last_name[0]
     approved_users = Employee.objects.filter(user_type__isnull=False)
     approved_users = list(approved_users)[::-1]
     unapproved_users = Employee.objects.filter(user_type__isnull=True)

@@ -47,32 +47,21 @@ def product_form_view(request):
     ac_models = list(AC.objects.values_list('ModelName', flat=True).distinct())
     phone_models = list(Phone.objects.values_list('ModelName', flat=True).distinct())
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True).distinct())
-    user = request.session['username']
     test = list(Test_core_detail.objects.values('ProductType', 'TestStage', 'TestName'))
     products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
-    username = request.session['username']
-    employee = Employee.objects.get(username=username)
-    icon = employee.first_name[0] + employee.last_name[0]
     context = {
-        'employee': employee,
         'tv_models': tv_models,
         'ac_models': ac_models,
         'phone_models': phone_models,
         'washing_machine_models': washing_machine_models,
-        'user': user,
         'test': test,
         'products': products,
-        'first_name': employee.first_name,
-        'last_name': employee.last_name,
-        'icon': icon,
-        'username': username,
     }
     return render(request, 'product.html', context)
 
 @login_required
 def AC_spec(request):
     user = Employee.objects.get(username=request.session['username'])
-    icon = user.first_name[0] + user.last_name[0]
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
@@ -113,10 +102,6 @@ def AC_spec(request):
             'DVT': dvt,
             'PP': pp,
             'MP': mp,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'icon': icon,
-            'username': request.session['username'],
         }
         return render(request, 'TestNames.html', context)
     messages.error(request, 'Invalid request')
@@ -125,7 +110,6 @@ def AC_spec(request):
 @login_required
 def WM_FATL_spec(request):
     user = Employee.objects.get(username=request.session['username'])
-    icon = user.first_name[0] + user.last_name[0]
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
@@ -156,10 +140,6 @@ def WM_FATL_spec(request):
             'DVT': dvt,
             'PP': pp,
             'MP': mp,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'icon': icon,
-            'username': request.session['username'],
         }
         return render(request, 'TestNames.html', context)
     messages.error(request, 'Invalid request')

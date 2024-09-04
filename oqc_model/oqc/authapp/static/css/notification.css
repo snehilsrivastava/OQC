@@ -1,0 +1,18 @@
+.content {
+    padding-top: 52px;
+}
+
+h1 {
+    margin: 10px;
+    text-align: center;
+}
+
+.notification-table {
+    border: 1px solid var(--webkit-text-fill-color);
+    /* border-collapse: collapse; */
+}
+
+td {
+    border-right: none !important;
+    border-left: none !important;
+}

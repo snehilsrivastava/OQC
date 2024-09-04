@@ -22,9 +22,10 @@ document.querySelectorAll('.dropdown-toggle').forEach(item => {
 function handleOutsideClick(event) {
     const sidebar = document.getElementById("sidebar");
     const header = document.querySelector(".header");
-
-    if (sidebar.classList.contains("visible") && !sidebar.contains(event.target) && !header.contains(event.target)) {
-        sidebar.classList.remove("visible");
+    if (sidebar) {
+        if (sidebar.classList.contains("visible") && !sidebar.contains(event.target) && !header.contains(event.target)) {
+            sidebar.classList.remove("visible");
+        }
     }
 }
 
@@ -72,12 +73,62 @@ function logoutUser() {
             // Redirect to the home page or show a success message
             window.location.href = '/';
         } else {
-            alert('Logout failed');
+            window.location.href = '/';
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Logout failed');
+        window.location.href = '/';
+    });
+}
+
+function toggleNotifications() {
+    const notifInfo = document.getElementById("notifInfo");
+    notifInfo.classList.toggle("active");
+}
+
+document.addEventListener('click', function(event) {
+    var notifInfo = document.getElementById("notifInfo");
+    var notifButton = document.getElementById("notifButton");
+    
+    if (!notifInfo.contains(event.target) && !notifButton.contains(event.target)) {
+        notifInfo.classList.remove("active");
+    }
+});
+
+function handleNotification(action, metadata) {
+    fetch('/handle_notification/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: action, metadata: metadata })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+        } else {
+            console.error('No redirect URL provided in response');
+        }
+    });
+}
+
+function clearNotifications(notifications) {
+    const notifClickElements = document.querySelectorAll('.notif-click');
+    
+    notifClickElements.forEach(element => {
+        element.style.transform = 'translate(100%, 0)';
+        element.addEventListener('transitionend', () => {
+            element.remove();
+        });
+    });
+    fetch('/clear_notification/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({notification: notifications})
     });
 }
 
