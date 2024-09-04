@@ -1,7 +1,6 @@
 from django.shortcuts import render,redirect
 from .models import *
 from employee.models import TestRecord, Test_core_detail
-from django.shortcuts import render
 from django.urls import reverse
 from authapp.models import Employee
 from django.contrib import messages

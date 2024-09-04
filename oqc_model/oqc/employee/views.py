@@ -618,7 +618,7 @@ def dashboard(request):
     role_letter = {"T": "Test Inspector", "L": "Legal Team", "B": "Brand Team"}
 
     user_ProdType = [k for k in user.product_type if user.product_type[k]]
-    completed_tests = TestRecord.objects.exclude(status="Not Sent")
+    completed_tests = TestRecord.objects.all()
     completed_tests = completed_tests.filter(ProductType__in=user_ProdType)
     if test_name:
         completed_tests = completed_tests.filter(TestName__icontains=test_name)
