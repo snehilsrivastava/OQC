@@ -1,94 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% load static%}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
-    <title>Product Specification Form</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/form.css' %}">
-    <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
-</head>
-<body>
-    {% include "header_PO.html" %}
-    <div class="message-container">
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="message {{ message.level_tag }}">
-                        {{ message }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-    <div class="container">
-        <div class="form-container">
-            
-            <div class="header-form" style = "padding: 5px 30px; "> 
-                <h1>Specification Form For AC</h1>
-            </div>
-
-            <form action="{% url 'AC' %}" method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="ModelName">Model Number</label>
-                    <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ Indkal_model_no }}" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="BImotor">BI Motor</label>
-                    <input type="text" class="form-control" id="BImotor" name="BImotor" value="{{ AC_model.BImotor }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="Compressor">Compressor</label>
-                    <input type="text" class="form-control" id="Compressor" name="Compressor" value="{{ AC_model.Compressor }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="Blower">Blower</label>
-                    <input type="text" class="form-control" id="Blower" name="Blower" value="{{ AC_model.Blower }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="FanMotor">Fan Motor</label>
-                    <input type="text" class="form-control" id="FanMotor" name="FanMotor" value="{{ AC_model.FanMotor }}" required>
-                </div>
-            
-                <div class="form-group">
-                    <label for="Fan">Fan</label>
-                    <input type="text" class="form-control" id="Fan" name="Fan" value="{{ AC_model.Fan }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="Eva">Eva</label>
-                    <input type="text" class="form-control" id="Eva" name="Eva" value="{{ AC_model.Eva }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="ConPipe">Con Pipe</label>
-                    <input type="text" class="form-control" id="ConPipe" name="ConPipe" value="{{ AC_model.ConPipe }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="CondCoil">Cond Coil</label>
-                    <input type="text" class="form-control" id="CondCoil" name="CondCoil" value="{{ AC_model.CondCoil }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="RefCharge">Ref Charge</label>
-                    <input type="text" class="form-control" id="RefCharge" name="RefCharge" value="{{ AC_model.RefCharge }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="Capilary">Capilary Tube</label>
-                    <input type="text" class="form-control" id="Capilary" name="Capilary" value="{{ AC_model.Capilary }}" required>
-                </div>
-                <button type="submit" class="btn btn-primary btn-submit">Submit</button>
-            </form>
+<div class="container">
+    <div class="form-container">
+        
+        <div class="header-form" style = "padding: 5px 30px; "> 
+            <h1>Specification Form For AC</h1>
         </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
-</body>
-</html>
+        <form action="{% url 'AC' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="ModelName">Model Number</label>
+                <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ model }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="BImotor">BI Motor</label>
+                <input type="text" class="form-control" id="BImotor" name="BImotor" value="{{ AC_model.BImotor }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Compressor">Compressor</label>
+                <input type="text" class="form-control" id="Compressor" name="Compressor" value="{{ AC_model.Compressor }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Blower">Blower</label>
+                <input type="text" class="form-control" id="Blower" name="Blower" value="{{ AC_model.Blower }}" required>
+            </div>
+            <div class="form-group">
+                <label for="FanMotor">Fan Motor</label>
+                <input type="text" class="form-control" id="FanMotor" name="FanMotor" value="{{ AC_model.FanMotor }}" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="Fan">Fan</label>
+                <input type="text" class="form-control" id="Fan" name="Fan" value="{{ AC_model.Fan }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Eva">Eva</label>
+                <input type="text" class="form-control" id="Eva" name="Eva" value="{{ AC_model.Eva }}" required>
+            </div>
+            <div class="form-group">
+                <label for="ConPipe">Con Pipe</label>
+                <input type="text" class="form-control" id="ConPipe" name="ConPipe" value="{{ AC_model.ConPipe }}" required>
+            </div>
+            <div class="form-group">
+                <label for="CondCoil">Cond Coil</label>
+                <input type="text" class="form-control" id="CondCoil" name="CondCoil" value="{{ AC_model.CondCoil }}" required>
+            </div>
+            <div class="form-group">
+                <label for="RefCharge">Ref Charge</label>
+                <input type="text" class="form-control" id="RefCharge" name="RefCharge" value="{{ AC_model.RefCharge }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Capilary">Capilary Tube</label>
+                <input type="text" class="form-control" id="Capilary" name="Capilary" value="{{ AC_model.Capilary }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-submit">Submit</button>
+        </form>
+    </div>
+</div>

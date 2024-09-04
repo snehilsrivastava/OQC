@@ -58,8 +58,7 @@ class Model_Test_Name_Details(models.Model):
     def __str__(self):
         return f"{self.Model_Name}"
     
-class Product_Test_Name_Details(models.Model):
+class Product_List(models.Model):
     Product = models.CharField(max_length=100, blank=True, null=True)
-    Test_Names = models.JSONField(default=default_data)
     def __str__(self):
         return f"{self.Product}"

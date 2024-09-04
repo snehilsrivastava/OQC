@@ -37,12 +37,8 @@ def access_denied(request):
     return render(request, "access_denied.html", context=context)
 
 @login_required
-def custom_404(request, exception):
-    user = request.session['username']
-    employee = Employee.objects.get(username=user)
-    icon = employee.first_name[0] + employee.last_name[0]
-    context = {
-    }
+def custom_404(request):
+    context = {}
     return render(request, "404_custom.html", context=context)
 
 def main_page(request):
@@ -568,10 +564,10 @@ def change_status_brand(request, test_id, status):
     serialno = test.SerailNo
     return redirect('brand_view', test_name=test_name, model_name=model_name, serialno=serialno)
 
-def summary(request):
+def summary():
     ret = []
     status_colors = {"Uploading": "Maroon", "Uploaded": "#989800", "Completed": "Green"}
-    PType = Product_Test_Name_Details.objects.values('Product')
+    PType = Product_List.objects.values('Product')
     ProductType = [_['Product'] for _ in PType]
     for P in ProductType:
         Models = Model_Test_Name_Details.objects.filter(Product=P)
@@ -678,9 +674,7 @@ def dashboard(request):
     phone_models = list(Phone.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
-    employee = user
-    icon = employee.first_name[0] + employee.last_name[0]
-    summary_data = summary(request)
+    summary_data = summary()
     summary_ = []
     for sum in summary_data:
         if sum['Meta'][0] in user_ProdType:
@@ -981,20 +975,23 @@ def MNF(request):
         )
         new_mnf.save()
 
-        if Product == 'AC':
-            context = {
-            'Indkal_model_no': Indkal_model_no,
-            }
-            return render(request, 'AC.html', context)
-        elif Product == 'WM - FATL':
-            context = {
-            'Indkal_model_no': Indkal_model_no,
-            }
-            return render(request, 'WM-FATL.html', context)
+        if Product == "AC":
+            new_ac = AC.objects.create()
+            new_ac.ModelName = Indkal_model_no
+            new_ac.save()
+        elif Product == "WM - FATL":
+            new_wm = WM_FATL.objects.create()
+            new_wm.ModelName = Indkal_model_no
+            new_wm.save()
+        else:
+            return redirect('/access_denied/')
+
+        if Product in Product_List.objects.values_list('Product', flat=True):
+            return redirect(f'/prod/specs/{Indkal_model_no}/{Product}')
         else:
             return redirect('/access_denied/')
     
-    products = Test_core_detail.objects.values_list('ProductType', flat=True).distinct()
+    products = Product_List.objects.values_list('Product', flat=True)
     context = {
         'products': list(products),
     }
@@ -1030,23 +1027,11 @@ def model_details_update(request):
             messages.error(request, 'Model details do not exist')
             return redirect('/dashboard/')
 
-        if Product == 'AC':
-            AC_model = AC.objects.get(ModelName=Indkal_model_no)
-            context = {
-            'Indkal_model_no': Indkal_model_no,
-            'AC_model': AC_model,
-            }
-            return render(request, 'AC.html', context)
-        elif Product == 'WM - FATL':
-            WM_model = WM_FATL.objects.get(ModelName=Indkal_model_no)
-            context = {
-            'Indkal_model_no': Indkal_model_no,
-            'WM_model': WM_model,
-            }
-            return render(request, 'WM-FATL.html', context)
+        if Product in Product_List.objects.values_list('Product', flat=True):
+            return redirect(f'/prod/specs/{Indkal_model_no}/{Product}')
         else:
             return redirect('/access_denied/')
-    products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
+    products = list(Product_List.objects.values_list('Product', flat=True))
     models = list(Model_MNF_detail.objects.values())
     context = {
         'products': products,
@@ -1120,7 +1105,7 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
-        existingProd = Product_Test_Name_Details.objects.get(Product=product)
+        existingProd = Product_List.objects.get(Product=product)
         T = list(map(bool, [int(_) for _ in s1]))
         S = ['DVT', 'PP', 'MP']
         stages = [_ for i, _ in enumerate(S) if T[i]]
@@ -1136,7 +1121,7 @@ def Test_list_entry(request):
         new_test.save()
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
 
-    products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
+    products = list(Product_List.objects.values_list('Product', flat=True))
     context = {
         'products': products,
     }
@@ -1204,7 +1189,7 @@ def update_test_list_entry(request):
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
 
     test_names = Test_core_detail.objects.values_list('TestName', flat=True).distinct()
-    products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
+    products = list(Product_List.objects.values_list('Product', flat=True))
     test = list(Test_core_detail.objects.all().values())
     context = {
         'test': test,

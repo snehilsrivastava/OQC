@@ -1,73 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% load static%}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
-    <title>Product Specification Form</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/form.css' %}">
-    <link rel="stylesheet" href="{% static 'css/color_pallette.css' %}">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
-</head>
-<body>
-    {% include "header_PO.html" %}
-    <div class="message-container">
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="message {{ message.level_tag }}">
-                        {{ message }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-    <div class="container">
-        <div class="form-container">
-            
-            <div class="header-form" style = "padding: 5px 30px; "> 
-                <h1>Specification Form For WM - FATL</h1>
-            </div>
-
-            <form action="{% url 'WM-FATL' %}" method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="ModelName">Model Number</label>
-                    <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ Indkal_model_no }}" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="RatedCapacity">Rated Capacity</label>
-                    <input type="text" class="form-control" id="RatedCapacity" name="RatedCapacity" value="{{ WM_model.RatedCapacity }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="RatedPower">Rated Power</label>
-                    <input type="text" class="form-control" id="RatedPower" name="RatedPower" value="{{ WM_model.RatedPower }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="RatedSupply">Rated Supply</label>
-                    <input type="text" class="form-control" id="RatedSupply" name="RatedSupply" value="{{ WM_model.RatedSupply }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="RatedFrequency">Rated Frequency</label>
-                    <input type="text" class="form-control" id="RatedFrequency" name="RatedFrequency" value="{{ WM_model.RatedFrequency }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="RatedRPM">Rated RPM</label>
-                    <input type="text" class="form-control" id="RatedRPM" name="RatedRPM" value="{{ WM_model.RatedRPM }}" required>
-                </div>
-                <button type="submit" class="btn btn-primary btn-submit">Submit</button>
-            </form>
+<div class="container">
+    <div class="form-container">
+        
+        <div class="header-form" style = "padding: 5px 30px; "> 
+            <h1>Specification Form For WM - FATL</h1>
         </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
-</body>
-</html>
+        <form action="{% url 'WM-FATL' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="ModelName">Model Number</label>
+                <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ model }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="RatedCapacity">Rated Capacity</label>
+                <input type="text" class="form-control" id="RatedCapacity" name="RatedCapacity" value="{{ WM_model.RatedCapacity }}" required>
+            </div>
+            <div class="form-group">
+                <label for="RatedPower">Rated Power</label>
+                <input type="text" class="form-control" id="RatedPower" name="RatedPower" value="{{ WM_model.RatedPower }}" required>
+            </div>
+            <div class="form-group">
+                <label for="RatedSupply">Rated Supply</label>
+                <input type="text" class="form-control" id="RatedSupply" name="RatedSupply" value="{{ WM_model.RatedSupply }}" required>
+            </div>
+            <div class="form-group">
+                <label for="RatedFrequency">Rated Frequency</label>
+                <input type="text" class="form-control" id="RatedFrequency" name="RatedFrequency" value="{{ WM_model.RatedFrequency }}" required>
+            </div>
+            <div class="form-group">
+                <label for="RatedRPM">Rated RPM</label>
+                <input type="text" class="form-control" id="RatedRPM" name="RatedRPM" value="{{ WM_model.RatedRPM }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-submit">Submit</button>
+        </form>
+    </div>
+</div>

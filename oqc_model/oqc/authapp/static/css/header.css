@@ -1,4 +1,6 @@
 @import url("theme_switcher.css");
+@import url('color_pallette.css');
+@import url('menu.css');
 
 @media only screen and (max-device-width: 600px) {
     .user-info {
@@ -48,6 +50,18 @@
     width: 100vw;
     position: fixed;
     top: 0;
+}
+
+button {
+    height: 30px;
+    color: var(--webkit-text-fill-color); 
+    width: max-content;
+    padding: 0px 10px;
+    border: 10px;
+    border-color: black;
+    background-color: var(--button-color);
+    font-size: 17px;
+    border-radius: 3px !important;
 }
 
 .user-btn {

@@ -60,6 +60,20 @@ def product_form_view(request):
     return render(request, 'product.html', context)
 
 @login_required
+def specs(request, model, product):
+    user = Employee.objects.get(username=request.session['username'])
+    user_PT = [PT for PT in user.product_type if user.product_type[PT]]
+    if (user.user_type != 'owner' and not user.is_superuser) or product not in user_PT:
+        return redirect('/access_denied/')
+    
+    context = {'product': product, 'model': model}
+    if product == 'AC':
+        context['AC_model'] = AC.objects.get(ModelName=model)
+    elif product == 'WM - FATL':
+        context['WM_model'] = WM_FATL.objects.get(ModelName=model)
+    return render(request, 'specs.html', context)
+
+@login_required
 def AC_spec(request):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'owner' and not user.is_superuser:
@@ -92,10 +106,17 @@ def AC_spec(request):
                 Compressor=compressor
             )
             new_ac.save()
-        test_names = Product_Test_Name_Details.objects.get(Product="AC").Test_Names
-        dvt = test_names['DVT']
-        pp = test_names['PP']
-        mp = test_names['MP']
+        test_details = Test_core_detail.objects.filter(ProductType="AC")
+        test_names = test_details.values_list('TestName', flat=True)
+        test_stages = test_details.values_list('TestStage', flat=True)
+        dvt, pp, mp = [], [], []
+        for i, stage in enumerate(test_stages):
+            if int(stage[0]):
+                dvt.append(test_names[i])
+            if int(stage[1]):
+                pp.append(test_names[i])
+            if int(stage[2]):
+                mp.append(test_names[i])
         context = {
             'model_name': model_name,
             'product': "AC",
@@ -130,10 +151,17 @@ def WM_FATL_spec(request):
                 RatedRPM = rated_rpm,
             )
             new_WM_FATL.save()
-        test_names = Product_Test_Name_Details.objects.get(Product="WM - FATL").Test_Names
-        dvt = test_names['DVT']
-        pp = test_names['PP']
-        mp = test_names['MP']
+        test_details = Test_core_detail.objects.filter(ProductType="WM - FATL")
+        test_names = test_details.values_list('TestName', flat=True)
+        test_stages = test_details.values_list('TestStage', flat=True)
+        dvt, pp, mp = [], [], []
+        for i, stage in enumerate(test_stages):
+            if int(stage[0]):
+                dvt.append(test_names[i])
+            if int(stage[1]):
+                pp.append(test_names[i])
+            if int(stage[2]):
+                mp.append(test_names[i])
         context = {
             'model_name': model_name,
             'product': "WM - FATL",

@@ -1,10 +1,10 @@
 from django.db import models
 from datetime import datetime as dt
-from product.models import Product_Test_Name_Details
+from product.models import Product_List
 from django.contrib.postgres.fields import ArrayField
 
 def product_choice():
-    return {k: False for k in Product_Test_Name_Details.objects.values_list('Product', flat=True)}
+    return {k: False for k in Product_List.objects.values_list('Product', flat=True)}
 
 # Create your models here.
 class Employee(models.Model):

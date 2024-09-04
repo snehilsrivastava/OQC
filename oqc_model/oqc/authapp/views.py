@@ -239,7 +239,7 @@ def admin(request):
     unapproved_users = Employee.objects.filter(user_type__isnull=True)
     unapproved_users = list(unapproved_users)[::-1]
     user_types = ['Product Owner', 'Tester', 'Brand', 'Legal']
-    product_types = list(Product_Test_Name_Details.objects.values_list('Product', flat=True))
+    product_types = list(Product_List.objects.values_list('Product', flat=True))
     context = {
         'approved': approved_users,
         'unapproved': unapproved_users,
