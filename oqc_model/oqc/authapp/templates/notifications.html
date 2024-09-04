@@ -22,13 +22,13 @@
         <table class="notification-table">
         {% for notification in notifications %}
             {% if notification.is_read %}
-            <tr class="read" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }})">
+            <tr class="read" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }}, '{{notification.created_at}}')">
             {% else %}
-            <tr class="unread" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }})">
+            <tr class="unread" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }}, '{{notification.created_at}}')">
             {% endif %}
-                <td>{{ notification.metadata.from }}</td>
+                <td>{{ notification.from }}</td>
                 <td>{{ notification.display_full_content }}</td>
-                <td>{{ notification.created_at }}</td>
+                <td>{{ notification.created_at_simp }}</td>
             </tr>
         {% endfor %}
         </table>

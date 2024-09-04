@@ -9,7 +9,11 @@
     <div class="right-icon">
         <div class="notifications">
             <button class="notif-toggle-btn" id="notifButton" onclick="toggleNotifications()">
+                {% if latest_notifications %}
                 <i class="fas fa-bell"></i>
+                {% else %}
+                <i class="far fa-bell"></i>
+                {% endif %}
                 {% if notification.unread_count > 0 %}
                 <span class="badge" id="unreadCountBadge">{{ notification.unread_count }}</span>
                 {% endif %}
@@ -22,12 +26,12 @@
                     <a class="notif-view-all" href="/notifications/">View all</a>
                 </div>
                 {% for notification in latest_notifications %}
-                    <div class="notif-click" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }})">
+                    <div class="notif-click" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }}, '{{notification.created_at}}')">
                         <div class="notif-content">
                             {{ notification.display_content }}
                         </div>
                         <div class="notif-date">
-                            {{ notification.created_at }}
+                            {{ notification.created_at_simp }}
                         </div>
                     </div>
                 {% endfor %}

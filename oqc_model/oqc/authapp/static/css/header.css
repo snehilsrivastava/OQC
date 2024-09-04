@@ -205,6 +205,10 @@ button {
 
 .notif-click {
     transition: transform 0.33s linear;
+    border-bottom: 1px solid #555;
+    &:last-child {
+        border-bottom: none !important;
+    }
     &:hover {
         background-color: var(--sidebar-hover-bg);
         cursor: pointer;
@@ -231,4 +235,5 @@ button {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: 1px solid #555;
 }
