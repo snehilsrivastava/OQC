@@ -407,7 +407,7 @@ def handle_selected_tests(request):
                 brand_employees = Employee.objects.filter(user_type='brand')
                 for employee in brand_employees:
                     notification = Notification.objects.get(employee=employee)
-                    notification_dict = default_notification()
+                    notification_dict = default_notification()[0]
                     test_record = selected_test_records[0]
                     notification_dict["metadata"] = {
                         "product": test_record.ProductType,
@@ -425,7 +425,8 @@ def handle_selected_tests(request):
                         notification_dict["display_full_content"] = f"Sent {count} reports for product: {test_record.ProductType}, model: {test_record.ModelName} and stage: {test_record.TestStage}."
                         notification_dict["action"] = "sent"
                     notification_dict["from"] = user.first_name + " " + user.last_name
-                    notification.notification.append(notification_dict)
+                    notif_dict = json.dumps(notification_dict)
+                    notification.notification.append(notif_dict)
                     notification.unread_count += 1
                     notification.save()
                 messages.success(request, 'Sent to Brand Team for approval.')
@@ -447,7 +448,7 @@ def handle_selected_tests(request):
                 legal_employees = Employee.objects.filter(user_type='legal')
                 for employee in legal_employees:
                     notification = Notification.objects.get(employee=employee)
-                    notification_dict = default_notification()
+                    notification_dict = default_notification()[0]
                     test_record = selected_test_records[0]
                     notification_dict["metadata"] = {
                         "product": test_record.ProductType,
@@ -465,7 +466,8 @@ def handle_selected_tests(request):
                         notification_dict["display_full_content"] = f"Sent {count} reports for product: {test_record.ProductType}, model: {test_record.ModelName} and stage: {test_record.TestStage}."
                         notification_dict["action"] = "sent"
                     notification_dict["from"] = user.first_name + " " + user.last_name
-                    notification.notification.append(notification_dict)
+                    notif_dict = json.dumps(notification_dict)
+                    notification.notification.append(notif_dict)
                     notification.unread_count += 1
                     notification.save()
                 messages.success(request, 'Sent to Legal Team for approval.')
@@ -1317,11 +1319,12 @@ def handle_notification(request):
         inc_notif = json.loads(request.body)
         user = Employee.objects.get(username=request.session['username'])
         notification = Notification.objects.get(employee=user.username)
-        latest_notif = notification.notification[::-1]
-        for notif in latest_notif:
-            if notif["metadata"] == inc_notif["metadata"] and notif['action'] == inc_notif['action'] and not notif['is_read']:
+        for i in range(len(notification.notification)):
+            notify = json.loads(notification.notification[i])
+            if notify["metadata"] == inc_notif["metadata"] and notify['action'] == inc_notif['action'] and not notify['is_read'] and notify["created_at"] == inc_notif["created_at"]:
                 notification.unread_count -= 1
-                notif['is_read'] = True
+                notify['is_read'] = True
+                notification.notification[i] = json.dumps(notify)
                 break
         notification.save()
         if user.user_type == 'owner':
@@ -1347,10 +1350,11 @@ def clear_notification(request):
         inc_notif = json.loads(request.body)["notification"]
         user = Employee.objects.get(username=request.session['username'])
         notification = Notification.objects.get(employee=user.username)
-        latest_notif = notification.notification[::-1]
-        for notif in latest_notif:
-            if inc_notif == 'all' or (notif["metadata"] == inc_notif["metadata"] and notif['action'] == inc_notif['action']):
-                notif['is_cleared'] = True
+        for i in range(len(notification.notification)):
+            notify = json.loads(notification.notification[i])
+            if inc_notif == 'all' or (notify["metadata"] == inc_notif["metadata"] and notify['action'] == inc_notif['action']):
+                notify['is_cleared'] = True
+            notification.notification[i] = json.dumps(notify)
         notification.save()
         return HttpResponse('Notification cleared successfully')
     return HttpResponse('Invalid request method')
@@ -1359,7 +1363,23 @@ def clear_notification(request):
 def notifications(request):
     notification = Notification.objects.get(employee=request.session['username'])
     latest_notifications = notification.notification[::-1]
+    notif_list = []
+    for notif in latest_notifications:
+        notify = json.loads(notif)
+        created_at = dt.strptime(notify['created_at'], "%Y-%m-%d %H:%M:%S")
+        time_diff = dt.now() - created_at
+        if time_diff.seconds < 60 and time_diff.days == 0:
+            notify['created_at_simp'] = "A few seconds ago"
+        elif time_diff.seconds < 3600 and time_diff.days == 0:
+            notify['created_at_simp'] = f"{time_diff.seconds // 60} min ago"
+        elif time_diff.days == 0:
+            notify['created_at_simp'] = f"{time_diff.seconds // 3600} hours ago"
+        elif time_diff.days == 1:
+            notify['created_at_simp'] = "Yesterday"
+        else:
+            notify['created_at_simp'] = created_at.strftime("%d %b")
+        notif_list.append(notify)
     context = {
-        'notifications': latest_notifications,
+        'notifications': notif_list,
     }
     return render(request, 'notifications.html', context=context)

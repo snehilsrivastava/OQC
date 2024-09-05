@@ -32,6 +32,9 @@
     --button-hover-color: rgb(80, 80, 80);
     --stage-btn-bg: #eee5;
     --single-select-checkbox-border: #00ad00;
+    --notif-hover-bg: 1.3;
+    --notif-read-bg: #182b43;
+    --notif-unread-bg: #1d3656;
 }
 
 :root[data-theme="light"] {
@@ -68,6 +71,9 @@
     --button-hover-color: rgb(150, 150, 150);
     --stage-btn-bg: #1113;
     --single-select-checkbox-border: green;
+    --notif-hover-bg: 0.95;
+    --notif-read-bg: #f8f9fa;
+    --notif-unread-bg: #f0f8ff;
 }
 
 body {

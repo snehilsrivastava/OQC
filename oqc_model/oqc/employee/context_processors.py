@@ -3,6 +3,7 @@ from .models import *
 from authapp.models import *
 from django.shortcuts import redirect
 from datetime import datetime
+import json
 
 def header_context(request):
     excluded_paths = ['/au/login/', '/au/register/', '/au/forgot_password/', '/au/logout/', '/admin/']
@@ -17,23 +18,26 @@ def header_context(request):
         return redirect(f"{login_url}?next={next_page}" if next_page else login_url)
     employee = Employee.objects.get(username=username)
     notification = Notification.objects.get(employee=employee.username)
-    latest_notifications = [notif for notif in notification.notification if not notif['is_cleared']]
+    latest_notifications = [notif for notif in notification.notification if not (json.loads(notif)['is_cleared'] or json.loads(notif)['is_read'])]
     latest_notifications = latest_notifications[::-1]
-    for i in range(len(latest_notifications)):
-        created_at = datetime.strptime(latest_notifications[i]['created_at'], "%Y-%m-%d %H:%M:%S")
+    notif_list = []
+    for notif in latest_notifications:
+        notify = json.loads(notif)
+        created_at = datetime.strptime(notify['created_at'], "%Y-%m-%d %H:%M:%S")
         time_diff = datetime.now() - created_at
         if time_diff.seconds < 60 and time_diff.days == 0:
-            latest_notifications[i]['created_at'] = "A few seconds ago"
+            notify['created_at_simp'] = "A few seconds ago"
         elif time_diff.seconds < 3600 and time_diff.days == 0:
-            latest_notifications[i]['created_at'] = f"{time_diff.seconds // 60} min ago"
+            notify['created_at_simp'] = f"{time_diff.seconds // 60} min ago"
         elif time_diff.days == 0:
-            latest_notifications[i]['created_at'] = f"{time_diff.seconds // 3600} hours ago"
+            notify['created_at_simp'] = f"{time_diff.seconds // 3600} hours ago"
         elif time_diff.days == 1:
-            latest_notifications[i]['created_at'] = "Yesterday"
+            notify['created_at_simp'] = "Yesterday"
         else:
-            latest_notifications[i]['created_at'] = created_at.strftime("%d %b")
+            notify['created_at_simp'] = created_at.strftime("%d %b")
+        notif_list.append(notify)
     return {
-        'latest_notifications': latest_notifications,
+        'latest_notifications': notif_list,
         'notification': notification,
         'employee': employee,
     }

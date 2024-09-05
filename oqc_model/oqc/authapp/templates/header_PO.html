@@ -26,12 +26,12 @@
                     <a class="notif-view-all" href="/notifications/">View all</a>
                 </div>
                 {% for notification in latest_notifications %}
-                    <div class="notif-click" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }})">
+                    <div class="notif-click" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }}, '{{notification.created_at}}')">
                         <div class="notif-content">
                             {{ notification.display_content }}
                         </div>
                         <div class="notif-date">
-                            {{ notification.created_at }}
+                            {{ notification.created_at_simp }}
                         </div>
                     </div>
                 {% endfor %}

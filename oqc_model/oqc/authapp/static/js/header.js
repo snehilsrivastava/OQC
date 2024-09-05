@@ -96,13 +96,13 @@ document.addEventListener('click', function(event) {
     }
 });
 
-function handleNotification(action, metadata) {
+function handleNotification(action, metadata, created_at) {
     fetch('/handle_notification/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ action: action, metadata: metadata })
+        body: JSON.stringify({ action: action, metadata: metadata, created_at: created_at })
     })
     .then(response => response.json())
     .then(data => {
@@ -116,7 +116,11 @@ function handleNotification(action, metadata) {
 
 function clearNotifications(notifications) {
     const notifClickElements = document.querySelectorAll('.notif-click');
-    
+    if (notifications === "all") {
+        let bell = document.querySelector('i.fas.fa-bell');
+        bell.classList.remove('fas');
+        bell.classList.add('far');
+    }
     notifClickElements.forEach(element => {
         element.style.transform = 'translate(100%, 0)';
         element.addEventListener('transitionend', () => {
