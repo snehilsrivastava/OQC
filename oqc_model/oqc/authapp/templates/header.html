@@ -12,7 +12,11 @@
     <div class="right-icon">
         <div class="notifications">
             <button class="notif-toggle-btn" id="notifButton" onclick="toggleNotifications()">
+                {% if latest_notifications %}
                 <i class="fas fa-bell"></i>
+                {% else %}
+                <i class="far fa-bell"></i>
+                {% endif %}
                 {% if notification.unread_count > 0 %}
                 <span class="badge" id="unreadCountBadge">{{ notification.unread_count }}</span>
                 {% endif %}

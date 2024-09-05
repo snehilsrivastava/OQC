@@ -150,6 +150,27 @@ def set_status(request, id):
     test_record.test_end_date = date.today()
     test_record.test_date = date.today()
     test_record.save()
+
+    # Send notification to product owners
+    product = test_record.ProductType
+    owner_employees = Employee.objects.filter(user_type='owner')
+    for employee in owner_employees:
+        if employee.product_type[product]:
+            notification = Notification.objects.get(employee=employee)
+            notification_dict = default_notification()
+            notification_dict["from"] = user.username
+            notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval."
+            notification_dict["display_full_content"] = f"Sent a report for product: {test_record.ProductType}, model: {test_record.ModelName}, stage: {test_record.TestStage} and test name: {test_record.TestName}."
+            notification_dict["metadata"]["product"] = test_record.ProductType
+            notification_dict["metadata"]["model"] = test_record.ModelName
+            notification_dict["metadata"]["stage"] = test_record.TestStage
+            notification_dict["metadata"]["test"] = test_record.TestName
+            notification_dict["metadata"]["serialno"] = test_record.SerailNo
+            notification_dict["action"] = "sent-1"
+            notif_dict = json.dumps(notification_dict)
+            notification.notification.append(notif_dict)
+            notification.unread_count += 1
+            notification.save()
     messages.success(request, 'Record sent to PO for approval.')
     return redirect('/employee_dashboard/')
 
@@ -394,7 +415,7 @@ def handle_selected_tests(request):
                         "stage": test_record.TestStage,
                     }
                     if count == 1:
-                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval. "
+                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval."
                         notification_dict["display_full_content"] = f"Sent a report for product: {test_record.ProductType}, model: {test_record.ModelName}, stage: {test_record.TestStage} and test name: {test_record.TestName}."
                         notification_dict["metadata"]["test"] = test_record.TestName
                         notification_dict["metadata"]["serialno"] = test_record.SerailNo
@@ -434,7 +455,7 @@ def handle_selected_tests(request):
                         "stage": test_record.TestStage,
                     }
                     if count == 1:
-                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval. "
+                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval."
                         notification_dict["display_full_content"] = f"Sent a report for product: {test_record.ProductType}, model: {test_record.ModelName}, stage: {test_record.TestStage} and test name: {test_record.TestName}."
                         notification_dict["metadata"]["test"] = test_record.TestName
                         notification_dict["metadata"]["serialno"] = test_record.SerailNo
@@ -718,7 +739,8 @@ def employee_dashboard(request):
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
     
-    completed_tests = TestRecord.objects.filter(employee=username)
+    user_ProdType = list(Product_List.objects.values_list('Product', flat=True))
+    completed_tests = TestRecord.objects.filter(ProductType__in=user_ProdType)
 
     if test_name:
         completed_tests = completed_tests.filter(TestName=test_name)
@@ -1303,7 +1325,8 @@ def handle_notification(request):
                 break
         notification.save()
         if user.user_type == 'owner':
-            return
+            if inc_notif['action'] == 'sent-1':
+                redirect_url = f'/owner_view/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
         elif user.user_type == 'tester':
             return
         elif user.user_type == 'brand':

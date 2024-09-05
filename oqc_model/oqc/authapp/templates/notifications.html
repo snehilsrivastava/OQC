@@ -26,7 +26,7 @@
             {% else %}
             <tr class="unread" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }})">
             {% endif %}
-                <td>{{ notification.metadata.from }}</td>
+                <td>{{ notification.from }}</td>
                 <td>{{ notification.display_full_content }}</td>
                 <td>{{ notification.created_at }}</td>
             </tr>
