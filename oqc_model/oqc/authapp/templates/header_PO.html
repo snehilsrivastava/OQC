@@ -25,6 +25,11 @@
                     </div>
                     <a class="notif-view-all" href="/notifications/">View all</a>
                 </div>
+                {% if not latest_notifications and notification.unread_count > 0 %}
+                <div class="notif-text">You have unread notifications</div>
+                {% elif not latest_notifications and notification.unread_count == 0 %}
+                    <div class="notif-text">You have no new notifications</div>
+                {% endif %}
                 {% for notification in latest_notifications %}
                     <div class="notif-click" onclick="handleNotification('{{ notification.action }}', {{ notification.metadata }}, '{{notification.created_at}}')">
                         <div class="notif-content">

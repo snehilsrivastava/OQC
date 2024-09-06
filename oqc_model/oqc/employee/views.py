@@ -144,6 +144,26 @@ def set_status(request, id):
     test_record.test_end_date = date.today()
     test_record.test_date = date.today()
     test_record.save()
+
+    product = test_record.ProductType
+    owner_employees = Employee.objects.filter(user_type='owner')
+    for employee in owner_employees:
+        if employee.product_type[product]:
+            notification = Notification.objects.get(employee=employee)
+            notification_dict = default_notification()
+            notification_dict["from"] = f"{user.first_name} {user.last_name}"
+            notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval."
+            notification_dict["display_full_content"] = f"Sent a report for product: {test_record.ProductType}, model: {test_record.ModelName}, stage: {test_record.TestStage} and test name: {test_record.TestName}."
+            notification_dict["metadata"]["product"] = test_record.ProductType
+            notification_dict["metadata"]["model"] = test_record.ModelName
+            notification_dict["metadata"]["stage"] = test_record.TestStage
+            notification_dict["metadata"]["test"] = test_record.TestName
+            notification_dict["metadata"]["serialno"] = test_record.SerailNo
+            notification_dict["action"] = "sent-1"
+            notif_dict = json.dumps(notification_dict)
+            notification.notification.append(notif_dict)
+            notification.unread_count += 1
+            notification.save()
     messages.success(request, 'Record sent to PO for approval.')
     return redirect('/employee_dashboard/')
 
@@ -386,7 +406,7 @@ def handle_selected_tests(request):
                         "stage": test_record.TestStage,
                     }
                     if count == 1:
-                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval. "
+                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval."
                         notification_dict["display_full_content"] = f"Sent a report for product: {test_record.ProductType}, model: {test_record.ModelName}, stage: {test_record.TestStage} and test name: {test_record.TestName}."
                         notification_dict["metadata"]["test"] = test_record.TestName
                         notification_dict["metadata"]["serialno"] = test_record.SerailNo
@@ -427,7 +447,7 @@ def handle_selected_tests(request):
                         "stage": test_record.TestStage,
                     }
                     if count == 1:
-                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval. "
+                        notification_dict["display_content"] = f"{user.first_name} {user.last_name} sent a report for approval."
                         notification_dict["display_full_content"] = f"Sent a report for product: {test_record.ProductType}, model: {test_record.ModelName}, stage: {test_record.TestStage} and test name: {test_record.TestName}."
                         notification_dict["metadata"]["test"] = test_record.TestName
                         notification_dict["metadata"]["serialno"] = test_record.SerailNo
@@ -510,6 +530,7 @@ def change_status(request, test_id, status):
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     test = get_object_or_404(TestRecord, id=test_id)
+    old_status = test.status
     if status == 1:
         test.status = 'Waiting'
     elif status == 2:
@@ -517,10 +538,70 @@ def change_status(request, test_id, status):
     else:
         test.status = 'Rejected'
     test.save()
+    if status != 1 and test.status != old_status:
+        tester_employees = Employee.objects.filter(user_type="employee")
+        for employee in tester_employees:
+            if employee.product_type[test.ProductType]:
+                notification = Notification.objects.get(employee_id=employee)
+                notification_dict = default_notification()
+                notification_dict["from"] = f"{user.first_name} {user.last_name}"
+                if status == 2:
+                    notification_dict["action"] = "approved"
+                    notification_dict["display_content"] = f"{user.first_name} {user.last_name} approved a report"
+                    notification_dict["display_full_content"] = f"Approved a report for model: {test.ModelName}, stage: {test.TestStage} and test name: {test.TestName}"
+                elif status == 3:
+                    notification_dict["action"] = "rejected"
+                    notification_dict["display_content"] = f"{user.first_name} {user.last_name} rejected a report"
+                    notification_dict["display_full_content"] = f"Rejected a report for model: {test.ModelName}, stage: {test.TestStage} and test name: {test.TestName}"
+                notification_dict["metadata"]["product"] = test.ProductType
+                notification_dict["metadata"]["model"] = test.ModelName
+                notification_dict["metadata"]["stage"] = test.TestStage
+                notification_dict["metadata"]["test"] = test.TestName
+                notification_dict["metadata"]["serialno"] = test.SerailNo
+                notif_dict = json.dumps(notification_dict)
+                notification.notification.append(notif_dict)
+                notification.unread_count += 1
+                notification.save()
     test_name = test.TestName
     model_name = test.ModelName
     serialno = test.SerailNo
     return redirect('owner_view', test_name=test_name, model_name=model_name, serialno=serialno)
+
+def send_change_status_notification(request, test, from_func):
+    owner_employees = Employee.objects.filter(user_type="owner")
+    user = Employee.objects.get(username=request.session['username'])
+    for owner in owner_employees:
+        if owner.product_type[test.ProductType]:
+            notification = Notification.objects.get(employee_id=owner)
+            notification_dict = default_notification()
+            notification_dict["from"] = f"{user.first_name} {user.last_name}"
+            if from_func == "legal":
+                if test.L_status == "Approved":
+                    notification_dict["action"] = "approved"
+                    notification_dict["display_content"] = f"{user.first_name} {user.last_name} (legal team) approved a report"
+                    notification_dict["display_full_content"] = f"Legal Team approved a report for model: {test.ModelName}, stage: {test.TestStage} and test name: {test.TestName}"
+                elif test.L_status == "Rejected":
+                    notification_dict["action"] = "rejected"
+                    notification_dict["display_content"] = f"{user.first_name} {user.last_name} (legal team) rejected a report"
+                    notification_dict["display_full_content"] = f"Legal Team rejected a report for model: {test.ModelName}, stage: {test.TestStage} and test name: {test.TestName}"
+            elif from_func == "brand":
+                if test.B_status == "Approved":
+                    notification_dict["action"] = "approved"
+                    notification_dict["display_content"] = f"{user.first_name} {user.last_name} (brand team) approved a report"
+                    notification_dict["display_full_content"] = f"Brand Team approved a report for model: {test.ModelName}, stage: {test.TestStage} and test name: {test.TestName}"
+                elif test.B_status == "Rejected":
+                    notification_dict["action"] = "rejected"
+                    notification_dict["display_content"] = f"{user.first_name} {user.last_name} (brand team) rejected a report"
+                    notification_dict["display_full_content"] = f"Brand Team rejected a report for model: {test.ModelName}, stage: {test.TestStage} and test name: {test.TestName}"
+            notification_dict["metadata"]["product"] = test.ProductType
+            notification_dict["metadata"]["model"] = test.ModelName
+            notification_dict["metadata"]["stage"] = test.TestStage
+            notification_dict["metadata"]["test"] = test.TestName
+            notification_dict["metadata"]["serialno"] = test.SerailNo
+            notif_dict = json.dumps(notification_dict)
+            notification.notification.append(notif_dict)
+            notification.unread_count += 1
+            notification.save()
 
 @login_required
 def change_status_legal(request, test_id, status):
@@ -528,6 +609,7 @@ def change_status_legal(request, test_id, status):
     if user.user_type != 'legal' and not user.is_superuser:
         return redirect('/access_denied/')
     test = get_object_or_404(TestRecord, id=test_id)
+    old_status = test.L_status
     if status == 1:
         test.L_status = "Waiting"
     elif status == 2:
@@ -535,6 +617,8 @@ def change_status_legal(request, test_id, status):
     else:
         test.L_status = "Rejected"
     test.save()
+    if status != 1 and test.L_status != old_status:
+        send_change_status_notification(request, test, "legal")
     test_name = test.TestName
     model_name = test.ModelName
     serialno = test.SerailNo
@@ -546,6 +630,7 @@ def change_status_brand(request, test_id, status):
     if user.user_type != 'brand' and not user.is_superuser:
         return redirect('/access_denied/')
     test = get_object_or_404(TestRecord, id=test_id)
+    old_status = test.B_status
     if status == 1:
         test.B_status = "Waiting"
     elif status == 2:
@@ -553,6 +638,8 @@ def change_status_brand(request, test_id, status):
     else:
         test.B_status = "Rejected"
     test.save()
+    if status != 1 and test.B_status != old_status:
+        send_change_status_notification(request, test, "brand")
     test_name = test.TestName
     model_name = test.ModelName
     serialno = test.SerailNo
@@ -1304,10 +1391,13 @@ def handle_notification(request):
                 break
         notification.save()
         if user.user_type == 'owner':
-            return
+            if inc_notif['action'] == 'sent-1':
+                redirect_url = f'/owner_view/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
+            elif inc_notif['action'] in ['approved', 'rejected']:
+                redirect_url = f'/owner_view/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
         elif user.user_type == 'employee':
-            print("===========================\nEmployee\n================")
-            return
+            if inc_notif['action'] in ['approved', 'rejected']:
+                redirect_url = f'/view/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
         elif user.user_type == 'brand':
             if inc_notif['action'] == 'sent':
                 redirect_url = f'/brand_dashboard/?product={inc_notif["metadata"]["product"]}&test_stage={inc_notif["metadata"]["stage"]}&model_name={inc_notif["metadata"]["model"]}'

@@ -28,7 +28,7 @@ class OTP(models.Model):
         return f"{self.user} {self.otp}"
     
 def default_notification():
-    return {"action": "", "display_content": "", "display_full_content": "","created_at": dt.now().strftime("%Y-%m-%d %H:%M:%S"), "metadata": {"product": "", "model": "", "stage": "", "test": ""}, "is_read": False, "is_cleared": False}
+    return {"action": "", "from": "", "display_content": "", "display_full_content": "","created_at": dt.now().strftime("%Y-%m-%d %H:%M:%S"), "metadata": {}, "is_read": False, "is_cleared": False}
 
 class Notification(models.Model):
     employee = models.ForeignKey(Employee, to_field="username", on_delete=models.CASCADE)
