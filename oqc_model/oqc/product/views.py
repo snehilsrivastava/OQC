@@ -101,6 +101,19 @@ def AC_spec(request):
                 Compressor=compressor
             )
             new_ac.save()
+        else:
+            existing_AC.update(
+                BImotor=bi_motor,
+                Blower=blower,
+                FanMotor=fan_motor,
+                Eva=eva,
+                Fan=fan,
+                ConPipe=con_pipe,
+                CondCoil=cond_coil,
+                RefCharge=ref_charge,
+                Capilary=capilary,
+                Compressor=compressor
+            )
         test_details = Test_core_detail.objects.filter(ProductType="AC")
         test_names = test_details.values_list('TestName', flat=True)
         test_stages = test_details.values_list('TestStage', flat=True)
@@ -146,6 +159,14 @@ def WM_FATL_spec(request):
                 RatedRPM = rated_rpm,
             )
             new_WM_FATL.save()
+        else:
+            existing_WM_FATL.update(
+                RatedCapacity = rated_capacity,
+                RatedPower = rated_power,
+                RatedSupply = rated_supply,
+                RatedFrequency = rated_frequency,
+                RatedRPM = rated_rpm,
+            )
         test_details = Test_core_detail.objects.filter(ProductType="WM - FATL")
         test_names = test_details.values_list('TestName', flat=True)
         test_stages = test_details.values_list('TestStage', flat=True)
@@ -184,6 +205,7 @@ def TestNames(request):
             existing_model_test_name_details = Model_Test_Name_Details.objects.get(Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name))
             existing_model_test_name_details.Test_Names = model_test_names
             existing_model_test_name_details.save()
+            delete_reports(request, model_name)
         else:
             new_model_test_name_details = Model_Test_Name_Details(
                 Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name),
@@ -211,3 +233,15 @@ def generate_reports(request, model_name):
                     TestStage=stage,
                 )
                 test_record.save()
+
+@login_required
+def delete_reports(request, model_name):
+    model = Model_Test_Name_Details.objects.get(Model_Name = model_name)
+    model_tests = model.Test_Names
+    model_product = model.Product
+    records = TestRecord.objects.filter(ProductType=model_product, ModelName=model_name)
+    for stage, test_names in model_tests.items():
+        recorded_tests = records.filter(TestStage=stage)
+        for recorded_test in recorded_tests:
+            if recorded_test.TestName not in test_names:
+                recorded_test.delete()

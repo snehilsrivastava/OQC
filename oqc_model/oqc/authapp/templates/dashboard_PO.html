@@ -20,17 +20,16 @@
     <form id="filter-form" method="get" action="{% url 'dashboard' %}">
         <div>
             <label for="product">Product Type:</label>
-            <select class="form-control filter-form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+            <select class="form-control filter-form-control" id="product" name="product" onchange="populateModels({{models_list}}); populateTestName({{test}});">
                 <option value="">Select Product Type</option>
-                <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
-                <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
-                <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
-                <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
+                {% for PT in userProductTypes %}
+                    <option value="{{ PT }}"{% if product == PT %}selected{% endif %}>{{ PT }}</option>
+                {% endfor %}
             </select>
         </div>
         <div>
             <label for="test_stage">Test Stage:</label>
-            <select class="form-control filter-form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+            <select class="form-control filter-form-control" id="test_stage" name="test_stage" onchange="populateTestName({{test}});">
                 <option value="">Select Test Stage</option>
                 <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
                 <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
@@ -39,7 +38,7 @@
         </div>
         <div>
             <label for="model_name">Model Name:</label>
-            <select class="form-control filter-form-control" id="model_name" name="model_name">
+            <select class="form-control filter-form-control" id="model_name" name="model_name" onchange="populateTestName({{test}});">
                 <!-- Model options will be populated dynamically based on the selected product type -->
                 {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
                 <option value="">{{model_name}}</option>
@@ -317,6 +316,7 @@
 </div>
 
 <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/filter.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/scroll-summary.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -324,6 +324,19 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        populateModels({{models_list|safe}});
+        populateTestName({{test|safe}});
+
+        document.querySelectorAll('[id^="select-all-"]').forEach(checkbox => {
+            checkbox.addEventListener('click', function(event) {
+                const table = event.target.closest('table'); // Find the closest table
+                const checkboxes = table.querySelectorAll('td input[type="checkbox"]'); // Get all checkboxes within the table
+                for (const checkbox of checkboxes) {
+                    checkbox.checked = event.target.checked;
+                }
+            });
+        });
+
         var messageContainer = document.querySelector('.message-container');
         var timerBar = document.querySelector('.timer-bar');
         var header = document.querySelector('.header');
@@ -339,118 +352,6 @@
                 messageContainer.style.top = `-${messageContainer.offsetHeight}px`;
             }, 5000);
         }
-    });
-    
-    document.addEventListener("DOMContentLoaded", function() {
-        populateModels();
-        populateTestName();
-    
-        document.getElementById("product").addEventListener("change", function() {
-            populateModels();
-            populateTestName();
-        });
-        document.getElementById("test_stage").addEventListener("change", function() {
-            populateTestName();
-        });
-    });
-        
-    // JavaScript object to store model data
-    const modelsByType = {
-        "TV": {{tv_models|safe}},
-        "AC": {{ac_models|safe}},
-        "Phone": {{phone_models|safe}},
-        "Washing_Machine": {{washing_machine_models|safe}}
-    };
-    
-    // JavaScript function to populate the model list based on the selected product type
-    function populateModels() {
-        const productTypeDropdown = document.getElementById("product");
-        const modelNameDropdown = document.getElementById("model_name");
-        const selectedProductType = productTypeDropdown.value;
-    
-        // Clear existing options
-        modelNameDropdown.innerHTML = "";
-    
-        // Populate model options based on the selected product type
-        if (selectedProductType && modelsByType[selectedProductType]) {
-            const optionAllModels = document.createElement("option");
-            optionAllModels.text = "All Models";
-            optionAllModels.value = "";
-            modelNameDropdown.appendChild(optionAllModels);
-    
-            modelsByType[selectedProductType].forEach(model => {
-                const option = document.createElement("option");
-                option.text = model;
-                modelNameDropdown.appendChild(option);
-            });
-        }
-    }
-        
-    function populateTestName() {
-        const testDetail = {{ test|safe }};
-        const productTypeDropdown = document.getElementById("product");
-        const testStageDropdown = document.getElementById("test_stage");
-        const testNameDropdown = document.getElementById("test_name");
-        const selectedProductType = productTypeDropdown.value;
-        const selectedTestStage = testStageDropdown.value;
-    
-        // Clear existing options
-        testNameDropdown.innerHTML = "";
-    
-        const optionAllTests = document.createElement("option");
-        optionAllTests.text = "All Tests";
-        optionAllTests.value = "";
-        testNameDropdown.appendChild(optionAllTests);
-    
-        testDetail.forEach(item => {
-            const s = item.TestStage;
-    
-            if (selectedProductType === "" && selectedTestStage === "") {
-                // If both product type and test stage are not selected, show all test names
-                const option = document.createElement("option");
-                option.text = item.TestName;
-                testNameDropdown.appendChild(option);
-            } else if (selectedProductType === "") {
-                // If only test stage is selected, filter by test stage
-                if ((s[0] === '1' && selectedTestStage === "DVT") ||
-                    (s[1] === '1' && selectedTestStage === "PP") ||
-                    (s[2] === '1' && selectedTestStage === "MP")) {
-                    const option = document.createElement("option");
-                    option.text = item.TestName;
-                    testNameDropdown.appendChild(option);
-                }
-            } else if (selectedTestStage === "") {
-                // If only product type is selected, filter by product type
-                if (item.ProductType === selectedProductType) {
-                    const option = document.createElement("option");
-                    option.text = item.TestName;
-                    testNameDropdown.appendChild(option);
-                }
-            } else {
-                // If both product type and test stage are selected, filter by both
-                if (item.ProductType === selectedProductType && (
-                    (s[0] === '1' && selectedTestStage === "DVT") ||
-                    (s[1] === '1' && selectedTestStage === "PP") ||
-                    (s[2] === '1' && selectedTestStage === "MP"))) {
-                    const option = document.createElement("option");
-                    option.text = item.TestName;
-                    testNameDropdown.appendChild(option);
-                }
-            }
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Select all checkboxes when the "select-all" checkbox is clicked
-        document.querySelectorAll('[id^="select-all-"]').forEach(checkbox => {
-            checkbox.addEventListener('click', function(event) {
-                const table = event.target.closest('table'); // Find the closest table
-                const checkboxes = table.querySelectorAll('td input[type="checkbox"]'); // Get all checkboxes within the table
-                for (const checkbox of checkboxes) {
-                    checkbox.checked = event.target.checked;
-                }
-            });
-        });
     });
 </script>
 </body>

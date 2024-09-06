@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/view_record.css' %}">
 </head>
 <body>
-<form class="mx-auto card p-3 shadow-lg form-container" method="post" action="{% url 'report' test_name=test_name model_name=model_name serialno=serialno %}"  enctype="multipart/form-data">
+<form class="mx-auto card p-3 shadow-lg form-container" method="post" action="{% url 'report' stage product test_name model_name serialno %}"  enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.media }}
     <!-- {{ form.as_p }} -->

@@ -102,17 +102,17 @@ def owner_remark(request, id):
     return render(request, "owner_remark.html", context)
 
 @login_required
-def report(request, test_name, model_name, serialno):
+def report(request, stage, product, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if (user.user_type != 'employee' and user.user_type != 'owner') and not user.is_superuser:
         return redirect('/access_denied/')
-    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
+    # product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
     if product == 'AC':
         models = get_object_or_404(AC, ModelName=model_name)
     elif product == 'WM - FATL':
         models = get_object_or_404(WM_FATL, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, ProductType=product, SerailNo=serialno, TestName=test_name, ModelName=model_name)
+    test_record = get_object_or_404(TestRecord, ProductType=product, SerailNo=serialno, TestName=test_name, ModelName=model_name, TestStage=stage)
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
@@ -211,7 +211,9 @@ def edit(request, stage, product, test_name, model_name, serialno):
         'form': form,
         'test_name': test_name,
         'model_name': model_name,
-        'serialno': serialno
+        'serialno': serialno,
+        'product': product,
+        'stage': stage
     }
     return render(request, "report.html", context)
 
@@ -726,18 +728,20 @@ def dashboard(request):
     role_letter = {"T": "Test Inspector", "L": "Legal Team", "B": "Brand Team"}
 
     user_ProdType = [k for k in user.product_type if user.product_type[k]]
+    if len(user_ProdType) == 1:
+        product = user_ProdType[0]
     completed_tests = TestRecord.objects.all()
     completed_tests = completed_tests.filter(ProductType__in=user_ProdType)
     if test_name:
-        completed_tests = completed_tests.filter(TestName__icontains=test_name)
+        completed_tests = completed_tests.filter(TestName=test_name)
     if product:
-        completed_tests = completed_tests.filter(ProductType__icontains=product)
+        completed_tests = completed_tests.filter(ProductType=product)
     if test_stage:
-        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
+        completed_tests = completed_tests.filter(TestStage=test_stage)
     if model_name:
-        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
+        completed_tests = completed_tests.filter(ModelName=model_name)
     if serial_number:
-        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
+        completed_tests = completed_tests.filter(SerailNo=serial_number)
     if status:
         completed_tests = completed_tests.filter(status=status)
     if L_status:
@@ -750,10 +754,7 @@ def dashboard(request):
         completed_tests = completed_tests.filter(test_date__lte=end_date)
     tests = completed_tests.values('ProductType', 'ModelName').distinct()
     completed_tests = completed_tests.order_by('-test_end_date')
-    tv_models = list(TV.objects.values_list('ModelName', flat=True))
-    ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
+    models_list = json.dumps(list(Model_Test_Name_Details.objects.all().values()))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     summary_data = summary()
     summary_ = []
@@ -774,13 +775,11 @@ def dashboard(request):
         'product':product,
         'start_date': start_date,
         'end_date': end_date,
-        'tv_models': tv_models,
-        'ac_models': ac_models,
-        'phone_models': phone_models,
-        'washing_machine_models': washing_machine_models,
+        'models_list': models_list,
         'status_color' : status_color,
         'role_letter': role_letter,
-        'summary_data': summary_
+        'summary_data': summary_,
+        'userProductTypes': user_ProdType
     }
     return render(request, 'dashboard_PO.html', context)
 
@@ -860,15 +859,15 @@ def legal_dashboard(request):
 
     completed_tests = TestRecord.objects.exclude(L_status="Not Sent")
     if test_name:
-        completed_tests = completed_tests.filter(TestName__icontains=test_name)
+        completed_tests = completed_tests.filter(TestName=test_name)
     if product:
-        completed_tests = completed_tests.filter(ProductType__icontains=product)
+        completed_tests = completed_tests.filter(ProductType=product)
     if test_stage:
-        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
+        completed_tests = completed_tests.filter(TestStage=test_stage)
     if model_name:
-        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
+        completed_tests = completed_tests.filter(ModelName=model_name)
     if serial_number:
-        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
+        completed_tests = completed_tests.filter(SerailNo=serial_number)
     if L_status:
         completed_tests = completed_tests.filter(L_status= L_status)
     if start_date:
@@ -919,15 +918,15 @@ def brand_dashboard(request):
     B_status = request.GET.get('B_status','')
     completed_tests = TestRecord.objects.exclude(B_status="Not Sent")
     if test_name:
-        completed_tests = completed_tests.filter(TestName__icontains=test_name)
+        completed_tests = completed_tests.filter(TestName=test_name)
     if product:
-        completed_tests = completed_tests.filter(ProductType__icontains=product)
+        completed_tests = completed_tests.filter(ProductType=product)
     if test_stage:
-        completed_tests = completed_tests.filter(TestStage__icontains=test_stage)
+        completed_tests = completed_tests.filter(TestStage=test_stage)
     if model_name:
-        completed_tests = completed_tests.filter(ModelName__icontains=model_name)
+        completed_tests = completed_tests.filter(ModelName=model_name)
     if serial_number:
-        completed_tests = completed_tests.filter(SerailNo__icontains=serial_number)
+        completed_tests = completed_tests.filter(SerailNo=serial_number)
     if B_status:
         completed_tests = completed_tests.filter(B_status= B_status)
     if start_date:
