@@ -62,8 +62,6 @@ def delete_test_record(request, record_id):
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
     test_record = get_object_or_404(TestRecord, pk=record_id)
-    if test_record.employee != user.username and not user.is_superuser:
-        return redirect('/access_denied/')
     test_record.delete()
     return redirect('/dashboard/')
     
@@ -114,9 +112,7 @@ def report(request, test_name, model_name, serialno):
         models = get_object_or_404(AC, ModelName=model_name)
     elif product == 'WM - FATL':
         models = get_object_or_404(WM_FATL, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestName=test_name, ModelName=model_name)
-    if test_record.employee != user.username and not user.is_superuser:
-        return redirect('/access_denied/')
+    test_record = get_object_or_404(TestRecord, ProductType=product, SerailNo=serialno, TestName=test_name, ModelName=model_name)
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
         if form.is_valid():
@@ -144,8 +140,6 @@ def set_status(request, id):
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
     test_record = TestRecord.objects.get(id=id)
-    if test_record.employee != user.username and not user.is_superuser:
-        return redirect('/access_denied/')
     test_record.status = "Waiting"
     test_record.test_end_date = date.today()
     test_record.test_date = date.today()
@@ -163,19 +157,17 @@ def logout(request):
     return JsonResponse({'success': False}, status=400)
 
 @login_required
-def edit(request, test_name, model_name, serialno):
+def edit(request, stage, product, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
-    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
+    # product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno, TestStage=stage).ProductType
     if product == 'AC':
         models = get_object_or_404(AC, ModelName=model_name)
     elif product == 'WM - FATL':
         models = get_object_or_404(WM_FATL, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestName=test_name, ModelName=model_name)
-    if test_record.employee != user.username and not user.is_superuser:
-        return redirect('/access_denied/')
+    test_record = get_object_or_404(TestRecord, ProductType=product, TestStage=stage, SerailNo=serialno, TestName=test_name, ModelName=model_name)
     if request.method == 'POST':
         test_record.test_end_date = date.today()
         test_record.test_date = date.today()
@@ -204,14 +196,14 @@ def edit(request, test_name, model_name, serialno):
     return render(request, "report.html", context)
 
 @login_required
-def view_pdf(request, test_name, model_name, serialno):
-    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+def view_pdf(request, stage, product, test_name, model_name, serialno):
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
+    # product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno, TestStage=stage).ProductType
     if product == 'AC':
         models = get_object_or_404(AC, ModelName=model_name)
     elif product == 'WM - FATL':
         models = get_object_or_404(WM_FATL, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+    test_record = get_object_or_404(TestRecord, SerailNo=serialno, TestStage=stage, ModelName=model_name, ProductType=product, TestName=test_name)
     context = {
         'TestProtocol': Test_protocol,
         'model': models,
@@ -319,8 +311,8 @@ def handle_selected_tests(request):
             for i, test_record in enumerate(selected_test_records, start=1):
                 model_name = test_record.ModelName
                 test_name = test_record.TestName
-                Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-                product = TestRecord.objects.filter(ModelName=model_name, TestName=test_name).first().ProductType
+                product = test_record.ProductType
+                Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
                 if product == 'AC':
                     models = get_object_or_404(AC, ModelName=model_name)
                 elif product == 'WM - FATL':
@@ -386,7 +378,7 @@ def handle_selected_tests(request):
                 brand_employees = Employee.objects.filter(user_type='brand')
                 for employee in brand_employees:
                     notification = Notification.objects.get(employee=employee)
-                    notification_dict = default_notification()[0]
+                    notification_dict = default_notification()
                     test_record = selected_test_records[0]
                     notification_dict["metadata"] = {
                         "product": test_record.ProductType,
@@ -427,7 +419,7 @@ def handle_selected_tests(request):
                 legal_employees = Employee.objects.filter(user_type='legal')
                 for employee in legal_employees:
                     notification = Notification.objects.get(employee=employee)
-                    notification_dict = default_notification()[0]
+                    notification_dict = default_notification()
                     test_record = selected_test_records[0]
                     notification_dict["metadata"] = {
                         "product": test_record.ProductType,
@@ -454,17 +446,17 @@ def handle_selected_tests(request):
     return redirect('/dashboard/')
 
 @login_required
-def view(request, test_name, model_name, serialno):
+def view(request, stage, product, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
-    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
+    # product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno, TestStage=stage).ProductType
     if product == 'AC':
         models = get_object_or_404(AC, ModelName=model_name)
     elif product == 'WM - FATL':
         models = get_object_or_404(WM_FATL, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno , TestName =test_name)
+    test_record = get_object_or_404(TestRecord, ProductType=product, ModelName=model_name, SerailNo=serialno , TestName=test_name, TestStage=stage)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')
     paragraphs = soup.find_all('p')
@@ -482,17 +474,17 @@ def view(request, test_name, model_name, serialno):
     return render(request, "view_test_record.html", context)
 
 @login_required
-def owner_view(request, test_name, model_name, serialno):
+def owner_view(request, stage, product, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
-    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
+    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno, TestStage=stage).ProductType
     if product == 'AC':
         models = get_object_or_404(AC, ModelName=model_name)
     elif product == 'WM - FATL':
         models = get_object_or_404(WM_FATL, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno, ModelName=model_name, TestName=test_name)
+    test_record = get_object_or_404(TestRecord, ProductType=product, SerailNo=serialno, ModelName=model_name, TestName=test_name, TestStage=stage)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')
     paragraphs = soup.find_all('p')
@@ -720,7 +712,8 @@ def employee_dashboard(request):
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
     
-    completed_tests = TestRecord.objects.filter(employee=username)
+    user_ProdType = [k for k in user.product_type if user.product_type[k]]
+    completed_tests = TestRecord.objects.filter(ProductType__in=user_ProdType)
 
     if test_name:
         completed_tests = completed_tests.filter(TestName=test_name)
@@ -884,17 +877,17 @@ def brand_dashboard(request):
     return render(request, "dashboard_brand.html", context)
 
 @login_required
-def legal_view(request, test_name, model_name, serialno):
+def legal_view(request, stage, product, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'legal' and not user.is_superuser:
         return redirect('/access_denied/')
-    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
+    # product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno, TestStage=stage).ProductType
     if product == 'AC':
         models = get_object_or_404(AC, ModelName=model_name)
     elif product == 'WM - FATL':
         models = get_object_or_404(WM_FATL, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+    test_record = get_object_or_404(TestRecord, ProductType=product, ModelName=model_name, SerailNo=serialno, TestStage=stage, TestName=test_name)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')
     paragraphs = soup.find_all('p')
@@ -915,17 +908,17 @@ def legal_view(request, test_name, model_name, serialno):
     return render(request, "legal_view.html", context)
 
 @login_required
-def brand_view(request, test_name, model_name, serialno):
+def brand_view(request, stage, product, test_name, model_name, serialno):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'brand' and not user.is_superuser:
         return redirect('/access_denied/')
-    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno).ProductType
+    Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
+    # product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno, TestStage=stage).ProductType
     if product == 'AC':
         models = get_object_or_404(AC, ModelName=model_name)
     elif product == 'WM - FATL':
         models = get_object_or_404(WM_FATL, ModelName=model_name)
-    test_record = get_object_or_404(TestRecord, SerailNo=serialno)
+    test_record = get_object_or_404(TestRecord, ProductType=product, ModelName=model_name, SerailNo=serialno, TestStage=stage, TestName=test_name)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')
     paragraphs = soup.find_all('p')
@@ -1075,10 +1068,8 @@ def model_details_view(request):
     return render(request, 'model_details_view.html', context)
 
 @login_required
-def Test_list_entry(request):
+def to_dashboards(request):
     user = Employee.objects.get(username=request.session['username'])
-    if user.user_type != 'owner' and not user.is_superuser:
-        return redirect('/access_denied/')
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == "dashboard":
@@ -1090,6 +1081,13 @@ def Test_list_entry(request):
                 return redirect('/brand_dashboard/')
             if user.user_type=="legal":
                 return redirect('/legal_dashboard/')
+
+@login_required
+def Test_list_entry(request):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
+    if request.method == 'POST':
         testStages = request.POST.getlist('TestStage')
         product = request.POST.get('Product')
         testName = request.POST.get('TestName')
@@ -1107,14 +1105,14 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
-        existingProd = Product_List.objects.get(Product=product)
-        T = list(map(bool, [int(_) for _ in s1]))
-        S = ['DVT', 'PP', 'MP']
-        stages = [_ for i, _ in enumerate(S) if T[i]]
-        for s in stages:
-            if testName not in existingProd.Test_Names[s]:
-                existingProd.Test_Names[s].append(testName)
-        existingProd.save()
+        # existingProd = Product_List.objects.get(Product=product)
+        # T = list(map(bool, [int(_) for _ in s1]))
+        # S = ['DVT', 'PP', 'MP']
+        # stages = [_ for i, _ in enumerate(S) if T[i]]
+        # for s in stages:
+        #     if testName not in existingProd.Test_Names[s]:
+        #         existingProd.Test_Names[s].append(testName)
+        # existingProd.save()
         new_test = Test_core_detail(
             TestStage=s1,
             ProductType=product,
@@ -1307,7 +1305,8 @@ def handle_notification(request):
         notification.save()
         if user.user_type == 'owner':
             return
-        elif user.user_type == 'tester':
+        elif user.user_type == 'employee':
+            print("===========================\nEmployee\n================")
             return
         elif user.user_type == 'brand':
             if inc_notif['action'] == 'sent':

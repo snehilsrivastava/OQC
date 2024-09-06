@@ -11,7 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="{%static 'css/register_details.css' %}">
-    <!-- <link rel="script" href="{%static 'js/register.js' %}"> -->
     <style>
         .final-view {
             display: none;
@@ -30,9 +29,7 @@
                     {% csrf_token %}
                     <div class="card-body border-0 no-background">
                         <div id="messages1">
-                            <!-- <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button> -->
+                            <!-- div to be filled by JS don't remove -->
                         </div>
                         <!-- Display error/success messages -->
                         {% if messages %}
@@ -47,25 +44,25 @@
                         {% endif %}
                         <!-- First Name input field -->
                         <div class="form-group">
-                            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                            <input type="text" class="form-control input-field" id="first-name-1" aria-describedby="emailHelp"
                                 placeholder="First name" name="first_name" required>
                         </div>
 
                         <!-- Last Name input field -->
                         <div class="form-group">
-                            <input type="text" name="last_name" class="form-control" id="exampleInputEmail1"
+                            <input type="text" name="last_name" class="form-control input-field" id="last-name-1"
                                 aria-describedby="emailHelp" placeholder="Last name" required>
                         </div>
 
                         <!-- Username input field -->
                         <div class="form-group">
-                            <input type="text" class="form-control" name="username" id="exampleInputEmail1"
+                            <input type="text" class="form-control input-field" name="username" id="email-1"
                                 aria-describedby="emailHelp" placeholder="Email" required>
                         </div>
 
                         <!-- Password input field -->
                         <div class="form-group">
-                            <input type="password" class="form-control" name="password" id="exampleInputPassword1"
+                            <input type="password" class="form-control input-field" name="password" id="password-1"
                                 placeholder="Password" required>
                         </div>
                         <button id="send-otp-btn" type="button" name="action" value="send_otp" class="btn btn-primary btn-fill">Send OTP</button>
@@ -77,37 +74,45 @@
                     {% csrf_token %}
                     <div class="card-body border-0 no-background">
                         <div id="messages2">
-                            <!-- <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button> -->
+                            <!-- div to be filled by JS don't remove -->
                         </div>
                         <!-- First Name input field -->
                         <div class="form-group">
-                            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                            <input type="text" class="form-control input-field" id="first-name-2" aria-describedby="emailHelp"
                                 placeholder="First name" name="first_name" required value="{{ employee.first_name }}">
                         </div>
 
                         <!-- Last Name input field -->
                         <div class="form-group">
-                            <input type="text" name="last_name" class="form-control" id="exampleInputEmail1"
+                            <input type="text" name="last_name" class="form-control input-field" id="last-name-2"
                                 aria-describedby="emailHelp" placeholder="Last name" required value="{{ employee.last_name }}">
                         </div>
 
                         <!-- Username input field -->
                         <div class="form-group">
-                            <input type="text" class="form-control" name="username" id="exampleInputEmail1"
+                            <input type="text" class="form-control input-field" name="username" id="email-2"
                                 aria-describedby="emailHelp" placeholder="Email" required value="{{ employee.username }}">
                         </div>
 
                         <!-- Password input field -->
                         <div class="form-group">
-                            <input type="password" class="form-control" name="password" id="exampleInputEmail1"
+                            <input type="password" class="form-control input-field" name="password" id="password-2"
                                 placeholder="Password" required value="{{ password }}">
                         </div>
                         <!-- OTP input field -->
                         <div class="form-group">
-                            <input type="OTP" class="form-control" name="OTP" id="exampleInputEmail1"
-                                placeholder="OTP" required>
+                            <div class="otp-container">
+                                <!-- Six input fields for OTP digits -->
+                                <input type="text" class="otp-input" pattern="\d" maxlength="1" required>
+                                <input type="text" class="otp-input" pattern="\d" maxlength="1" disabled required>
+                                <input type="text" class="otp-input" pattern="\d" maxlength="1" disabled required>
+                                <input type="text" class="otp-input" pattern="\d" maxlength="1" disabled required>
+                                <input type="text" class="otp-input" pattern="\d" maxlength="1" disabled required>
+                                <input type="text" class="otp-input" pattern="\d" maxlength="1" disabled required>
+                            </div>
+                              
+                              <!-- Field to store complete OTP -->
+                                <input style="display: none;" class="form-control input-field" type="OTP" name="OTP" placeholder="OTP" id="OTP-code" readonly>
                         </div>
                         <!-- Submit button -->
                         <button type="submit" name="action" value="sign_up" class="btn btn-primary btn-fill">Sign Up</button>
@@ -118,80 +123,6 @@
             <p class="no_wrap">Already have an account? <a href="/au/login/">Sign in</a> </p>
         </div>
     </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const sendOtpBtn = document.getElementById('send-otp-btn');
-        const initialView = document.querySelector('.initial-view');
-        const finalView = document.querySelector('.final-view');
-        const initialForm = initialView.querySelector('form');
-        const finalForm = finalView.querySelector('form');
-        // const messagesContainer = document.getElementById('messages');
-    
-        sendOtpBtn.addEventListener('click', function(){
-            const formData = new FormData(initialForm);
-            fetch('send_otp/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-                },
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.redirect_url) {
-                // Redirect to the specified URL
-                window.location.href = data.redirect_url;
-                }
-                else if (data.warning) {
-                    // Show warning message
-                    const messagesContainer = document.getElementById('messages1');
-                    messagesContainer.innerHTML = ``;
-                    const warningMessage = document.createElement('div');
-                    warningMessage.classList.add('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show');
-                    warningMessage.setAttribute('role', 'alert');
-                    warningMessage.innerHTML = `<span class="message-span">${data.message}</span>
-                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>`;
-                    messagesContainer.appendChild(warningMessage);                
-                }
-                else if (data.success) {
-                    const messagesContainer = document.getElementById('messages2');
-                    messagesContainer.innerHTML = ``;   
-                    const successMessage = document.createElement('div');
-                    successMessage.classList.add('alert', 'alert-success', 'alert-dismissible', 'fade', 'show');
-                    successMessage.setAttribute('role', 'alert');
-                    successMessage.innerHTML = `<span class="message-span">${data.message}</span>
-                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>`;
-                    messagesContainer.appendChild(successMessage);
-                    // Set values in the final form fields
-                    finalForm.querySelector('input[name="first_name"]').value = formData.get('first_name');
-                    finalForm.querySelector('input[name="last_name"]').value = formData.get('last_name');
-                    finalForm.querySelector('input[name="username"]').value = formData.get('username');
-                    finalForm.querySelector('input[name="password"]').value = formData.get('password');
-
-                    // Make fields readonly
-                    finalForm.querySelector('input[name="first_name"]').readOnly = true;
-                    finalForm.querySelector('input[name="last_name"]').readOnly = true;
-                    finalForm.querySelector('input[name="username"]').readOnly = true;
-                    finalForm.querySelector('input[name="password"]').readOnly = true;
-                    
-                    // Toggle views
-                    initialView.style.display = 'none';
-                    finalView.style.display = 'block';
-                } 
-                else {
-                    // Handle error
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
-    });
-    </script>
+    <script src="{%static 'js/register.js' %}"></script>
 </body>
 </html>

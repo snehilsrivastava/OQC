@@ -404,7 +404,7 @@ button.collapse-button i {
 }
 
 .status-Not.Sent {
-    background: #cfcfcf;
+    background: #888;
     
 }
 
@@ -468,16 +468,10 @@ button.collapse-button i {
     outline: none;
     position: relative;
 }
-.stage-filter-btn:active {
-    box-shadow: 0 0.7rem 1rem var(--stage-btn-bg) inset;
-    border-left: solid 1px var(--stage-btn-bg) !important;
-    &:after {
-        opacity: 0;
-    }
-}
 .stage-filter-btn-active {
     box-shadow: 0 0.7rem 1rem var(--stage-btn-bg) inset;
     border-left: solid 1px var(--stage-btn-bg) !important;
+    background-color: var(--button-hover-color);
     &:after {
         opacity: 0;
     }

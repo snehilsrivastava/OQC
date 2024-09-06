@@ -73,6 +73,7 @@ def generate_otp(length=6):
 
 def delete_expired_otps():
     expirations_time = datetime.now() - timedelta(minutes=5)
+
     OTP.objects.filter(Q(created_at__lt=expirations_time)).delete()
     return
 
@@ -107,6 +108,8 @@ def send_otp(request):
             return JsonResponse({'warning': True, 'message': validity})
 
         otp = generate_otp()
+        if OTP.objects.filter(user=username).exists():
+            OTP.objects.filter(user=username).delete()
         OTP.objects.create(user=username, otp=otp, created_at=datetime.now(), is_verified=False)
         subject = 'OTP'
         message = f'Hi {first_name} {last_name},\nYour OTP is {otp}. It expires in 5 minutes.'
@@ -146,8 +149,10 @@ def register_page(request):
             case 1:
                 new_employee = Employee(username=username, first_name=fname, last_name=lname, password=pword)
                 new_employee.save()
+                print("================\nEmployee saved successfully\n================")
                 new_notification = Notification(employee=new_employee, notification=[])
                 new_notification.save()
+                print("\nNotification saved successfully\n================")
                 messages.success(request, "Account creation request sent.")
 
                 subject = 'New account approval'
@@ -188,13 +193,15 @@ def forgot_password_send_otp(request):
         first_name = employee.first_name
         last_name = employee.last_name
         otp = generate_otp()
+        if OTP.objects.filter(user=username).exists():
+            OTP.objects.filter(user=username).delete()
         OTP.objects.create(user=username, otp=otp, created_at=datetime.now(), is_verified=False)
         subject = 'OTP'
         message = f'Hi {first_name} {last_name},\nYour OTP is {otp}. It expires in 5 minutes.'
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [username]
         send_mail(subject, message, email_from, recipient_list)
-        return JsonResponse({'success': True})
+        return JsonResponse({'success': True, 'message': 'OTP sent successfully'})
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
 def forgot_password_verify_otp(request):
@@ -205,7 +212,7 @@ def forgot_password_verify_otp(request):
         msg = verify_otp(username, in_otp)
         match (msg):
             case 1:
-                return JsonResponse({'success': True})
+                return JsonResponse({'success': True, 'message': 'OTP Verified. Please update the password.'})
             case 2:
                 return JsonResponse({'error': True, 'message': 'Invalid or Expired OTP.'})
             case 3:

@@ -7,13 +7,13 @@
 - **Django** is the project's main codebase
 - **HTML, CSS and JavaScript** for the project's UI
 - **AWS EC2** as a VM for the server
-- **SQLite** as the database for the server
+- **PostgreSQL** as the database for the server
 
 # **Documentation for Future Developers**
 
 ## Introduction and Architecture Overview
 
-- QMS is a django project which maintains mainly the employee, test details, model details and test record  models. The web-app is hosted on the domain **http://protrackindkal.in/** through an AWS EC2 instance. All changes made to this repository can be pulled to the VM on AWS and it reflects on the website hosted.
+- QMS is a django project which maintains mainly the employee, test details, model details and test record  models. The web-app is hosted on the domain **https://protrackindkal.in/** through an AWS EC2 instance. All changes made to this repository can be pulled to the VM on AWS and it reflects on the website hosted.
 
 - To work on the VM, the AWS EC2 interface offers a linux terminal to pull changes from the repository or stop the server.
 
@@ -139,6 +139,6 @@ For more information on Django's admin site and its customization options, refer
 
 - For further support, contact the developers:
 
-  Snehil Srivastava, @snehilsr, snehil.s@inkdaltechno.onmicrosoft.com
+  Snehil Srivastava, @snehilsr, snehil.s@inkdal.com
 
-  Akshay Verma, @unhappyTWO, akshay.v@indkaltechno.onmicrosoft.com
+  Akshay Verma, @unhappyTWO, akshay.v@indkal.com
