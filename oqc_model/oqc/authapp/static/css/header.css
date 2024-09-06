@@ -237,3 +237,11 @@ button {
     justify-content: space-between;
     border-bottom: 1px solid #555;
 }
+
+.notif-text {
+    text-align: center;
+    font-size: 17px;
+    padding: 20px 10px
+    
+    ;
+}
