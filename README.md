@@ -78,7 +78,6 @@
 ## Project Structure and Codebase
 
 - The project is structured like a standard django project with apps **authapp**, **employee**, **product** and **oqc**. These apps are placed inside the oqc folder which holds other folders like **media**, which contains files relating to the images uploaded. The innermost **oqc** folder contains the main settings.py code which dictates all major operations of the django project.
-- The database, which is stored as `db.sqlite3` contains all models responsible for the backend of the website.
 - The **.gitignore** files are written to ignore all pycache and information like the .venv and the database.
 - The static and the templates folder in **oqc_model/oqc/authapp/**  holds the html pages, their css stylings and js files to make them more interactive. Other main files of interest for development in this path will be **forms.py**, **models.py** and more importantly, **views.py** in the apps mentioned above.
 
