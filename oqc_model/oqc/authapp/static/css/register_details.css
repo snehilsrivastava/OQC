@@ -134,11 +134,7 @@ body {
     margin-bottom: 4%;
 }
 
-#exampleInputEmail1 {
-    width: 250px;
-}
-
-#exampleInputPassword1 {
+.input-field {
     width: 250px;
 }
 
@@ -182,4 +178,18 @@ body {
     /* display: flex;
     justify-content: center; */
     gap: 0em 0.25em;
+}
+
+.otp-input {
+    width: 38px;
+    height: 38px;
+    text-align: center;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s;
+    &:disabled {
+        background-color: #fff;
+    }
 }

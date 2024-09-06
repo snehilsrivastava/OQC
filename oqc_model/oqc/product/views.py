@@ -26,17 +26,12 @@ def product_form_view(request):
         test_name = request.POST.get('TestName')
         serial_no = request.POST.get('SerailNo')
         tested_by = request.POST.get('TestedBy')
-        username = request.session['username']
-        employee = Employee.objects.get(username=username)
-        name = employee.first_name + ' ' + employee.last_name
         new_product_detail = TestRecord(
             ProductType=product_type,
             ModelName=model_name,
             SerailNo=serial_no,
             TestStage=test_stage,
             TestName=test_name,
-            employee=username,
-            employee_name=name,
             status = "Approved" if user.user_type == "owner" else "Not Sent",
             verification = True if tested_by == 'ODM' else False,
         )
@@ -185,12 +180,34 @@ def TestNames(request):
         pp = request.POST.getlist('pp-options')
         mp = request.POST.getlist('mp-options')
         model_test_names = {"DVT": dvt, "PP": pp, "MP": mp}
-        new_model_test_name_details = Model_Test_Name_Details(
-            Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name),
-            Test_Names=model_test_names
-        )
-        new_model_test_name_details.save()
+        if Model_Test_Name_Details.objects.filter(Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name)).exists():
+            existing_model_test_name_details = Model_Test_Name_Details.objects.get(Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name))
+            existing_model_test_name_details.Test_Names = model_test_names
+            existing_model_test_name_details.save()
+        else:
+            new_model_test_name_details = Model_Test_Name_Details(
+                Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name),
+                Test_Names=model_test_names
+            )
+            new_model_test_name_details.save()
+        generate_reports(request, model_name)
         messages.success(request, 'Model saved')
         return redirect('/dashboard/')
     messages.error(request, 'Invalid request')
     return redirect('/dashboard/')
+
+@login_required
+def generate_reports(request, model_name):
+    model = Model_Test_Name_Details.objects.get(Model_Name = Model_MNF_detail.objects.get(Indkal_model_no = model_name))
+    model_tests = model.Test_Names
+    model_product = model.Product
+    for stage, test_names in model_tests.items():
+        for test_name in test_names:
+            if not TestRecord.objects.filter(ProductType=model_product, ModelName=model_name, TestStage=stage, TestName=test_name).exists():
+                test_record = TestRecord.objects.create(
+                    ProductType=model_product,
+                    ModelName=model_name,
+                    TestName=test_name,
+                    TestStage=stage,
+                )
+                test_record.save()

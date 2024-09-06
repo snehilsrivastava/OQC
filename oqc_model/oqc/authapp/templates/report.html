@@ -8,9 +8,6 @@
     <title>Report Form</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/view_record.css' %}">
-    <style>
-        
-    </style>
 </head>
 <body>
 <form class="mx-auto card p-3 shadow-lg form-container" method="post" action="{% url 'report' test_name=test_name model_name=model_name serialno=serialno %}"  enctype="multipart/form-data">
@@ -398,6 +395,9 @@
 <div style="margin: 10px;"></div>
 <button type="submit" class="btn btn-primary custom-btn-small">Submit</button>
 </form>
+
+<script src="{% static 'js/ckeditor/customImageInfo.js' %}"></script>
+<script src="{% static 'js/ckeditor/customImageUpload.js' %}"></script>
 <script>
     CKEDITOR.on('dialogDefinition', function (ev) {
         var dialogName = ev.data.name;

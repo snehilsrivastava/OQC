@@ -30,8 +30,6 @@ class Test_core_detail(models.Model):
         return f"{self.ProductType} | {self.TestName}"
     
 class TestRecord(models.Model):
-    employee = models.CharField(max_length=80, default = 'None')
-    employee_name = models.CharField(max_length=80, default = 'None')
     test_date = models.DateField(default=datetime.date.today)
     test_start_date = models.DateField(default=datetime.date.today)
     test_end_date = models.DateField(default=datetime.date.today)
@@ -39,7 +37,6 @@ class TestRecord(models.Model):
     sample_quantiy = models.IntegerField(default=0)
     result = RichTextUploadingField(default="", blank=True)
     additional_details = RichTextUploadingField(default="", blank=True, config_name='full')
-    notes = models.CharField(max_length=255, blank=True) 
     employee_remark  = models.TextField(max_length=500,default='',blank=True)
     owner_remark  = models.TextField(max_length=500,default='',blank=True)
     status = models.CharField(max_length=50,default="Not Sent")
