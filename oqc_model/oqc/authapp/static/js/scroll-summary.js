@@ -10,7 +10,7 @@ function navigateToPage(card) {
 
     filterProdField.value = productName;
     filterStageField.value = stageName;
-    populateModels();
+    // populateModels();
     filterModelField.value = modelName;
     filterForm.submit();
 }

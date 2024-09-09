@@ -23,7 +23,7 @@ urlpatterns = [
     path('owner_view/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.owner_view, name='owner_view'),
     path('legal_view/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.legal_view, name='legal_view'),
     path('brand_view/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.brand_view, name='brand_view'),
-    path('report/<str:test_name>/<str:model_name>/<str:serialno>/', views.report, name='report'),
+    path('report/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.report, name='report'),
     path('mnf/', views.MNF, name='mnf'),
     path('model_details_update/', views.model_details_update, name='model_details_update'),
     path('model_details_view/', views.model_details_view, name='model_details_view'),
@@ -44,6 +44,8 @@ urlpatterns = [
     path('clear_notification/', views.clear_notification, name="clear_notification"),
     path('notifications/', views.notifications, name="notifications"),
     path('to_dashboards/', views.to_dashboards, name="to_dashboards"),
+    path('mark_all_as_read/', views.mark_all_as_read, name="mark_all_as_read"),
+    path('delete_notification/', views.delete_notification, name="delete_notification"),
 ]
 
 from django.conf import settings
