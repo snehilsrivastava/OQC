@@ -1,6 +1,7 @@
 from django.db import models
 import datetime
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
     
@@ -37,8 +38,7 @@ class TestRecord(models.Model):
     sample_quantiy = models.IntegerField(default=0)
     result = RichTextUploadingField(default="", blank=True)
     additional_details = RichTextUploadingField(default="", blank=True, config_name='full')
-    employee_remark  = models.TextField(max_length=500,default='',blank=True)
-    owner_remark  = models.TextField(max_length=500,default='',blank=True)
+    remarks = ArrayField(models.TextField(default=str), default=list)
     status = models.CharField(max_length=50,default="Not Sent")
     L_status = models.CharField(max_length=50,default="Not Sent")
     B_status = models.CharField(max_length=50,default="Not Sent")
@@ -48,6 +48,6 @@ class TestRecord(models.Model):
     TestStage = models.CharField(max_length=20,default="None")
     TestName  = models.CharField(max_length=80,default="None")
     owner_name = models.CharField(max_length=80, default = 'None')
-
+    html_content = models.TextField(default="")
     def __str__(self):
         return f"{self.ProductType} - {self.ModelName} - {self.TestName}"

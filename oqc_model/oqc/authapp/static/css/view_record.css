@@ -1,3 +1,5 @@
+@import url('color_pallette.css');
+
 table {
     border: 1px solid black;
     border-collapse: collapse;
@@ -32,6 +34,7 @@ span {
     flex-direction: column;
     width: 96%;
     max-width: 700px;
+    margin-bottom: 15px;
 }
 
 .page-break-indicator {
@@ -63,26 +66,4 @@ span {
 
 .action-buttons .button:hover {
     background-color: #0056b3;
-}
-
-/* WebKit browsers (Chrome, Safari, Edge) */
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: #fff0;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgb(80, 80, 80);
-}
-
-::-webkit-scrollbar:hover {
-    background: black;
 }

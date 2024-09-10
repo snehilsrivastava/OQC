@@ -7,18 +7,24 @@
     <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
     <title>Report Form</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/view_record.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
 </head>
 <body>
-<form class="mx-auto card p-3 shadow-lg form-container" method="post" action="{% url 'report' stage product test_name model_name serialno %}"  enctype="multipart/form-data">
+{% if employee.is_superuser %}
+    {% include "header_PO.html" %}
+{% else %}
+    {% include "header.html" %}
+{% endif %}
+<form class="mx-auto card p-3 shadow-lg form-container" method="post" action="{% url 'report' test.TestStage test.ProductType test.TestName test.ModelName test.SerailNo %}"  enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.media }}
-    <!-- {{ form.as_p }} -->
     <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;'>{{TestProtocol.TestName}}</span></u></strong></p>
     <div style="margin: 6px;"></div>
     <table>
         <tbody>
-            {% if testdetail.ProductType == 'AC' %}
+            {% if test.ProductType == 'AC' %}
                 <tr>
                     <td style="max-width: 110px;">
                         <strong><span class="row_header">Test Objective</span></strong>
@@ -48,16 +54,16 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="4">
-                        <span>{{ serialno }}</span>
+                        <span>{{ test.SerailNo }}</span>
                     </td>
                 </tr>
-                {% if testdetail.verification %}
+                {% if test.verification %}
                 <tr>
                     <td rowspan="9">
                         <strong><span class="row_header">Set Details</span></strong>
                     </td>
                     <td colspan="4">
-                        <span>Report verification Date: {{testdetail.test_date|date:"d/m/Y"}}</span>
+                        <span>Report verification Date: {{test.test_date|date:"d/m/Y"}}</span>
                     </td>
                 </tr>
                 {% else %}
@@ -66,10 +72,10 @@
                         <strong><span class="row_header">Set Details</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>Start Date: {{testdetail.test_start_date|date:"d/m/Y"}}</span>
+                        <span>Start Date: {{test.test_start_date|date:"d/m/Y"}}</span>
                     </td>
                     <td colspan="2">
-                        <span>End Date: {{testdetail.test_end_date|date:"d/m/Y"}}</span>
+                        <span>End Date: {{test.test_end_date|date:"d/m/Y"}}</span>
                     </td>
                 </tr>
                 {% endif %}
@@ -227,7 +233,7 @@
                         <span>{{form.result}}</span>
                     </td>
                 </tr>
-            {% elif testdetail.ProductType == 'WM - FATL' %}
+            {% elif test.ProductType == 'WM - FATL' %}
                 <tr>
                     <td style="width: 110px;">
                         <strong><span class="row_header">Test Objective</span></strong>
@@ -257,16 +263,16 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>{{ serialno }}</span>
+                        <span>{{ test.SerailNo }}</span>
                     </td>
                 </tr>
-                {% if testdetail.verification %}
+                {% if test.verification %}
                 <tr>
                     <td rowspan="7">
                         <strong><span class="row_header">Set Details</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>Report verification Date: {{testdetail.test_date|date:"d/m/Y"}}</span>
+                        <span>Report verification Date: {{test.test_date|date:"d/m/Y"}}</span>
                     </td>
                 </tr>
                 {% else %}
@@ -275,10 +281,10 @@
                         <strong><span class="row_header">Set Details</span></strong>
                     </td>
                     <td>
-                        <span>Test Start Date: {{testdetail.test_start_date|date:"d/m/Y"}}</span>
+                        <span>Test Start Date: {{test.test_start_date|date:"d/m/Y"}}</span>
                     </td>
                     <td>
-                        <span>Test End Date: {{testdetail.test_end_date|date:"d/m/Y"}}</span>
+                        <span>Test End Date: {{test.test_end_date|date:"d/m/Y"}}</span>
                     </td>
                 </tr>
                 {% endif %}
@@ -386,7 +392,7 @@
 
 <!-- this code doesnt work as additional_details isnt a string
  so if condition just defaults to True -->
-{% if testdetail.additional_details != '' %}
+{% if test.additional_details != '' %}
 <div class="additional_details">{{ form.additional_details }}</div>
 {% else %}
 <button id="addPageButton" type="button" class="btn btn-primary custom-btn-small">Add page</button>
@@ -420,5 +426,6 @@
         addPageButton.style.display = "none";
     });
 </script>
+<script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 </body>
 </html>
