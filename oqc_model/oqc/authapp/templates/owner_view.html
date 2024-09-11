@@ -15,32 +15,33 @@
     <link rel="stylesheet" href="{% static 'css/header.css' %}">
 </head>
 <body>
-{% include "header_PO.html" %}
-<form class="mx-auto card p-3 shadow-lg form-container" style="margin-top: 15px;">
-    {% csrf_token %}
-    {{ form.media }}
-    <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;'>{{TestProtocol.TestName}}</span></u></strong></p>
-    <div style="margin: 6px;"></div>
-    {{ test.html_content|safe }}
-<hr class="page-break-indicator">
+    {% include "header_PO.html" %}
+    <form class="mx-auto card p-3 shadow-lg form-container" style="margin-top: 15px;">
+        {% csrf_token %}
+        {{ form.media }}
+        <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;'>{{TestProtocol.TestName}}</span></u></strong></p>
+        <div style="margin: 6px;"></div>
+        {{ test.html_content|safe }}
+        <hr class="page-break-indicator">
 
-<div class="additional_details">{{ test.additional_details|safe }}</div>
+        <div class="additional_details">{{ test.additional_details|safe }}</div>
 
-<div class="action-buttons">
-    <a class="btn btn-primary" href="{% url 'dashboard' %}">Return</a>
-    
-    <div class="dropdown">
-        <a class="btn btn-primary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {{test.status}}
-        </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="{% url 'change_status' test.id 1 %}">Waiting</a>
-            <a class="dropdown-item" href="{% url 'change_status' test.id 2 %}">Approve</a>
-            <a class="dropdown-item" href="{% url 'change_status' test.id 3 %}">Reject</a>
+        <div class="action-buttons">
+            <a class="btn btn-primary" href="{% url 'dashboard' %}">Return</a>
+            
+            <div class="dropdown">
+                <a class="btn btn-primary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{test.status}}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="{% url 'change_status' test.id 1 %}">Waiting</a>
+                    <a class="dropdown-item" href="{% url 'change_status' test.id 2 %}">Approve</a>
+                    <a class="dropdown-item" href="{% url 'change_status' test.id 3 %}">Reject</a>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-</form>
-<script type="text/javascript" src="{% static 'js/header.js' %}"></script>
+    </form>
+    {% include "remarks.html" %}
+    <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 </body>
 </html>

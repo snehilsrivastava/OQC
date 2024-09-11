@@ -11,7 +11,7 @@ table {
 td {
     border: 1px solid black;
     vertical-align: middle;
-    padding: 1px 3px 1px 5px;
+    padding: 2px 3px 2px 5px;
     line-height: 90%;
 }
 
@@ -23,11 +23,13 @@ td {
 p {
     font-family: Arial;
     font-size: 13px;
+    margin: 0;
 }
 
 span {
     font-family: Arial;
     font-size: 13px;
+    margin: 0;
 }
 
 .form-container {
@@ -66,4 +68,69 @@ span {
 
 .action-buttons .button:hover {
     background-color: #0056b3;
+}
+
+.dropdown-item {
+    color: var(--webkit-text-field-color);
+    &:hover {
+        color: var(--webkit-text-field-color);
+        background-color: var(--form-field-bg);
+    }
+}
+
+.report-container {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-remarks-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: fixed;
+    font-size: 17px;
+    top: 100px;
+    right: 20px;
+    /* padding: 10px 15px; */
+    height: 50px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    &:hover {
+        background-color: #0056b3;
+    }
+}
+  
+.remarks {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 52px;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: #f4f4f4;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    transition: right 0.3s ease;
+    background-color: var(--form-field-bg);
+    &.visible {
+        right: 0;
+    }
+}
+
+.remarks h3 {
+    margin-top: 0;
+}
+
+.close-remarks-btn {
+    align-self: flex-end;
+}
+
+.popup button {
+    height: auto;
+    padding: 0;
 }
