@@ -5,21 +5,36 @@
     </button>
 
     <div id="remarks-section" class="remarks">
-        <button class="close-remarks-btn" onclick="toggleRemarks()">&times;</button>
-        <h4>Comments</h4>
-        Remark 1: Everything went well in the first round.<br>
-        Remark 2: Need to recheck failed tests.
+        <div class="remarks-header">
+            <button class="close-remarks-btn" onclick="toggleRemarks()"><span class="close">&times;</span></button>
+            <h5>Comments</h5>
+        </div>
+        <div class="remarks-content">
+
+            
+        </div>
+        <div class="comment-box">
+            <textarea class="add-comment" placeholder="Add a comment"></textarea>
+            <button class="send-button">Post</button>
+        </div>
     </div>
 </div>
 
 <div class="popup" style="display: none;">
-    <button class="comment-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-384h480v-72H240v72Zm0-132h480v-72H240v72Zm0-132h480v-72H240v72ZM864-96 720-240H168q-29.7 0-50.85-21.15Q96-282.3 96-312v-480q0-29.7 21.15-50.85Q138.3-864 168-864h624q29.7 0 50.85 21.15Q864-821.7 864-792v696ZM168-312h582l42 42v-522H168v480Zm0 0v-480 480Z"/></svg></button>
-    <button class="highlight-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="m548-410-90-91-193 193 91 91 192-193Zm-38-143 90 91 192-192-90-91-192 192Zm-77-24 192 192-218 218q-22 20-50.5 21.5T308-164l-20 20H96l116-116q-21-20-20-49.5t23-49.5l218-218Zm0 0 218-218q21-21 51-21t51 21l90 90q20 22 20 51t-20 51L625-385 433-577Z"/></svg></button>
-    <button class="underline-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-144v-72h480v72H240Zm240-144q-96 0-148.5-59.4T279-504.86V-816h97.21v317.09q0 52.85 26.43 85.88Q429.07-380 480.03-380q50.97 0 77.39-33.03 26.41-33.03 26.41-85.88V-816H681v311.14q0 98.06-52.5 157.46Q576-288 480-288Z"/></svg></button>
-    <button class="strikethrough-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M96-408v-72h768v72H96Zm336-144v-120H240v-96h480v96H528v120h-96Zm0 360v-144h96v144h-96Z"/></svg></button>
+    <button class="comment-btn" onclick="popupAction('comment')"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-384h480v-72H240v72Zm0-132h480v-72H240v72Zm0-132h480v-72H240v72ZM864-96 720-240H168q-29.7 0-50.85-21.15Q96-282.3 96-312v-480q0-29.7 21.15-50.85Q138.3-864 168-864h624q29.7 0 50.85 21.15Q864-821.7 864-792v696ZM168-312h582l42 42v-522H168v480Zm0 0v-480 480Z"/></svg></button>
+    <button class="highlight-btn" onclick="popupAction('highlight')"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="m548-410-90-91-193 193 91 91 192-193Zm-38-143 90 91 192-192-90-91-192 192Zm-77-24 192 192-218 218q-22 20-50.5 21.5T308-164l-20 20H96l116-116q-21-20-20-49.5t23-49.5l218-218Zm0 0 218-218q21-21 51-21t51 21l90 90q20 22 20 51t-20 51L625-385 433-577Z"/></svg></button>
+    <button class="underline-btn" onclick="popupAction('underline')"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-144v-72h480v72H240Zm240-144q-96 0-148.5-59.4T279-504.86V-816h97.21v317.09q0 52.85 26.43 85.88Q429.07-380 480.03-380q50.97 0 77.39-33.03 26.41-33.03 26.41-85.88V-816H681v311.14q0 98.06-52.5 157.46Q576-288 480-288Z"/></svg></button>
+    <button class="strikethrough-btn" onclick="popupAction('strikethrough')"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M96-408v-72h768v72H96Zm336-144v-120H240v-96h480v96H528v120h-96Zm0 360v-144h96v144h-96Z"/></svg></button>
 </div>
 
 <script>
+    const textarea = document.querySelector('.add-comment');
+
+    textarea.addEventListener('input', () => {
+    textarea.style = 'max-height: 200px';
+    textarea.style.height = `${textarea.scrollHeight+2}px`;
+    });
+
     function toggleRemarks() {
         var remarksSection = document.getElementById('remarks-section');
         var toggleButton = document.getElementById('toggleRemarksBtn');
@@ -32,28 +47,66 @@
             toggleButton.style.display = 'none';
         }
     }
+
+    function generateRandomString(length) {
+        const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let randomString = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            randomString += characters.charAt(randomIndex);   
+        }
+        return randomString;
+    }
+
+    function popupAction(action) {
+        toggleRemarks();
+        // window.removeEventListener('scroll', updatePopupPosition);
+        var popup = document.querySelector('.popup');
+        popup.style.display = 'none';
+        var selection = window.getSelection();
+        var range = selection.getRangeAt(0);
+        var div = document.createElement('div');
+        div.classList.add("remark");
+        div.setAttribute("data-comment-id", generateRandomString(6));
+        if (action === 'highlight') {
+            div.style.backgroundColor = 'yellow';
+        }
+        else if (action === 'underline') {
+            div.style.textDecoration = 'underline';
+        }
+        else if (action === 'strikethrough') {
+            div.style.textDecoration = 'line-through';
+        }
+        range.surroundContents(div);
+        
+        
+        selection.removeAllRanges();
+    }
 </script>
 <script>
+    let lastSelected = '';
     document.addEventListener('mouseup', function(event) {
-        if (window.getSelection().toString() !== '') {
+        var selection = window.getSelection();
+        let currSelected = selection.toString();
+        if (currSelected !== '' && currSelected !== lastSelected) {
+            lastSelected = currSelected;
             var popup = document.querySelector('.popup');
             popup.style.display = 'block';
             popup.style.position = 'absolute';
 
             var updatePopupPosition = function() {
                 var rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
-                popup.style.left = rect.left + 'px';
+                popup.style.left = (rect.left + rect.right) / 2 - 25.5 + 'px';
                 popup.style.top = rect.top + window.scrollY- 30 + 'px';
             };
 
-            // Update position initially and on scroll
             updatePopupPosition();
             window.addEventListener('scroll', updatePopupPosition);
             
             const docListener = function(event) {
                 event.stopPropagation();
                 // console.log(event.target);
-                if (!popup.contains(event.target) && event.target.nodeName !== 'SELECTION') {
+                if (!popup.contains(event.target)) {
                     popup.style.display = 'none';
                     window.removeEventListener('scroll', updatePopupPosition);
                     document.removeEventListener('mousedown', docListener);
