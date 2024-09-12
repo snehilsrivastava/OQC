@@ -593,57 +593,65 @@ def summary():
     for P in ProductType:
         Models = Model_Test_Name_Details.objects.filter(Product=P)
         for M in Models:
-            TestCount = M.Test_Count
-            if TestCount['MP']:
-                stage='MP'
-                total_count = TestCount['MP']
-            elif TestCount['PP']:
-                stage='PP'
-                total_count = TestCount['PP']
-            else:
-                stage='DVT'
-                total_count = TestCount['DVT']
-            TestRecords = TestRecord.objects.filter(ProductType=P, ModelName=M.Model_Name.Indkal_model_no, TestStage=stage)
-            PS, BS, LS = "Completed", "Completed", "Completed"
-            PO_Approved, PO_Uploaded, PO_Uploading = 0, 0, 0
-            BT_Approved, BT_Uploaded, BT_Uploading = 0, 0, 0
-            LT_Approved, LT_Uploaded, LT_Uploading = 0, 0, 0
-            for T in TestRecords:
-                POS = T.status
-                BTS = T.B_status
-                LTS = T.L_status
-                if POS=="Approved":
-                    PO_Approved += 1
-                elif POS=="Not Sent":
-                    PO_Uploading += 1
-                elif POS=="Waiting":
-                    PO_Uploaded += 1
-                if BTS=="Approved":
-                    BT_Approved += 1
-                elif BTS=="Not Sent":
-                    BT_Uploading += 1
-                elif BTS=="Waiting":
-                    BT_Uploaded += 1
-                if LTS=="Approved":
-                    LT_Approved += 1
-                elif LTS=="Not Sent":
-                    LT_Uploading += 1
-                elif LTS=="Waiting":
-                    LT_Uploaded += 1
-                if POS=="Waiting" and PS=="Completed":
-                    PS = "Uploaded"
-                elif POS=="Not Sent" and (PS=="Completed" or PS=="Uploaded"):
-                    PS = "Uploading"
-                if BTS=="Waiting" and BS=="Completed":
-                    BS = "Uploaded"
-                elif BTS=="Not Sent" and (BS=="Completed" or BS=="Uploaded"):
-                    BS = "Uploading"
-                if LTS=="Waiting" and LS=="Completed":
-                    LS = "Uploaded"
-                elif LTS=="Not Sent" and (LS=="Completed" or LS=="Uploaded"):
-                    LS = "Uploading"
-            combined_count = {"PO": [total_count, PO_Approved, PO_Uploaded, PO_Uploading], "BT": [total_count, BT_Approved, BT_Uploaded, BT_Uploading], "LT": [total_count, LT_Approved, LT_Uploaded, LT_Uploading]}
-            ret.append({"Meta": [P, M.Model_Name.Indkal_model_no, stage], "Count": combined_count, "Status":[status_colors[PS], status_colors[BS], status_colors[LS]]})
+            stage_wise = {"DVT": [], "PP": [], "MP": []}
+            curr_stage = "DVT"
+
+            today = dt.now()
+            for S in ["DVT", "PP", "MP"][::-1]:
+                if M.Time_Line[S][0]:
+                    curr_stage = S if dt.strptime(M.Time_Line[S][0], "%d/%m/%Y") < today else curr_stage
+
+            for S in ["DVT", "PP", "MP"]:
+                total_count = M.Test_Count[S]
+                end_date = M.Time_Line[S][1]
+                if end_date:
+                    end_date = dt.strptime(end_date, "%d/%m/%Y")
+                    end_date_color = "lime" if (end_date > dt.now() and curr_stage == S) else "#ff4d4d" if (end_date < dt.now() and curr_stage == S) else "white"
+                else:
+                    end_date_color = "white"
+                TestRecords = TestRecord.objects.filter(ProductType=P, ModelName=M.Model_Name.Indkal_model_no, TestStage=S)
+                PS, BS, LS = "Completed", "Completed", "Completed"
+                PO_Approved, PO_Uploaded, PO_Uploading = 0, 0, 0
+                BT_Approved, BT_Uploaded, BT_Uploading = 0, 0, 0
+                LT_Approved, LT_Uploaded, LT_Uploading = 0, 0, 0
+                for T in TestRecords:
+                    POS = T.status
+                    BTS = T.B_status
+                    LTS = T.L_status
+                    if POS=="Approved":
+                        PO_Approved += 1
+                    elif POS=="Not Sent":
+                        PO_Uploading += 1
+                    elif POS=="Waiting":
+                        PO_Uploaded += 1
+                    if BTS=="Approved":
+                        BT_Approved += 1
+                    elif BTS=="Not Sent":
+                        BT_Uploading += 1
+                    elif BTS=="Waiting":
+                        BT_Uploaded += 1
+                    if LTS=="Approved":
+                        LT_Approved += 1
+                    elif LTS=="Not Sent":
+                        LT_Uploading += 1
+                    elif LTS=="Waiting":
+                        LT_Uploaded += 1
+                    if POS=="Waiting" and PS=="Completed":
+                        PS = "Uploaded"
+                    elif POS=="Not Sent" and (PS=="Completed" or PS=="Uploaded"):
+                        PS = "Uploading"
+                    if BTS=="Waiting" and BS=="Completed":
+                        BS = "Uploaded"
+                    elif BTS=="Not Sent" and (BS=="Completed" or BS=="Uploaded"):
+                        BS = "Uploading"
+                    if LTS=="Waiting" and LS=="Completed":
+                        LS = "Uploaded"
+                    elif LTS=="Not Sent" and (LS=="Completed" or LS=="Uploaded"):
+                        LS = "Uploading"
+                combined_count = {"PO": [total_count, PO_Approved, PO_Uploaded, PO_Uploading], "BT": [total_count, BT_Approved, BT_Uploaded, BT_Uploading], "LT": [total_count, LT_Approved, LT_Uploaded, LT_Uploading]}
+                status = [status_colors[PS], status_colors[BS], status_colors[LS]]
+                stage_wise[S] = {"Count": combined_count, "Status": status, "TimeLine": M.Time_Line[S], "EndDateColor": end_date_color}
+            ret.append({"Meta": [P, M.Model_Name.Indkal_model_no, curr_stage], "Stage_wise": stage_wise})
     return ret
 
 @login_required

@@ -1,4 +1,3 @@
-// JavaScript function to populate the model list based on the selected product type
 function populateModels(all_models) {
     const productTypeDropdown = document.getElementById("product");
     const modelNameDropdown = document.getElementById("model_name");
@@ -15,16 +14,21 @@ function populateModels(all_models) {
             const option = document.createElement("option");
             option.text = model.Model_Name_id;
             modelNameDropdown.appendChild(option);
+            if (localStorage.getItem('selectedModel') === model.Model_Name_id) {
+                option.selected = true;
+            }
         } else if (selectedProductType === "") {
             const option = document.createElement("option");
             option.text = model.Model_Name_id;
             modelNameDropdown.appendChild(option);
+            if (localStorage.getItem('selectedModel') === model.Model_Name_id) {
+                option.selected = true;
+            }
         }
     });
 }
     
 function populateTestName(testDetail) {
-    // const testDetail = {{ test|safe;
     const productTypeDropdown = document.getElementById("product");
     const testStageDropdown = document.getElementById("test_stage");
     const testNameDropdown = document.getElementById("test_name");
@@ -39,45 +43,16 @@ function populateTestName(testDetail) {
     optionAllTests.value = "";
     testNameDropdown.appendChild(optionAllTests);
 
+    let addedTests = [];
+
     testDetail.forEach(test => {
         if ((selectedProductType === "" || selectedProductType === test.ProductType) && (selectedTestStage === "" || selectedTestStage === test.TestStage) && (selectedModelName === "" || selectedModelName === test.Model_Name_id)) {
-            const option = document.createElement("option");
-            option.text = test.TestName;
-            testNameDropdown.appendChild(option);
+            if (!addedTests.includes(test.TestName)) {
+                const option = document.createElement("option");
+                option.text = test.TestName;
+                testNameDropdown.appendChild(option);
+                addedTests.push(test.TestName);
+            }
         }
-        // const s = item.TestStage;
-
-        // if (selectedProductType === "" && selectedTestStage === "") {
-        //     // If both product type and test stage are not selected, show all test names
-        //     const option = document.createElement("option");
-        //     option.text = item.TestName;
-        //     testNameDropdown.appendChild(option);
-        // } else if (selectedProductType === "") {
-        //     // If only test stage is selected, filter by test stage
-        //     if ((s[0] === '1' && selectedTestStage === "DVT") ||
-        //         (s[1] === '1' && selectedTestStage === "PP") ||
-        //         (s[2] === '1' && selectedTestStage === "MP")) {
-        //         const option = document.createElement("option");
-        //         option.text = item.TestName;
-        //         testNameDropdown.appendChild(option);
-        //     }
-        // } else if (selectedTestStage === "") {
-        //     // If only product type is selected, filter by product type
-        //     if (item.ProductType === selectedProductType) {
-        //         const option = document.createElement("option");
-        //         option.text = item.TestName;
-        //         testNameDropdown.appendChild(option);
-        //     }
-        // } else {
-        //     // If both product type and test stage are selected, filter by both
-        //     if (item.ProductType === selectedProductType && (
-        //         (s[0] === '1' && selectedTestStage === "DVT") ||
-        //         (s[1] === '1' && selectedTestStage === "PP") ||
-        //         (s[2] === '1' && selectedTestStage === "MP"))) {
-        //         const option = document.createElement("option");
-        //         option.text = item.TestName;
-        //         testNameDropdown.appendChild(option);
-        //     }
-        // }
     });
 }

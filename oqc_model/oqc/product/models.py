@@ -49,6 +49,7 @@ class Model_Test_Name_Details(models.Model):
     Product = models.CharField(max_length=100, blank=True, null=True)
     Test_Names = models.JSONField(default=default_data)
     Test_Count = models.JSONField(default=default_data)
+    Time_Line = models.JSONField(default=dict)
     def save(self, *args, **kwargs):
         if self.Model_Name:
             self.Product = self.Model_Name.Product

@@ -201,3 +201,23 @@ input[id="stage-dvt"]:checked + label::before, input[id="stage-pp"]:checked + la
 .single-select-checkboxes {
     display: none;
 }
+
+.timeline {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.timeline-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group .timeline:nth-child(3) {
+    gap: 16px;
+}
+
+.timeline-input {
+    width: fit-content;
+}

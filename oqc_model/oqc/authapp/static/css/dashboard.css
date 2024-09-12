@@ -139,7 +139,6 @@ body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     display: flex;
     flex-direction: column;
-    height: 100vh;
     width: 100vw;
     font-size: 17px;
     text-decoration-color: whitesmoke;
@@ -433,7 +432,9 @@ button.collapse-button i {
     color: var(--webkit-text-fill-color);
     font-size: 16px;
 }
-
+.card-table-containers {
+    margin-right: 0 !important;
+}
 .table-containers {
     width: 100vw;
     margin-right: 25px;

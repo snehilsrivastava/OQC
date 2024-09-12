@@ -91,7 +91,7 @@ select {
 
 .form-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 input[type=text]:focus {

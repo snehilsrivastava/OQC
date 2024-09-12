@@ -1,19 +1,32 @@
 @import url('color_pallette.css');
 
-.summary {
-    display: flex;
-    justify-content: center;
-    width: calc(100% - 25px);
+@media only screen and (max-device-width: 600px) {
+    .card {
+        flex-direction: column !important;
+        gap: 10px;
+    }
+    .card-meta, .card-details, .card-dates, .card-status {
+        width: 100% !important;
+        padding-top: 10px;
+        border-left: none !important;
+        border-right: none !important;
+    }
+    .card-details, .card-dates, .card-status {
+        border-top: 1px dotted #222 !important;
+    }
 }
 
-.scroll-container {
+.summary {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    position: relative;
+    gap: 10px;
 }
 
 .scrollcontainer {
     display: flex;
+    flex-direction: column;
+    gap: 20px;
     overflow-x: auto;
     scroll-behavior: smooth;
     white-space: nowrap;
@@ -25,6 +38,7 @@
     max-width: 95vw;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    margin: 0;
 }
 
 .scrollcontainer::-webkit-scrollbar {
@@ -32,16 +46,17 @@
 }
 
 .card {
-    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    /* gap: 10px; */
     min-width: 180px;
     height: min-content;
-    margin-right: 20px;
     color: #fafafa !important;
     padding: 10px;
     background-color: #3f69ad !important;
     border: 1px solid #ddd;
     border-radius: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     text-align: center;
     cursor: pointer;
     transition: transform 0.2s;
@@ -49,12 +64,8 @@
     overflow: hidden;
 }
 
-.scrollcontainer .card:last-child {
-    margin: 0;
-}
-
 .card:hover {
-    transform: scale(1.05);
+    transform: scale(1.01);
 }
 
 .scroll-btn {
@@ -75,11 +86,84 @@
 .scroll-btn.right {
     right: 0;
 }
+
+.card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    width: 20%;
+}
+
+.card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    width: 20%;
+    border-left: 2px dotted #222;
+    border-right: 2px dotted #222;
+}
+
+.card-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    width: 20%;
+    border-right: 2px dotted #222;
+}
+
+.card-status {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    width: 40%;
+}
+
+.card-status-table {
+    max-width: 90%;
+    margin: 0;
+    border: 0;
+}
+.card-status-table colgroup col {
+    width: 5%;
+    &:first-of-type{
+        width: 15%;
+    }
+}
+.card-status-table tr {
+    & td:nth-of-type(2), td:nth-of-type(6), td:nth-of-type(10) {
+        color: lime;
+    }
+    & td:nth-of-type(3), td:nth-of-type(7), td:nth-of-type(11) {
+        color: yellow;
+    }
+    & th:nth-of-type(2), th:nth-of-type(4), th:nth-of-type(6) {
+        border-radius: 13px;
+        background-color: #989800;
+    }
+}
+.card-status-table td, .card-status-table th {
+    padding: 0;
+    text-align: center;
+    border: 0;
+    background-color: transparent;
+    color: #eee;
+}
+
 .card-title {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 0;
+}
+.card-timeline {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    font-size: 10px;
 }
 .card-prod {
     display: flex;
@@ -125,5 +209,36 @@
     &:focus {
         outline: none;
         border: 1px solid black !important;
+    }
+}
+
+.stage-button {
+    display: flex;
+    align-items: center;
+}
+
+.stage-display-btn {
+    height: 20px;
+    font-size: 12px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:nth-child(1) {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border-right: 1px solid #8ea0ba !important;
+    }
+    &:nth-child(2) {
+        width: 20px !important;
+        border-radius: 0 !important;
+        border-left: 1px solid #8ea0ba !important;
+        border-right: 1px solid #8ea0ba !important;
+    }
+    &:nth-child(3) {
+        width: 25px !important;
+        border-left: 1px solid #8ea0ba !important;
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
     }
 }

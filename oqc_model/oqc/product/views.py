@@ -5,6 +5,7 @@ from django.urls import reverse
 from authapp.models import Employee, Notification, default_notification
 from django.contrib import messages
 import json
+from datetime import datetime as dt
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -126,12 +127,27 @@ def AC_spec(request):
                 pp.append(test_names[i])
             if int(stage[2]):
                 mp.append(test_names[i])
+        selected_dvt, selected_pp, selected_mp = [], [], []
+        timeline = {'DVT': [], 'PP': [], 'MP': []}
+        if Model_Test_Name_Details.objects.filter(Model_Name=model_name).exists():
+            selected_dvt = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['DVT'])
+            selected_pp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['PP'])
+            selected_mp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['MP'])
+            timeline['DVT'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['DVT'])
+            timeline['PP'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['PP'])
+            timeline['MP'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['MP'])
         context = {
             'model_name': model_name,
             'product': "AC",
             'DVT': dvt,
             'PP': pp,
             'MP': mp,
+            'selected_dvt': selected_dvt,
+            'selected_pp': selected_pp,
+            'selected_mp': selected_mp,
+            'timeline_dvt': timeline['DVT'],
+            'timeline_pp': timeline['PP'],
+            'timeline_mp': timeline['MP'],
         }
         return render(request, 'TestNames.html', context)
     messages.error(request, 'Invalid request')
@@ -179,12 +195,31 @@ def WM_FATL_spec(request):
                 pp.append(test_names[i])
             if int(stage[2]):
                 mp.append(test_names[i])
+        selected_dvt, selected_pp, selected_mp = [], [], []
+        timeline = {'DVT': [], 'PP': [], 'MP': []}
+        if Model_Test_Name_Details.objects.filter(Model_Name=model_name).exists():
+            selected_dvt = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['DVT'])
+            selected_pp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['PP'])
+            selected_mp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['MP'])
+            timeline['DVT'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['DVT'])
+            timeline['PP'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['PP'])
+            timeline['MP'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['MP'])
+            for stage in timeline:
+                for i in [0, 1]:
+                    if timeline[stage][i] != '':
+                        timeline[stage][i] = dt.strptime(timeline[stage][i], '%d/%m/%Y').strftime('%Y-%m-%d')
         context = {
             'model_name': model_name,
             'product': "WM - FATL",
             'DVT': dvt,
             'PP': pp,
             'MP': mp,
+            'selected_dvt': selected_dvt,
+            'selected_pp': selected_pp,
+            'selected_mp': selected_mp,
+            'timeline_dvt': timeline['DVT'],
+            'timeline_pp': timeline['PP'],
+            'timeline_mp': timeline['MP'],
         }
         return render(request, 'TestNames.html', context)
     messages.error(request, 'Invalid request')
@@ -201,18 +236,32 @@ def TestNames(request):
         dvt = request.POST.getlist('dvt-options')
         pp = request.POST.getlist('pp-options')
         mp = request.POST.getlist('mp-options')
+        print("=======================\n",dvt, pp, mp, "\n========================")
+        tl = {'DVT': ['NA', 'NA'], 'PP': ['NA', 'NA'], 'MP': ['NA', 'NA']}
+        tl['DVT'][0] = request.POST.get('dvt-start-date')
+        tl['DVT'][1] = request.POST.get('dvt-end-date')
+        tl['PP'][0] = request.POST.get('pp-start-date')
+        tl['PP'][1] = request.POST.get('pp-end-date')
+        tl['MP'][0] = request.POST.get('mp-start-date')
+        tl['MP'][1] = request.POST.get('mp-end-date')
+        for stage in tl:
+            for i in [0, 1]:
+                if tl[stage][i] !='':
+                    tl[stage][i] = dt.strptime(tl[stage][i], '%Y-%m-%d').strftime('%d/%m/%Y')
         model_test_names = {"DVT": dvt, "PP": pp, "MP": mp}
         model_updated = False
         if Model_Test_Name_Details.objects.filter(Model_Name=model_name).exists():
             existing_model_test_name_details = Model_Test_Name_Details.objects.get(Model_Name=model_name)
             existing_model_test_name_details.Test_Names = model_test_names
+            existing_model_test_name_details.Time_Line = {"DVT": [tl['DVT'][0], tl['DVT'][1]], "PP": [tl['PP'][0], tl['PP'][1]], "MP": [tl['MP'][0], tl['MP'][1]]}
             existing_model_test_name_details.save()
             delete_reports(request, model_name)
             model_updated = True
         else:
             new_model_test_name_details = Model_Test_Name_Details(
-                Model_Name=model_name,
-                Test_Names=model_test_names
+                Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name),
+                Test_Names=model_test_names,
+                Time_Line = tl
             )
             new_model_test_name_details.save()
         generate_reports(request, model_name, model_updated)
