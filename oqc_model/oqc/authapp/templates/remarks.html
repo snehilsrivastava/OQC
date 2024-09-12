@@ -1,21 +1,51 @@
 <div class="report-container">
     <button class="toggle-remarks-btn" id="toggleRemarksBtn" onclick="toggleRemarks()">
         <svg height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
-        <span>Remarks</span>
+        <span>Comments</span>
     </button>
 
-    <div id="remarks-section" class="remarks">
+    <div id="remarks-section">
         <div class="remarks-header">
             <button class="close-remarks-btn" onclick="toggleRemarks()"><span class="close">&times;</span></button>
             <h5>Comments</h5>
         </div>
-        <div class="remarks-content">
-
-            
-        </div>
-        <div class="comment-box">
+        <div class="add-comment-box">
             <textarea class="add-comment" placeholder="Add a comment"></textarea>
             <button class="send-button">Post</button>
+        </div>
+        <div class="remarks-content">
+            {% for remark in remarks %}
+                <div class="comment-box" id="{{ remark.id }}">
+                    <div class="comment-header">
+                        <icon class="comment-icon">
+                            {% if remark.type == "highlight" %}
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="m548-410-90-91-193 193 91 91 192-193Zm-38-143 90 91 192-192-90-91-192 192Zm-77-24 192 192-218 218q-22 20-50.5 21.5T308-164l-20 20H96l116-116q-21-20-20-49.5t23-49.5l218-218Zm0 0 218-218q21-21 51-21t51 21l90 90q20 22 20 51t-20 51L625-385 433-577Z"/></svg>
+                            {% elif remark.type == "underline" %}
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-144v-72h480v72H240Zm240-144q-96 0-148.5-59.4T279-504.86V-816h97.21v317.09q0 52.85 26.43 85.88Q429.07-380 480.03-380q50.97 0 77.39-33.03 26.41-33.03 26.41-85.88V-816H681v311.14q0 98.06-52.5 157.46Q576-288 480-288Z"/></svg></button>
+                            {% elif remark.type == "strikethrough" %}
+                            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M96-408v-72h768v72H96Zm336-144v-120H240v-96h480v96H528v120h-96Zm0 360v-144h96v144h-96Z"/></svg>
+                            {% elif remark.type == "comment" %}
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-384h480v-72H240v72Zm0-132h480v-72H240v72Zm0-132h480v-72H240v72ZM864-96 720-240H168q-29.7 0-50.85-21.15Q96-282.3 96-312v-480q0-29.7 21.15-50.85Q138.3-864 168-864h624q29.7 0 50.85 21.15Q864-821.7 864-792v696ZM168-312h582l42 42v-522H168v480Zm0 0v-480 480Z"/></svg>
+                            {% endif %}
+                        </icon>
+                        <div class="comment-from">{{ remark.from }}</div>
+                        <div class="comment-date">{{ remark.simp_date }}</div>
+                    </div>
+                    {% if remark.content %}
+                        <div class="comment-content">{{ remark.content }}</div>
+                    {% elif remark.type == "highlight" %}
+                        <div class="comment-content italics">Highlighted text</div>
+                    {% elif remark.type == "underline" %}
+                        <div class="comment-content italics">Underlined text</div>
+                    {% elif remark.type == "strikethrough" %}
+                        <div class="comment-content italics">Strikethrough text</div>
+                    {% endif %}
+                    <div class="add-comment-box-2">
+                        <textarea class="comment-content-input" placeholder="Add comment">{{ remark.content }}</textarea>
+                        <button class="send-button">Post</button>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
 </div>
@@ -29,7 +59,6 @@
 
 <script>
     const textarea = document.querySelector('.add-comment');
-
     textarea.addEventListener('input', () => {
     textarea.style = 'max-height: 200px';
     textarea.style.height = `${textarea.scrollHeight+2}px`;
@@ -53,14 +82,16 @@
         let randomString = '';
         for (let i = 0; i < length; i++) {
             const randomIndex = Math.floor(Math.random() * characters.length);
-            randomString += characters.charAt(randomIndex);   
+            randomString += characters.charAt(randomIndex);
         }
         return randomString;
     }
 
     function popupAction(action) {
-        toggleRemarks();
-        // window.removeEventListener('scroll', updatePopupPosition);
+        var remarksSection = document.getElementById('remarks-section');
+        if (!remarksSection.classList.contains('visible')) {
+            remarksSection.classList.add('visible');
+        }
         var popup = document.querySelector('.popup');
         popup.style.display = 'none';
         var selection = window.getSelection();
@@ -78,17 +109,33 @@
             div.style.textDecoration = 'line-through';
         }
         range.surroundContents(div);
-        
+        const textarea = document.querySelector('.add-comment');
+        textarea.focus();
+        textarea.selectionStart = textarea.value.length;
+        textarea.selectionEnd = textarea.value.length;
         
         selection.removeAllRanges();
     }
-</script>
-<script>
+    
+    function findCommonParentTag(selection) {
+        let currentNode = selection.anchorNode;
+        while (currentNode) {
+            if (currentNode.contains(selection.focusNode)) {
+                return currentNode.parentElement;
+            }
+            currentNode = currentNode.parentNode;
+        }
+        return null;
+    }
+
     let lastSelected = '';
-    document.addEventListener('mouseup', function(event) {
+    const form = document.querySelector('form'); 
+    form.addEventListener('mouseup', function(event) {
         var selection = window.getSelection();
+        var parentTag = findCommonParentTag(selection).tagName;
         let currSelected = selection.toString();
-        if (currSelected !== '' && currSelected !== lastSelected) {
+        validTagList = ['TD', 'SPAN', 'P'];
+        if (currSelected !== '' && currSelected !== lastSelected && validTagList.includes(parentTag)) {
             lastSelected = currSelected;
             var popup = document.querySelector('.popup');
             popup.style.display = 'block';
@@ -99,13 +146,11 @@
                 popup.style.left = (rect.left + rect.right) / 2 - 25.5 + 'px';
                 popup.style.top = rect.top + window.scrollY- 30 + 'px';
             };
-
             updatePopupPosition();
             window.addEventListener('scroll', updatePopupPosition);
             
             const docListener = function(event) {
                 event.stopPropagation();
-                // console.log(event.target);
                 if (!popup.contains(event.target)) {
                     popup.style.display = 'none';
                     window.removeEventListener('scroll', updatePopupPosition);
@@ -114,5 +159,89 @@
             };
             document.addEventListener('mousedown', docListener);
         }
+    });
+
+    const commentBoxes = document.querySelectorAll('.comment-box');
+    commentBoxes.forEach(box => {
+        box.addEventListener('mouseenter', function() {
+            const commentId = box.id;
+            const targetContent = document.querySelector(`[data-comment-id='${commentId}']`);
+            if (targetContent) {
+                targetContent.classList.add('add-border');
+            }
+        });
+        box.addEventListener('mouseleave', function() {
+            const commentId = box.id;
+            const targetContent = document.querySelector(`[data-comment-id='${commentId}']`);
+            if (targetContent) {
+                targetContent.classList.remove('add-border');
+            }
+        });
+    });
+
+    function handleCommentClick() {
+        const commentBoxes = document.querySelectorAll('.comment-box');
+        commentBoxes.forEach(box => {
+            const commentFrom = box.querySelector('.comment-header .comment-from');
+            const employeeName = "{{employee.first_name}} {{employee.last_name}}";
+            if (commentFrom.textContent.trim() === employeeName) {
+                box.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    const commentContent = box.querySelector('.comment-content');
+                    const addCommentBox2 = box.querySelector('.add-comment-box-2');
+                    const textarea = addCommentBox2.querySelector('.comment-content-input');
+                    if (commentContent) {
+                        commentContent.style.display = (commentContent.style.display === 'none') ? 'block' : 'none';
+                    }
+                    if (addCommentBox2) {
+                        addCommentBox2.style.display = (addCommentBox2.style.display === 'flex') ? 'none' : 'flex';
+                        if (addCommentBox2.style.display === 'flex') {
+                            textarea.focus();
+                            textarea.selectionStart = textarea.value.length;
+                            textarea.selectionEnd = textarea.value.length;
+                            textarea.style.height = `${textarea.scrollHeight+2}px`;
+                            textarea.addEventListener('input', () => {
+                            textarea.style = 'max-height: 200px';
+                            textarea.style.height = `${textarea.scrollHeight+2}px`;
+                            });
+                        }
+                    }
+                });
+                const addCommentBox2 = box.querySelector('.add-comment-box-2');
+                addCommentBox2.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                });
+            }
+        });
+    }
+    handleCommentClick();
+
+    const remarkElements = document.querySelectorAll('.remark');
+    remarkElements.forEach(remark => {
+        const commentId = remark.dataset.commentId;
+        const targetContent = document.querySelector(`.comment-box[id='${commentId}']`);
+        remark.addEventListener('mouseover', () => {
+            const commentId = remark.dataset.commentId;
+            remark.style.cursor = 'pointer';
+            remark.classList.add('add-border');
+            if (targetContent) {
+                targetContent.classList.add('add-border');
+            }
+        });
+
+        remark.addEventListener('mouseout', () => {
+            remark.classList.remove('add-border');
+            if (targetContent) {
+                targetContent.classList.remove('add-border');
+            }
+        });
+
+        remark.addEventListener('click', () => {
+            if (targetContent) {
+                const remarksSection = document.querySelector('#remarks-section');
+                remarksSection.classList.add('visible');
+                targetContent.focus();
+            }
+        });
     });
 </script>

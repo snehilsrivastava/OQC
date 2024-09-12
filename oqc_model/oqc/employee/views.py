@@ -405,7 +405,25 @@ def view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
+    remarks_list = []
+    remarks = test_record.remarks
+    for remark in remarks:
+        remark = json.loads(remark)
+        remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
+        time_diff = dt.now() - remark_date
+        if time_diff.seconds < 60 and time_diff.days == 0:
+            remark["simp_date"] = "A few seconds ago"
+        elif time_diff.seconds < 3600 and time_diff.days == 0:
+            remark["simp_date"] = f"{time_diff.seconds // 60} min ago"
+        elif time_diff.days == 0:
+            remark["simp_date"] = f"{time_diff.seconds // 3600} hours ago"
+        elif time_diff.days == 1:
+            remark["simp_date"] = "Yesterday"
+        else:
+            remark["simp_date"] = remark_date.strftime("%d %b")
+        remarks_list.append(remark)
     context = {
+        'remarks': remarks_list,
         'TestProtocol': Test_protocol,
         'test': test_record,
     }
@@ -431,7 +449,25 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
+    remarks_list = []
+    remarks = test_record.remarks
+    for remark in remarks:
+        remark = json.loads(remark)
+        remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
+        time_diff = dt.now() - remark_date
+        if time_diff.seconds < 60 and time_diff.days == 0:
+            remark["simp_date"] = "A few seconds ago"
+        elif time_diff.seconds < 3600 and time_diff.days == 0:
+            remark["simp_date"] = f"{time_diff.seconds // 60} min ago"
+        elif time_diff.days == 0:
+            remark["simp_date"] = f"{time_diff.seconds // 3600} hours ago"
+        elif time_diff.days == 1:
+            remark["simp_date"] = "Yesterday"
+        else:
+            remark["simp_date"] = remark_date.strftime("%d %b")
+        remarks_list.append(remark)
     context = {
+        'remarks': remarks_list,
         'TestProtocol': Test_protocol,
         'test': test_record,
     }
@@ -879,7 +915,25 @@ def legal_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
+    remarks_list = []
+    remarks = test_record.remarks
+    for remark in remarks:
+        remark = json.loads(remark)
+        remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
+        time_diff = dt.now() - remark_date
+        if time_diff.seconds < 60 and time_diff.days == 0:
+            remark["simp_date"] = "A few seconds ago"
+        elif time_diff.seconds < 3600 and time_diff.days == 0:
+            remark["simp_date"] = f"{time_diff.seconds // 60} min ago"
+        elif time_diff.days == 0:
+            remark["simp_date"] = f"{time_diff.seconds // 3600} hours ago"
+        elif time_diff.days == 1:
+            remark["simp_date"] = "Yesterday"
+        else:
+            remark["simp_date"] = remark_date.strftime("%d %b")
+        remarks_list.append(remark)
     context = {
+        'remarks': remarks_list,
         'TestProtocol': Test_protocol,
         'test': test_record,
     }
@@ -900,7 +954,25 @@ def brand_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
+    remarks_list = []
+    remarks = test_record.remarks
+    for remark in remarks:
+        remark = json.loads(remark)
+        remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
+        time_diff = dt.now() - remark_date
+        if time_diff.seconds < 60 and time_diff.days == 0:
+            remark["simp_date"] = "A few seconds ago"
+        elif time_diff.seconds < 3600 and time_diff.days == 0:
+            remark["simp_date"] = f"{time_diff.seconds // 60} min ago"
+        elif time_diff.days == 0:
+            remark["simp_date"] = f"{time_diff.seconds // 3600} hours ago"
+        elif time_diff.days == 1:
+            remark["simp_date"] = "Yesterday"
+        else:
+            remark["simp_date"] = remark_date.strftime("%d %b")
+        remarks_list.append(remark)
     context = {
+        'remarks': remarks_list,
         'TestProtocol': Test_protocol,
         'test': test_record,
     }
