@@ -2,8 +2,9 @@ from django.shortcuts import render,redirect
 from .models import *
 from employee.models import TestRecord, Test_core_detail
 from django.urls import reverse
-from authapp.models import Employee
+from authapp.models import Employee, Notification, default_notification
 from django.contrib import messages
+import json
 from datetime import datetime as dt
 
 def login_required(view_func):
@@ -248,30 +249,33 @@ def TestNames(request):
                 if tl[stage][i] !='':
                     tl[stage][i] = dt.strptime(tl[stage][i], '%Y-%m-%d').strftime('%d/%m/%Y')
         model_test_names = {"DVT": dvt, "PP": pp, "MP": mp}
-        if Model_Test_Name_Details.objects.filter(Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name)).exists():
-            existing_model_test_name_details = Model_Test_Name_Details.objects.get(Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name))
+        model_updated = False
+        if Model_Test_Name_Details.objects.filter(Model_Name=model_name).exists():
+            existing_model_test_name_details = Model_Test_Name_Details.objects.get(Model_Name=model_name)
             existing_model_test_name_details.Test_Names = model_test_names
             existing_model_test_name_details.Time_Line = {"DVT": [tl['DVT'][0], tl['DVT'][1]], "PP": [tl['PP'][0], tl['PP'][1]], "MP": [tl['MP'][0], tl['MP'][1]]}
             existing_model_test_name_details.save()
             delete_reports(request, model_name)
+            model_updated = True
         else:
             new_model_test_name_details = Model_Test_Name_Details(
                 Model_Name=Model_MNF_detail.objects.get(Indkal_model_no=model_name),
                 Test_Names=model_test_names,
-                Time_Line = {"DVT": [dvt_start_date, dvt_end_date], "PP": [pp_start_date, pp_end_date], "MP": [mp_start_date, mp_end_date]}
+                Time_Line = tl
             )
             new_model_test_name_details.save()
-        generate_reports(request, model_name)
+        generate_reports(request, model_name, model_updated)
         messages.success(request, 'Model saved')
         return redirect('/dashboard/')
     messages.error(request, 'Invalid request')
     return redirect('/dashboard/')
 
 @login_required
-def generate_reports(request, model_name):
+def generate_reports(request, model_name, model_updated):
     model = Model_Test_Name_Details.objects.get(Model_Name = Model_MNF_detail.objects.get(Indkal_model_no = model_name))
     model_tests = model.Test_Names
     model_product = model.Product
+    created_reports = 0
     for stage, test_names in model_tests.items():
         for test_name in test_names:
             if not TestRecord.objects.filter(ProductType=model_product, ModelName=model_name, TestStage=stage, TestName=test_name).exists():
@@ -282,6 +286,32 @@ def generate_reports(request, model_name):
                     TestStage=stage,
                 )
                 test_record.save()
+                created_reports += 1
+    # send notification to owners and employees
+    user = Employee.objects.get(username=request.session['username'])
+    if created_reports > 0:
+        employees = Employee.objects.filter(user_type__in=['employee', 'owner'])
+        for employee in employees:
+            user_ProdType = [k for k in employee.product_type if employee.product_type[k]]
+            if model_product in user_ProdType:
+                notification = Notification.objects.get(employee=employee.username)
+                notification_dict = default_notification()
+                notification_dict["from"] = f"{user.first_name} {user.last_name}"
+                if model_updated:
+                    notification_dict["display_content"] = f"{user.first_name} {user.last_name} updated model: {model_name}"
+                    notification_dict["display_full_content"] = f"Updated model {model_name} and created {created_reports} reports for product: {model_product}."
+                else:
+                    notification_dict["display_content"] = f"{user.first_name} {user.last_name} added model: {model_name}"
+                    notification_dict["display_full_content"] = f"Added model {model_name} and created {created_reports} reports for product: {model_product}."
+                notification_dict["metadata"] = {
+                    "product": model_product,
+                    "model": model_name
+                }
+                notification_dict["action"] = "created"
+                notif_dict = json.dumps(notification_dict)
+                notification.notification.append(notif_dict)
+                notification.unread_count += 1
+                notification.save()
 
 @login_required
 def delete_reports(request, model_name):

@@ -33,8 +33,6 @@ urlpatterns = [
     path('test_protocol_entry/<str:test_name>/<str:product>/', views.test_protocol_entry, name='test_protocol_entry'),
     path('set_status/<int:id>/', views.set_status, name='set_status'),
     path('delete-test-record/<int:record_id>/', views.delete_test_record, name='delete_test_record'),
-    path('remark/<int:id>/', views.remark, name='remark'),
-    path('remark_owner/<int:id>/', views.owner_remark, name='remark_owner'),
     path('view_pdf/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.view_pdf, name='view_pdf'),
     path('handle_selected_tests/', views.handle_selected_tests, name='handle_selected_tests'),
     path('access_denied/', views.access_denied, name='access_denied'),
@@ -44,6 +42,8 @@ urlpatterns = [
     path('clear_notification/', views.clear_notification, name="clear_notification"),
     path('notifications/', views.notifications, name="notifications"),
     path('to_dashboards/', views.to_dashboards, name="to_dashboards"),
+    path('mark_all_as_read/', views.mark_all_as_read, name="mark_all_as_read"),
+    path('delete_notification/', views.delete_notification, name="delete_notification"),
 ]
 
 from django.conf import settings
