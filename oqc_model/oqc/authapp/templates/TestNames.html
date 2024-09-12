@@ -8,7 +8,7 @@
     <title>Add Tests for Model</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUa1zX+8Hk5uvz/2BifflkLvKZon43Z7qD5C5xQzGtvT0PCZfFj5x0zJb3ln" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/form.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/menu.css' %}">
@@ -28,7 +28,7 @@
     </div>
     <div class="container">
         <div class="form-container">
-            <div class="header-form" style = "padding: 5px 30px; "> 
+            <div class="form-header" style = "padding: 5px 30px; "> 
                 <h1>Add Tests for Model</h1>
             </div>
             <form action="{% url 'TestNames' %}" method="post">
@@ -45,15 +45,15 @@
                     <div class="single-select-container">
                         <span style="gap: 5px; display: flex; align-items: center;">
                             <input type="checkbox" id="stage-dvt" name="single-select-options" class="single-select-checkboxes" value="DVT" onclick="singleSelect(this)">
-                            DVT<label for="stage-dvt"></label>
+                            <label for="stage-dvt"></label>DVT
                         </span>
                         <span style="gap: 5px; display: flex; align-items: center;">
                             <input type="checkbox" id="stage-pp" name="single-select-options" class="single-select-checkboxes" value="PP" onclick="singleSelect(this)">
-                            PP<label for="stage-pp"></label>
+                            <label for="stage-pp"></label>PP
                         </span>
                         <span style="gap: 5px; display: flex; align-items: center;">
                             <input type="checkbox" id="stage-mp" name="single-select-options" class="single-select-checkboxes" value="MP" onclick="singleSelect(this)">
-                            MP<label for="stage-mp"></label>
+                            <label for="stage-mp"></label>MP
                         </span>
                     </div>
                 </div>
@@ -61,25 +61,94 @@
                     <label>DVT Tests</label>
                     <select class="multiple-selections" id="dvt-options" name="dvt-options" data-placeholder="Select DVT Tests" multiple data-multi-select>
                         {% for t in DVT %}
-                            <option value="{{ t }}">{{ t }}</option>
+                            {% for st in selected_dvt %}
+                                {% if t == st %}
+                                    <option value="{{ t }}" selected>{{ t }}</option>
+                                {% else %}
+                                    <option value="{{ t }}">{{ t }}</option>
+                                {% endif %}
+                            {% endfor %}
                         {% endfor %}
                     </select>
+                </div>
+                <div class="form-group timeline-group">
+                    <label>DVT Timeline <span style="font-size: 12px; font-weight: 300;">(Leave empty if not decided yet)</span></label>
+                    <div class="timeline">
+                        {% if timeline_dvt %}
+                            Start Date: <input value="{{ timeline_dvt.0 }}" type="date" class="timeline-input form-control" id="dvt" name="dvt-start-date" placeholder="Enter NA if not decided yet">
+                        {% else %}
+                            Start Date: <input type="date" class="timeline-input form-control" id="dvt" name="dvt-start-date" placeholder="Enter NA if not decided yet">
+                        {% endif %}
+                    </div>
+                    <div class="timeline">
+                        {% if timeline_dvt %}
+                            End Date: <input value="{{ timeline_dvt.1 }}" type="date" class="timeline-input form-control" id="dvt" name="dvt-end-date" placeholder="Enter NA if not decided yet">
+                        {% else %}
+                            End Date: <input type="date" class="timeline-input form-control" id="dvt" name="dvt-end-date" placeholder="Enter NA if not decided yet">
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>PP Tests</label>
                     <select class="multiple-selections" id="pp-options" name="pp-options" data-placeholder="Select PP Tests" multiple data-multi-select>
                         {% for t in PP %}
-                            <option value="{{ t }}">{{ t }}</option>
+                            {% for st in selected_pp %}
+                                {% if t == st %}
+                                    <option value="{{ t }}" selected>{{ t }}</option>
+                                {% else %}
+                                    <option value="{{ t }}">{{ t }}</option>
+                                {% endif %}
+                            {% endfor %}
                         {% endfor %}
                     </select>
+                </div>
+                <div class="form-group timeline-group">
+                    <label>PP Timeline <span style="font-size: 12px; font-weight: 300;">(Leave empty if not decided yet)</span></label>
+                    <div class="timeline">
+                        {% if timeline_pp %}
+                            Start Date: <input value="{{ timeline_pp.0 }}" type="date" class="timeline-input form-control" id="pp" name="pp-start-date" placeholder="Enter NA if not decided yet">
+                        {% else %}
+                            Start Date: <input type="date" class="timeline-input form-control" id="pp" name="pp-start-date" placeholder="Enter NA if not decided yet">
+                        {% endif %}
+                    </div>
+                    <div class="timeline">
+                        {% if timeline_pp %}
+                            End Date: <input value="{{ timeline_pp.1 }}" type="date" class="timeline-input form-control" id="pp" name="pp-end-date" placeholder="Enter NA if not decided yet">
+                        {% else %}
+                            End Date: <input type="date" class="timeline-input form-control" id="pp" name="pp-end-date" placeholder="Enter NA if not decided yet">
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>MP Tests</label>
                     <select class="multiple-selections" id="mp-options" name="mp-options" data-placeholder="Select MP Tests" multiple data-multi-select>
                         {% for t in MP %}
-                            <option value="{{ t }}">{{ t }}</option>
+                            {% for st in selected_mp %}
+                                {% if t == st %}
+                                    <option value="{{ t }}" selected>{{ t }}</option>
+                                {% else %}
+                                    <option value="{{ t }}">{{ t }}</option>
+                                {% endif %}
+                            {% endfor %}
                         {% endfor %}
                     </select>
+                </div>
+                <div class="form-group timeline-group">
+                    <label>MP Timeline <span style="font-size: 12px; font-weight: 300;">(Leave empty if not decided yet)</span></label>
+                    <div class="timeline">
+                        {% if timeline_mp %}
+                            Start Date: <input value="{{ timeline_mp.0 }}" type="date" class="timeline-input form-control" id="mp" name="mp-start-date" placeholder="Enter NA if not decided yet">
+                        {% else %}
+                            Start Date: <input type="date" class="timeline-input form-control" id="mp" name="mp-start-date" placeholder="Enter NA if not decided yet">
+                        {% endif %}
+                    </div>
+                    <div class="timeline">
+                        {% if timeline_mp %}
+                            End Date: <input value="{{ timeline_mp.1 }}" type="date" class="timeline-input form-control" id="mp" name="mp-end-date" placeholder="Enter NA if not decided yet">
+                        {% else %}
+                            End Date: <input type="date" class="timeline-input form-control" id="mp" name="mp-end-date" placeholder="Enter NA if not decided yet">
+                        {% endif %}
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-submit">Submit</button>
             </form>
@@ -92,5 +161,6 @@
     <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
     <script src="{% static 'js/multiselect.js' %}"></script>
+    <script src="{% static 'js/testName.js' %}"></script>
 </body>
 </html>
