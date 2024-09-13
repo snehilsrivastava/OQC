@@ -199,17 +199,17 @@ button {
     display: block;
 }
 
-.badge {
+.unreadBadge {
     position: absolute;
     transform: translate(-60%, 0%);
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     background-color: red;
     color: white;
     text-align: center;
     font-size: 11px;
-    line-height: 10.5px;
+    line-height: 16px;
 }
 
 .fa-bell {

@@ -127,12 +127,18 @@ def AC_spec(request):
                 pp.append(test_names[i])
             if int(stage[2]):
                 mp.append(test_names[i])
-        selected_dvt, selected_pp, selected_mp = [], [], []
+        selected_dvt, selected_pp, selected_mp = [0 for _ in dvt], [0 for _ in pp], [0 for _ in mp]
         timeline = {'DVT': [], 'PP': [], 'MP': []}
         if Model_Test_Name_Details.objects.filter(Model_Name=model_name).exists():
-            selected_dvt = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['DVT'])
-            selected_pp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['PP'])
-            selected_mp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['MP'])
+            _dvt = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['DVT'])
+            _pp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['PP'])
+            _mp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['MP'])
+            for i in range(len(dvt)):
+                selected_dvt[i] = 1 if dvt[i] in _dvt else 0
+            for i in range(len(pp)):
+                selected_pp[i] = 1 if pp[i] in _pp else 0
+            for i in range(len(mp)):
+                selected_mp[i] = 1 if mp[i] in _mp else 0
             timeline['DVT'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['DVT'])
             timeline['PP'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['PP'])
             timeline['MP'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['MP'])
@@ -195,12 +201,18 @@ def WM_FATL_spec(request):
                 pp.append(test_names[i])
             if int(stage[2]):
                 mp.append(test_names[i])
-        selected_dvt, selected_pp, selected_mp = [], [], []
+        selected_dvt, selected_pp, selected_mp = [0 for _ in dvt], [0 for _ in pp], [0 for _ in mp]
         timeline = {'DVT': [], 'PP': [], 'MP': []}
         if Model_Test_Name_Details.objects.filter(Model_Name=model_name).exists():
-            selected_dvt = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['DVT'])
-            selected_pp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['PP'])
-            selected_mp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['MP'])
+            _dvt = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['DVT'])
+            _pp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['PP'])
+            _mp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['MP'])
+            for i in range(len(dvt)):
+                selected_dvt[i] = 1 if dvt[i] in _dvt else 0
+            for i in range(len(pp)):
+                selected_pp[i] = 1 if pp[i] in _pp else 0
+            for i in range(len(mp)):
+                selected_mp[i] = 1 if mp[i] in _mp else 0
             timeline['DVT'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['DVT'])
             timeline['PP'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['PP'])
             timeline['MP'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['MP'])

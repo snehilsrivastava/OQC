@@ -40,115 +40,63 @@
                     <label for="ModelName">Model Number</label>
                     <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ model_name }}" readonly>
                 </div>
-                <div class="form-group">
-                    <label for="single-select-container" style="margin-bottom: 0;">Stages</label>
-                    <div class="single-select-container">
-                        <span style="gap: 5px; display: flex; align-items: center;">
-                            <input type="checkbox" id="stage-dvt" name="single-select-options" class="single-select-checkboxes" value="DVT" onclick="singleSelect(this)">
-                            <label for="stage-dvt"></label>DVT
-                        </span>
-                        <span style="gap: 5px; display: flex; align-items: center;">
-                            <input type="checkbox" id="stage-pp" name="single-select-options" class="single-select-checkboxes" value="PP" onclick="singleSelect(this)">
-                            <label for="stage-pp"></label>PP
-                        </span>
-                        <span style="gap: 5px; display: flex; align-items: center;">
-                            <input type="checkbox" id="stage-mp" name="single-select-options" class="single-select-checkboxes" value="MP" onclick="singleSelect(this)">
-                            <label for="stage-mp"></label>MP
-                        </span>
-                    </div>
+                <div class="timeline-device" style="margin-bottom: 16px;">
+                    <!-- filled by JS on load -->
                 </div>
-                <div class="form-group">
-                    <label>DVT Tests</label>
-                    <select class="multiple-selections" id="dvt-options" name="dvt-options" data-placeholder="Select DVT Tests" multiple data-multi-select>
-                        {% for t in DVT %}
-                            {% for st in selected_dvt %}
-                                {% if t == st %}
-                                    <option value="{{ t }}" selected>{{ t }}</option>
-                                {% else %}
-                                    <option value="{{ t }}">{{ t }}</option>
-                                {% endif %}
+                <div class=" hidden-test-options" style="display: none;">
+                    <div class="form-group">
+                        <label>DVT Tests</label>
+                        <select class="multiple-selections" id="dvt-options" name="dvt-options" data-placeholder="Select DVT Tests" multiple>
+                            {% for t in DVT %}
+                                <option value="{{ t }}">{{ t }}</option>
                             {% endfor %}
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group timeline-group">
-                    <label>DVT Timeline <span style="font-size: 12px; font-weight: 300;">(Leave empty if not decided yet)</span></label>
-                    <div class="timeline">
-                        {% if timeline_dvt %}
-                            Start Date: <input value="{{ timeline_dvt.0 }}" type="date" class="timeline-input form-control" id="dvt" name="dvt-start-date" placeholder="Enter NA if not decided yet">
-                        {% else %}
-                            Start Date: <input type="date" class="timeline-input form-control" id="dvt" name="dvt-start-date" placeholder="Enter NA if not decided yet">
-                        {% endif %}
+                        </select>
                     </div>
-                    <div class="timeline">
-                        {% if timeline_dvt %}
-                            End Date: <input value="{{ timeline_dvt.1 }}" type="date" class="timeline-input form-control" id="dvt" name="dvt-end-date" placeholder="Enter NA if not decided yet">
-                        {% else %}
-                            End Date: <input type="date" class="timeline-input form-control" id="dvt" name="dvt-end-date" placeholder="Enter NA if not decided yet">
-                        {% endif %}
+                    
+                    <div class="form-group">
+                        <label>PP Tests</label>
+                        <select class="multiple-selections" id="pp-options" name="pp-options" data-placeholder="Select PP Tests" multiple>
+                            {% for t in PP %}
+                                <option value="{{ t }}">{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>MP Tests</label>
+                        <select class="multiple-selections" id="mp-options" name="mp-options" data-placeholder="Select MP Tests" multiple>
+                            {% for t in MP %}
+                                <option value="{{ t }}">{{ t }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>PP Tests</label>
-                    <select class="multiple-selections" id="pp-options" name="pp-options" data-placeholder="Select PP Tests" multiple data-multi-select>
-                        {% for t in PP %}
-                            {% for st in selected_pp %}
-                                {% if t == st %}
-                                    <option value="{{ t }}" selected>{{ t }}</option>
-                                {% else %}
-                                    <option value="{{ t }}">{{ t }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group timeline-group">
-                    <label>PP Timeline <span style="font-size: 12px; font-weight: 300;">(Leave empty if not decided yet)</span></label>
-                    <div class="timeline">
-                        {% if timeline_pp %}
-                            Start Date: <input value="{{ timeline_pp.0 }}" type="date" class="timeline-input form-control" id="pp" name="pp-start-date" placeholder="Enter NA if not decided yet">
-                        {% else %}
-                            Start Date: <input type="date" class="timeline-input form-control" id="pp" name="pp-start-date" placeholder="Enter NA if not decided yet">
-                        {% endif %}
-                    </div>
-                    <div class="timeline">
-                        {% if timeline_pp %}
-                            End Date: <input value="{{ timeline_pp.1 }}" type="date" class="timeline-input form-control" id="pp" name="pp-end-date" placeholder="Enter NA if not decided yet">
-                        {% else %}
-                            End Date: <input type="date" class="timeline-input form-control" id="pp" name="pp-end-date" placeholder="Enter NA if not decided yet">
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>MP Tests</label>
-                    <select class="multiple-selections" id="mp-options" name="mp-options" data-placeholder="Select MP Tests" multiple data-multi-select>
-                        {% for t in MP %}
-                            {% for st in selected_mp %}
-                                {% if t == st %}
-                                    <option value="{{ t }}" selected>{{ t }}</option>
-                                {% else %}
-                                    <option value="{{ t }}">{{ t }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group timeline-group">
-                    <label>MP Timeline <span style="font-size: 12px; font-weight: 300;">(Leave empty if not decided yet)</span></label>
-                    <div class="timeline">
-                        {% if timeline_mp %}
-                            Start Date: <input value="{{ timeline_mp.0 }}" type="date" class="timeline-input form-control" id="mp" name="mp-start-date" placeholder="Enter NA if not decided yet">
-                        {% else %}
-                            Start Date: <input type="date" class="timeline-input form-control" id="mp" name="mp-start-date" placeholder="Enter NA if not decided yet">
-                        {% endif %}
-                    </div>
-                    <div class="timeline">
-                        {% if timeline_mp %}
-                            End Date: <input value="{{ timeline_mp.1 }}" type="date" class="timeline-input form-control" id="mp" name="mp-end-date" placeholder="Enter NA if not decided yet">
-                        {% else %}
-                            End Date: <input type="date" class="timeline-input form-control" id="mp" name="mp-end-date" placeholder="Enter NA if not decided yet">
-                        {% endif %}
-                    </div>
+                    <label style="margin: 0;">Tests</label>
+                    <table class="selection-table">
+                        <colgroup>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>DVT</th>
+                                <th>PP</th>
+                                <th>MP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="templateRow">
+                                <th>Test Name</th>
+                                <td><input onchange="fillMultiSelect(this)" type="checkbox" id="dvt"></td></td>
+                                <td><input onchange="fillMultiSelect(this)" type="checkbox" id="pp"></td></td>
+                                <td><input onchange="fillMultiSelect(this)" type="checkbox" id="mp"></td></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <button type="submit" class="btn btn-primary btn-submit">Submit</button>
             </form>
@@ -162,5 +110,11 @@
     <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
     <script src="{% static 'js/multiselect.js' %}"></script>
     <script src="{% static 'js/testName.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            populateTimeline({{timeline_dvt|safe}}, {{timeline_pp|safe}}, {{timeline_mp|safe}});
+            populateTests({{DVT|safe}}, {{PP|safe}}, {{MP|safe}}, {{selected_dvt}}, {{selected_pp}}, {{selected_mp}});
+        });
+    </script>
 </body>
 </html>
