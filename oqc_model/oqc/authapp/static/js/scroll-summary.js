@@ -61,10 +61,12 @@ function getCloneTable(card, pick, club) {
         if(row.children[0].colSpan !== 5){
             if(row.children[1].textContent.trim() == productName && row.children[2].textContent.trim() == modelName){
                 if(pick || !club){
+                    row.querySelector('td button').click();
                     cloneTableBody.innerHTML = row.outerHTML + row.nextElementSibling.outerHTML;
                     row.nextElementSibling.style.display = "none";
                     row.style.display = "none";
                 } else {
+                    row.querySelector('td button').click();
                     row.nextElementSibling.removeAttribute('style');
                     row.removeAttribute('style');
                 }
