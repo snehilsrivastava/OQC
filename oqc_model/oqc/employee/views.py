@@ -412,7 +412,7 @@ def view(request, stage, product, test_name, model_name, serialno):
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
         if time_diff.seconds < 60 and time_diff.days == 0:
-            remark["simp_date"] = "A few seconds ago"
+            remark["simp_date"] = "Now"
         elif time_diff.seconds < 3600 and time_diff.days == 0:
             remark["simp_date"] = f"{time_diff.seconds // 60} min ago"
         elif time_diff.days == 0:
@@ -422,6 +422,7 @@ def view(request, stage, product, test_name, model_name, serialno):
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
         remarks_list.append(remark)
+    remarks_list.sort(key=lambda remark: remark['date'], reverse=True)
     context = {
         'remarks': remarks_list,
         'TestProtocol': Test_protocol,
@@ -456,7 +457,7 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
         if time_diff.seconds < 60 and time_diff.days == 0:
-            remark["simp_date"] = "A few seconds ago"
+            remark["simp_date"] = "Now"
         elif time_diff.seconds < 3600 and time_diff.days == 0:
             remark["simp_date"] = f"{time_diff.seconds // 60} min ago"
         elif time_diff.days == 0:
@@ -466,6 +467,7 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
         remarks_list.append(remark)
+    remarks_list.sort(key=lambda remark: remark['date'], reverse=True)
     context = {
         'remarks': remarks_list,
         'TestProtocol': Test_protocol,
@@ -930,7 +932,7 @@ def legal_view(request, stage, product, test_name, model_name, serialno):
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
         if time_diff.seconds < 60 and time_diff.days == 0:
-            remark["simp_date"] = "A few seconds ago"
+            remark["simp_date"] = "Now"
         elif time_diff.seconds < 3600 and time_diff.days == 0:
             remark["simp_date"] = f"{time_diff.seconds // 60} min ago"
         elif time_diff.days == 0:
@@ -940,6 +942,7 @@ def legal_view(request, stage, product, test_name, model_name, serialno):
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
         remarks_list.append(remark)
+    remarks_list.sort(key=lambda remark: remark['date'], reverse=True)
     context = {
         'remarks': remarks_list,
         'TestProtocol': Test_protocol,
@@ -969,7 +972,7 @@ def brand_view(request, stage, product, test_name, model_name, serialno):
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
         if time_diff.seconds < 60 and time_diff.days == 0:
-            remark["simp_date"] = "A few seconds ago"
+            remark["simp_date"] = "Now"
         elif time_diff.seconds < 3600 and time_diff.days == 0:
             remark["simp_date"] = f"{time_diff.seconds // 60} min ago"
         elif time_diff.days == 0:
@@ -979,6 +982,7 @@ def brand_view(request, stage, product, test_name, model_name, serialno):
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
         remarks_list.append(remark)
+    remarks_list.sort(key=lambda remark: remark['date'], reverse=True)
     context = {
         'remarks': remarks_list,
         'TestProtocol': Test_protocol,
@@ -1443,3 +1447,31 @@ def delete_notification(request):
         notification.save()
         return HttpResponse('Notification deleted successfully')
     return HttpResponse('Invalid request method')
+
+@login_required
+def make_remark_changes(request):
+    if request.method == 'POST':
+        inc_remark = json.loads(request.body)
+        user = Employee.objects.get(username=request.session['username'])
+        test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
+        test_record.html_content = inc_remark["table_content"]
+        remarks_list = [json.loads(remark) for remark in test_record.remarks]
+        updated = False
+        for remark in remarks_list:
+            if remark["id"] == inc_remark["id"]:
+                updated = True
+                remark["content"] = inc_remark["content"]
+                remark["date"] = dt.now().strftime("%Y-%m-%d %H:%M:%S")
+                break
+        if not updated:
+            remarks_list.append({
+                "content": inc_remark["content"],
+                "type": inc_remark["type"],
+                "id": inc_remark["id"],
+                "from": f"{user.first_name} {user.last_name}",
+                "date": dt.now().strftime("%Y-%m-%d %H:%M:%S"),
+            })
+        test_record.remarks = [json.dumps(remark) for remark in remarks_list]
+        test_record.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
