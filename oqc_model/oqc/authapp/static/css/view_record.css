@@ -211,6 +211,15 @@ div.add-border {
 
 div.remark {
     display: inline;
+    &.highlight {
+        background-color: yellow;
+    }
+    &.strikethrough {
+        text-decoration: line-through;
+    }
+    &.underline {
+        text-decoration: underline;
+    }
 }
 
 .comment-box {
