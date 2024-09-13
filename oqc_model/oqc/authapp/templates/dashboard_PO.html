@@ -139,7 +139,17 @@
                             Model Details
                         </div>
                         <div class="card-dates">
-                            12/09/24 - 12/09/24
+                            {% for stage, stageData in sum.Stage_wise.items %}
+                                {% if stageData.TimeLine.0 and stageData.TimeLine.1 %}
+                                    <div class="card-date">{{stage}}: {{stageData.TimeLine.0}} - {{stageData.TimeLine.1}}</div>
+                                {% elif stageData.TimeLine.0 %}
+                                    <div class="card-date">{{stage}}: {{stageData.TimeLine.0}} - NA</div>
+                                {% elif stageData.TimeLine.1 %}
+                                    <div class="card-date">{{stage}}: NA - {{stageData.TimeLine.1}}</div>
+                                {% else %}
+                                    <div class="card-date">{{stage}}: NA - NA</div>
+                                {% endif %}
+                            {% endfor %}
                         </div>
                         <div class="card-status">
                             <table class="card-status-table">
