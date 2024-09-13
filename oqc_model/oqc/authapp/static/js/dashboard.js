@@ -118,3 +118,29 @@ function filterOnStage(button, stage) {
         button.classList.add('stage-filter-btn-active');
     }
 }
+
+function selectAllCheckboxes(Selected_checkbox) {
+    const table = Selected_checkbox.parentElement.parentElement.parentElement.parentElement; // Find the closest table
+    const checkboxes = table.querySelectorAll('td input[type="checkbox"]'); // Get all checkboxes within the table
+    for (const checkbox of checkboxes) {
+        checkbox.checked = Selected_checkbox.checked;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var messageContainer = document.querySelector('.message-container');
+    var timerBar = document.querySelector('.timer-bar');
+    var header = document.querySelector('.header');
+
+    if (messageContainer && timerBar && header) {
+        var headerRect = header.getBoundingClientRect();
+        var headerHeight = headerRect.height;
+        var headerTop = headerRect.top + window.scrollY;
+        messageContainer.style.top = `${headerTop + headerHeight}px`;
+        timerBar.style.width = '0%';
+
+        setTimeout(function() {
+            messageContainer.style.top = `-${messageContainer.offsetHeight}px`;
+        }, 5000);
+    }
+});

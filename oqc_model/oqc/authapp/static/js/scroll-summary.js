@@ -1,107 +1,115 @@
-function navigateToPage(card) {
-    const productName = card.querySelector('.card-prod').textContent.trim();
-    const stageName = card.querySelector('.card-heading .stage').textContent.trim();
-    const modelName = card.querySelector('.card-heading .model').textContent.trim();
+function modifyCardContainer(card, pick, club) {
+    const cardContainer = card.parentElement;
+    const sumContainer = cardContainer.parentElement;
+    const productName = card.querySelector('.card-product').textContent.trim();
+    const modelName = card.querySelector('.card-model').textContent.trim();
 
-    const filterForm = document.querySelector('#filter-form');
-    const filterProdField = filterForm.querySelector('select#product');
-    const filterStageField = filterForm.querySelector('select#test_stage');
-    const filterModelField = filterForm.querySelector('select#model_name');
-
-    filterProdField.value = productName;
-    filterStageField.value = stageName;
-    populateModels();
-    filterModelField.value = modelName;
-    filterForm.submit();
-}
-
-function isTouchScreenDevice() {
-    return 'ontouchstart' in window;
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.querySelector('.scrollcontainer');
-
-    // Define scroll speed and interval
-    const scrollSpeed = 200; // Adjust scroll speed (higher value for faster scrolling)
-    const scrollInterval = 1500; // Adjust scroll interval in milliseconds
-    let scrollDirection = 'right'; // Initial scroll direction
-
-    // Function to scroll container automatically
-    function autoScroll() {
-        if (scrollDirection === 'right') {
-            container.scrollLeft += scrollSpeed;
-            // Check if reached end of scroll
-            if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
-                scrollDirection = 'left';
+    let newContainer = document.createElement('div');
+    newContainer.classList.add('scrollcontainer');
+    if(pick || !club){
+        let cards = Array.from(cardContainer.children)
+        for(let i = 0; i < cards.length; i++){
+            childProduct = cards[i].querySelector('.card-product').textContent.trim();
+            childModel = cards[i].querySelector('.card-model').textContent.trim();
+            if(productName === childProduct && modelName === childModel){
+                newContainer.appendChild(cards[i]);
+                break;
             }
-        } else if (scrollDirection === 'left') {
-            container.scrollLeft -= scrollSpeed;
-            // Check if scrolled back to start
-            if (container.scrollLeft <= 0) {
-                scrollDirection = 'right';
+            newContainer.appendChild(cards[i]);
+        }
+        sumContainer.insertBefore(newContainer, cardContainer);
+    } else {
+        let cards = Array.from(cardContainer.children)
+        if(cardContainer.nextElementSibling.nextElementSibling){
+            for(let i = cards.length-1; i > -1; i--){
+                cardContainer.nextElementSibling.nextElementSibling.insertBefore(cards[i], cardContainer.nextElementSibling.nextElementSibling.firstChild);
             }
         }
     }
+    return newContainer;
+}
 
-    // Start auto-scrolling
-    let scrollIntervalId = setInterval(autoScroll, scrollInterval);
-
-    if (!isTouchScreenDevice()) {
-        // Stop auto-scrolling when mouse enters container
-        container.addEventListener('mouseover', () => {
-            clearInterval(scrollIntervalId);
-        });
-
-        // Resume auto-scrolling when mouse leaves container
-        container.addEventListener('mouseout', () => {
-            scrollIntervalId = setInterval(autoScroll, scrollInterval);
-        });
+function placeCloneTable(card, cloneTable, pick, club, last_card) {
+    const cardParent = card.parentElement;
+    const sumParent = cardParent.parentElement;
+    newContainer = modifyCardContainer(card, pick, club);
+    if(pick || !club){
+        if(last_card){
+            sumParent.insertBefore(cloneTable, cardParent);
+            cardParent.remove();
+        } else {
+            sumParent.insertBefore(cloneTable, cardParent);
+        }
+    } else {
+        sumParent.removeChild(cardParent.nextElementSibling);
+        if(!last_card){
+            cardParent.remove();
+        }
     }
-    else {
-        container.addEventListener('touchstart', () => {
-            clearInterval(scrollIntervalId);
-        });
-    
-        // Resume auto-scrolling when mouse leaves container
-        container.addEventListener('touchend', () => {
-            setTimeout(() => {
-                scrollIntervalId = setInterval(autoScroll, scrollInterval);
-            }, 2000);
-        });
-    }
+}
+        
+function getCloneTable(card, pick, club) {
+    const productName = card.querySelector('span.card-product').textContent.trim();
+    const modelName = card.querySelector('span.card-model').textContent.trim();
 
-    // Optional: Stop auto-scrolling when clicking on a card
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-        card.addEventListener('click', () => {
-            clearInterval(scrollIntervalId);
-        });
+    const mainTable = document.querySelectorAll('.main-table');
+    const mainTableRows = Array.from(mainTable[mainTable.length - 1].querySelector('tbody').children);
+    const cloneTable = mainTable[mainTable.length - 1].cloneNode(true);
+    const cloneTableBody = cloneTable.querySelector('tbody');
+    let remRows = mainTableRows.length;
+    mainTableRows.forEach(row => {
+        if(row.children[0].colSpan !== 5){
+            if(row.children[1].textContent.trim() == productName && row.children[2].textContent.trim() == modelName){
+                if(pick || !club){
+                    row.querySelector('td button').click();
+                    cloneTableBody.innerHTML = row.outerHTML + row.nextElementSibling.outerHTML;
+                    row.nextElementSibling.style.display = "none";
+                    row.style.display = "none";
+                } else {
+                    row.querySelector('td button').click();
+                    row.nextElementSibling.removeAttribute('style');
+                    row.removeAttribute('style');
+                }
+            }
+            if(row.getAttribute('style')){
+                remRows--;
+                remRows--;
+            }
+        }
     });
-});
-
-function displayStatusPerTeam(button, event, sum) {
-    event.stopPropagation();
-    const team = button.textContent.trim();
-    const testCounts = button.parentElement.parentElement.parentElement.previousElementSibling;
-    
-    if (team === "Product") {
-        lists = testCounts.querySelectorAll('li');
-        lists.forEach((testCount, index) => {
-            let splitText = testCount.textContent.split(': ');
-            testCount.textContent = splitText[0] + ": " + sum.Count.PO[index];
-        });
-    } else if (team === "Brand") {
-        lists = testCounts.querySelectorAll('li');
-        lists.forEach((testCount, index) => {
-            let splitText = testCount.textContent.split(': ');
-            testCount.textContent = splitText[0] + ": " + sum.Count.BT[index];
-        });
-    } else if (team === "Legal") {
-        lists = testCounts.querySelectorAll('li');
-        lists.forEach((testCount, index) => {
-            let splitText = testCount.textContent.split(': ');
-            testCount.textContent = splitText[0] + ": " + sum.Count.LT[index];
-        });
+    if(remRows == 0) {
+        mainTable[mainTable.length - 1].style.display = "none";
+    } else if (mainTable[mainTable.length - 1].getAttribute('style')) {
+        mainTable[mainTable.length - 1].removeAttribute('style');
     }
+    cloneTable.querySelector('thead').querySelector('tr').querySelector('th').children[0].remove();
+
+    const newTableContainer = document.createElement('div');
+    newTableContainer.classList.add('table-containers');
+    newTableContainer.classList.add('card-table-containers');
+    newTableContainer.appendChild(cloneTable);
+
+    const newForm = document.createElement('form');
+    newForm.setAttribute('method', 'POST');
+    newForm.setAttribute('action', '/handle_selected_tests/');
+    newForm.appendChild(newTableContainer);
+
+    return newForm;
+}
+
+function fetchModelRow(card) {
+    let pick, club, last_card;
+    if(card.nextElementSibling){pick = true;}
+    else {pick = false;}
+    if(card.parentElement.nextElementSibling){club = true;}
+    else {club = false;}
+    if(card.nextElementSibling){last_card = false;}
+    else {
+        if(card.parentElement.nextElementSibling && card.parentElement.nextElementSibling.nextElementSibling){
+            last_card = false;
+        }
+        else {last_card = true;}
+    }
+    const cloneTable = getCloneTable(card, pick, club);
+    placeCloneTable(card, cloneTable, pick, club, last_card);
 }

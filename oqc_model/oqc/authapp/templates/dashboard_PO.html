@@ -20,17 +20,16 @@
     <form id="filter-form" method="get" action="{% url 'dashboard' %}">
         <div>
             <label for="product">Product Type:</label>
-            <select class="form-control filter-form-control" id="product" name="product" onchange="populateModels(); populateTestName();">
+            <select class="form-control filter-form-control" id="product" name="product" onchange="populateModels({{models_list}}); populateTestName({{test}});">
                 <option value="">Select Product Type</option>
-                <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
-                <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
-                <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
-                <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
+                {% for PT in userProductTypes %}
+                    <option value="{{ PT }}"{% if product == PT %}selected{% endif %}>{{ PT }}</option>
+                {% endfor %}
             </select>
         </div>
         <div>
             <label for="test_stage">Test Stage:</label>
-            <select class="form-control filter-form-control" id="test_stage" name="test_stage" onchange="populateTestName();">
+            <select class="form-control filter-form-control" id="test_stage" name="test_stage" onchange="populateTestName({{test}});">
                 <option value="">Select Test Stage</option>
                 <option value="DVT" {%if test_stage == 'DVT'%}selected{%endif%}>DVT</option>
                 <option value="PP"{%if test_stage == 'PP'%}selected{%endif%}>PP</option>
@@ -39,10 +38,8 @@
         </div>
         <div>
             <label for="model_name">Model Name:</label>
-            <select class="form-control filter-form-control" id="model_name" name="model_name">
+            <select class="form-control filter-form-control" id="model_name" name="model_name" onchange="populateTestName({{test}});">
                 <!-- Model options will be populated dynamically based on the selected product type -->
-                {% comment %} {%if model_name%}<option value={{model_name}} selected>{{model_name}}</option>{%endif%} {% endcomment %}
-                <option value="">{{model_name}}</option>
             </select>
         </div>
         <div>
@@ -131,44 +128,107 @@
                 </div>
             </span>
             <div class="summary">
-                <div class="scroll-container">
-                    <div class="scrollcontainer">
-                        {% for sum in summary_data %}
-                        <div class="card" onclick="navigateToPage(this)">
-                            <div class="card-title">
-                                <div class="card-prod">
-                                    <span>{{sum.Meta.0}}</span>
-                                </div>
-                                <div class="card-heading">
-                                    <span class="model">{{sum.Meta.1}}</span>
-                                    <span class="stage">{{sum.Meta.2}}</span>
-                                </div>
-                            </div>
-                            <div class="card-content">
-                                <span class="test-count">
-                                    <ul>
-                                        <li>Total: {{sum.Count.PO.0}}</li>
-                                        <li style="color: lime;">Approved: {{sum.Count.PO.1}}</li>
-                                        <li style="color: yellow;">Unapproved: {{sum.Count.PO.2}}</li>
-                                        <li style="color: #ff5959;">Not Submitted: {{sum.Count.PO.3}}</li>
-                                    </ul>
-                                </span>
-                                <span class="status-info">
-                                    <ul>
-                                        <li><button class="card-status-button" style="background-color: {{sum.Status.0}};" onclick="displayStatusPerTeam(this, event, {{sum}})">Product</button></li>
-                                        <li><button class="card-status-button" style="background-color: {{sum.Status.1}};" onclick="displayStatusPerTeam(this, event, {{sum}})">Brand</button></li>
-                                        <li><button class="card-status-button" style="background-color: {{sum.Status.2}};" onclick="displayStatusPerTeam(this, event, {{sum}})">Legal</button></li>
-                                    </ul>
-                                </span>
-                            </div>
+                <div class="scrollcontainer">
+                    {% for sum in summary_data %}
+                    <div class="card" onclick="fetchModelRow(this)">
+                        <div class="card-meta">
+                            <span class="card-product">{{sum.Meta.0}}</span>
+                            <span class="card-model">{{sum.Meta.1}}</span>
                         </div>
-                        {% endfor %}
+                        <div class="card-details">
+                            Model Details
+                        </div>
+                        <div class="card-dates">
+                            {% for stage, stageData in sum.Stage_wise.items %}
+                                {% if stageData.TimeLine.0 and stageData.TimeLine.1 %}
+                                    <div class="card-date">{{stage}}: {{stageData.TimeLine.0}} - {{stageData.TimeLine.1}}</div>
+                                {% elif stageData.TimeLine.0 %}
+                                    <div class="card-date">{{stage}}: {{stageData.TimeLine.0}} - NA</div>
+                                {% elif stageData.TimeLine.1 %}
+                                    <div class="card-date">{{stage}}: NA - {{stageData.TimeLine.1}}</div>
+                                {% else %}
+                                    <div class="card-date">{{stage}}: NA - NA</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="card-status">
+                            <table class="card-status-table">
+                                <colgroup>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th colspan="3">DVT</th>
+                                        <th></th>
+                                        <th colspan="3">PP</th>
+                                        <th></th>
+                                        <th colspan="3">MP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>PT</th>
+                                        <td>10</td>
+                                        <td>5</td>
+                                        <td>3</td>
+                                        <td></td>
+                                        <td>15</td>
+                                        <td>9</td>
+                                        <td>5</td>
+                                        <td></td>
+                                        <td>25</td>
+                                        <td>9</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <th>BT</th>
+                                        <td>10</td>
+                                        <td>5</td>
+                                        <td>3</td>
+                                        <td></td>
+                                        <td>15</td>
+                                        <td>9</td>
+                                        <td>5</td>
+                                        <td></td>
+                                        <td>25</td>
+                                        <td>9</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <th>LT</th>
+                                        <td>10</td>
+                                        <td>5</td>
+                                        <td>3</td>
+                                        <td></td>
+                                        <td>15</td>
+                                        <td>9</td>
+                                        <td>5</td>
+                                        <td></td>
+                                        <td>25</td>
+                                        <td>9</td>
+                                        <td>3</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
         <form method="POST" action="{% url 'handle_selected_tests' %}">
-            {% csrf_token %}
             <div class="table-containers">
                 <table class="table main-table table-bordered">
                     <colgroup>
@@ -192,123 +252,123 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for test in tests %}
-                    <tr>
-                        <td class="coll-btn-cell">
-                            <button class="collapse-button" type="button" data-toggle="collapse"
-                                    data-target="#testList{{ forloop.counter }}" aria-expanded="false"
-                                    aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">
-                                <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
-                            </button>
-                        </td>
-                        <td>{{ test.ProductType }}</td>
-                        <td><p class="model-name">{{ test.ModelName }}</p></td>
-                        <td>
-                            <div class="stage-btn">
-                                <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'DVT')">DVT</button>
-                                <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'PP')">PP</button>
-                                <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'MP')">MP</button>
-                            </div>
-                        </td>
-                        <td>
-                            <div style="display: flex; gap: 5px">
-                                <button class="action-button" name="action" value="generate_pdf" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
-                                    <path d="M360-460h40v-80h40q17 0 28.5-11.5T480-580v-40q0-17-11.5-28.5T440-660h-80v200Zm40-120v-40h40v40h-40Zm120 120h80q17 0 28.5-11.5T640-500v-120q0-17-11.5-28.5T600-660h-80v200Zm40-40v-120h40v120h-40Zm120 40h40v-80h40v-40h-40v-40h40v-40h-80v200ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
-                                    </svg>&nbsp;Download</button>
-                                <button class="action-button" name="action" value="send_legal" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed" transform="rotate(-45 0 0)">
-                                    <path d="M792-443 176-183q-20 8-38-3.5T120-220v-520q0-22 18-33.5t38-3.5l616 260q25 11 25 37t-25 37ZM200-280l474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
-                                    </svg>Legal</button>
-                                <button class="action-button" name="action" value="send_brand" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed" transform="rotate(-45 0 0)">
-                                    <path d="M792-443 176-183q-20 8-38-3.5T120-220v-520q0-22 18-33.5t38-3.5l616 260q25 11 25 37t-25 37ZM200-280l474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
-                                    </svg>Brand</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="5">
-                            <div class="collapse" id="testList{{ forloop.counter }}">
-                                <table class="table drop-table">
-                                    <colgroup>
-                                        <col>
-                                        <col>
-                                        <col>
-                                        <col>
-                                        <col>
-                                        <col>
-                                        <col>
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th class="checkbox-cell">
-                                                <input type="checkbox" id="select-all-{{ forloop.counter }}">
-                                            </th>
-                                            <th>Test Name</th>
-                                            <th>Stage</th>
-                                            <th>Date</th>
-                                            <th>Serial No</th>
-                                            <th class="status-column">Status
-                                                <span class="help-legends">
-                                                    ? 
-                                                    <div class="legends">
-                                                        <span class="color">
-                                                            {% for status, color in status_color.items %}
-                                                                <span class="circle" name="{{status}}" id="leg" style="background-color: {{color}};"></span> : {{status}}<br>
-                                                            {% endfor %}
-                                                        </span>
-                                                        <br>
-                                                        <span class="letter">
-                                                            {% for letter, role in role_letter.items %}
-                                                                <span class="circle" name='{{role}}' id="leg">{{letter}}</span> : {{role}}<br>
-                                                            {% endfor %}
-                                                        </span>
-                                                    </div>
-                                                </span></th>
-                                            {% if employee.is_superuser %}
-                                            <th>Actions</th>
-                                            {% else %}
-                                            <th>Action</th>
-                                            {% endif %}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for subtest in all_tests %}
-                                        {% if subtest.ModelName == test.ModelName %}
-                                        <tr>
-                                            <td class="checkbox-cell">
-                                                <input type="checkbox" name="selected_tests" value="{{ subtest.id }}">
-                                            </td>
-                                            <td><p class="test-name">{{ subtest.TestName }}</p></td>
-                                            <td>{{ subtest.TestStage }}</td>
-                                            <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
-                                            <td>{{ subtest.SerailNo }}</td>
-                                            <td> <span class="test-status">
-                                                <span class="letter">
-                                                    <span class="color">
-                                                        <span class="circle status-{{subtest.status}}">T</span>
-                                                        <span class="circle status-{{subtest.L_status}}">L</span>
-                                                        <span class="circle status-{{subtest.B_status}}">B</span>
-                                                    </span>
-                                                </span>
-                                            </span></td>
-                                            <td class="action-buttons">
+                        {% for test in tests %}
+                        <tr>
+                            <td class="coll-btn-cell">
+                                <button class="collapse-button" type="button" data-toggle="collapse"
+                                        data-target="#testList{{ forloop.counter }}" aria-expanded="false"
+                                        aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">
+                                    <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
+                                </button>
+                            </td>
+                            <td>{{ test.ProductType }}</td>
+                            <td><p class="model-name">{{ test.ModelName }}</p></td>
+                            <td>
+                                <div class="stage-btn">
+                                    <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'DVT')">DVT</button>
+                                    <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'PP')">PP</button>
+                                    <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'MP')">MP</button>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 5px">
+                                    <button class="action-button" name="action" value="generate_pdf" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+                                        <path d="M360-460h40v-80h40q17 0 28.5-11.5T480-580v-40q0-17-11.5-28.5T440-660h-80v200Zm40-120v-40h40v40h-40Zm120 120h80q17 0 28.5-11.5T640-500v-120q0-17-11.5-28.5T600-660h-80v200Zm40-40v-120h40v120h-40Zm120 40h40v-80h40v-40h-40v-40h40v-40h-80v200ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
+                                        </svg>&nbsp;Download</button>
+                                    <button class="action-button" name="action" value="send_legal" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed" transform="rotate(-45 0 0)">
+                                        <path d="M792-443 176-183q-20 8-38-3.5T120-220v-520q0-22 18-33.5t38-3.5l616 260q25 11 25 37t-25 37ZM200-280l474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
+                                        </svg>Legal</button>
+                                    <button class="action-button" name="action" value="send_brand" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed" transform="rotate(-45 0 0)">
+                                        <path d="M792-443 176-183q-20 8-38-3.5T120-220v-520q0-22 18-33.5t38-3.5l616 260q25 11 25 37t-25 37ZM200-280l474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
+                                        </svg>Brand</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">
+                                <div class="collapse" id="testList{{ forloop.counter }}">
+                                    <table class="table drop-table">
+                                        <colgroup>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col>
+                                            <col>
+                                        </colgroup>
+                                        <thead>
+                                            <tr>
+                                                <th class="checkbox-cell">
+                                                    <input type="checkbox" id="select-all-{{ forloop.counter }}" onchange="selectAllCheckboxes(this)">
+                                                </th>
+                                                <th>Test Name</th>
+                                                <th>Stage</th>
+                                                <th>Date</th>
+                                                <th>Serial No</th>
+                                                <th class="status-column">Status
+                                                    <span class="help-legends">
+                                                        ? 
+                                                        <div class="legends">
+                                                            <span class="color">
+                                                                {% for status, color in status_color.items %}
+                                                                    <span class="circle" name="{{status}}" id="leg" style="background-color: {{color}};"></span> : {{status}}<br>
+                                                                {% endfor %}
+                                                            </span>
+                                                            <br>
+                                                            <span class="letter">
+                                                                {% for letter, role in role_letter.items %}
+                                                                    <span class="circle" name='{{role}}' id="leg">{{letter}}</span> : {{role}}<br>
+                                                                {% endfor %}
+                                                            </span>
+                                                        </div>
+                                                    </span></th>
                                                 {% if employee.is_superuser %}
-                                                <div class="multiple-actions">
-                                                    <a class="btn" href="{% url 'owner_view' subtest.TestStage subtest.ProductType subtest.TestName subtest.ModelName subtest.SerailNo %}"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg></a>
-                                                    <a class="edit button" href="{% url 'edit' subtest.TestStage subtest.ProductType subtest.TestName subtest.ModelName subtest.SerailNo %}"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg></a> 
-                                                </div>
+                                                <th>Actions</th>
                                                 {% else %}
-                                                <a class="btn" href="{% url 'owner_view' subtest.TestStage subtest.ProductType subtest.TestName subtest.ModelName subtest.SerailNo %}">View</a>
+                                                <th>Action</th>
                                                 {% endif %}
-                                            </td>
-                                        </tr>
-                                        {% endif %}
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for subtest in all_tests %}
+                                            {% if subtest.ModelName == test.ModelName %}
+                                            <tr>
+                                                <td class="checkbox-cell">
+                                                    <input type="checkbox" name="selected_tests" value="{{ subtest.id }}">
+                                                </td>
+                                                <td><p class="test-name">{{ subtest.TestName }}</p></td>
+                                                <td>{{ subtest.TestStage }}</td>
+                                                <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
+                                                <td>{{ subtest.SerailNo }}</td>
+                                                <td> <span class="test-status">
+                                                    <span class="letter">
+                                                        <span class="color">
+                                                            <span class="circle status-{{subtest.status}}">T</span>
+                                                            <span class="circle status-{{subtest.L_status}}">L</span>
+                                                            <span class="circle status-{{subtest.B_status}}">B</span>
+                                                        </span>
+                                                    </span>
+                                                </span></td>
+                                                <td class="action-buttons">
+                                                    {% if employee.is_superuser %}
+                                                    <div class="multiple-actions">
+                                                        <a class="btn" href="{% url 'owner_view' subtest.TestStage subtest.ProductType subtest.TestName subtest.ModelName subtest.SerailNo %}"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg></a>
+                                                        <a class="edit button" href="{% url 'edit' subtest.TestStage subtest.ProductType subtest.TestName subtest.ModelName subtest.SerailNo %}"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg></a> 
+                                                    </div>
+                                                    {% else %}
+                                                    <a class="btn" href="{% url 'owner_view' subtest.TestStage subtest.ProductType subtest.TestName subtest.ModelName subtest.SerailNo %}">View</a>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -317,6 +377,7 @@
 </div>
 
 <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/filter.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/scroll-summary.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -324,133 +385,8 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var messageContainer = document.querySelector('.message-container');
-        var timerBar = document.querySelector('.timer-bar');
-        var header = document.querySelector('.header');
-
-        if (messageContainer && timerBar && header) {
-            var headerRect = header.getBoundingClientRect();
-            var headerHeight = headerRect.height;
-            var headerTop = headerRect.top + window.scrollY;
-            messageContainer.style.top = `${headerTop + headerHeight}px`;
-            timerBar.style.width = '0%';
-
-            setTimeout(function() {
-                messageContainer.style.top = `-${messageContainer.offsetHeight}px`;
-            }, 5000);
-        }
-    });
-    
-    document.addEventListener("DOMContentLoaded", function() {
-        populateModels();
-        populateTestName();
-    
-        document.getElementById("product").addEventListener("change", function() {
-            populateModels();
-            populateTestName();
-        });
-        document.getElementById("test_stage").addEventListener("change", function() {
-            populateTestName();
-        });
-    });
-        
-    // JavaScript object to store model data
-    const modelsByType = {
-        "TV": {{tv_models|safe}},
-        "AC": {{ac_models|safe}},
-        "Phone": {{phone_models|safe}},
-        "Washing_Machine": {{washing_machine_models|safe}}
-    };
-    
-    // JavaScript function to populate the model list based on the selected product type
-    function populateModels() {
-        const productTypeDropdown = document.getElementById("product");
-        const modelNameDropdown = document.getElementById("model_name");
-        const selectedProductType = productTypeDropdown.value;
-    
-        // Clear existing options
-        modelNameDropdown.innerHTML = "";
-    
-        // Populate model options based on the selected product type
-        if (selectedProductType && modelsByType[selectedProductType]) {
-            const optionAllModels = document.createElement("option");
-            optionAllModels.text = "All Models";
-            optionAllModels.value = "";
-            modelNameDropdown.appendChild(optionAllModels);
-    
-            modelsByType[selectedProductType].forEach(model => {
-                const option = document.createElement("option");
-                option.text = model;
-                modelNameDropdown.appendChild(option);
-            });
-        }
-    }
-        
-    function populateTestName() {
-        const testDetail = {{ test|safe }};
-        const productTypeDropdown = document.getElementById("product");
-        const testStageDropdown = document.getElementById("test_stage");
-        const testNameDropdown = document.getElementById("test_name");
-        const selectedProductType = productTypeDropdown.value;
-        const selectedTestStage = testStageDropdown.value;
-    
-        // Clear existing options
-        testNameDropdown.innerHTML = "";
-    
-        const optionAllTests = document.createElement("option");
-        optionAllTests.text = "All Tests";
-        optionAllTests.value = "";
-        testNameDropdown.appendChild(optionAllTests);
-    
-        testDetail.forEach(item => {
-            const s = item.TestStage;
-    
-            if (selectedProductType === "" && selectedTestStage === "") {
-                // If both product type and test stage are not selected, show all test names
-                const option = document.createElement("option");
-                option.text = item.TestName;
-                testNameDropdown.appendChild(option);
-            } else if (selectedProductType === "") {
-                // If only test stage is selected, filter by test stage
-                if ((s[0] === '1' && selectedTestStage === "DVT") ||
-                    (s[1] === '1' && selectedTestStage === "PP") ||
-                    (s[2] === '1' && selectedTestStage === "MP")) {
-                    const option = document.createElement("option");
-                    option.text = item.TestName;
-                    testNameDropdown.appendChild(option);
-                }
-            } else if (selectedTestStage === "") {
-                // If only product type is selected, filter by product type
-                if (item.ProductType === selectedProductType) {
-                    const option = document.createElement("option");
-                    option.text = item.TestName;
-                    testNameDropdown.appendChild(option);
-                }
-            } else {
-                // If both product type and test stage are selected, filter by both
-                if (item.ProductType === selectedProductType && (
-                    (s[0] === '1' && selectedTestStage === "DVT") ||
-                    (s[1] === '1' && selectedTestStage === "PP") ||
-                    (s[2] === '1' && selectedTestStage === "MP"))) {
-                    const option = document.createElement("option");
-                    option.text = item.TestName;
-                    testNameDropdown.appendChild(option);
-                }
-            }
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Select all checkboxes when the "select-all" checkbox is clicked
-        document.querySelectorAll('[id^="select-all-"]').forEach(checkbox => {
-            checkbox.addEventListener('click', function(event) {
-                const table = event.target.closest('table'); // Find the closest table
-                const checkboxes = table.querySelectorAll('td input[type="checkbox"]'); // Get all checkboxes within the table
-                for (const checkbox of checkboxes) {
-                    checkbox.checked = event.target.checked;
-                }
-            });
-        });
+        populateModels({{models_list|safe}});
+        populateTestName({{test|safe}});
     });
 </script>
 </body>

@@ -1,5 +1,23 @@
 @import url("color_pallette.css");
 
+/* @media only screen and (max-device-width: 600px) {
+    .mobile-tg {
+        display: block !important;
+    }
+    .desktop-tg {
+        display: none !important;
+    }
+}
+
+@media only screen and (min-device-width: 600px) {
+    .desktop-tg {
+        display: block !important;
+    }
+    .mobile-tg {
+        display: none !important;
+    }
+} */
+
 .multi-select {
     display: flex;
     box-sizing: border-box;
@@ -200,4 +218,99 @@ input[id="stage-dvt"]:checked + label::before, input[id="stage-pp"]:checked + la
 
 .single-select-checkboxes {
     display: none;
+}
+
+.timeline {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.timeline-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group .timeline:nth-child(3) {
+    gap: 16px;
+}
+
+.timeline-input {
+    width: fit-content;
+}
+
+.desktop-tg-table {
+    align-self: center;
+    border: none;
+    margin: 0;
+    width: 80% !important;
+    & colgroup col{
+        &:nth-of-type(1) {
+            width: 10%;
+        }
+        &:nth-of-type(2), &:nth-of-type(3){
+            width: 45%;
+        }
+    }
+    & tr, td, th {
+        border: none;
+        padding: 0;
+    }
+    & th {
+        background-color: transparent;
+        color: var(--webkit-text-fill-color);
+        &:nth-of-type(2), &:nth-of-type(3){
+            text-align: center;
+        }
+    }
+    & tbody th {
+        padding: 5px;
+    }
+    & td {
+        align-items: center;
+        & div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}
+.desktop-tg {
+    display: flex;
+    flex-direction: column;
+
+    & label{
+        align-self: start;
+        margin-bottom: 0;
+    }
+    & input[type="date"] {
+        width: 90%;
+    }
+}
+
+.selection-table {
+    border: none;
+    margin: 0;
+    width: 100% !important;
+    & colgroup col{
+        width: 14%;
+        &:nth-of-type(1) {
+            width: 58%;
+        }
+    }
+    & tr, td, th {
+        border: none;
+        padding: 0;
+    }
+    & th {
+        background-color: transparent;
+        color: var(--webkit-text-fill-color);
+        &:nth-of-type(2), &:nth-of-type(3), &:nth-of-type(4) {
+            text-align: center;
+        }
+    }
+    & td {
+        text-align: center;
+    }
 }

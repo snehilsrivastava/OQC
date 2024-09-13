@@ -35,3 +35,14 @@ td {
     background-color: var(--notif-read-bg);
     font-weight: 370;
 }
+
+.mark-read {
+    align-self: flex-start;
+    margin: 0px 100px;
+}
+
+.delete-btn {
+    padding: 2px 5px;
+    align-items: center;
+    justify-content: center;
+}

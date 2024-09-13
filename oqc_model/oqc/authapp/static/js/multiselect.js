@@ -62,7 +62,7 @@ class MultiSelect {
         }
         let template = `
             <div class="multi-select ${this.name}"${this.selectElement.id ? ' id="' + this.selectElement.id + '"' : ''} style="${this.width ? 'width:' + this.width + ';' : ''}${this.height ? 'height:' + this.height + ';' : ''}">
-                ${this.selectedValues.map(value => `<input type="hidden" name="${this.name}[]" value="${value}">`).join('')}
+                ${this.selectedValues.map(value => `<input type="hidden" name="${this.name}" value="${value}">`).join('')}
                 <div class="multi-select-header" style="${this.width ? 'width:' + this.width + ';' : ''}${this.height ? 'height:' + this.height + ';' : ''}">
                     <span class="multi-select-header-max">${this.options.max ? this.selectedValues.length + '/' + this.options.max : ''}</span>
                     <span class="multi-select-header-placeholder">${this.placeholder}</span>
@@ -252,51 +252,4 @@ class MultiSelect {
 
 }
 
-function singleSelect(selectedBox) {
-    const checkboxes = document.querySelectorAll('.single-select-checkboxes');
-    checkboxes.forEach(checkbox => {
-        if (checkbox !== selectedBox) {
-            checkbox.checked = false;
-        }
-    });
-
-    const stage_id = selectedBox.getAttribute('id');
-    const multiSelect = document.querySelectorAll('.multi-select');
-    if (selectedBox.checked) {
-        if (stage_id === 'stage-dvt') {
-            multiSelect.forEach(multiSel => {
-                if (multiSel.id !=='dvt-options') {
-                    multiSel.parentElement.parentElement.style.display = 'none';
-                } else {
-                    multiSel.parentElement.parentElement.style.display = 'block';
-                }
-            });
-        }
-        else if (stage_id === 'stage-pp') {
-            multiSelect.forEach(multiSel => {
-                if (multiSel.id !=='pp-options') {
-                    multiSel.parentElement.parentElement.style.display = 'none';
-                } else {
-                    multiSel.parentElement.parentElement.style.display = 'block';
-                }
-            });
-        }
-        else if (stage_id === 'stage-mp') {
-            multiSelect.forEach(multiSel => {
-                if (multiSel.id !=='mp-options') {
-                    multiSel.parentElement.parentElement.style.display = 'none';
-                } else {
-                    multiSel.parentElement.parentElement.style.display = 'block';
-                }
-            });
-        }
-    }
-    else {
-        multiSelect.forEach(multiSel => {
-            multiSel.parentElement.parentElement.style.display = 'none';
-        });
-    }
-}
-
 document.querySelectorAll('[data-multi-select]').forEach(select => new MultiSelect(select));
-document.querySelectorAll('.form-group div .multi-select').forEach(ms => ms.parentElement.parentElement.style.display = 'none');

@@ -23,7 +23,7 @@ urlpatterns = [
     path('owner_view/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.owner_view, name='owner_view'),
     path('legal_view/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.legal_view, name='legal_view'),
     path('brand_view/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.brand_view, name='brand_view'),
-    path('report/<str:test_name>/<str:model_name>/<str:serialno>/', views.report, name='report'),
+    path('report/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.report, name='report'),
     path('mnf/', views.MNF, name='mnf'),
     path('model_details_update/', views.model_details_update, name='model_details_update'),
     path('model_details_view/', views.model_details_view, name='model_details_view'),
@@ -33,8 +33,6 @@ urlpatterns = [
     path('test_protocol_entry/<str:test_name>/<str:product>/', views.test_protocol_entry, name='test_protocol_entry'),
     path('set_status/<int:id>/', views.set_status, name='set_status'),
     path('delete-test-record/<int:record_id>/', views.delete_test_record, name='delete_test_record'),
-    path('remark/<int:id>/', views.remark, name='remark'),
-    path('remark_owner/<int:id>/', views.owner_remark, name='remark_owner'),
     path('view_pdf/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.view_pdf, name='view_pdf'),
     path('handle_selected_tests/', views.handle_selected_tests, name='handle_selected_tests'),
     path('access_denied/', views.access_denied, name='access_denied'),
@@ -44,6 +42,9 @@ urlpatterns = [
     path('clear_notification/', views.clear_notification, name="clear_notification"),
     path('notifications/', views.notifications, name="notifications"),
     path('to_dashboards/', views.to_dashboards, name="to_dashboards"),
+    path('mark_all_as_read/', views.mark_all_as_read, name="mark_all_as_read"),
+    path('delete_notification/', views.delete_notification, name="delete_notification"),
+    path('make_remark_changes/', views.make_remark_changes, name='make_remark_changes'),
 ]
 
 from django.conf import settings
