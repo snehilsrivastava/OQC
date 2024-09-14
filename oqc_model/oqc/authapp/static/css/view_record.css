@@ -109,14 +109,16 @@ span {
     flex-direction: column;
     position: fixed;
     top: 52px;
-    right: -300px;
-    width: 300px;
-    height: 100%;
+    max-width: 100vw;
+    right: -350px;
+    width: 350px;
+    height: calc(100% - 52px);
     background-color: #f4f4f4;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
     padding: 20px;
     transition: right 0.3s ease;
     background-color: var(--background-area);
+    overflow: auto;
     &.visible {
         right: 0;
     }
@@ -234,6 +236,7 @@ div.remark {
     gap: 7px;
     padding: 5px 0px 0px 5px;
     align-items: center;
+    justify-content: space-between;
 }
 
 .comment-icon {
@@ -250,9 +253,29 @@ div.remark {
     fill: var(--webkit-text-fill-color);
 }
 
+.comment-from {
+    font-size: 15px;
+}
+
 .comment-date {
     font-size: 13px;
     color: var(--date-text-color);
+}
+
+.delete-btn {
+    height: 18px;
+    display: flex;
+    margin-left: auto;
+    margin-right: 10px;
+    & svg {
+        fill: var(--webkit-text-fill-color);
+        &:hover {
+            fill: rgb(206, 0, 0);
+        }
+    }
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 .comment-content {
