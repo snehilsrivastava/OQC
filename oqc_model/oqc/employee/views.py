@@ -1374,12 +1374,12 @@ def handle_notification(request):
         elif user.user_type == 'brand':
             if inc_notif['action'] == 'sent':
                 redirect_url = f'/brand_dashboard/?product={inc_notif["metadata"]["product"]}&test_stage={inc_notif["metadata"]["stage"]}&model_name={inc_notif["metadata"]["model"]}'
-            elif inc_notif['action'] == 'sent-1':
+            elif inc_notif['action'] in ['sent-1', 'commented']:
                 redirect_url = f'/brand_view/{inc_notif["metadata"]["stage"]}/{inc_notif["metadata"]["product"]}/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
         elif user.user_type == 'legal':
             if inc_notif['action'] == 'sent':
                 redirect_url = f'/legal_dashboard/?product={inc_notif["metadata"]["product"]}&test_stage={inc_notif["metadata"]["stage"]}&model_name={inc_notif["metadata"]["model"]}'
-            elif inc_notif['action'] == 'sent-1':
+            elif inc_notif['action'] in ['sent-1', 'commented']:
                 redirect_url = f'/legal_view/{inc_notif["metadata"]["stage"]}/{inc_notif["metadata"]["product"]}/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
         return JsonResponse({'redirect_url': redirect_url})
     return HttpResponse('Invalid request method')
@@ -1475,10 +1475,10 @@ def make_remark_changes(request):
                 "from": f"{user.first_name} {user.last_name}",
                 "date": dt.now().strftime("%Y-%m-%d %H:%M:%S"),
             })
-            employees = Employee.objects.filter(user_type__in=['employee', 'owner'])
+            employees = Employee.objects.all()
             for employee in employees:
                 user_ProdType = [k for k in employee.product_type if employee.product_type[k]]
-                if test_record.ProductType in user_ProdType:
+                if employee.user_type in ['legal', 'brand'] or test_record.ProductType in user_ProdType:
                     notification = Notification.objects.get(employee=employee.username)
                     notification_dict = default_notification()
                     notification_dict["from"] = f"{user.first_name} {user.last_name}"
