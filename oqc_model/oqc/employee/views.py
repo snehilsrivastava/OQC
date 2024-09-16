@@ -1362,11 +1362,15 @@ def handle_notification(request):
                 redirect_url = f'/owner_view/{inc_notif["metadata"]["stage"]}/{inc_notif["metadata"]["product"]}/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
             elif inc_notif['action'] == 'created':
                 redirect_url = f'/dashboard/?product={inc_notif["metadata"]["product"]}&model_name={inc_notif["metadata"]["model"]}'
+            elif inc_notif['action'] == 'commented':
+                redirect_url = f'/owner_view/{inc_notif["metadata"]["stage"]}/{inc_notif["metadata"]["product"]}/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
         elif user.user_type == 'employee':
             if inc_notif['action'] in ['approved', 'rejected']:
                 redirect_url = f'/view/{inc_notif["metadata"]["stage"]}/{inc_notif["metadata"]["product"]}/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
             elif inc_notif['action'] == 'created':
                 redirect_url = f'/employee_dashboard/?product={inc_notif["metadata"]["product"]}&model_name={inc_notif["metadata"]["model"]}'
+            elif inc_notif['action'] == 'commented':
+                redirect_url = f'/view/{inc_notif["metadata"]["stage"]}/{inc_notif["metadata"]["product"]}/{inc_notif["metadata"]["test"]}/{inc_notif["metadata"]["model"]}/{inc_notif["metadata"]["serialno"]}'
         elif user.user_type == 'brand':
             if inc_notif['action'] == 'sent':
                 redirect_url = f'/brand_dashboard/?product={inc_notif["metadata"]["product"]}&test_stage={inc_notif["metadata"]["stage"]}&model_name={inc_notif["metadata"]["model"]}'
@@ -1471,6 +1475,42 @@ def make_remark_changes(request):
                 "from": f"{user.first_name} {user.last_name}",
                 "date": dt.now().strftime("%Y-%m-%d %H:%M:%S"),
             })
+            employees = Employee.objects.filter(user_type__in=['employee', 'owner'])
+            for employee in employees:
+                user_ProdType = [k for k in employee.product_type if employee.product_type[k]]
+                if test_record.ProductType in user_ProdType:
+                    notification = Notification.objects.get(employee=employee.username)
+                    notification_dict = default_notification()
+                    notification_dict["from"] = f"{user.first_name} {user.last_name}"
+                    notification_dict["display_content"] = f"{user.first_name} {user.last_name} commented on a test record"
+                    notification_dict["display_full_content"] = f"Commented on test: {test_record.TestName} for model: {test_record.ModelName} and product: {test_record.ProductType}"
+                    notification_dict["metadata"] = {
+                        "stage": test_record.TestStage,
+                        "product": test_record.ProductType,
+                        "test": test_record.TestName,
+                        "model": test_record.ModelName,
+                        "serialno": test_record.SerailNo
+                    }
+                    notification_dict["action"] = "commented"
+                    notification.notification.append(json.dumps(notification_dict))
+                    notification.unread_count += 1
+                    notification.save()
+        test_record.remarks = [json.dumps(remark) for remark in remarks_list]
+        test_record.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+@login_required
+def delete_remark(request):
+    if request.method == 'POST':
+        inc_remark = json.loads(request.body)
+        test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
+        test_record.html_content = inc_remark["table_content"]
+        remarks_list = [json.loads(remark) for remark in test_record.remarks]
+        for remark in remarks_list:
+            if remark["id"] == inc_remark["id"]:
+                remarks_list.remove(remark)
+                break
         test_record.remarks = [json.dumps(remark) for remark in remarks_list]
         test_record.save()
         return JsonResponse({'success': True})

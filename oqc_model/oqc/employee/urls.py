@@ -45,6 +45,7 @@ urlpatterns = [
     path('mark_all_as_read/', views.mark_all_as_read, name="mark_all_as_read"),
     path('delete_notification/', views.delete_notification, name="delete_notification"),
     path('make_remark_changes/', views.make_remark_changes, name='make_remark_changes'),
+    path('delete_remark/', views.delete_remark, name='delete_remark'),
 ]
 
 from django.conf import settings
