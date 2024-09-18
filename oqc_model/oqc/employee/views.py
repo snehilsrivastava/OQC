@@ -404,10 +404,8 @@ def view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks_list = []
     remarks = test_record.remarks
-    for remark in remarks:
-        remark = json.loads(remark)
+    for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
         if time_diff.seconds < 60 and time_diff.days == 0:
@@ -420,10 +418,10 @@ def view(request, stage, product, test_name, model_name, serialno):
             remark["simp_date"] = "Yesterday"
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
-        remarks_list.append(remark)
-    remarks_list.sort(key=lambda remark: remark['date'], reverse=True)
+        remark["reply_zipped"] = zip(remark["reply"]["ids"], remark["reply"]["users"], remark["reply"]["dates"])
+    sorted_remarks = sorted(remarks.items(), key=lambda item: item[1]['date'], reverse=True)
     context = {
-        'remarks': remarks_list,
+        'remarks': sorted_remarks,
         'TestProtocol': Test_protocol,
         'test': test_record,
     }
@@ -449,10 +447,8 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks_list = []
     remarks = test_record.remarks
-    for remark in remarks:
-        remark = json.loads(remark)
+    for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
         if time_diff.seconds < 60 and time_diff.days == 0:
@@ -465,10 +461,10 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
             remark["simp_date"] = "Yesterday"
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
-        remarks_list.append(remark)
-    remarks_list.sort(key=lambda remark: remark['date'], reverse=True)
+        remark["reply_zipped"] = zip(remark["reply"]["ids"], remark["reply"]["users"], remark["reply"]["dates"])
+    sorted_remarks = sorted(remarks.items(), key=lambda item: item[1]['date'], reverse=True)
     context = {
-        'remarks': remarks_list,
+        'remarks': sorted_remarks,
         'TestProtocol': Test_protocol,
         'test': test_record,
     }
@@ -924,10 +920,8 @@ def legal_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks_list = []
     remarks = test_record.remarks
-    for remark in remarks:
-        remark = json.loads(remark)
+    for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
         if time_diff.seconds < 60 and time_diff.days == 0:
@@ -940,10 +934,10 @@ def legal_view(request, stage, product, test_name, model_name, serialno):
             remark["simp_date"] = "Yesterday"
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
-        remarks_list.append(remark)
-    remarks_list.sort(key=lambda remark: remark['date'], reverse=True)
+        remark["reply_zipped"] = zip(remark["reply"]["ids"], remark["reply"]["users"], remark["reply"]["dates"])
+    sorted_remarks = sorted(remarks.items(), key=lambda item: item[1]['date'], reverse=True)
     context = {
-        'remarks': remarks_list,
+        'remarks': sorted_remarks,
         'TestProtocol': Test_protocol,
         'test': test_record,
     }
@@ -964,10 +958,8 @@ def brand_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks_list = []
     remarks = test_record.remarks
-    for remark in remarks:
-        remark = json.loads(remark)
+    for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
         if time_diff.seconds < 60 and time_diff.days == 0:
@@ -980,10 +972,10 @@ def brand_view(request, stage, product, test_name, model_name, serialno):
             remark["simp_date"] = "Yesterday"
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
-        remarks_list.append(remark)
-    remarks_list.sort(key=lambda remark: remark['date'], reverse=True)
+        remark["reply_zipped"] = zip(remark["reply"]["ids"], remark["reply"]["users"], remark["reply"]["dates"])
+    sorted_remarks = sorted(remarks.items(), key=lambda item: item[1]['date'], reverse=True)
     context = {
-        'remarks': remarks_list,
+        'remarks': sorted_remarks,
         'TestProtocol': Test_protocol,
         'test': test_record,
     }
@@ -1458,22 +1450,22 @@ def make_remark_changes(request):
         user = Employee.objects.get(username=request.session['username'])
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
         test_record.html_content = inc_remark["table_content"]
-        remarks_list = [json.loads(remark) for remark in test_record.remarks]
+        remarks = test_record.remarks
         updated = False
-        for remark in remarks_list:
-            if remark["id"] == inc_remark["id"]:
+        for id, remark in remarks.items():
+            if id == inc_remark["id"]:
                 updated = True
                 remark["content"] = inc_remark["content"]
                 remark["date"] = dt.now().strftime("%Y-%m-%d %H:%M:%S")
                 break
         if not updated:
-            remarks_list.append({
+            remarks[inc_remark["id"]] = {
                 "content": inc_remark["content"],
                 "type": inc_remark["type"],
-                "id": inc_remark["id"],
                 "from": f"{user.first_name} {user.last_name}",
                 "date": dt.now().strftime("%Y-%m-%d %H:%M:%S"),
-            })
+                "reply": {"ids": [], "dates": [], "users": [], "content": []},
+            }
             employees = Employee.objects.all()
             for employee in employees:
                 user_ProdType = [k for k in employee.product_type if employee.product_type[k]]
@@ -1488,13 +1480,14 @@ def make_remark_changes(request):
                         "product": test_record.ProductType,
                         "test": test_record.TestName,
                         "model": test_record.ModelName,
-                        "serialno": test_record.SerailNo
+                        "serialno": test_record.SerailNo,
+                        "id": inc_remark["id"],
                     }
                     notification_dict["action"] = "commented"
                     notification.notification.append(json.dumps(notification_dict))
                     notification.unread_count += 1
                     notification.save()
-        test_record.remarks = [json.dumps(remark) for remark in remarks_list]
+        test_record.remarks = remarks
         test_record.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
@@ -1505,12 +1498,20 @@ def delete_remark(request):
         inc_remark = json.loads(request.body)
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
         test_record.html_content = inc_remark["table_content"]
-        remarks_list = [json.loads(remark) for remark in test_record.remarks]
-        for remark in remarks_list:
-            if remark["id"] == inc_remark["id"]:
-                remarks_list.remove(remark)
-                break
-        test_record.remarks = [json.dumps(remark) for remark in remarks_list]
+        if inc_remark["id"] in test_record.remarks:
+            del test_record.remarks[inc_remark["id"]]
         test_record.save()
+        employees = Employee.objects.all()
+        for employee in employees:
+            user_ProdType = [k for k in employee.product_type if employee.product_type[k]]
+            if employee.user_type in ['legal', 'brand'] or test_record.ProductType in user_ProdType:
+                notification = Notification.objects.get(employee=employee.username)
+                for i in range(len(notification.notification)):
+                    notify = json.loads(notification.notification[i])
+                    if notify["action"] == "commented" and notify["metadata"]["id"] == inc_remark["id"] and not notify["is_read"]:
+                        notification.unread_count -= 1
+                        notification.notification.pop(i)
+                        break
+                notification.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
