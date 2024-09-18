@@ -242,14 +242,13 @@ def merge_pdfs(pdf_list):
     return merged_pdf_io
 
 @login_required
-def handle_selected_tests(request):
+def handle_selected_tests(request, product, model, action):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type not in ['owner', 'brand', 'legal'] and not user.is_superuser:
         return redirect('/access_denied/')
     if request.method == 'POST':
         selected_test_ids = request.POST.getlist('selected_tests')
-        action = request.POST.get('action')
-        selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids)
+        selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids, ProductType=product, ModelName=model)
         if action == 'generate_pdf':
             if not selected_test_records.exists():
                 messages.error(request, 'No test records selected')

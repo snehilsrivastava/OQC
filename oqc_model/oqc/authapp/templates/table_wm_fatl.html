@@ -1,0 +1,150 @@
+<tr>
+    <td class="header-column">
+        <strong><span class="row_header">Test Objective</span></strong>
+    </td>
+    <td colspan="2">
+        <span>{{ TestProtocol.Test_Objective }}</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <strong><span class="row_header">Model No.</span></strong>
+    </td>
+    <td colspan="2">
+        <span>{{ model.ModelName }}</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <strong><span class="row_header">Sample Quantity</span></strong>
+    </td>
+    <td colspan="2">
+        <span>{{ test.sample_quantiy }}</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <strong><span class="row_header">Serial No.</span></strong>
+    </td>
+    <td colspan="2">
+        <span>{{ test.SerailNo }}</span>
+    </td>
+</tr>
+{% if test.verification %}
+<tr>
+    <td rowspan="7">
+        <strong><span class="row_header">Set Details</span></strong>
+    </td>
+    <td colspan="2">
+        <span>Report verification Date: {{test.test_date|date:"d/m/Y"}}</span>
+    </td>
+</tr>
+{% else %}
+<tr>
+    <td rowspan="7">
+        <strong><span class="row_header">Set Details</span></strong>
+    </td>
+    <td>
+        <span>Test Start Date: {{test.test_start_date|date:"d/m/Y"}}</span>
+    </td>
+    <td>
+        <span>Test End Date: {{test.test_end_date|date:"d/m/Y"}}</span>
+    </td>
+</tr>
+{% endif %}
+<tr>
+    <td>
+        <span>Type</span>
+    </td>
+    <td>
+        <span>Fully Automatic Top Load Washing Machine</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <span>Rated Capacity</span>
+    </td>
+    <td>
+        <span>{{model.RatedCapacity}}</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <span>Rated Power</span>
+    </td>
+    <td>
+        <span>{{model.RatedPower}}</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <span>Rated Supply</span>
+    </td>
+    <td>
+        <span>{{model.RatedSupply}}</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <span>Rated Frequency</span>
+    </td>
+    <td>
+        <span>{{model.RatedFrequency}}</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <span>Rated RPM</span>
+    </td>
+    <td>
+        <span>{{model.RatedRPM}}</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <strong><span class="row_header">Test Standard</span></strong>
+    </td>
+    <td colspan="2">
+        <span>{{TestProtocol.Test_Standard}}</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <strong><span class="row_header">Test Condition</span></strong>
+    </td>
+    <td colspan="2">
+        <span> {{TestProtocol.Test_Condition|linebreaksbr }}</span>
+    </td>
+</tr>
+<tr>
+    <td>
+        <strong><span class="row_header">Test Procedure</span></strong>
+    </td>
+    <td colspan="2">
+        <span> {{TestProtocol.Test_Procedure|linebreaksbr }}</span> 
+    </td>
+</tr>
+<tr>
+    <td>
+        <strong><span class="row_header">Judgement Criteria</span></strong>
+    </td>
+    <td colspan="2">
+        <span> {{TestProtocol.Judgement|linebreaksbr }}</span>  
+    </td>
+</tr>
+<tr>
+    <td>
+        <strong><span class="row_header">Instrument / Equipment used</span></strong>
+    </td>
+    <td colspan="2">
+        <span>{{TestProtocol.Instrument}}</span>
+    </td>
+</tr>
+<tr>
+    <td rowspan="2">
+        <strong><span class="row_header">Result &amp; Conclusion</span></strong>
+    </td>
+    <td colspan="2">
+        <span>{{test.result|safe}}</span>
+    </td>
+</tr>

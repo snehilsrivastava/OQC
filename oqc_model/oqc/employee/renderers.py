@@ -13,7 +13,7 @@ def render_to_pdf(template_name, context, request):
         width = img.get('width')
         images.append((i, height, width))
         i += 1
-    css_string = '@page {size: A4; margin: 20px;}\n'
+    css_string = '@page {size: A4; margin: 20px;}\n'+'.header-column {width: 170px !important;}\n'
     for i, height, width in images:
         css_string += f'.c{i} {{height: {height}px; width: {width}px}}\n'
     context['test'].result = str(soup)

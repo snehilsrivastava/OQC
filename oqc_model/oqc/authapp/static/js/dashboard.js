@@ -88,6 +88,7 @@ function filterOnStage(button, stage) {
     const parentRow = button.closest('tr');
     const collapseRow = parentRow.nextElementSibling;
     const collapseTable = collapseRow.querySelector('.drop-table');
+    collapseTable.querySelector('thead input').checked = false;
     const collapseBody = collapseTable.querySelector('tbody');
     const rows = collapseBody.querySelectorAll('tr');
     const isFiltered = button.getAttribute('data-filtered') === 'true';
@@ -111,6 +112,9 @@ function filterOnStage(button, stage) {
         rows.forEach(row => {
             const stageValue = row.cells[2].textContent.trim();
             row.style.display = stageValue === stage ? '' : 'none';
+            if (row.style.display === 'none') {
+                row.querySelector('input[type="checkbox"]').checked = false;
+            }
         });
 
         // Set the active state for the clicked button
@@ -123,8 +127,22 @@ function selectAllCheckboxes(Selected_checkbox) {
     const table = Selected_checkbox.parentElement.parentElement.parentElement.parentElement; // Find the closest table
     const checkboxes = table.querySelectorAll('td input[type="checkbox"]'); // Get all checkboxes within the table
     for (const checkbox of checkboxes) {
-        checkbox.checked = Selected_checkbox.checked;
+        if(checkbox.parentElement.parentElement.style.display != 'none'){
+            checkbox.checked = Selected_checkbox.checked;
+        } else{
+            checkbox.checked = false;
+        }
     }
+}
+
+function submitRowForm(button){
+    const modelRow = button.closest('tr');
+    const buttonAction = button.getAttribute('value');
+    let rowForm = modelRow.nextElementSibling.querySelector('form');
+    let formAction = rowForm.action;
+    formAction = formAction.replace('/null/', '/' + buttonAction + '/');
+    rowForm.action = formAction;
+    rowForm.submit();
 }
 
 document.addEventListener('DOMContentLoaded', function() {

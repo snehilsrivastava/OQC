@@ -37,6 +37,8 @@ span {
     width: 96%;
     max-width: 700px;
     margin-bottom: 15px;
+    transition: right 0.3s ease;
+    right: 0;
 }
 
 .page-break-indicator {
@@ -158,6 +160,9 @@ span.close {
 
 .popup  {
     background-color: #414141 !important;
+    gap: 10px;
+    padding: 3px;
+    border-radius: 5px;
 }
 
 .popup button {

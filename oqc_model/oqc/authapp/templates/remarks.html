@@ -11,7 +11,7 @@
         </div>
         <div class="add-comment-box">
             <textarea class="add-comment" placeholder="Add a comment"></textarea>
-            <button class="send-button" onclick="addCommentBox(generateRandomString(6))">Post</button>
+            <button class="send-button" onclick="addCommentBox('{{test.id}}', generateRandomString(6))">Post</button>
         </div>
         <div class="remarks-content">
             {% for remark in remarks %}
@@ -30,7 +30,7 @@
                         </icon>
                         <div class="comment-from">{{ remark.from }}</div>
                         <div class="comment-date">{{ remark.simp_date }}</div>
-                        <div class="delete-btn" onclick="deleteRemark('{{ remark.id }}')"><svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg></div>
+                        <div class="delete-btn" onclick="deleteRemark('{{test.id}}', '{{ remark.id }}')"><svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg></div>
                     </div>
                     {% if remark.content %}
                         <div class="comment-content">{{ remark.content }}</div>
@@ -43,7 +43,7 @@
                     {% endif %}
                     <div class="add-comment-box-2">
                         <textarea class="comment-content-input" placeholder="Add comment">{{ remark.content }}</textarea>
-                        <button class="send-button" onclick="updateCommentBox('{{ remark.id }}', '{{ remark.type }}')">Post</button>
+                        <button class="send-button" onclick="updateCommentBox('{{test.id}}', '{{ remark.id }}', '{{ remark.type }}')">Post</button>
                     </div>
                 </div>
             {% endfor %}
@@ -52,13 +52,18 @@
 </div>
 
 <div class="popup" style="display: none;">
-    <button class="comment-btn" onclick="popupAction('comment')"><svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-384h480v-72H240v72Zm0-132h480v-72H240v72Zm0-132h480v-72H240v72ZM864-96 720-240H168q-29.7 0-50.85-21.15Q96-282.3 96-312v-480q0-29.7 21.15-50.85Q138.3-864 168-864h624q29.7 0 50.85 21.15Q864-821.7 864-792v696ZM168-312h582l42 42v-522H168v480Zm0 0v-480 480Z"/></svg></button>
-    <button class="highlight-btn" onclick="popupAction('highlight')"><svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="m548-410-90-91-193 193 91 91 192-193Zm-38-143 90 91 192-192-90-91-192 192Zm-77-24 192 192-218 218q-22 20-50.5 21.5T308-164l-20 20H96l116-116q-21-20-20-49.5t23-49.5l218-218Zm0 0 218-218q21-21 51-21t51 21l90 90q20 22 20 51t-20 51L625-385 433-577Z"/></svg></button>
-    <button class="underline-btn" onclick="popupAction('underline')"><svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-144v-72h480v72H240Zm240-144q-96 0-148.5-59.4T279-504.86V-816h97.21v317.09q0 52.85 26.43 85.88Q429.07-380 480.03-380q50.97 0 77.39-33.03 26.41-33.03 26.41-85.88V-816H681v311.14q0 98.06-52.5 157.46Q576-288 480-288Z"/></svg></button>
-    <button class="strikethrough-btn" onclick="popupAction('strikethrough')"><svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M96-408v-72h768v72H96Zm336-144v-120H240v-96h480v96H528v120h-96Zm0 360v-144h96v144h-96Z"/></svg></button>
+    <button class="comment-btn" onclick="popupAction('{{test.id}}', 'comment')"><svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-384h480v-72H240v72Zm0-132h480v-72H240v72Zm0-132h480v-72H240v72ZM864-96 720-240H168q-29.7 0-50.85-21.15Q96-282.3 96-312v-480q0-29.7 21.15-50.85Q138.3-864 168-864h624q29.7 0 50.85 21.15Q864-821.7 864-792v696ZM168-312h582l42 42v-522H168v480Zm0 0v-480 480Z"/></svg></button>
+    <button class="highlight-btn" onclick="popupAction('{{test.id}}', 'highlight')"><svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="m548-410-90-91-193 193 91 91 192-193Zm-38-143 90 91 192-192-90-91-192 192Zm-77-24 192 192-218 218q-22 20-50.5 21.5T308-164l-20 20H96l116-116q-21-20-20-49.5t23-49.5l218-218Zm0 0 218-218q21-21 51-21t51 21l90 90q20 22 20 51t-20 51L625-385 433-577Z"/></svg></button>
+    <button class="underline-btn" onclick="popupAction('{{test.id}}', 'underline')"><svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-144v-72h480v72H240Zm240-144q-96 0-148.5-59.4T279-504.86V-816h97.21v317.09q0 52.85 26.43 85.88Q429.07-380 480.03-380q50.97 0 77.39-33.03 26.41-33.03 26.41-85.88V-816H681v311.14q0 98.06-52.5 157.46Q576-288 480-288Z"/></svg></button>
+    <button class="strikethrough-btn" onclick="popupAction('{{test.id}}', 'strikethrough')"><svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M96-408v-72h768v72H96Zm336-144v-120H240v-96h480v96H528v120h-96Zm0 360v-144h96v144h-96Z"/></svg></button>
 </div>
 
+{% load static %}
 <script>
+    const employee_name = '{{employee.first_name}} {{employee.last_name}}';
+</script>
+<script src="{% static 'js/remarks.js' %}"></script>
+<!-- <script>
     const textarea = document.querySelector('.add-comment');
     textarea.addEventListener('input', () => {
     textarea.style = 'max-height: 200px';
@@ -129,7 +134,7 @@
         if (currSelected !== '' && currSelected !== lastSelected && validTagList.includes(parentTag)) {
             lastSelected = currSelected;
             var popup = document.querySelector('.popup');
-            popup.style.display = 'block';
+            popup.style.display = 'flex';
             popup.style.position = 'absolute';
 
             var updatePopupPosition = function() {
@@ -173,8 +178,8 @@
     }
     addCommentBoxListeners();
 
-    function handleCommentClick() {
-        const commentBoxes = document.querySelectorAll('.comment-box');
+    function handleCommentClick(commentBoxes) {
+        // const commentBoxes = document.querySelectorAll('.comment-box');
         commentBoxes.forEach(box => {
             const commentFrom = box.querySelector('.comment-header .comment-from');
             const employeeName = "{{employee.first_name}} {{employee.last_name}}";
@@ -208,7 +213,7 @@
             }
         });
     }
-    handleCommentClick();
+    handleCommentClick(document.querySelectorAll('.comment-box'));
 
     function addRemarkListeners() {
         const remarkElements = document.querySelectorAll('.remark');
@@ -319,7 +324,7 @@
 
         remarksSection.insertBefore(commentBox, addCommentBox.nextSibling);
         addRemarkListeners();
-        handleCommentClick();
+        handleCommentClick([commentBox]);
         addCommentBoxListeners();
     }
 
@@ -357,7 +362,7 @@
                 'id': id,
                 'type': type,
                 'content': content,
-                'test_record_id': {{test.id}},
+                'test_record_id': '{{test.id}}',
                 'table_content': table_content
             })
         });
@@ -375,7 +380,7 @@
             },
             body: JSON.stringify({
                 'id': id,
-                'test_record_id': {{test.id}},
+                'test_record_id': '{{test.id}}',
                 'table_content': table_content
             })
         });
@@ -403,4 +408,4 @@
         });
     }
     hideDeleteButton();
-</script>
+</script> -->

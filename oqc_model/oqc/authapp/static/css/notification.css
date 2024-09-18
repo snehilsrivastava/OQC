@@ -11,7 +11,8 @@ h1 {
 
 .notification-table {
     border: 1px solid var(--webkit-text-fill-color);
-    max-width: 1200px !important;
+    margin: 0 !important;
+    width: 100% !important;
 }
 
 td {
@@ -36,9 +37,14 @@ td {
     font-weight: 370;
 }
 
-.mark-read {
-    align-self: flex-start;
-    margin: 0px 100px;
+.table-content {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 10px;
+    padding: 0px 20px;
+    width: 100%;
+    max-width: 1200px !important;
 }
 
 .delete-btn {
