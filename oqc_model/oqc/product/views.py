@@ -42,7 +42,7 @@ def product_form_view(request):
 
     tv_models = list(TV.objects.values_list('ModelName', flat=True).distinct())
     ac_models = list(AC.objects.values_list('ModelName', flat=True).distinct())
-    phone_models = list(Phone.objects.values_list('ModelName', flat=True).distinct())
+    phone_models = list(Mobile.objects.values_list('ModelName', flat=True).distinct())
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True).distinct())
     test = list(Test_core_detail.objects.values('ProductType', 'TestStage', 'TestName'))
     products = list(Test_core_detail.objects.values_list('ProductType', flat=True).distinct())
@@ -68,6 +68,8 @@ def specs(request, model, product):
         context['AC_model'] = AC.objects.get(ModelName=model)
     elif product == 'WM - FATL':
         context['WM_model'] = WM_FATL.objects.get(ModelName=model)
+    elif product == 'Mobile':
+        context['Mobile_model'] = Mobile.objects.get(ModelName=model)
     return render(request, 'specs.html', context)
 
 @login_required
@@ -238,6 +240,96 @@ def WM_FATL_spec(request):
     return redirect('/dashboard/')
 
 @login_required
+def Mobile_spec(request):
+    user = Employee.objects.get(username=request.session['username'])
+    if user.user_type != 'owner' and not user.is_superuser:
+        return redirect('/access_denied/')
+    if request.method == 'POST':
+        model_name = request.POST.get('ModelName')
+        imei_number = request.POST.get('IMEINumber')
+        chipset = request.POST.get('Chipset')
+        display = request.POST.get('Display')
+        camera = request.POST.get('Camera')
+        charger = request.POST.get('Charger')
+        battery = request.POST.get('Battery')
+        ram = request.POST.get('RAM')
+        rom = request.POST.get('ROM')
+        color = request.POST.get('Color')
+        existing_Mobile = Mobile.objects.filter(ModelName=model_name)
+        if not existing_Mobile:
+            new_Mobile = Mobile(
+                ModelName=model_name,
+                IMEINumber=imei_number,
+                Chipset=chipset,
+                Display=display,
+                Camera=camera,
+                Charger=charger,
+                Battery=battery,
+                RAM=ram,
+                ROM=rom,
+                Color=color
+            )
+            new_Mobile.save()
+        else:
+            existing_Mobile.update(
+                IMEINumber = imei_number,
+                Chipset = chipset,
+                Display = display,
+                Camera = camera,
+                Charger = charger,
+                Battery = battery,
+                RAM = ram,
+                ROM = rom,
+                Color = color
+            )
+        test_details = Test_core_detail.objects.filter(ProductType="Mobile")
+        test_names = test_details.values_list('TestName', flat=True)
+        test_stages = test_details.values_list('TestStage', flat=True)
+        dvt, pp, mp = [], [], []
+        for i, stage in enumerate(test_stages):
+            if int(stage[0]):
+                dvt.append(test_names[i])
+            if int(stage[1]):
+                pp.append(test_names[i])
+            if int(stage[2]):
+                mp.append(test_names[i])
+        selected_dvt, selected_pp, selected_mp = [0 for _ in dvt], [0 for _ in pp], [0 for _ in mp]
+        timeline = {'DVT': [], 'PP': [], 'MP': []}
+        if Model_Test_Name_Details.objects.filter(Model_Name=model_name).exists():
+            _dvt = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['DVT'])
+            _pp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['PP'])
+            _mp = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Test_Names['MP'])
+            for i in range(len(dvt)):
+                selected_dvt[i] = 1 if dvt[i] in _dvt else 0
+            for i in range(len(pp)):
+                selected_pp[i] = 1 if pp[i] in _pp else 0
+            for i in range(len(mp)):
+                selected_mp[i] = 1 if mp[i] in _mp else 0
+            timeline['DVT'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['DVT'])
+            timeline['PP'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['PP'])
+            timeline['MP'] = list(Model_Test_Name_Details.objects.get(Model_Name=model_name).Time_Line['MP'])
+            for stage in timeline:
+                for i in [0, 1]:
+                    if timeline[stage][i] != '':
+                        timeline[stage][i] = dt.strptime(timeline[stage][i], '%d/%m/%Y').strftime('%Y-%m-%d')
+        context = {
+            'model_name': model_name,
+            'product': "Mobile",
+            'DVT': dvt,
+            'PP': pp,
+            'MP': mp,
+            'selected_dvt': selected_dvt,
+            'selected_pp': selected_pp,
+            'selected_mp': selected_mp,
+            'timeline_dvt': timeline['DVT'],
+            'timeline_pp': timeline['PP'],
+            'timeline_mp': timeline['MP'],
+        }
+        return render(request, 'TestNames.html', context)
+    messages.error(request, 'Invalid request')
+    return redirect('/dashboard/')
+
+@login_required
 def TestNames(request):
     user = Employee.objects.get(username=request.session['username'])
     if user.user_type != 'owner' and not user.is_superuser:
@@ -325,7 +417,6 @@ def generate_reports(request, model_name, model_updated):
                 notification.unread_count += 1
                 notification.save()
 
-@login_required
 def delete_reports(request, model_name):
     model = Model_Test_Name_Details.objects.get(Model_Name = model_name)
     model_tests = model.Test_Names
@@ -336,3 +427,44 @@ def delete_reports(request, model_name):
         for recorded_test in recorded_tests:
             if recorded_test.TestName not in test_names:
                 recorded_test.delete()
+
+# def get_summaries():
+#     allSummaries = []
+#     singleSummary = {"Meta":{"Product": "", "Model": ""},
+#                      "Model Details": {"Details": ""}, 
+#                      "Dates": {"DVT": {"dates": [], "color": ""}, "PP": {"dates": [], "color": ""}, "MP": {"dates": [], "color": ""}}, 
+#                      "Status": {"DVT": "", "PP": "", "MP": ""}, 
+#                      "PTC": {"Total": [], "Approved": [], "Waiting": []},
+#                      "LTC": {"Total": [], "Approved": [], "Waiting": []}, 
+#                      "BTC": {"Total": [], "Approved": [], "Waiting": []}}
+#     sumObjs = Summary.objects.all()
+#     for obj in sumObjs:
+#         singleSummary["Meta"]["Product"] = obj.Product
+#         singleSummary["Meta"]["Model"] = obj.Model_Name
+#         singleSummary["Model Details"]["Details"] = obj.Model_Details['Details']
+
+#         singleSummary["Dates"]["DVT"]["dates"] = obj.Dates['DVT']
+#         if(obj.Dates['DVT'][1] > dt.today().strftime("%d/%m/%Y")):
+#             singleSummary["Dates"]["DVT"]["colors"] = "#ff5a5a"
+#         else:
+#             singleSummary["Dates"]["DVT"]["colors"] = "lime"
+
+#         singleSummary["Dates"]["PP"]["dates"] = obj.Dates['PP']
+#         if(obj.Dates['PP'][1] > dt.today().strftime("%d/%m/%Y")):
+#             singleSummary["Dates"]["PP"]["colors"] = "#ff5a5a"
+#         else:
+#             singleSummary["Dates"]["PP"]["colors"] = "lime"
+
+#         singleSummary["Dates"]["MP"]["dates"] = obj.Dates['MP']
+#         if(obj.Dates['MP'][1] > dt.today().strftime("%d/%m/%Y")):
+#             singleSummary["Dates"]["MP"]["colors"] = "#ff5a5a"
+#         elif(obj.Dates['MP'][0] > dt.today().strftime("%d/%m/%Y")):
+#         else:
+#             singleSummary["Dates"]["MP"]["colors"] = "lime"
+
+#         singleSummary["Status"]["DVT"] = obj.Status['DVT']
+#         singleSummary["Status"]["PP"] = obj.Status['PP']
+#         singleSummary["Status"]["MP"] = obj.Status['MP']
+#     return allSummaries
+
+{ "5136Mv": {"content": "", "type": "highlight", "from": "A V", "date": "2024-09-17 17:11:11", "reply": {"ids": [], "dates": [], "users": [], "contents": []}}, "AcjpRV" : {"content": "", "type": "highlight", "from": "A V", "date": "2024-09-17 17:12:50"}}

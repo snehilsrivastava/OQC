@@ -34,7 +34,7 @@ urlpatterns = [
     path('set_status/<int:id>/', views.set_status, name='set_status'),
     path('delete-test-record/<int:record_id>/', views.delete_test_record, name='delete_test_record'),
     path('view_pdf/<str:stage>/<str:product>/<str:test_name>/<str:model_name>/<str:serialno>/', views.view_pdf, name='view_pdf'),
-    path('handle_selected_tests/', views.handle_selected_tests, name='handle_selected_tests'),
+    path('handle_selected_tests/<str:product>/<str:model>/<str:action>/', views.handle_selected_tests, name='handle_selected_tests'),
     path('access_denied/', views.access_denied, name='access_denied'),
 	path('ckeditor_image_upload/', views.ckeditor_image_upload, name='ckeditor_image_upload'),
     path('server_media_browse/', views.server_media_browse, name="server_media_browse"),
@@ -46,6 +46,7 @@ urlpatterns = [
     path('delete_notification/', views.delete_notification, name="delete_notification"),
     path('make_remark_changes/', views.make_remark_changes, name='make_remark_changes'),
     path('delete_remark/', views.delete_remark, name='delete_remark'),
+    path('reply_remark/', views.reply_remark, name='reply_remark'),
 ]
 
 from django.conf import settings

@@ -15,6 +15,10 @@ td {
     line-height: 90%;
 }
 
+.header-column {
+    width: 20%;
+}
+
 .additional_details {
     font-family: Arial;
     font-size: 13px;
@@ -37,6 +41,8 @@ span {
     width: 96%;
     max-width: 700px;
     margin-bottom: 15px;
+    transition: right 0.3s ease;
+    right: 0;
 }
 
 .page-break-indicator {
@@ -158,6 +164,9 @@ span.close {
 
 .popup  {
     background-color: #414141 !important;
+    gap: 10px;
+    padding: 3px;
+    border-radius: 5px;
 }
 
 .popup button {
@@ -198,6 +207,12 @@ div.add-border {
     overflow-y: auto;
     height: 39px;
 }
+
+.comment-body {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 15px;
+}
   
 .send-button {
     margin-left: -50px;
@@ -236,7 +251,6 @@ div.remark {
     gap: 7px;
     padding: 5px 0px 0px 5px;
     align-items: center;
-    justify-content: space-between;
 }
 
 .comment-icon {
@@ -247,6 +261,8 @@ div.remark {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .comment-icon svg {
@@ -275,6 +291,13 @@ div.remark {
     }
     &:hover {
         cursor: pointer;
+    }
+    & .resolve-btn {
+        font-size: 12px;
+        font-weight: 500;
+        &:hover {
+            color: red;
+        }
     }
 }
 

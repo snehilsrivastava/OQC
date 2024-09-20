@@ -157,7 +157,7 @@ def register_page(request):
 
                 subject = 'New account approval'
                 from_email = settings.EMAIL_HOST_USER
-                to = ["qmsindkal@gmail.com"]
+                to = ["protrack@indkal.com"]
                 text_content = 'This is an important message.'
                 html_content = f"""
                 <html>

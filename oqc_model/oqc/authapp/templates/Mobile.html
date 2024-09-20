@@ -1,0 +1,53 @@
+<div class="container"></div>
+    <div class="form-container">
+        
+        <div class="form-header" style = "padding: 5px 30px; "> 
+            <h1>Specification Form For Mobile</h1>
+        </div>
+
+        <form action="{% url 'Mobile' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="ModelName">Model Number</label>
+                <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ model }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="RatedCapacity">IMEI Number</label>
+                <input type="text" class="form-control" id="IMEINumber" name="IMEINumber" value="{{ Mobile_model.IMEINumber }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Chipset">Chipset</label>
+                <input type="text" class="form-control" id="Chipset" name="Chipset" value="{{ Mobile_model.Chipset }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Display">Display</label>
+                <input type="text" class="form-control" id="Display" name="Display" value="{{ Mobile_model.Display }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Camera">Camera</label>
+                <input type="text" class="form-control" id="Camera" name="Camera" value="{{ Mobile_model.Camera }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Charger">Charger</label>
+                <input type="text" class="form-control" id="Charger" name="Charger" value="{{ Mobile_model.Charger }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Battery">Battery</label>
+                <input type="text" class="form-control" id="Battery" name="Battery" value="{{ Mobile_model.Battery }}" required>
+            </div>
+            <div class="form-group">
+                <label for="RAM">RAM</label>
+                <input type="text" class="form-control" id="RAM" name="RAM" value="{{ Mobile_model.RAM }}" required>
+            </div>
+            <div class="form-group">
+                <label for="ROM">ROM</label>
+                <input type="text" class="form-control" id="ROM" name="ROM" value="{{ Mobile_model.ROM }}" required>
+            </div>
+            <div class="form-group">
+                <label for="Color">Color</label>
+                <input type="text" class="form-control" id="Color" name="Color" value="{{ Mobile_model.Color }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-submit">Submit</button>
+        </form>
+    </div>
+</div>

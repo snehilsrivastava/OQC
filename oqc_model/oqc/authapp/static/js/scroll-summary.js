@@ -89,12 +89,7 @@ function getCloneTable(card, pick, club) {
     newTableContainer.classList.add('card-table-containers');
     newTableContainer.appendChild(cloneTable);
 
-    const newForm = document.createElement('form');
-    newForm.setAttribute('method', 'POST');
-    newForm.setAttribute('action', '/handle_selected_tests/');
-    newForm.appendChild(newTableContainer);
-
-    return newForm;
+    return newTableContainer;
 }
 
 function fetchModelRow(card) {

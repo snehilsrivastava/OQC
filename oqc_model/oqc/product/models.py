@@ -4,6 +4,12 @@ import datetime
 from employee.models import Model_MNF_detail
 from django.contrib.postgres.fields import ArrayField
 
+def default_count():
+    return {"Total": 0, "Approved": 0, "Waiting": 0}
+
+def default_data():
+    return {'DVT': [], 'PP': [], 'MP': []}
+
 # Create your models here.
 class AC(models.Model):
     ModelName = models.CharField(max_length=100,default='')
@@ -18,7 +24,7 @@ class AC(models.Model):
     Capilary = models.CharField(max_length=100,default='')
     Compressor  = models.CharField(max_length=100,default='')
     def __str__(self):
-        return f"AC - {self.ModelName}"
+        return f"{self.ModelName}"
 
 class WM_FATL(models.Model):
     ModelName = models.CharField(max_length=100,default='')
@@ -31,18 +37,24 @@ class WM_FATL(models.Model):
     def __str__(self):
         return f"{self.ModelName} - {self.Type}"
     
-class Phone(models.Model):
+class Mobile(models.Model):
     ModelName = models.CharField(max_length=100)
+    IMEINumber = models.CharField(max_length=100)
+    Chipset = models.CharField(max_length=100)
+    Display = models.CharField(max_length=100)
+    Camera = models.CharField(max_length=100)
+    Charger = models.CharField(max_length=100)
+    Battery = models.CharField(max_length=100)
+    RAM = models.CharField(max_length=100)
+    ROM = models.CharField(max_length=100)
+    Color = models.CharField(max_length=100)
     def __str__(self):
-        return f"{self.ModelName} "
+        return f"{self.ModelName}"
     
 class TV(models.Model):
     ModelName = models.CharField(max_length=100)
     def __str__(self):
-        return f"{self.ModelName} "
-
-def default_data():
-    return {'DVT': [], 'PP': [], 'MP': []}
+        return f"{self.ModelName}"
 
 class Model_Test_Name_Details(models.Model):
     Model_Name = models.ForeignKey(Model_MNF_detail, to_field="Indkal_model_no", on_delete=models.CASCADE)
@@ -57,9 +69,25 @@ class Model_Test_Name_Details(models.Model):
             self.Test_Count = {key: len(val) for key, val in self.Test_Names.items()}
         return super().save(*args, **kwargs)
     def __str__(self):
-        return f"{self.Model_Name}"
+        return f"{self.Product} - {self.Model_Name}"
     
 class Product_List(models.Model):
     Product = models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
         return f"{self.Product}"
+    
+class Summary(models.Model):
+    Model_Name = models.ForeignKey(Model_MNF_detail, to_field="Indkal_model_no", on_delete=models.CASCADE)
+    Product = models.CharField(max_length=100, blank=True, null=True)
+    Model_Details = models.JSONField(default=dict)
+    Dates = models.JSONField(default=default_data)
+    Status = models.JSONField(default=default_data)
+    PT = models.JSONField(default=default_count)
+    LT = models.JSONField(default=default_count)
+    BT = models.JSONField(default=default_count)
+    def save(self, *args, **kwargs):
+        if self.Model_Name:
+            self.Product = self.Model_Name.Product
+        return super().save(*args, **kwargs)
+    def __str__(self):
+        return f"{self.Model_Name}"

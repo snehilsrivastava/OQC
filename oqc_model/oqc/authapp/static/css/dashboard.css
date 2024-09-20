@@ -234,7 +234,6 @@ table {
     width: calc(100% - 40px) !important;
     border-collapse: collapse;
     margin: 20px;
-    margin-top: 20px;
     color: var(--webkit-text-fill-color) !important;
     /* overflow-x: auto; */
     /* -webkit-overflow-scrolling: touch; */
