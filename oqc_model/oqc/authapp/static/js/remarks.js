@@ -12,17 +12,16 @@ function toggleRemarks() {
 
     if (remarksSection.classList.contains('visible')) {
         remarksSection.classList.remove('visible');
-        if(ww > 1050){
+        if (ww > 1050) {
             formContainer.style.right = `0px`;
         }
         toggleButton.style.display = 'flex';
     } else {
         remarksSection.classList.add('visible');
-        if(ww > 1050){
-            const sw = 350-(ww-700)/2;
-            const cw = ww-1050;
+        if (ww > 1050) {
+            const sw = 350 - (ww - 700) / 2;
+            const cw = ww - 1050;
             formContainer.style.right = `${sw+cw/2}px`;
-            console.log(ww, sw, cw);
         }
         toggleButton.style.display = 'none';
     }
@@ -38,7 +37,7 @@ function generateRandomString(length) {
     return randomString;
 }
 
-function popupAction(test, action) {
+function popupAction(testID, action) {
     var remarksSection = document.getElementById('remarks-section');
     if (!remarksSection.classList.contains('visible')) {
         remarksSection.classList.add('visible');
@@ -53,8 +52,8 @@ function popupAction(test, action) {
     var dataCommentId = generateRandomString(6);
     div.setAttribute("data-comment-id", dataCommentId);
     range.surroundContents(div);
-    createCommentBox(test, dataCommentId, action, '');
-    makeRemarkChanges(test, dataCommentId, action, '');
+    createCommentBox(testID, dataCommentId, action, '');
+    makeRemarkChanges(testID, dataCommentId, action, '');
     selection.removeAllRanges();
 }
 
@@ -70,7 +69,7 @@ function findCommonParentTag(selection) {
 }
 
 let lastSelected = '';
-const form = document.querySelector('form'); 
+const form = document.querySelector('form');
 form.addEventListener('mouseup', function(event) {
     var selection = window.getSelection();
     var parentTag = findCommonParentTag(selection).tagName;
@@ -85,11 +84,11 @@ form.addEventListener('mouseup', function(event) {
         var updatePopupPosition = function() {
             var rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
             popup.style.left = rect.left + 'px';
-            popup.style.top = rect.top + window.scrollY- 35 + 'px';
+            popup.style.top = rect.top + window.scrollY - 35 + 'px';
         };
         updatePopupPosition();
         window.addEventListener('scroll', updatePopupPosition);
-        
+
         const docListener = function(event) {
             event.stopPropagation();
             if (!popup.contains(event.target)) {
@@ -123,37 +122,45 @@ function addCommentBoxListeners() {
 }
 addCommentBoxListeners();
 
+var boxClickFunction = function(event, replyBoxes, box) {
+    event.stopPropagation();
+    let eventBox = box;
+    if (replyBoxes.length !== 0) {
+        eventBox = replyBoxes[replyBoxes.length - 1];
+    }
+    const commentBody = eventBox.querySelector('.comment-body');
+    const addCommentBox2 = eventBox.querySelector('.add-comment-box-2');
+    const textarea = addCommentBox2.querySelector('.comment-content-input');
+    commentBody.style.display = (commentBody.style.display === 'none') ? 'flex' : 'none';
+    addCommentBox2.style.display = (addCommentBox2.style.display === 'flex') ? 'none' : 'flex';
+    if (addCommentBox2.style.display === 'flex') {
+        textarea.focus();
+        textarea.selectionStart = textarea.value.length;
+        textarea.selectionEnd = textarea.value.length;
+        textarea.style.height = `${textarea.scrollHeight+2}px`;
+        textarea.addEventListener('input', () => {
+            textarea.style = 'max-height: 200px';
+            textarea.style.height = `${textarea.scrollHeight+2}px`;
+        });
+    }
+};
+
 function handleCommentClick(commentBoxes) {
     // const commentBoxes = document.querySelectorAll('.comment-box');
     commentBoxes.forEach(box => {
-        const commentFrom = box.querySelector('.comment-header .comment-from');
-        const employeeName = employee_name;
-        if (commentFrom.textContent.trim() === employeeName) {
-            box.addEventListener('click', function(event) {
-                event.stopPropagation();
-                const commentContent = box.querySelector('.comment-content');
-                const addCommentBox2 = box.querySelector('.add-comment-box-2');
-                const textarea = addCommentBox2.querySelector('.comment-content-input');
-                if (commentContent) {
-                    commentContent.style.display = (commentContent.style.display === 'none') ? 'block' : 'none';
-                }
-                if (addCommentBox2) {
-                    addCommentBox2.style.display = (addCommentBox2.style.display === 'flex') ? 'none' : 'flex';
-                    if (addCommentBox2.style.display === 'flex') {
-                        textarea.focus();
-                        textarea.selectionStart = textarea.value.length;
-                        textarea.selectionEnd = textarea.value.length;
-                        textarea.style.height = `${textarea.scrollHeight+2}px`;
-                        textarea.addEventListener('input', () => {
-                        textarea.style = 'max-height: 200px';
-                        textarea.style.height = `${textarea.scrollHeight+2}px`;
-                        });
-                    }
-                }
-            });
-            const addCommentBox2 = box.querySelector('.add-comment-box-2');
-            addCommentBox2.addEventListener('click', function(event) {
-                event.stopPropagation();
+        const replyBoxes = box.querySelectorAll('.reply-box');
+        let commentFrom = box.querySelector('.comment-header .comment-from');
+        if (replyBoxes.length !== 0) {
+            commentFrom = replyBoxes[replyBoxes.length - 1].querySelector('.comment-header .comment-from');
+        }
+        if (commentFrom.textContent.trim() === employee_name) {
+            box.removeEventListener('click', function(event){boxClickFunction(event, replyBoxes, box)});
+            box.addEventListener('click', function(event){boxClickFunction(event, replyBoxes, box)});
+            const addCommentBox2 = box.querySelectorAll('.add-comment-box-2');
+            addCommentBox2.forEach(addBox => {
+                addBox.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                });
             });
         }
     });
@@ -202,7 +209,7 @@ function addRemarkListeners() {
 }
 addRemarkListeners();
 
-function createCommentBox(test, dataCommentId, type, content) {
+function createCommentBox(testID, dataCommentId, type, content) {
     const commentBox = document.createElement('div');
     commentBox.classList.add('comment-box');
     commentBox.id = dataCommentId;
@@ -214,13 +221,13 @@ function createCommentBox(test, dataCommentId, type, content) {
     const icon = document.createElement('icon');
     icon.classList.add('comment-icon');
     if (type === "highlight") {
-        icon.innerHTML = '<svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="m548-410-90-91-193 193 91 91 192-193Zm-38-143 90 91 192-192-90-91-192 192Zm-77-24 192 192-218 218q-22 20-50.5 21.5T308-164l-20 20H96l116-116q-21-20-20-49.5t23-49.5l218-218Zm0 0 218-218q21-21 51-21t51 21l90 90q20 22 20 51t-20 51L625-385 433-577Z"/></svg>';
+        icon.innerHTML = '<svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed"><path d="m548-410-90-91-193 193 91 91 192-193Zm-38-143 90 91 192-192-90-91-192 192Zm-77-24 192 192-218 218q-22 20-50.5 21.5T308-164l-20 20H96l116-116q-21-20-20-49.5t23-49.5l218-218Zm0 0 218-218q21-21 51-21t51 21l90 90q20 22 20 51t-20 51L625-385 433-577Z"/></svg>';
     } else if (type === "underline") {
-        icon.innerHTML = '<svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-144v-72h480v72H240Zm240-144q-96 0-148.5-59.4T279-504.86V-816h97.21v317.09q0 52.85 26.43 85.88Q429.07-380 480.03-380q50.97 0 77.39-33.03 26.41-33.03 26.41-85.88V-816H681v311.14q0 98.06-52.5 157.46Q576-288 480-288Z"/></svg>';
-    } else if (type === "strikethrough"){
-        icon.innerHTML = '<svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M96-408v-72h768v72H96Zm336-144v-120H240v-96h480v96H528v120h-96Zm0 360v-144h96v144h-96Z"/></svg>';
-    } else if (type === "comment"){
-        icon.innerHTML = '<svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-384h480v-72H240v72Zm0-132h480v-72H240v72Zm0-132h480v-72H240v72ZM864-96 720-240H168q-29.7 0-50.85-21.15Q96-282.3 96-312v-480q0-29.7 21.15-50.85Q138.3-864 168-864h624q29.7 0 50.85 21.15Q864-821.7 864-792v696ZM168-312h582l42 42v-522H168v480Zm0 0v-480 480Z"/></svg>';
+        icon.innerHTML = '<svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed"><path d="M240-144v-72h480v72H240Zm240-144q-96 0-148.5-59.4T279-504.86V-816h97.21v317.09q0 52.85 26.43 85.88Q429.07-380 480.03-380q50.97 0 77.39-33.03 26.41-33.03 26.41-85.88V-816H681v311.14q0 98.06-52.5 157.46Q576-288 480-288Z"/></svg>';
+    } else if (type === "strikethrough") {
+        icon.innerHTML = '<svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed"><path d="M96-408v-72h768v72H96Zm336-144v-120H240v-96h480v96H528v120h-96Zm0 360v-144h96v144h-96Z"/></svg>';
+    } else if (type === "comment") {
+        icon.innerHTML = '<svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed"><path d="M240-384h480v-72H240v72Zm0-132h480v-72H240v72Zm0-132h480v-72H240v72ZM864-96 720-240H168q-29.7 0-50.85-21.15Q96-282.3 96-312v-480q0-29.7 21.15-50.85Q138.3-864 168-864h624q29.7 0 50.85 21.15Q864-821.7 864-792v696ZM168-312h582l42 42v-522H168v480Zm0 0v-480 480Z"/></svg>';
     }
     commentHeader.appendChild(icon);
 
@@ -236,11 +243,12 @@ function createCommentBox(test, dataCommentId, type, content) {
 
     const deleteBtn = document.createElement('div');
     deleteBtn.classList.add('delete-btn');
-    deleteBtn.onclick = function() {
-        deleteRemark(test, dataCommentId);
-    };
+    deleteBtn.onclick = function() {deleteRemark(testID, dataCommentId);}
     deleteBtn.innerHTML = '<svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg>';
     commentHeader.appendChild(deleteBtn);
+
+    const commentBody = document.createElement('div');
+    commentBody.classList.add('comment-body');
 
     const commentContent = document.createElement('div');
     commentContent.classList.add('comment-content');
@@ -252,16 +260,24 @@ function createCommentBox(test, dataCommentId, type, content) {
             commentContent.textContent = "Highlighted text";
         } else if (type === "underline") {
             commentContent.textContent = "Underlined text";
-        }
-        else if (type === "strikethrough") {
+        } else if (type === "strikethrough") {
             commentContent.textContent = "Strikethrough text";
         }
     }
-    commentBox.appendChild(commentContent);
+    commentBody.appendChild(commentContent);
+
+    const replyButton = document.createElement('button');
+    replyButton.classList.add('reply-button');
+    replyButton.classList.add('send-button');
+    replyButton.type = 'button';
+    replyButton.onclick = function(event){createReplyBox(event, testID, replyButton);}
+    replyButton.textContent = 'Reply';
+    commentBody.appendChild(replyButton);
+    commentBox.appendChild(commentBody);
 
     const addCommentBox2 = document.createElement('div');
     addCommentBox2.classList.add('add-comment-box-2');
-    addCommentBox2.innerHTML = `<textarea class="comment-content-input" placeholder="Add comment">${content}</textarea><button class="send-button" onclick="updateCommentBox('${test}', '${dataCommentId}', '${type}')">Post</button>`;
+    addCommentBox2.innerHTML = `<textarea class="comment-content-input" placeholder="Add comment">${content}</textarea><button class="send-button" onclick="updateCommentBox('${testID}', '${dataCommentId}', '${type}')">Post</button>`;
     commentBox.appendChild(addCommentBox2);
 
     const remarksSection = document.getElementById('remarks-section');
@@ -270,34 +286,133 @@ function createCommentBox(test, dataCommentId, type, content) {
     remarksSection.insertBefore(commentBox, addCommentBox.nextSibling);
     addRemarkListeners();
     handleCommentClick([commentBox]);
-    setTimeout(() => {commentBox.click();}, 1);
+    setTimeout(() => { commentBox.click(); }, 1);
     addCommentBoxListeners();
 }
 
-function addCommentBox(test, id) {
+function addCommentBox(testID, id) {
     const remarksSection = document.getElementById('remarks-section');
     const textArea = remarksSection.querySelector('.add-comment');
-    createCommentBox(test, id, 'comment', textArea.value);
-    makeRemarkChanges(test, id, 'comment', textArea.value);
+    createCommentBox(testID, id, 'comment', textArea.value);
+    makeRemarkChanges(testID, id, 'comment', textArea.value);
     textArea.value = '';
 }
 
-function updateCommentBox(test, id, type) {
+function updateCommentBox(testID, id, type) {
     const remarksSection = document.getElementById('remarks-section');
     const commentBox = remarksSection.querySelector(`.comment-box[id="${id}"]`);
+    const commentBody = commentBox.querySelector('.comment-body');
     const textArea = commentBox.querySelector('.comment-content-input');
-    const textContent = commentBox.querySelector('.comment-content');
+    const textContent = commentBody.querySelector('.comment-content');
     textContent.innerHTML = textArea.value;
     const addCommentBox2 = commentBox.querySelector('.add-comment-box-2');
     addCommentBox2.style.display = 'none';
-    textContent.style.display = 'block';
+    commentBody.style.display = 'flex';
     textContent.classList.remove('italics');
     const commentDate = commentBox.querySelector('.comment-date');
     commentDate.innerHTML = 'Now';
-    makeRemarkChanges(test, id, type, textArea.value);
+    makeRemarkChanges(testID, id, type, textArea.value);
 }
 
-function makeRemarkChanges(test, id, type, content) {
+function createReplyBox(event, testID, button) {
+    event.stopPropagation();
+    const commentBox = button.parentElement.parentElement;
+
+    const deleteButton = commentBox.querySelector('.delete-btn');
+    deleteButton.innerHTML = "<div class='resolve-btn'>Resolve</div>";
+
+    const lastBox = commentBox.lastElementChild;
+    if (lastBox.classList.contains('reply-box')) {
+        lastBox.querySelector('.delete-btn').style.display = 'none';
+    }
+    ////////////////////////    REPLY BOX    //////////////////////////
+    const newReplyBox = document.createElement('div');
+    newReplyBox.classList.add('reply-box');
+    const count = commentBox.querySelectorAll('.reply-box').length+1;
+    newReplyBox.id = `${count}`;
+    ////////////////////////    REPLY HEADER    //////////////////////////
+    const replyHeader = document.createElement('div');
+    replyHeader.classList.add('comment-header');
+
+    const icon = document.createElement('icon');
+    icon.classList.add('comment-icon');
+    const eName = employee_name.split(" ");
+    icon.textContent = `${eName[0][0]}${eName[1][0]}`;
+    replyHeader.appendChild(icon);
+
+    const replyFrom = document.createElement('div');
+    replyFrom.classList.add('comment-from');
+    replyFrom.textContent = employee_name;
+    replyHeader.appendChild(replyFrom);
+
+    const replyDate = document.createElement('div');
+    replyDate.classList.add('comment-date');
+    replyDate.textContent = 'Now';
+    replyHeader.appendChild(replyDate);
+
+    const deleteBtn = document.createElement('div');
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.onclick = function(){deleteReply(testID, commentBox.id, newReplyBox.id)};
+    deleteBtn.innerHTML = '<svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg>';
+    replyHeader.appendChild(deleteBtn);
+    newReplyBox.appendChild(replyHeader);
+    ////////////////////////    REPLY BODY    //////////////////////////
+    const replyBody = document.createElement('div');
+    replyBody.classList.add('comment-body');
+
+    const replyContent = document.createElement('div');
+    replyContent.classList.add('comment-content');
+    replyContent.textContent = '';
+    replyBody.appendChild(replyContent);
+    newReplyBox.appendChild(replyBody);
+    ////////////////////////    EDIT COMMENT BOX    //////////////////////////
+    const addCommentBox2 = document.createElement('div');
+    addCommentBox2.classList.add('add-comment-box-2');
+    addCommentBox2.style.display = 'none';
+
+    const replyText = document.createElement('textarea');
+    replyText.classList.add('comment-content-input');
+    replyText.placeholder = 'Add reply';
+    addCommentBox2.appendChild(replyText);
+
+    const replyButton2 = document.createElement('button');
+    replyButton2.classList.add('send-button');
+    replyButton2.type = 'button';
+    replyButton2.onclick = function(){replyRemark(testID, commentBox.id, newReplyBox.id)};
+    replyButton2.textContent = 'Post';
+    addCommentBox2.appendChild(replyButton2);
+    newReplyBox.appendChild(addCommentBox2);
+    ////////////////////////    REPLY BOX APPEND    //////////////////////////
+    commentBox.appendChild(newReplyBox);
+
+    setTimeout(() => { handleCommentClick([commentBox]); }, 1);
+    setTimeout(() => { commentBox.click(); }, 1);
+}
+
+function replyRemark(testID, id, replyID) {
+    console.log(testID, id, replyID);
+    const commentBox = document.querySelector(`.comment-box#${id}`);
+    const replyBox = commentBox.querySelector(`.reply-box[id="${replyID}"]`);
+    const replyBody = replyBox.querySelector('.comment-body');
+    const content = replyBox.querySelector('.comment-content-input').value;
+    replyBody.querySelector('.comment-content').innerHTML = content;
+    replyBox.querySelector('.comment-body').style.display = "flex";
+    replyBox.querySelector('.add-comment-box-2').style.display = "none";
+    fetch('/reply_remark/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'id': id,
+            'content': content,
+            'test_record_id': testID,
+            'reply_id': replyID,
+        })
+    });
+}
+
+function makeRemarkChanges(testID, id, type, content) {
     const table_content = document.getElementsByTagName('table')[0].outerHTML;
     fetch('/make_remark_changes/', {
         method: 'POST',
@@ -308,13 +423,31 @@ function makeRemarkChanges(test, id, type, content) {
             'id': id,
             'type': type,
             'content': content,
-            'test_record_id': test,
+            'test_record_id': testID,
             'table_content': table_content
         })
     });
 }
 
-function deleteRemark(test, id) {
+function deleteReply(testID, id, replyID) {
+    const commentBox = document.querySelector(`.comment-box#${id}`);
+    const replyBox = commentBox.querySelector(`.reply-box[id="${replyID}"]`);
+    replyBox.remove();
+    fetch('/delete_remark/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'id': id,
+            'reply_id': replyID,
+            'test_record_id': testID,
+            'table_content': null
+        })
+    });
+}
+
+function deleteRemark(testID, id) {
     removeDiv(id);
     const table_content = document.getElementsByTagName('table')[0].outerHTML;
     const commentBox = document.getElementById(id);
@@ -326,7 +459,8 @@ function deleteRemark(test, id) {
         },
         body: JSON.stringify({
             'id': id,
-            'test_record_id': test,
+            'reply_id': null,
+            'test_record_id': testID,
             'table_content': table_content
         })
     });
@@ -335,22 +469,23 @@ function deleteRemark(test, id) {
 function removeDiv(divId) {
     var divElement = document.querySelector(`[data-comment-id='${divId}']`);
     if (divElement) {
-        var textNode = document.createTextNode(divElement.textContent);
-        divElement.parentNode.replaceChild(textNode, divElement);
+        var inner_html = divElement.innerHTML;
+        divElement.outerHTML = inner_html;
     }
 }
 
 function hideDeleteButton() {
     const commentBoxes = document.querySelectorAll('.comment-box');
     commentBoxes.forEach(commentBox => {
-        const commentName = commentBox.querySelector('.comment-from').textContent.trim();
-        const employeeName = employee_name;
-        const commentDate = commentBox.querySelector('.comment-date').textContent.trim();
-        const isRecent = commentDate === "Now" || commentDate.endsWith("min ago");
-        if (commentName !== employeeName || !isRecent) {
-            const deleteButton = commentBox.querySelector('.delete-btn');
-            deleteButton.style.visibility = 'hidden';
-        }
+        const deleteButtons = commentBox.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(deleteButton => {
+            const commentName = deleteButton.previousElementSibling.previousElementSibling.textContent.trim();
+            const commentDate = deleteButton.previousElementSibling.textContent.trim();
+            const isRecent = commentDate === "Now" || commentDate.endsWith("min ago");
+            if (commentName !== employee_name || !isRecent && deleteButton.textContent.trim() !== "Resolve") {
+                deleteButton.style.visibility = 'hidden';
+            }
+        });
     });
 }
 hideDeleteButton();

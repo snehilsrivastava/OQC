@@ -46,6 +46,7 @@ urlpatterns = [
     path('delete_notification/', views.delete_notification, name="delete_notification"),
     path('make_remark_changes/', views.make_remark_changes, name='make_remark_changes'),
     path('delete_remark/', views.delete_remark, name='delete_remark'),
+    path('reply_remark/', views.reply_remark, name='reply_remark'),
 ]
 
 from django.conf import settings

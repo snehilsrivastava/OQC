@@ -29,28 +29,60 @@
                     </icon>
                     <div class="comment-from">{{ remark.from }}</div>
                     <div class="comment-date">{{ remark.simp_date }}</div>
-                    <div class="delete-btn" onclick="deleteRemark('{{test.id}}', '{{ id }}')"><svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg></div>
+                    {% if remark.reply_zipped %}
+                    <div class="delete-btn" onclick="deleteRemark('{{test.id}}', '{{ id }}')">
+                        <div class='resolve-btn'>Resolve</div>
+                    </div>
+                    {% else %}
+                    <div class="delete-btn" onclick="deleteRemark('{{test.id}}', '{{ id }}')">
+                        <svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed">
+                            <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/>
+                        </svg>
+                    </div>
+                    {% endif %}
                 </div>
-                {% if remark.content %}
-                    <div class="comment-content">{{ remark.content }}</div>
-                {% elif remark.type == "highlight" %}
-                    <div class="comment-content italics">Highlighted text</div>
-                {% elif remark.type == "underline" %}
-                    <div class="comment-content italics">Underlined text</div>
-                {% elif remark.type == "strikethrough" %}
-                    <div class="comment-content italics">Strikethrough text</div>
-                {% endif %}
+                <div class="comment-body">
+                    {% if remark.content %}
+                        <div class="comment-content">{{ remark.content }}</div>
+                    {% elif remark.type == "highlight" %}
+                        <div class="comment-content italics">Highlighted text</div>
+                    {% elif remark.type == "underline" %}
+                        <div class="comment-content italics">Underlined text</div>
+                    {% elif remark.type == "strikethrough" %}
+                        <div class="comment-content italics">Strikethrough text</div>
+                    {% endif %}
+                    <button class="reply-button send-button" type="button" onclick="createReplyBox(event, '{{test.id}}', this)">Reply</button>
+                </div>
                 <div class="add-comment-box-2">
                     <textarea class="comment-content-input" placeholder="Add comment">{{ remark.content }}</textarea>
                     <button class="send-button" onclick="updateCommentBox('{{test.id}}', '{{ id }}', '{{ remark.type }}')">Post</button>
                 </div>
+                <!-- REPLIES GO HERE -->
+                {% for rid, date, user, content in remark.reply_zipped %}
+                <div class="reply-box" id="{{ rid }}">
+                    <div class="comment-header">
+                        <icon class="comment-icon">{{ employee.first_name.0 }}{{ employee.last_name.0 }}</icon>
+                        <div class="comment-from">{{ user }}</div>
+                        <div class="comment-date">{{ date }}</div>
+                        {% if forloop.counter == remark.reply_zipped|length %}
+                        <div class="delete-btn" onclick="deleteReply('{{test.id}}', '{{ id }}', '{{rid}}')">
+                            <svg height="18px" viewBox="0 -960 960 960" width="18px" fill="#e8eaed">
+                                <path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/>
+                            </svg>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="comment-body">
+                        <div class="comment-content">{{ content }}</div>
+                    </div>
+                    <div class="add-comment-box-2">
+                        <textarea class="comment-content-input" placeholder="Add reply" value = "{{content}}"></textarea>
+                        <button class="send-button" onclick="replyRemark('{{test.id}}', '{{ id }}', '{{ rid }}')">Post</button>
+                    </div>
+                    <!-- {{ id }} - {{ date }} - {{ user }} -->
+                </div>
+                {% endfor %}
             </div>
-            <!-- REPLIES GO HERE -->
-            {% for id, date, user in remark.reply_zipped %}
-            <div class="reply-box">
-                {{ id }} - {{ date }} - {{ user }}
-            </div>
-            {% endfor %}
         {% endfor %}
     </div>
 </div>

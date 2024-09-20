@@ -418,7 +418,20 @@ def view(request, stage, product, test_name, model_name, serialno):
             remark["simp_date"] = "Yesterday"
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
-        remark["reply_zipped"] = zip(remark["reply"]["ids"], remark["reply"]["users"], remark["reply"]["dates"])
+        reply = remark["reply"]
+        reply["simp_dates"] = []
+        for rdt in reply["dates"]:
+            rdt = dt.strptime(rdt, "%Y-%m-%d %H:%M:%S")
+            rtd = dt.now() - rdt
+            if rtd.seconds < 60 and rtd.days == 0:
+                reply["simp_dates"].append("Now")
+            elif rtd.seconds < 3600 and rtd.days == 0:
+                reply["simp_dates"].append(f"{rtd.seconds // 60} min ago")
+            elif rtd.days == 0:
+                reply["simp_dates"].append(f"{rtd.seconds // 3600} hours ago")
+            else:
+                reply["simp_dates"].append(rdt.strftime("%d %b"))
+        remark["reply_zipped"] = list(zip(remark["reply"]["ids"], remark["reply"]["simp_dates"], remark["reply"]["users"], remark["reply"]["contents"]))
     sorted_remarks = sorted(remarks.items(), key=lambda item: item[1]['date'], reverse=True)
     context = {
         'remarks': sorted_remarks,
@@ -461,7 +474,20 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
             remark["simp_date"] = "Yesterday"
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
-        remark["reply_zipped"] = zip(remark["reply"]["ids"], remark["reply"]["users"], remark["reply"]["dates"])
+        reply = remark["reply"]
+        reply["simp_dates"] = []
+        for rdt in reply["dates"]:
+            rdt = dt.strptime(rdt, "%Y-%m-%d %H:%M:%S")
+            rtd = dt.now() - rdt
+            if rtd.seconds < 60 and rtd.days == 0:
+                reply["simp_dates"].append("Now")
+            elif rtd.seconds < 3600 and rtd.days == 0:
+                reply["simp_dates"].append(f"{rtd.seconds // 60} min ago")
+            elif rtd.days == 0:
+                reply["simp_dates"].append(f"{rtd.seconds // 3600} hours ago")
+            else:
+                reply["simp_dates"].append(rdt.strftime("%d %b"))
+        remark["reply_zipped"] = list(zip(remark["reply"]["ids"], remark["reply"]["simp_dates"], remark["reply"]["users"], remark["reply"]["contents"]))
     sorted_remarks = sorted(remarks.items(), key=lambda item: item[1]['date'], reverse=True)
     context = {
         'remarks': sorted_remarks,
@@ -934,7 +960,20 @@ def legal_view(request, stage, product, test_name, model_name, serialno):
             remark["simp_date"] = "Yesterday"
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
-        remark["reply_zipped"] = zip(remark["reply"]["ids"], remark["reply"]["users"], remark["reply"]["dates"])
+        reply = remark["reply"]
+        reply["simp_dates"] = []
+        for rdt in reply["dates"]:
+            rdt = dt.strptime(rdt, "%Y-%m-%d %H:%M:%S")
+            rtd = dt.now() - rdt
+            if rtd.seconds < 60 and rtd.days == 0:
+                reply["simp_dates"].append("Now")
+            elif rtd.seconds < 3600 and rtd.days == 0:
+                reply["simp_dates"].append(f"{rtd.seconds // 60} min ago")
+            elif rtd.days == 0:
+                reply["simp_dates"].append(f"{rtd.seconds // 3600} hours ago")
+            else:
+                reply["simp_dates"].append(rdt.strftime("%d %b"))
+        remark["reply_zipped"] = list(zip(remark["reply"]["ids"], remark["reply"]["simp_dates"], remark["reply"]["users"], remark["reply"]["contents"]))
     sorted_remarks = sorted(remarks.items(), key=lambda item: item[1]['date'], reverse=True)
     context = {
         'remarks': sorted_remarks,
@@ -972,7 +1011,20 @@ def brand_view(request, stage, product, test_name, model_name, serialno):
             remark["simp_date"] = "Yesterday"
         else:
             remark["simp_date"] = remark_date.strftime("%d %b")
-        remark["reply_zipped"] = zip(remark["reply"]["ids"], remark["reply"]["users"], remark["reply"]["dates"])
+        reply = remark["reply"]
+        reply["simp_dates"] = []
+        for rdt in reply["dates"]:
+            rdt = dt.strptime(rdt, "%Y-%m-%d %H:%M:%S")
+            rtd = dt.now() - rdt
+            if rtd.seconds < 60 and rtd.days == 0:
+                reply["simp_dates"].append("Now")
+            elif rtd.seconds < 3600 and rtd.days == 0:
+                reply["simp_dates"].append(f"{rtd.seconds // 60} min ago")
+            elif rtd.days == 0:
+                reply["simp_dates"].append(f"{rtd.seconds // 3600} hours ago")
+            else:
+                reply["simp_dates"].append(rdt.strftime("%d %b"))
+        remark["reply_zipped"] = list(zip(remark["reply"]["ids"], remark["reply"]["simp_dates"], remark["reply"]["users"], remark["reply"]["contents"]))
     sorted_remarks = sorted(remarks.items(), key=lambda item: item[1]['date'], reverse=True)
     context = {
         'remarks': sorted_remarks,
@@ -1464,7 +1516,7 @@ def make_remark_changes(request):
                 "type": inc_remark["type"],
                 "from": f"{user.first_name} {user.last_name}",
                 "date": dt.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "reply": {"ids": [], "dates": [], "users": [], "content": []},
+                "reply": {"ids": [], "dates": [], "users": [], "contents": []},
             }
             employees = Employee.objects.all()
             for employee in employees:
@@ -1497,9 +1549,20 @@ def delete_remark(request):
     if request.method == 'POST':
         inc_remark = json.loads(request.body)
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
-        test_record.html_content = inc_remark["table_content"]
+        newHTML = inc_remark["table_content"]
+        reply_id = inc_remark["reply_id"]
+        if newHTML:
+            test_record.html_content = newHTML
         if inc_remark["id"] in test_record.remarks:
-            del test_record.remarks[inc_remark["id"]]
+            if not reply_id:
+                del test_record.remarks[inc_remark["id"]]
+            else:
+                if inc_remark["reply_id"] in test_record.remarks[inc_remark["id"]]["reply"]["ids"]:
+                    idx = test_record.remarks[inc_remark["id"]]["reply"]["ids"].index(inc_remark["reply_id"])
+                    del test_record.remarks[inc_remark["id"]]["reply"]["ids"][idx]
+                    del test_record.remarks[inc_remark["id"]]["reply"]["users"][idx]
+                    del test_record.remarks[inc_remark["id"]]["reply"]["contents"][idx]
+                    del test_record.remarks[inc_remark["id"]]["reply"]["dates"][idx]
         test_record.save()
         employees = Employee.objects.all()
         for employee in employees:
@@ -1513,5 +1576,28 @@ def delete_remark(request):
                         notification.notification.pop(i)
                         break
                 notification.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+@login_required
+def reply_remark(request):
+    if request.method == 'POST':
+        inc_remark = json.loads(request.body)
+        user = Employee.objects.get(username=request.session['username'])
+        test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
+        remarks = test_record.remarks
+        remark = remarks[inc_remark["id"]]
+        replies = remark["reply"]
+        if replies["ids"].count(inc_remark["reply_id"]) > 0:
+            idx = replies['ids'].index(inc_remark["reply_id"])
+            replies["contents"][idx] = inc_remark["content"]
+            replies["dates"][idx] = dt.now().strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            replies["ids"].append(inc_remark["reply_id"])
+            replies["contents"].append(inc_remark["content"])
+            replies["users"].append(user.first_name + " " + user.last_name)
+            replies["dates"].append(dt.now().strftime("%Y-%m-%d %H:%M:%S"))
+        test_record.remarks = remarks
+        test_record.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})

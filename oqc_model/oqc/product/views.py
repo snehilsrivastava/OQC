@@ -325,7 +325,6 @@ def generate_reports(request, model_name, model_updated):
                 notification.unread_count += 1
                 notification.save()
 
-@login_required
 def delete_reports(request, model_name):
     model = Model_Test_Name_Details.objects.get(Model_Name = model_name)
     model_tests = model.Test_Names
@@ -336,3 +335,44 @@ def delete_reports(request, model_name):
         for recorded_test in recorded_tests:
             if recorded_test.TestName not in test_names:
                 recorded_test.delete()
+
+# def get_summaries():
+#     allSummaries = []
+#     singleSummary = {"Meta":{"Product": "", "Model": ""},
+#                      "Model Details": {"Details": ""}, 
+#                      "Dates": {"DVT": {"dates": [], "color": ""}, "PP": {"dates": [], "color": ""}, "MP": {"dates": [], "color": ""}}, 
+#                      "Status": {"DVT": "", "PP": "", "MP": ""}, 
+#                      "PTC": {"Total": [], "Approved": [], "Waiting": []},
+#                      "LTC": {"Total": [], "Approved": [], "Waiting": []}, 
+#                      "BTC": {"Total": [], "Approved": [], "Waiting": []}}
+#     sumObjs = Summary.objects.all()
+#     for obj in sumObjs:
+#         singleSummary["Meta"]["Product"] = obj.Product
+#         singleSummary["Meta"]["Model"] = obj.Model_Name
+#         singleSummary["Model Details"]["Details"] = obj.Model_Details['Details']
+
+#         singleSummary["Dates"]["DVT"]["dates"] = obj.Dates['DVT']
+#         if(obj.Dates['DVT'][1] > dt.today().strftime("%d/%m/%Y")):
+#             singleSummary["Dates"]["DVT"]["colors"] = "#ff5a5a"
+#         else:
+#             singleSummary["Dates"]["DVT"]["colors"] = "lime"
+
+#         singleSummary["Dates"]["PP"]["dates"] = obj.Dates['PP']
+#         if(obj.Dates['PP'][1] > dt.today().strftime("%d/%m/%Y")):
+#             singleSummary["Dates"]["PP"]["colors"] = "#ff5a5a"
+#         else:
+#             singleSummary["Dates"]["PP"]["colors"] = "lime"
+
+#         singleSummary["Dates"]["MP"]["dates"] = obj.Dates['MP']
+#         if(obj.Dates['MP'][1] > dt.today().strftime("%d/%m/%Y")):
+#             singleSummary["Dates"]["MP"]["colors"] = "#ff5a5a"
+#         elif(obj.Dates['MP'][0] > dt.today().strftime("%d/%m/%Y")):
+#         else:
+#             singleSummary["Dates"]["MP"]["colors"] = "lime"
+
+#         singleSummary["Status"]["DVT"] = obj.Status['DVT']
+#         singleSummary["Status"]["PP"] = obj.Status['PP']
+#         singleSummary["Status"]["MP"] = obj.Status['MP']
+#     return allSummaries
+
+{ "5136Mv": {"content": "", "type": "highlight", "from": "A V", "date": "2024-09-17 17:11:11", "reply": {"ids": [], "dates": [], "users": [], "contents": []}}, "AcjpRV" : {"content": "", "type": "highlight", "from": "A V", "date": "2024-09-17 17:12:50"}}
