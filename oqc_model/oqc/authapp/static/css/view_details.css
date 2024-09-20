@@ -45,6 +45,12 @@
     .filter-dropdown {
         width: 200px;
         align-content: flex-end;
+        &[name="product_filter"] {
+            margin-left: 20px;
+        }
+        &[name="model_filter"]{
+            width: 187px;
+        }
     }
 
     .clear-btn {

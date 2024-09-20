@@ -32,7 +32,7 @@ def default_notification():
 
 class Notification(models.Model):
     employee = models.ForeignKey(Employee, to_field="username", on_delete=models.CASCADE)
-    notification = ArrayField(models.TextField(default=str), default=list)
+    notification = ArrayField(models.TextField(default=str), default=list, blank=True)
     unread_count = models.IntegerField(default=0)
     def __str__(self):
         return f"{self.employee.username}"

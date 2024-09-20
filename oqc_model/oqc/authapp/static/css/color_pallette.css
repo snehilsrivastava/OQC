@@ -156,7 +156,7 @@ textarea {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgb(80, 80, 80);
+    background: #505050;
 }
 
 ::-webkit-scrollbar:hover {
