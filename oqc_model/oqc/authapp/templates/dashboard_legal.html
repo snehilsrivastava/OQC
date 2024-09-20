@@ -24,7 +24,7 @@
                     <option value="">Select Product Type</option>
                     <option value="TV"{%if product == 'TV'%}selected{%endif%}>TV</option>
                     <option value="AC" {%if product == 'AC'%}selected{%endif%}>AC</option>
-                    <option value="Phone"{%if product == 'Phone'%}selected{%endif%}>Phone</option>
+                    <option value="Mobile"{%if product == 'Mobile'%}selected{%endif%}>Mobile</option>
                     <option value="Washing_Machine"{%if product == 'Washing_Machine'%}selected{%endif%}>Washing Machine</option>
                 </select>
             </div>
@@ -265,7 +265,7 @@
     const modelsByType = {
         "TV": {{tv_models|safe}},
         "AC": {{ac_models|safe}},
-        "Phone": {{phone_models|safe}},
+        "Mobile": {{phone_models|safe}},
         "Washing_Machine": {{washing_machine_models|safe}}
     };
     

@@ -77,6 +77,8 @@ def report(request, stage, product, test_name, model_name, serialno):
         models = get_object_or_404(AC, ModelName=model_name)
     elif product == 'WM - FATL':
         models = get_object_or_404(WM_FATL, ModelName=model_name)
+    elif product == 'Mobile':
+        models = get_object_or_404(Mobile, ModelName=model_name)
     if request.method == 'POST':
         form = TestRecordForm(request.POST, instance=test_record)  
         form.save()
@@ -147,11 +149,12 @@ def edit(request, stage, product, test_name, model_name, serialno):
     if user.user_type != 'employee' and not user.is_superuser:
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
-    # product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno, TestStage=stage).ProductType
     if product == 'AC':
         models = get_object_or_404(AC, ModelName=model_name)
     elif product == 'WM - FATL':
         models = get_object_or_404(WM_FATL, ModelName=model_name)
+    elif product == 'Mobile':
+        models = get_object_or_404(Mobile, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, ProductType=product, TestStage=stage, SerailNo=serialno, TestName=test_name, ModelName=model_name)
     form = TestRecordForm(instance=test_record)
     test_record.additional_details = test_record.additional_details.strip()
@@ -446,11 +449,6 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
     if user.user_type != 'owner' and not user.is_superuser:
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
-    product = TestRecord.objects.get(ModelName=model_name, TestName=test_name, SerailNo=serialno, TestStage=stage).ProductType
-    if product == 'AC':
-        models = get_object_or_404(AC, ModelName=model_name)
-    elif product == 'WM - FATL':
-        models = get_object_or_404(WM_FATL, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, ProductType=product, SerailNo=serialno, ModelName=model_name, TestName=test_name, TestStage=stage)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
     soup = BeautifulSoup(test_record.additional_details, 'html.parser')
@@ -789,7 +787,7 @@ def employee_dashboard(request):
     completed_tests = completed_tests.order_by('-test_end_date')
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
+    phone_models = list(Mobile.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     context = {
@@ -848,7 +846,7 @@ def legal_dashboard(request):
 
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
+    phone_models = list(Mobile.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
@@ -908,7 +906,7 @@ def brand_dashboard(request):
     
     tv_models = list(TV.objects.values_list('ModelName', flat=True))
     ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Phone.objects.values_list('ModelName', flat=True))
+    phone_models = list(Mobile.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     context = {
@@ -1073,6 +1071,10 @@ def MNF(request):
             new_wm = WM_FATL.objects.create()
             new_wm.ModelName = Indkal_model_no
             new_wm.save()
+        elif Product == "Mobile":
+            new_mobile = Mobile.objects.create()
+            new_mobile.ModelName = Indkal_model_no
+            new_mobile.save()
         else:
             return redirect('/access_denied/')
 

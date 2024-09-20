@@ -4,6 +4,8 @@
             {% include 'table_ac.html' %}
         {% elif test.ProductType == 'WM - FATL' %}
             {% include 'table_wm_fatl.html' %}
+        {% elif test.ProductType == 'Mobile' %}
+            {% include 'table_mobile.html' %}
         {% endif %}
     </tbody>
 </table>

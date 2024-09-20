@@ -24,7 +24,7 @@ class AC(models.Model):
     Capilary = models.CharField(max_length=100,default='')
     Compressor  = models.CharField(max_length=100,default='')
     def __str__(self):
-        return f"AC - {self.ModelName}"
+        return f"{self.ModelName}"
 
 class WM_FATL(models.Model):
     ModelName = models.CharField(max_length=100,default='')
@@ -37,15 +37,24 @@ class WM_FATL(models.Model):
     def __str__(self):
         return f"{self.ModelName} - {self.Type}"
     
-class Phone(models.Model):
+class Mobile(models.Model):
     ModelName = models.CharField(max_length=100)
+    IMEINumber = models.CharField(max_length=100)
+    Chipset = models.CharField(max_length=100)
+    Display = models.CharField(max_length=100)
+    Camera = models.CharField(max_length=100)
+    Charger = models.CharField(max_length=100)
+    Battery = models.CharField(max_length=100)
+    RAM = models.CharField(max_length=100)
+    ROM = models.CharField(max_length=100)
+    Color = models.CharField(max_length=100)
     def __str__(self):
-        return f"{self.ModelName} "
+        return f"{self.ModelName}"
     
 class TV(models.Model):
     ModelName = models.CharField(max_length=100)
     def __str__(self):
-        return f"{self.ModelName} "
+        return f"{self.ModelName}"
 
 class Model_Test_Name_Details(models.Model):
     Model_Name = models.ForeignKey(Model_MNF_detail, to_field="Indkal_model_no", on_delete=models.CASCADE)

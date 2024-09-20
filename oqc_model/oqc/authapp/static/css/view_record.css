@@ -15,6 +15,10 @@ td {
     line-height: 90%;
 }
 
+.header-column {
+    width: 20%;
+}
+
 .additional_details {
     font-family: Arial;
     font-size: 13px;
