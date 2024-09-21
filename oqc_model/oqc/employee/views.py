@@ -407,7 +407,7 @@ def view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks = test_record.remarks
+    remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
@@ -458,7 +458,7 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks = test_record.remarks
+    remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
@@ -849,7 +849,6 @@ def legal_dashboard(request):
     phone_models = list(Mobile.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
-    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     context = {
         'test': test,
         'tests': tests,
@@ -944,7 +943,7 @@ def legal_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks = test_record.remarks
+    remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
@@ -995,7 +994,7 @@ def brand_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks = test_record.remarks
+    remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
@@ -1504,7 +1503,7 @@ def make_remark_changes(request):
         user = Employee.objects.get(username=request.session['username'])
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
         test_record.html_content = inc_remark["table_content"]
-        remarks = test_record.remarks
+        remarks = json.loads(test_record.remarks)
         updated = False
         for id, remark in remarks.items():
             if id == inc_remark["id"]:
@@ -1541,7 +1540,7 @@ def make_remark_changes(request):
                     notification.notification.append(json.dumps(notification_dict))
                     notification.unread_count += 1
                     notification.save()
-        test_record.remarks = remarks
+        test_record.remarks = json.dumps(remarks)
         test_record.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
@@ -1555,16 +1554,18 @@ def delete_remark(request):
         reply_id = inc_remark["reply_id"]
         if newHTML:
             test_record.html_content = newHTML
-        if inc_remark["id"] in test_record.remarks:
+        rmrk = json.loads(test_record.remarks)
+        if inc_remark["id"] in rmrk:
             if not reply_id:
-                del test_record.remarks[inc_remark["id"]]
+                del rmrk[inc_remark["id"]]
             else:
-                if inc_remark["reply_id"] in test_record.remarks[inc_remark["id"]]["reply"]["ids"]:
-                    idx = test_record.remarks[inc_remark["id"]]["reply"]["ids"].index(inc_remark["reply_id"])
-                    del test_record.remarks[inc_remark["id"]]["reply"]["ids"][idx]
-                    del test_record.remarks[inc_remark["id"]]["reply"]["users"][idx]
-                    del test_record.remarks[inc_remark["id"]]["reply"]["contents"][idx]
-                    del test_record.remarks[inc_remark["id"]]["reply"]["dates"][idx]
+                if inc_remark["reply_id"] in rmrk[inc_remark["id"]]["reply"]["ids"]:
+                    idx = rmrk[inc_remark["id"]]["reply"]["ids"].index(inc_remark["reply_id"])
+                    del rmrk[inc_remark["id"]]["reply"]["ids"][idx]
+                    del rmrk[inc_remark["id"]]["reply"]["users"][idx]
+                    del rmrk[inc_remark["id"]]["reply"]["contents"][idx]
+                    del rmrk[inc_remark["id"]]["reply"]["dates"][idx]
+        test_record.remarks = json.dumps(rmrk)
         test_record.save()
         employees = Employee.objects.all()
         for employee in employees:
@@ -1587,7 +1588,7 @@ def reply_remark(request):
         inc_remark = json.loads(request.body)
         user = Employee.objects.get(username=request.session['username'])
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
-        remarks = test_record.remarks
+        remarks = json.loads(test_record.remarks)
         remark = remarks[inc_remark["id"]]
         replies = remark["reply"]
         if replies["ids"].count(inc_remark["reply_id"]) > 0:
@@ -1599,7 +1600,7 @@ def reply_remark(request):
             replies["contents"].append(inc_remark["content"])
             replies["users"].append(user.first_name + " " + user.last_name)
             replies["dates"].append(dt.now().strftime("%Y-%m-%d %H:%M:%S"))
-        test_record.remarks = remarks
+        test_record.remarks = json.dumps(remarks)
         test_record.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
