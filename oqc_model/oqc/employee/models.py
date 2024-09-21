@@ -38,7 +38,7 @@ class TestRecord(models.Model):
     sample_quantiy = models.IntegerField(default=0)
     result = RichTextUploadingField(default="", blank=True)
     additional_details = RichTextUploadingField(default="", blank=True, config_name='full')
-    remarks = models.JSONField(default=dict)
+    remarks = models.TextField(default=str, blank=True)
     status = models.CharField(max_length=50,default="Not Sent")
     L_status = models.CharField(max_length=50,default="Not Sent")
     B_status = models.CharField(max_length=50,default="Not Sent")

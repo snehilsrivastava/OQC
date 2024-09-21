@@ -46,7 +46,7 @@ function populateTestName(testDetail) {
     let addedTests = [];
 
     testDetail.forEach(test => {
-        if ((selectedProductType === "" || selectedProductType === test.ProductType) && (selectedTestStage === "" || selectedTestStage === test.TestStage) && (selectedModelName === "" || selectedModelName === test.Model_Name_id)) {
+        if ((selectedProductType === "" || selectedProductType === test.ProductType) && (selectedTestStage === "" || selectedTestStage === test.TestStage) && (selectedModelName === "" || selectedModelName === test.ModelName)) {
             if (!addedTests.includes(test.TestName)) {
                 const option = document.createElement("option");
                 option.text = test.TestName;
