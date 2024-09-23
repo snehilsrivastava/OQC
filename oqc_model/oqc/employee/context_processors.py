@@ -14,7 +14,6 @@ def header_context(request):
     except KeyError:
         next_page = request.original_path
         login_url = '/au/login'
-        print(login_url)
         return redirect(f"{login_url}?next={next_page}" if next_page else login_url)
     employee = Employee.objects.get(username=username)
     notification = Notification.objects.get(employee=employee.username)

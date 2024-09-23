@@ -75,17 +75,17 @@
                     {% for test in tests %}
                     <tr>
                         {% if not product_filter %}
-                        <td>{{ test.ProductType }}</td>
+                        <td>{{ test.ProductType | linebreaksbr}}</td>
                         {% endif %}
                         {% if not testname_filter %}
-                        <td>{{ test.TestName }}</td>
+                        <td>{{ test.TestName | linebreaksbr}}</td>
                         {% endif %}
-                        <td>{{ test.Test_Objective }}</td>
-                        <td>{{ test.Test_Standard }}</td>
-                        <td>{{ test.Test_Condition }}</td>
-                        <td>{{ test.Test_Procedure }}</td>
-                        <td>{{ test.Judgement }}</td>
-                        <td>{{ test.Instrument }}</td>
+                        <td>{{ test.Test_Objective | linebreaksbr}}</td>
+                        <td>{{ test.Test_Standard | linebreaksbr}}</td>
+                        <td>{{ test.Test_Condition | linebreaksbr}}</td>
+                        <td>{{ test.Test_Procedure | linebreaksbr}}</td>
+                        <td>{{ test.Judgement | linebreaksbr}}</td>
+                        <td>{{ test.Instrument | linebreaksbr}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

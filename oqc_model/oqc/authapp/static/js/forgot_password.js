@@ -154,7 +154,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.addEventListener("DOMContentLoaded", function () {
     var otpInputs = document.querySelectorAll(".otp-input");
-    console.log(otpInputs);
   
     function setupOtpInputListeners(inputs) {
       inputs.forEach(function (input, index) {
@@ -209,7 +208,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   
     function updateOTPValue(inputs) {
-        console.log('inside updateOTPValue');
         var otpValue = "";
         inputs.forEach(function (input) {
             otpValue += input.value;

@@ -340,7 +340,6 @@ def TestNames(request):
         dvt = request.POST.getlist('dvt-options')
         pp = request.POST.getlist('pp-options')
         mp = request.POST.getlist('mp-options')
-        print("=======================\n",dvt, pp, mp, "\n========================")
         tl = {'DVT': ['NA', 'NA'], 'PP': ['NA', 'NA'], 'MP': ['NA', 'NA']}
         tl['DVT'][0] = request.POST.get('dvt-start-date')
         tl['DVT'][1] = request.POST.get('dvt-end-date')
@@ -374,6 +373,10 @@ def TestNames(request):
     messages.error(request, 'Invalid request')
     return redirect('/dashboard/')
 
+from django.shortcuts import get_object_or_404
+from django.template import loader
+
+
 @login_required
 def generate_reports(request, model_name, model_updated):
     model = Model_Test_Name_Details.objects.get(Model_Name = Model_MNF_detail.objects.get(Indkal_model_no = model_name))
@@ -388,7 +391,21 @@ def generate_reports(request, model_name, model_updated):
                     ModelName=model_name,
                     TestName=test_name,
                     TestStage=stage,
+                    remarks="{}",
                 )
+                Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=model_product)
+                if model_product == 'AC':
+                    models = get_object_or_404(AC, ModelName=model_name)
+                elif model_product == 'WM - FATL':
+                    models = get_object_or_404(WM_FATL, ModelName=model_name)
+                elif model_product == 'Mobile':
+                    models = get_object_or_404(Mobile, ModelName=model_name)
+                context = {
+                    'test': test_record,
+                    'model': models,
+                    'TestProtocol': Test_protocol,
+                } 
+                test_record.html_content = loader.get_template('report_table.html').render(context)
                 test_record.save()
                 created_reports += 1
     # send notification to owners and employees
