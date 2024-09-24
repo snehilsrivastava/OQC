@@ -407,7 +407,7 @@ def view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks = test_record.remarks
+    remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
@@ -458,7 +458,7 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks = test_record.remarks
+    remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
@@ -849,7 +849,6 @@ def legal_dashboard(request):
     phone_models = list(Mobile.objects.values_list('ModelName', flat=True))
     washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
-    test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     context = {
         'test': test,
         'tests': tests,
@@ -944,7 +943,7 @@ def legal_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks = test_record.remarks
+    remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
@@ -995,7 +994,7 @@ def brand_view(request, stage, product, test_name, model_name, serialno):
         p.string = ""
         p.append(BeautifulSoup(page_break, 'html.parser'))
     test_record.additional_details = str(soup)
-    remarks = test_record.remarks
+    remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
         time_diff = dt.now() - remark_date
@@ -1202,14 +1201,9 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
-        # existingProd = Product_List.objects.get(Product=product)
-        # T = list(map(bool, [int(_) for _ in s1]))
-        # S = ['DVT', 'PP', 'MP']
-        # stages = [_ for i, _ in enumerate(S) if T[i]]
-        # for s in stages:
-        #     if testName not in existingProd.Test_Names[s]:
-        #         existingProd.Test_Names[s].append(testName)
-        # existingProd.save()
+        existing_test = Test_core_detail.objects.filter(TestName=testName, ProductType=product).first()
+        if existing_test:
+            return redirect(reverse('test_protocol_entry', args=[testName, product]))
         new_test = Test_core_detail(
             TestStage=s1,
             ProductType=product,
@@ -1343,7 +1337,6 @@ def ckeditor_image_upload(request):
                 'url': file_url
             }
             return JsonResponse(response)
-        print("didn't run upload request")
         return JsonResponse({'error': 'Invalid file type. Only images are allowed.'}, status=422)
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
@@ -1504,7 +1497,7 @@ def make_remark_changes(request):
         user = Employee.objects.get(username=request.session['username'])
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
         test_record.html_content = inc_remark["table_content"]
-        remarks = test_record.remarks
+        remarks = json.loads(test_record.remarks)
         updated = False
         for id, remark in remarks.items():
             if id == inc_remark["id"]:
@@ -1517,10 +1510,11 @@ def make_remark_changes(request):
                 "content": inc_remark["content"],
                 "type": inc_remark["type"],
                 "from": f"{user.first_name} {user.last_name}",
+                "uid": f"{user.pk}",
                 "date": dt.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "reply": {"ids": [], "dates": [], "users": [], "contents": []},
+                "reply": {"ids": [], "dates": [], "users": [], "uids": [], "contents": []},
             }
-            employees = Employee.objects.all()
+            employees = Employee.objects.exclude(username=user.username)
             for employee in employees:
                 user_ProdType = [k for k in employee.product_type if employee.product_type[k]]
                 if employee.user_type in ['legal', 'brand'] or test_record.ProductType in user_ProdType:
@@ -1541,7 +1535,7 @@ def make_remark_changes(request):
                     notification.notification.append(json.dumps(notification_dict))
                     notification.unread_count += 1
                     notification.save()
-        test_record.remarks = remarks
+        test_record.remarks = json.dumps(remarks)
         test_record.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
@@ -1552,32 +1546,37 @@ def delete_remark(request):
         inc_remark = json.loads(request.body)
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
         newHTML = inc_remark["table_content"]
-        reply_id = inc_remark["reply_id"]
         if newHTML:
             test_record.html_content = newHTML
-        if inc_remark["id"] in test_record.remarks:
-            if not reply_id:
-                del test_record.remarks[inc_remark["id"]]
-            else:
-                if inc_remark["reply_id"] in test_record.remarks[inc_remark["id"]]["reply"]["ids"]:
-                    idx = test_record.remarks[inc_remark["id"]]["reply"]["ids"].index(inc_remark["reply_id"])
-                    del test_record.remarks[inc_remark["id"]]["reply"]["ids"][idx]
-                    del test_record.remarks[inc_remark["id"]]["reply"]["users"][idx]
-                    del test_record.remarks[inc_remark["id"]]["reply"]["contents"][idx]
-                    del test_record.remarks[inc_remark["id"]]["reply"]["dates"][idx]
+        remark = json.loads(test_record.remarks)
+        if inc_remark["id"] in remark:
+            to = [int(remark[inc_remark["id"]]["uid"])]
+            if not inc_remark["reply_id"]:
+                del remark[inc_remark["id"]]
+            elif inc_remark["reply_id"] in remark[inc_remark["id"]]["reply"]["ids"]:
+                idx = remark[inc_remark["id"]]["reply"]["ids"].index(inc_remark["reply_id"])
+                to += [_ for _ in list(map(int, remark[inc_remark["id"]]["reply"]["uids"])) if _!=int(remark[inc_remark["id"]]["reply"]["uids"][idx])]
+                del remark[inc_remark["id"]]["reply"]["ids"][idx]
+                del remark[inc_remark["id"]]["reply"]["users"][idx]
+                del remark[inc_remark["id"]]["reply"]["uids"][idx]
+                del remark[inc_remark["id"]]["reply"]["contents"][idx]
+                del remark[inc_remark["id"]]["reply"]["dates"][idx]
+        test_record.remarks = json.dumps(remark)
         test_record.save()
-        employees = Employee.objects.all()
+        employees = Employee.objects.filter(pk__in=to)
         for employee in employees:
-            user_ProdType = [k for k in employee.product_type if employee.product_type[k]]
-            if employee.user_type in ['legal', 'brand'] or test_record.ProductType in user_ProdType:
-                notification = Notification.objects.get(employee=employee.username)
-                for i in range(len(notification.notification)):
-                    notify = json.loads(notification.notification[i])
-                    if notify["action"] == "commented" and notify["metadata"]["id"] == inc_remark["id"] and not notify["is_read"]:
-                        notification.unread_count -= 1
-                        notification.notification.pop(i)
-                        break
-                notification.save()
+            notification = Notification.objects.get(employee=employee.username)
+            for i in range(len(notification.notification)):
+                notify = json.loads(notification.notification[i])
+                if notify["action"] == "commented" and notify["metadata"]["id"] == inc_remark["id"] and not notify["is_read"]:
+                    notification.unread_count -= 1
+                    notification.notification.pop(i)
+                    break
+                elif notify["action"] == "commented" and notify["metadata"]["id"] == inc_remark["id"]+"-"+inc_remark["reply_id"] and not notify["is_read"]:
+                    notification.unread_count -= 1
+                    notification.notification.pop(i)
+                    break
+            notification.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
@@ -1587,9 +1586,11 @@ def reply_remark(request):
         inc_remark = json.loads(request.body)
         user = Employee.objects.get(username=request.session['username'])
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
-        remarks = test_record.remarks
+        remarks = json.loads(test_record.remarks)
         remark = remarks[inc_remark["id"]]
+        to = [int(remark["uid"])]
         replies = remark["reply"]
+        to += [_ for _ in list(map(int, replies["uids"])) if _!=user.pk]
         if replies["ids"].count(inc_remark["reply_id"]) > 0:
             idx = replies['ids'].index(inc_remark["reply_id"])
             replies["contents"][idx] = inc_remark["content"]
@@ -1598,8 +1599,30 @@ def reply_remark(request):
             replies["ids"].append(inc_remark["reply_id"])
             replies["contents"].append(inc_remark["content"])
             replies["users"].append(user.first_name + " " + user.last_name)
+            replies["uids"].append(f"{user.pk}")
             replies["dates"].append(dt.now().strftime("%Y-%m-%d %H:%M:%S"))
-        test_record.remarks = remarks
+        test_record.remarks = json.dumps(remarks)
         test_record.save()
+
+        employees = Employee.objects.filter(pk__in = to)
+        for employee in employees:
+            notification = Notification.objects.get(employee=employee.username)
+            notification_dict = default_notification()
+            notification_dict["from"] = f"{user.first_name} {user.last_name}"
+            notification_dict["display_content"] = f"{user.first_name} {user.last_name} replied on one of your comment thread"
+            notification_dict["display_full_content"] = f"Replied on one of your comment thread in test: {test_record.TestName} for model: {test_record.ModelName} and product: {test_record.ProductType}"
+            notification_dict["metadata"] = {
+                "stage": test_record.TestStage,
+                "product": test_record.ProductType,
+                "test": test_record.TestName,
+                "model": test_record.ModelName,
+                "serialno": test_record.SerailNo,
+                "id": inc_remark["id"]+"-"+inc_remark["reply_id"],
+            }
+            notification_dict["action"] = "commented"
+            notification.notification.append(json.dumps(notification_dict))
+            notification.unread_count += 1
+            notification.save()
+
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
