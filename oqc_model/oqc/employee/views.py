@@ -1201,14 +1201,9 @@ def Test_list_entry(request):
             s1 += "1"
         else:
             s1 += "0"
-        # existingProd = Product_List.objects.get(Product=product)
-        # T = list(map(bool, [int(_) for _ in s1]))
-        # S = ['DVT', 'PP', 'MP']
-        # stages = [_ for i, _ in enumerate(S) if T[i]]
-        # for s in stages:
-        #     if testName not in existingProd.Test_Names[s]:
-        #         existingProd.Test_Names[s].append(testName)
-        # existingProd.save()
+        existing_test = Test_core_detail.objects.filter(TestName=testName, ProductType=product).first()
+        if existing_test:
+            return redirect(reverse('test_protocol_entry', args=[testName, product]))
         new_test = Test_core_detail(
             TestStage=s1,
             ProductType=product,

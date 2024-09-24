@@ -286,7 +286,9 @@ function createCommentBox(testID, dataCommentId, type, content) {
     remarksSection.insertBefore(commentBox, addCommentBox.nextSibling);
     addRemarkListeners();
     handleCommentClick([commentBox]);
-    setTimeout(() => { commentBox.click(); }, 1);
+    if (content === ""){
+        setTimeout(() => { commentBox.click(); }, 1);
+    }
     addCommentBoxListeners();
 }
 
