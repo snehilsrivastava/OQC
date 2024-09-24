@@ -15,7 +15,6 @@ CKEDITOR.on('dialogDefinition', function(event) {
         new_span.textContent = 'This is a preview of image size with the text size as it would look in the report.';
         let preview_img = image_preview_parent.querySelector('img');
         let img_width = preview_img.getAttribute('style');
-        console.log(img_width);
         new_span.style.width = img_width;
         image_preview_parent.replaceChild(new_span, old_text_node);
     }, 10);

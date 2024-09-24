@@ -286,7 +286,7 @@ function createCommentBox(testID, dataCommentId, type, content) {
     remarksSection.insertBefore(commentBox, addCommentBox.nextSibling);
     addRemarkListeners();
     handleCommentClick([commentBox]);
-    if (content === ""){
+    if(content === ""){
         setTimeout(() => { commentBox.click(); }, 1);
     }
     addCommentBoxListeners();
@@ -392,8 +392,7 @@ function createReplyBox(event, testID, button) {
 }
 
 function replyRemark(testID, id, replyID) {
-    console.log(testID, id, replyID);
-    const commentBox = document.querySelector(`.comment-box#${id}`);
+    const commentBox = document.querySelector(`.comment-box[id="${id}"]`);
     const replyBox = commentBox.querySelector(`.reply-box[id="${replyID}"]`);
     const replyBody = replyBox.querySelector('.comment-body');
     const content = replyBox.querySelector('.comment-content-input').value;
@@ -432,7 +431,7 @@ function makeRemarkChanges(testID, id, type, content) {
 }
 
 function deleteReply(testID, id, replyID) {
-    const commentBox = document.querySelector(`.comment-box#${id}`);
+    const commentBox = document.querySelector(`.comment-box[id="${id}"]`);
     const replyBox = commentBox.querySelector(`.reply-box[id="${replyID}"]`);
     replyBox.remove();
     fetch('/delete_remark/', {

@@ -149,10 +149,8 @@ def register_page(request):
             case 1:
                 new_employee = Employee(username=username, first_name=fname, last_name=lname, password=pword)
                 new_employee.save()
-                print("================\nEmployee saved successfully\n================")
                 new_notification = Notification(employee=new_employee, notification=[])
                 new_notification.save()
-                print("\nNotification saved successfully\n================")
                 messages.success(request, "Account creation request sent.")
 
                 subject = 'New account approval'

@@ -1337,7 +1337,6 @@ def ckeditor_image_upload(request):
                 'url': file_url
             }
             return JsonResponse(response)
-        print("didn't run upload request")
         return JsonResponse({'error': 'Invalid file type. Only images are allowed.'}, status=422)
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
@@ -1511,10 +1510,11 @@ def make_remark_changes(request):
                 "content": inc_remark["content"],
                 "type": inc_remark["type"],
                 "from": f"{user.first_name} {user.last_name}",
+                "uid": f"{user.pk}",
                 "date": dt.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "reply": {"ids": [], "dates": [], "users": [], "contents": []},
+                "reply": {"ids": [], "dates": [], "users": [], "uids": [], "contents": []},
             }
-            employees = Employee.objects.all()
+            employees = Employee.objects.exclude(username=user.username)
             for employee in employees:
                 user_ProdType = [k for k in employee.product_type if employee.product_type[k]]
                 if employee.user_type in ['legal', 'brand'] or test_record.ProductType in user_ProdType:
@@ -1546,34 +1546,37 @@ def delete_remark(request):
         inc_remark = json.loads(request.body)
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
         newHTML = inc_remark["table_content"]
-        reply_id = inc_remark["reply_id"]
         if newHTML:
             test_record.html_content = newHTML
-        rmrk = json.loads(test_record.remarks)
-        if inc_remark["id"] in rmrk:
-            if not reply_id:
-                del rmrk[inc_remark["id"]]
-            else:
-                if inc_remark["reply_id"] in rmrk[inc_remark["id"]]["reply"]["ids"]:
-                    idx = rmrk[inc_remark["id"]]["reply"]["ids"].index(inc_remark["reply_id"])
-                    del rmrk[inc_remark["id"]]["reply"]["ids"][idx]
-                    del rmrk[inc_remark["id"]]["reply"]["users"][idx]
-                    del rmrk[inc_remark["id"]]["reply"]["contents"][idx]
-                    del rmrk[inc_remark["id"]]["reply"]["dates"][idx]
-        test_record.remarks = json.dumps(rmrk)
+        remark = json.loads(test_record.remarks)
+        if inc_remark["id"] in remark:
+            to = [int(remark[inc_remark["id"]]["uid"])]
+            if not inc_remark["reply_id"]:
+                del remark[inc_remark["id"]]
+            elif inc_remark["reply_id"] in remark[inc_remark["id"]]["reply"]["ids"]:
+                idx = remark[inc_remark["id"]]["reply"]["ids"].index(inc_remark["reply_id"])
+                to += [_ for _ in list(map(int, remark[inc_remark["id"]]["reply"]["uids"])) if _!=int(remark[inc_remark["id"]]["reply"]["uids"][idx])]
+                del remark[inc_remark["id"]]["reply"]["ids"][idx]
+                del remark[inc_remark["id"]]["reply"]["users"][idx]
+                del remark[inc_remark["id"]]["reply"]["uids"][idx]
+                del remark[inc_remark["id"]]["reply"]["contents"][idx]
+                del remark[inc_remark["id"]]["reply"]["dates"][idx]
+        test_record.remarks = json.dumps(remark)
         test_record.save()
-        employees = Employee.objects.all()
+        employees = Employee.objects.filter(pk__in=to)
         for employee in employees:
-            user_ProdType = [k for k in employee.product_type if employee.product_type[k]]
-            if employee.user_type in ['legal', 'brand'] or test_record.ProductType in user_ProdType:
-                notification = Notification.objects.get(employee=employee.username)
-                for i in range(len(notification.notification)):
-                    notify = json.loads(notification.notification[i])
-                    if notify["action"] == "commented" and notify["metadata"]["id"] == inc_remark["id"] and not notify["is_read"]:
-                        notification.unread_count -= 1
-                        notification.notification.pop(i)
-                        break
-                notification.save()
+            notification = Notification.objects.get(employee=employee.username)
+            for i in range(len(notification.notification)):
+                notify = json.loads(notification.notification[i])
+                if notify["action"] == "commented" and notify["metadata"]["id"] == inc_remark["id"] and not notify["is_read"]:
+                    notification.unread_count -= 1
+                    notification.notification.pop(i)
+                    break
+                elif notify["action"] == "commented" and notify["metadata"]["id"] == inc_remark["id"]+"-"+inc_remark["reply_id"] and not notify["is_read"]:
+                    notification.unread_count -= 1
+                    notification.notification.pop(i)
+                    break
+            notification.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
@@ -1585,7 +1588,9 @@ def reply_remark(request):
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
         remarks = json.loads(test_record.remarks)
         remark = remarks[inc_remark["id"]]
+        to = [int(remark["uid"])]
         replies = remark["reply"]
+        to += [_ for _ in list(map(int, replies["uids"])) if _!=user.pk]
         if replies["ids"].count(inc_remark["reply_id"]) > 0:
             idx = replies['ids'].index(inc_remark["reply_id"])
             replies["contents"][idx] = inc_remark["content"]
@@ -1594,8 +1599,30 @@ def reply_remark(request):
             replies["ids"].append(inc_remark["reply_id"])
             replies["contents"].append(inc_remark["content"])
             replies["users"].append(user.first_name + " " + user.last_name)
+            replies["uids"].append(f"{user.pk}")
             replies["dates"].append(dt.now().strftime("%Y-%m-%d %H:%M:%S"))
         test_record.remarks = json.dumps(remarks)
         test_record.save()
+
+        employees = Employee.objects.filter(pk__in = to)
+        for employee in employees:
+            notification = Notification.objects.get(employee=employee.username)
+            notification_dict = default_notification()
+            notification_dict["from"] = f"{user.first_name} {user.last_name}"
+            notification_dict["display_content"] = f"{user.first_name} {user.last_name} replied on one of your comment thread"
+            notification_dict["display_full_content"] = f"Replied on one of your comment thread in test: {test_record.TestName} for model: {test_record.ModelName} and product: {test_record.ProductType}"
+            notification_dict["metadata"] = {
+                "stage": test_record.TestStage,
+                "product": test_record.ProductType,
+                "test": test_record.TestName,
+                "model": test_record.ModelName,
+                "serialno": test_record.SerailNo,
+                "id": inc_remark["id"]+"-"+inc_remark["reply_id"],
+            }
+            notification_dict["action"] = "commented"
+            notification.notification.append(json.dumps(notification_dict))
+            notification.unread_count += 1
+            notification.save()
+
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})

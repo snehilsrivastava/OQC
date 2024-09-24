@@ -50,7 +50,6 @@ function get_new_data(button){
 }
 
 function callDjango(url, user_type, productTypes, username) {
-    console.log(url, user_type, productTypes, username);
     if (['owner', 'employee'].includes(user_type) && productTypes.length === 0) {alert('Please select a Product Type before approving the user.');}
     else {
         fetch(url, {
