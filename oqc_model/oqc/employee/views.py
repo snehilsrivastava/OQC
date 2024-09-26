@@ -251,6 +251,7 @@ def handle_selected_tests(request, product, model, action):
         return redirect('/access_denied/')
     if request.method == 'POST':
         selected_test_ids = request.POST.getlist('selected_tests')
+        print(selected_test_ids)
         selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids, ProductType=product, ModelName=model)
         if action == 'generate_pdf':
             if not selected_test_records.exists():

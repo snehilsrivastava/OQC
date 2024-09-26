@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{% static 'css/header.css' %}">
 </head>
 <body>
-{% include "header.html" %}
+{% include "header_plain.html" %}
     <form class="mx-auto card p-3 shadow-lg form-container" style="margin-top: 65px;">
         {% csrf_token %}
         {{ form.media }}

@@ -1,7 +1,8 @@
 from django.urls import path, include, re_path
 from . import views
-# from django.conf.urls import url
 from ckeditor_uploader import views as ckeditor_views
+from django.views.static import serve
+from django.conf import settings
 
 handler404 = 'employee.views.custom_404'
 
@@ -47,6 +48,7 @@ urlpatterns = [
     path('make_remark_changes/', views.make_remark_changes, name='make_remark_changes'),
     path('delete_remark/', views.delete_remark, name='delete_remark'),
     path('reply_remark/', views.reply_remark, name='reply_remark'),
+    re_path(r'^user_manual\.pdf$', serve, {'document_root': settings.STATICFILES_DIRS[0], 'path': 'documents\\user_manual.pdf'}),
 ]
 
 from django.conf import settings

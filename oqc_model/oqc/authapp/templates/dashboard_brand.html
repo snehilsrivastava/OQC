@@ -102,52 +102,50 @@
                 </svg>Filter
             </button>
         </span>
-        <form method="POST" action="{% url 'handle_selected_tests' %}">
-            <div class="table-containers">
-                <table class="table main-table main-table-bl table-bordered">
-                    <colgroup>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th>
-                            <button class="collapse-button master-collapse-button" type="button" onclick="toggleAllCollapseButtons()">
-                                <i class="fas fa-chevron-down fa-sm"></i>
-                            </button>
-                        </th>
-                        <th>Product</th>
-                        <th>Model Name</th>
-                        <th>Stage</th>
-                        <th>Actions</th>
-                        <!-- Column for collapse icon -->
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for test in tests %}
-                    <tr>
-                        <td class="coll-btn-cell">
-                            <button class="collapse-button" type="button" data-toggle="collapse"
-                                    data-target="#testList{{ forloop.counter }}" aria-expanded="false"
-                                    aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">
-                                <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
-                            </button>
-                        </td>
-                        <td>{{ test.ProductType }}</td>
-                        <td><p class="model-name">{{ test.ModelName }}</p></td>
-                        <td>{{ test.TestStage }}</td>
-                        <td>
-                            <button class="action-button" name="action" value="generate_pdf" type="submit"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
-                                <path d="M360-460h40v-80h40q17 0 28.5-11.5T480-580v-40q0-17-11.5-28.5T440-660h-80v200Zm40-120v-40h40v40h-40Zm120 120h80q17 0 28.5-11.5T640-500v-120q0-17-11.5-28.5T600-660h-80v200Zm40-40v-120h40v120h-40Zm120 40h40v-80h40v-40h-40v-40h40v-40h-80v200ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
-                                </svg>&nbsp;Download</button>
-                        </td>
-
-                    </tr>
-                    <tr>
-                        <td colspan="5">
+        <div class="table-containers">
+            <table class="table main-table main-table-bl table-bordered">
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>
+                        <button class="collapse-button master-collapse-button" type="button" onclick="toggleAllCollapseButtons()">
+                            <i class="fas fa-chevron-down fa-sm"></i>
+                        </button>
+                    </th>
+                    <th>Product</th>
+                    <th>Model Name</th>
+                    <th>Stage</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for test in tests %}
+                <tr>
+                    <td class="coll-btn-cell">
+                        <button class="collapse-button" type="button" data-toggle="collapse"
+                                data-target="#testList{{ forloop.counter }}" aria-expanded="false"
+                                aria-controls="testList{{ forloop.counter }}" onclick="toggleCollapseIcon(this)">
+                            <i class="fas fa-chevron-down fa-sm collapse-arrow" id="icon{{ forloop.counter }}"></i>
+                        </button>
+                    </td>
+                    <td>{{ test.ProductType }}</td>
+                    <td><p class="model-name">{{ test.ModelName }}</p></td>
+                    <td>{{ test.TestStage }}</td>
+                    <td>
+                        <button class="action-button" name="action" value="generate_pdf" type="submit" onclick="submitRowForm(this)"><svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+                            <path d="M360-460h40v-80h40q17 0 28.5-11.5T480-580v-40q0-17-11.5-28.5T440-660h-80v200Zm40-120v-40h40v40h-40Zm120 120h80q17 0 28.5-11.5T640-500v-120q0-17-11.5-28.5T600-660h-80v200Zm40-40v-120h40v120h-40Zm120 40h40v-80h40v-40h-40v-40h40v-40h-80v200ZM320-240q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
+                        </svg>&nbsp;Download</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        <form method="POST" action="{% url 'handle_selected_tests' test.ProductType test.ModelName 'null' %}"></form>
                             <div class="collapse" id="testList{{ forloop.counter }}">
                                 <table class="table drop-table drop-table-bl">
                                     <colgroup>
@@ -200,14 +198,13 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </td>
-                        
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </form>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
