@@ -22,8 +22,10 @@
             <label for="product">Product Type:</label>
             <select class="form-control filter-form-control" id="product" name="product" onchange="populateModels({{models_list}}); populateTestName({{test}});">
                 <option value="">Select Product Type</option>
-                {% for PT in userProductTypes %}
-                    <option value="{{ PT }}"{% if product == PT %}selected{% endif %}>{{ PT }}</option>
+                {% for prod, boo in employee.product_type.items %}
+                    {% if boo %}
+                        <option value="{{prod}}" {% if product == prod %}selected{% endif %}>{{prod}}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
         </div>

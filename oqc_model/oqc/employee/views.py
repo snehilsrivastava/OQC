@@ -607,11 +607,11 @@ def change_status_brand(request, test_id, status):
         send_change_status_notification(request, test, "brand")
     return redirect('brand_view', test.TestStage, test.ProductType, test.TestName, test.ModelName, test.SerailNo)
 
-def summary():
+def summary(ProductType):
     ret = []
     status_colors = {"Uploading": "Maroon", "Uploaded": "#989800", "Completed": "Green"}
-    PType = Product_List.objects.values('Product')
-    ProductType = [_['Product'] for _ in PType]
+    # PType = Product_List.objects.values('Product')
+    # ProductType = [_['Product'] for _ in PType]
     for P in ProductType:
         Models = Model_Test_Name_Details.objects.filter(Product=P)
         for M in Models:
@@ -724,7 +724,10 @@ def dashboard(request):
     completed_tests = completed_tests.order_by('-test_end_date')
     models_list = json.dumps(list(Model_Test_Name_Details.objects.all().values()))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
-    summary_data = summary()
+    if product:
+        summary_data = summary([product])
+    else:
+        summary_data = summary(user_ProdType)
     summary_ = []
     for sum in summary_data:
         if sum['Meta'][0] in user_ProdType:
@@ -747,7 +750,6 @@ def dashboard(request):
         'status_color' : status_color,
         'role_letter': role_letter,
         'summary_data': summary_,
-        'userProductTypes': user_ProdType
     }
     return render(request, 'dashboard_PO.html', context)
 
@@ -759,7 +761,7 @@ def employee_dashboard(request):
         return redirect('/access_denied/')
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
-    product = request.GET.get('product','')
+    product = request.GET.get('product', '')
     model_name = request.GET.get('model_name', '')
     serial_number = request.GET.get('serial_number', '')
     status = request.GET.get('status', '')
@@ -1082,12 +1084,7 @@ def MNF(request):
             return redirect(f'/prod/specs/{Indkal_model_no}/{Product}')
         else:
             return redirect('/access_denied/')
-    
-    products = Product_List.objects.values_list('Product', flat=True)
-    context = {
-        'products': list(products),
-    }
-    return render(request, 'productMNFdetail.html',context)
+    return render(request, 'productMNFdetail.html')
 
 @login_required
 def model_details_update(request):
@@ -1123,10 +1120,9 @@ def model_details_update(request):
             return redirect(f'/prod/specs/{Indkal_model_no}/{Product}')
         else:
             return redirect('/access_denied/')
-    products = list(Product_List.objects.values_list('Product', flat=True))
-    models = list(Model_MNF_detail.objects.values())
+    user_ProdType = [k for k in user.product_type if user.product_type[k]]
+    models = list(Model_MNF_detail.objects.filter(Product__in=user_ProdType).values())
     context = {
-        'products': products,
         'models': models,
     }
     return render(request, 'model_details_update.html',context)
@@ -1140,11 +1136,11 @@ def model_details_view(request):
         return redirect('model_details_view')
     product_filter = request.GET.get('product_filter', '')
     model_filter = request.GET.get('model_filter', '')
-    products = Model_MNF_detail.objects.values_list('Product', flat=True).distinct()
+    products = [k for k in user.product_type if user.product_type[k]]
     if product_filter:
         models = Model_MNF_detail.objects.filter(Product=product_filter).values_list('Indkal_model_no', flat=True).distinct()
     else:
-        models = Model_MNF_detail.objects.values_list('Indkal_model_no', flat=True).distinct()
+        models = Model_MNF_detail.objects.filter(Product__in=products).values_list('Indkal_model_no', flat=True).distinct()
     filtered_models = Model_MNF_detail.objects.all()
     if product_filter:
         filtered_models = filtered_models.filter(Product=product_filter)
@@ -1212,12 +1208,7 @@ def Test_list_entry(request):
         )
         new_test.save()
         return redirect(reverse('test_protocol_entry', args=[testName, product]))
-
-    products = list(Product_List.objects.values_list('Product', flat=True))
-    context = {
-        'products': products,
-    }
-    return render(request, 'Test_list_entry.html',context)
+    return render(request, 'Test_list_entry.html')
 
 @login_required
 def test_protocol_entry(request, test_name, product):
@@ -1298,28 +1289,28 @@ def test_details_view(request):
     if 'clear_filters' in request.GET:
         return redirect('test_details_view')
     product_filter = request.GET.get('product_filter', '')
-    model_filter = request.GET.get('model_filter', '')
-    products = Test_core_detail.objects.values_list('ProductType', flat=True).distinct()
+    testname_filter = request.GET.get('testname_filter', '')
+    products = [k for k in user.product_type if user.product_type[k]]
     if product_filter:
         testnames = Test_core_detail.objects.filter(ProductType=product_filter).values_list('TestName', flat=True).distinct()
     else:
-        testnames = Test_core_detail.objects.values_list('TestName', flat=True).distinct()
+        testnames = Test_core_detail.objects.filter(ProductType__in=products).values_list('TestName', flat=True).distinct()
     filtered_tests = Test_core_detail.objects.all()
     if product_filter:
         filtered_tests = filtered_tests.filter(ProductType=product_filter)
-        if model_filter and not Test_core_detail.objects.filter(ProductType=product_filter, TestName=model_filter).exists():
-            model_filter = ''
+        if testname_filter and not Test_core_detail.objects.filter(ProductType=product_filter, TestName=testname_filter).exists():
+            testname_filter = ''
             query_params = request.GET.copy()
-            query_params['model_filter'] = ''
+            query_params['testname_filter'] = ''
             return redirect(f"{request.path}?{query_params.urlencode()}")
-    if model_filter:
-        filtered_tests = filtered_tests.filter(TestName=model_filter)
+    if testname_filter:
+        filtered_tests = filtered_tests.filter(TestName=testname_filter)
     context = {
         'tests': filtered_tests,
         'products': products,
         'testnames': testnames,
         'product_filter': product_filter,
-        'model_filter': model_filter,
+        'testname_filter': testname_filter,
     }
     return render(request, 'test_details_view.html', context)
 

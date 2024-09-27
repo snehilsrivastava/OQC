@@ -36,6 +36,12 @@
                 <div class="form-group">
                     <label for="Product">Product</label>
                     <select class="form-control"  onchange="populateTestName()" id="Product" name="Product" required>
+                        <option value="" selected disabled hidden>Select the Product</option>
+                        {% for prod, boo in employee.product_type.items %}
+                            {% if boo %}
+                                <option value="{{prod}}">{{prod}}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
@@ -68,8 +74,6 @@
         </div>
     </div>
     <script>
-        const products = {{ products|safe }};
-
         function populateStages(sel, testName) {
             const testDetails = {{ test|safe }};
             testDetails.forEach(t => {
@@ -89,32 +93,7 @@
             });
         }
 
-        function populateProducts() {
-            const productSelect = document.getElementById("Product");
-
-            // Clear existing options
-            productSelect.innerHTML = "";
-
-            // Create a default option
-            const defaultOption = document.createElement("option");
-            defaultOption.value = "";
-            defaultOption.text = "Select the Product";
-            defaultOption.selected = true;
-            defaultOption.disabled = true;
-            defaultOption.hidden = true;
-            productSelect.appendChild(defaultOption);
-
-            // Populate options from the products data
-            products.forEach(product => {
-                const option = document.createElement("option");
-                option.value = product;
-                option.text = product;
-                productSelect.appendChild(option);
-            });
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            populateProducts();
             populateTestName();
         });
 

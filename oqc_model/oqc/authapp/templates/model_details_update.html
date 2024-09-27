@@ -35,6 +35,12 @@
                 <div class="form-group">
                     <label for="Product">Product</label>
                     <select name="Product" id="Product" class="form-control" required onchange="populateModels()">
+                        <option value="Select the Product" selected disabled hidden>Select the Product</option>
+                        {% for prod, boo in employee.product_type.items %}
+                            {% if boo %}
+                                <option value="{{prod}}">{{prod}}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
@@ -44,10 +50,7 @@
                 </div>
                 <div class="form-group">
                     <label>Name and Address of Customer</label>
-                    <textarea class="form-control" id="Customer" name="Customer" required>
-INDKAL TECHNOLOGIES PRIVATE LIMITED
-1, C-102, Hinduja Lake Front Estate, Hullimavu Bennerghatta Rd,
-Bangalore, Bengaluru (Bangalore) Urban, Karnataka, 560076</textarea>
+                    <textarea class="form-control" id="Customer" name="Customer" required></textarea>
                 </div>
                 <div class="form-group">
                     <label>Name and Address of Manufacturer</label>
@@ -87,30 +90,8 @@ Bangalore, Bengaluru (Bangalore) Urban, Karnataka, 560076</textarea>
     <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            populateProducts();
             populateModels();
         });
-
-        function populateProducts() {
-            const productSelect = document.getElementById("Product");
-            productSelect.innerHTML = "";
-            const productsData = {{ products|safe }};
-            
-            // Default option 
-            const option = document.createElement("option");
-            option.text = "Select the product";
-            option.selected = true;
-            option.disabled = true;
-            option.hidden = true;
-            productSelect.appendChild(option);
-
-            // Populate options from the products data
-            productsData.forEach(product => {
-                const option = document.createElement("option");
-                option.text = product;
-                productSelect.appendChild(option);
-            });
-        }
         
         function populateModels() {
             const productSelect = document.getElementById("Product");
@@ -130,7 +111,7 @@ Bangalore, Bengaluru (Bangalore) Urban, Karnataka, 560076</textarea>
 
             // Filter models based on the selected product and populate the dropdown
             modelsData.forEach(model => {
-                if (model.Product === selectedProduct || selectedProduct == "Select the product") {
+                if (model.Product === selectedProduct || selectedProduct == "Select the Product") {
                     const option = document.createElement("option");
                     option.text = model.Indkal_model_no;
                     modelSelect.appendChild(option);

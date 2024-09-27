@@ -44,7 +44,7 @@
                     <select class="filter-dropdown" name="model_filter" onchange="this.form.submit()">
                         <option value="">All Models</option>
                         {% for modelname in modelnames %}
-                            <option value="{{ modelname }}" {% if model == request.GET.model_filter %}selected{% endif %}>
+                            <option value="{{ modelname }}" {% if modelname == request.GET.model_filter %}selected{% endif %}>
                                 {{ modelname }}
                             </option>
                         {% endfor %}

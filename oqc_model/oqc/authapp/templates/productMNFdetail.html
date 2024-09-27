@@ -36,6 +36,11 @@
                     <label for="Product">Product</label>
                     <select name="Product" id="Product" class="form-control" required>
                         <option value="" selected disabled hidden>Select the Product</option>
+                        {% for prod, boo in employee.product_type.items %}
+                            {% if boo %}
+                                <option value="{{prod}}">{{prod}}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
@@ -85,21 +90,5 @@ Bangalore, Bengaluru (Bangalore) Urban, Karnataka, 560076</textarea>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            populateProducts();
-        });
-        function populateProducts() {
-            const productSelect = document.getElementById("Product");
-            productSelect.innerHTML = "";
-            const productsData = {{ products|safe }};
-            // Populate options from the products data
-            productsData.forEach(product => {
-                const option = document.createElement("option");
-                option.text = product;
-                productSelect.appendChild(option);
-            });
-        }
-    </script>
 </body>
 </html>
