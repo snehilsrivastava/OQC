@@ -12,7 +12,7 @@ from authapp.views import login_page
 import PyPDF2
 from io import BytesIO
 from django.contrib import messages
-from django.db.models import Min, Max, Case, When, DateField
+from django.db.models import Min, Max, Case, When, DateField, Q
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import json
@@ -1627,3 +1627,9 @@ def reply_remark(request):
 
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
+def add_prod_to_users(product):
+    users_to_update = Employee.objects.filter(user_type__in=['owner', 'employee']).filter(~Q(product_type__has_key=product))
+    for user in users_to_update:
+        user.product_type[product] = False
+    Employee.objects.bulk_update(users_to_update, ['product_type'])
