@@ -60,21 +60,24 @@
 .popup form {
     display: flex;
     flex-direction: column;
-}
-
-.popup form label {
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.popup form input, .popup form select {
-    /* padding: 5px; */
-    font-size: 13px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-    box-sizing: border-box;
+    label {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    input {
+        padding: 0px 0px 0px 12px;
+    }
+    select {
+        padding: 0px 0px 0px 8px;
+    }
+    input, select {
+        font-size: 13px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
 
 .overlay {

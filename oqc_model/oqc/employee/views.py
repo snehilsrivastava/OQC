@@ -684,12 +684,12 @@ def dashboard(request):
         return redirect('/access_denied/')
     test_name = request.GET.get('test_name', '')
     test_stage = request.GET.get('test_stage', '')
-    product = request.GET.get('product','')
+    product = request.GET.get('product', '')
     model_name = request.GET.get('model_name', '')
     serial_number = request.GET.get('serial_number', '')
     status = request.GET.get('status', '')
-    L_status = request.GET.get('L_status','')
-    B_status = request.GET.get('B_status','')
+    L_status = request.GET.get('L_status', '')
+    B_status = request.GET.get('B_status', '')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
     status_color = {"Not Sent": "#cfcfcf", "Waiting": "Yellow", "Approved": "#5AA33F", "Rejected": "Red"}
@@ -747,7 +747,7 @@ def dashboard(request):
         'start_date': start_date,
         'end_date': end_date,
         'models_list': models_list,
-        'status_color' : status_color,
+        'status_color': status_color,
         'role_letter': role_letter,
         'summary_data': summary_,
     }
@@ -788,10 +788,7 @@ def employee_dashboard(request):
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
     completed_tests = completed_tests.order_by('-test_end_date')
-    tv_models = list(TV.objects.values_list('ModelName', flat=True))
-    ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Mobile.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
+    models_list = json.dumps(list(Model_Test_Name_Details.objects.all().values()))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     context = {
         'test': test,
@@ -804,10 +801,7 @@ def employee_dashboard(request):
         'product': product,
         'start_date': start_date,
         'end_date': end_date,
-        'tv_models': tv_models,
-        'ac_models': ac_models,
-        'phone_models': phone_models,
-        'washing_machine_models': washing_machine_models,
+        'models_list': models_list,
     }
     return render(request, "dashboard_employee.html", context)
 
@@ -825,7 +819,7 @@ def legal_dashboard(request):
     serial_number = request.GET.get('serial_number', '')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
-    L_status = request.GET.get('L_status','')
+    L_status = request.GET.get('L_status', '')
 
     completed_tests = TestRecord.objects.exclude(L_status="Not Sent")
     if test_name:
@@ -839,20 +833,18 @@ def legal_dashboard(request):
     if serial_number:
         completed_tests = completed_tests.filter(SerailNo=serial_number)
     if L_status:
-        completed_tests = completed_tests.filter(L_status= L_status)
+        completed_tests = completed_tests.filter(L_status=L_status)
     if start_date:
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
-    tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
+    tests = completed_tests.values('ProductType', 'ModelName').distinct()
     completed_tests = completed_tests.order_by('-test_date')
-
-    tv_models = list(TV.objects.values_list('ModelName', flat=True))
-    ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Mobile.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
+    models_list = json.dumps(list(Model_Test_Name_Details.objects.all().values()))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
+    products = list(Product_List.objects.values_list('Product', flat=True))
     context = {
+        'products': products,
         'test': test,
         'tests': tests,
         'all_tests': completed_tests,
@@ -864,10 +856,7 @@ def legal_dashboard(request):
         'product': product,
         'start_date': start_date,
         'end_date': end_date,
-        'tv_models': tv_models,
-        'ac_models': ac_models,
-        'phone_models': phone_models,
-        'washing_machine_models': washing_machine_models,
+        'models_list': models_list,
     }
     return render(request, "dashboard_legal.html", context)
 
@@ -884,7 +873,7 @@ def brand_dashboard(request):
     serial_number = request.GET.get('serial_number', '')
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
-    B_status = request.GET.get('B_status','')
+    B_status = request.GET.get('B_status', '')
     completed_tests = TestRecord.objects.exclude(B_status="Not Sent")
     if test_name:
         completed_tests = completed_tests.filter(TestName=test_name)
@@ -897,21 +886,19 @@ def brand_dashboard(request):
     if serial_number:
         completed_tests = completed_tests.filter(SerailNo=serial_number)
     if B_status:
-        completed_tests = completed_tests.filter(B_status= B_status)
+        completed_tests = completed_tests.filter(B_status=B_status)
     if start_date:
         completed_tests = completed_tests.filter(test_date__gte=start_date)
     if end_date:
         completed_tests = completed_tests.filter(test_date__lte=end_date)
 
-    tests = completed_tests.values('ProductType', 'ModelName', 'TestStage').distinct()
+    tests = completed_tests.values('ProductType', 'ModelName').distinct()
     completed_tests = completed_tests.order_by('-test_date')
-    
-    tv_models = list(TV.objects.values_list('ModelName', flat=True))
-    ac_models = list(AC.objects.values_list('ModelName', flat=True))
-    phone_models = list(Mobile.objects.values_list('ModelName', flat=True))
-    washing_machine_models = list(WM_FATL.objects.values_list('ModelName', flat=True))
+    models_list = json.dumps(list(Model_Test_Name_Details.objects.all().values()))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
+    products = list(Product_List.objects.values_list('Product', flat=True))
     context = {
+        'products': products,
         'test': test,
         'tests': tests,
         'all_tests': completed_tests,
@@ -923,11 +910,7 @@ def brand_dashboard(request):
         'product': product,
         'start_date': start_date,
         'end_date': end_date,
-        'tv_models': tv_models,
-        'ac_models': ac_models,
-        'phone_models': phone_models,
-        'washing_machine_models': washing_machine_models,
-        'username': username
+        'models_list': models_list,
     }
     return render(request, "dashboard_brand.html", context)
 

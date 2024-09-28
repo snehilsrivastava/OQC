@@ -41,9 +41,15 @@ function clearFilter() {
     modelName.value = "";
     testName.value = "";
     serialNumber.value = "";
-    B_status.value = "";
-    L_status.value = "";
-    PO_status.value = "";
+    if (B_status) {
+        B_status.value = "";
+    }
+    if (L_status) {
+        L_status.value = "";
+    }
+    if (PO_status) {
+        PO_status.value = "";
+    }
     startDate.value = "";
     endDate.value = "";
 }
