@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'product',
 ]
 
+if os.environ.get("db_type") == "SERVER":
+    INSTALLED_APPS.append('storages')
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -126,30 +129,26 @@ EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'qmsindkal@gmail.com'
 EMAIL_HOST_PASSWORD = os.environ.get("email_pass")
 
-# LOGIN_URL = '/au/login/'
-# AUTH_USER_MODEL = 'authapp.Employee'
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Kolkata'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = '/static/'
-STATIC_ROOT= os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'authapp/static')
-]
-
-MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'authapp/static')]
+if os.environ.get("db_type") == "SERVER":
+    AWS_STORAGE_BUCKET_NAME = 'qms-server-bucket'
+    STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_ACCESS_KEY_ID = os.environ.get("access_key_id")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("secret_access_key")
+    AWS_S3_REGION_NAME = 'ap-south-1'
+else:
+    STATIC_URL = '/static/'
+    MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
