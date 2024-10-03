@@ -136,6 +136,23 @@ function clearNotifications(notifications) {
     });
 }
 
+function changeColorWithTheme() {
+    const remarkSection = document.querySelector('#remarks-section');
+    if (!remarkSection){return}
+    else {
+        const pageTheme = localStorage.getItem('theme');
+        document.querySelectorAll('.remark').forEach(remark => {
+            if (pageTheme === 'light') {
+                remark.style.backgroundColor = remark.style.color;
+                remark.style.color = "black";
+            } else {
+                remark.style.color = remark.style.backgroundColor;
+                remark.style.backgroundColor = "#0000";
+            }
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Check local storage
     let localS = localStorage.getItem('theme'),
@@ -171,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         rootElem.setAttribute('data-theme', newTheme);
         localStorage.setItem("theme", newTheme);
-        // updateIcons(newTheme);    
+        changeColorWithTheme();
     };
 
     // Add the event listener for the theme switcher

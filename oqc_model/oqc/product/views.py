@@ -411,7 +411,7 @@ def generate_reports(request, model_name, model_updated):
     # send notification to owners and employees
     user = Employee.objects.get(username=request.session['username'])
     if created_reports > 0:
-        employees = Employee.objects.filter(user_type__in=['employee', 'owner'])
+        employees = Employee.objects.exclude(pk=user.pk).filter(user_type__in=['employee', 'owner'])
         for employee in employees:
             user_ProdType = [k for k in employee.product_type if employee.product_type[k]]
             if model_product in user_ProdType:
@@ -483,5 +483,3 @@ def delete_reports(request, model_name):
 #         singleSummary["Status"]["PP"] = obj.Status['PP']
 #         singleSummary["Status"]["MP"] = obj.Status['MP']
 #     return allSummaries
-
-{ "5136Mv": {"content": "", "type": "highlight", "from": "A V", "date": "2024-09-17 17:11:11", "reply": {"ids": [], "dates": [], "users": [], "contents": []}}, "AcjpRV" : {"content": "", "type": "highlight", "from": "A V", "date": "2024-09-17 17:12:50"}}

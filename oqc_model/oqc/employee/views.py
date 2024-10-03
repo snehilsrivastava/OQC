@@ -113,7 +113,7 @@ def set_status(request, id):
     test_record.save()
 
     product = test_record.ProductType
-    owner_employees = Employee.objects.filter(user_type='owner')
+    owner_employees = Employee.objects.exclude(pk=user.pk).filter(user_type='owner')
     for employee in owner_employees:
         if employee.product_type[product]:
             notification = Notification.objects.get(employee=employee)
@@ -509,7 +509,7 @@ def change_status(request, test_id, status):
         test.status = 'Rejected'
     test.save()
     if status != 1 and test.status != old_status:
-        tester_employees = Employee.objects.filter(user_type="employee")
+        tester_employees = Employee.objects.exclude(pk=user.pk).filter(user_type="employee")
         for employee in tester_employees:
             if employee.product_type[test.ProductType]:
                 notification = Notification.objects.get(employee_id=employee)
@@ -535,8 +535,8 @@ def change_status(request, test_id, status):
     return redirect('owner_view', test.TestStage, test.ProductType, test.TestName, test.ModelName, test.SerailNo)
 
 def send_change_status_notification(request, test, from_func):
-    owner_employees = Employee.objects.filter(user_type="owner")
     user = Employee.objects.get(username=request.session['username'])
+    owner_employees = Employee.objects.exclude(pk=user.pk).filter(user_type="owner")
     for owner in owner_employees:
         if owner.product_type[test.ProductType]:
             notification = Notification.objects.get(employee_id=owner)
@@ -1497,6 +1497,9 @@ def make_remark_changes(request):
         user = Employee.objects.get(username=request.session['username'])
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
         test_record.html_content = inc_remark["table_content"]
+        if not inc_remark["id"]:
+            test_record.save()
+            return JsonResponse({'success': True})
         remarks = json.loads(test_record.remarks)
         updated = False
         for id, remark in remarks.items():
