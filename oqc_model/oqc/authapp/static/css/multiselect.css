@@ -96,10 +96,10 @@
     background: #f0f1f3;
 }
 .multi-select .multi-select-options::-webkit-scrollbar-thumb {
-    background: #cdcfd1;
+    background: #888;
 }
 .multi-select .multi-select-options::-webkit-scrollbar-thumb:hover {
-    background: #b2b6b9;
+    background: #505050;
 }
 .multi-select .multi-select-options .multi-select-option, .multi-select .multi-select-options .multi-select-all {
     padding: 4px 12px;
