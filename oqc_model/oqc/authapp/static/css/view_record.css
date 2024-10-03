@@ -178,10 +178,6 @@ span.close {
     }
 }
 
-div.add-border {
-    outline: 2px solid rgb(20, 20, 255);
-}
-
 .comment-btn {
     margin-left: 3px;
 }
@@ -229,13 +225,58 @@ div.add-border {
 div.remark {
     display: inline;
     &.highlight {
-        background-color: yellow;
+        color: var(--text-color-yellow);
+        background-color: var(--decoration-color-yellow);
     }
     &.strikethrough {
         text-decoration: line-through;
+        text-decoration-thickness: 2px;
+        text-decoration-color: #ee7830;
     }
     &.underline {
         text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-decoration-color: #e743ff;
+    }
+}
+
+.color-box {
+    z-Index: 10;
+    width: 200px;
+    height: 40px;
+    background-color: gray;
+    border-radius: 5px;
+    padding: 8px;
+    gap: 8px;
+    right: 0;
+    transition: right 0.3s ease;
+    & div {
+        width: 24px;
+        height: 24px;
+        border-radius: 3px;
+        display: flex;
+        cursor: pointer;
+        &:hover{
+            filter: brightness(1.1);
+        }
+        &.blue-box {
+            border: 2px solid #555b89;
+        }
+        &.green-box {
+            border: 2px solid #446c28;
+        }
+        &.yellow-box {
+            border: 2px solid #bea037;
+        }
+        &.orange-box {
+            border: 2px solid #a95521;
+        }
+        &.pink-box {
+            border: 2px solid #975664;
+        }
+        &.violet-box {
+            border: 2px solid #9f2eaf;
+        }
     }
 }
 

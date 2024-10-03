@@ -94,8 +94,11 @@
     <button class="strikethrough-btn" onclick="popupAction('{{test.id}}', 'strikethrough')"><svg height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M96-408v-72h768v72H96Zm336-144v-120H240v-96h480v96H528v120h-96Zm0 360v-144h96v144h-96Z"/></svg></button>
 </div>
 
+<div class="color-box"></div>
+
 {% load static %}
 <script>
     const employee_name = '{{employee.first_name}} {{employee.last_name}}';
+    const test_id = '{{test.id}}';
 </script>
 <script src="{% static 'js/remarks.js' %}"></script>

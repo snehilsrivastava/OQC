@@ -114,6 +114,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             populateTimeline({{timeline_dvt|safe}}, {{timeline_pp|safe}}, {{timeline_mp|safe}});
             populateTests({{DVT|safe}}, {{PP|safe}}, {{MP|safe}}, {{selected_dvt}}, {{selected_pp}}, {{selected_mp}});
+            if ({{selected_dvt}}.includes(1) || {{selected_pp}}.includes(1) || {{selected_mp}}.includes(1) || {{timeline_dvt|safe}}.length || {{timeline_pp|safe}}.length || {{timeline_mp|safe}}.length) {
+                document.querySelector('.form-header h1').innerHTML = 'Update Tests for Model';
+            }
         });
     </script>
 </body>

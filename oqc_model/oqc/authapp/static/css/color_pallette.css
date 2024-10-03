@@ -37,6 +37,20 @@
     --notif-unread-bg: #1d3656;
     --post-button-color: #aec4e5;
     --date-text-color: #b8b8b8;
+    --text-color-blue: #9da7fb;
+    --decoration-color-blue: #9da7fb00;
+    --text-color-green: #87d54e;
+    --decoration-color-green: #87d54e00;
+    --text-color-yellow: #f8d147;
+    --decoration-color-yellow: #f8d14700;
+    --text-color-orange: #ee7830;
+    --decoration-color-orange: #ee783000;
+    --text-color-pink: #ef879e;
+    --decoration-color-pink: #ef879e00;
+    --text-color-violet: #e743ff;
+    --decoration-color-violet: #e743ff00;
+    --text-color-black: #000;
+    --decoration-color-black: #ddd;
 }
 
 :root[data-theme="light"] {
@@ -78,6 +92,20 @@
     --notif-unread-bg: #f0f8ff;
     --post-button-color: #2c4f7b;
     --date-text-color: #363636;
+    --text-color-blue: #000;
+    --decoration-color-blue: #9da7fb;
+    --text-color-green: #000;
+    --decoration-color-green: #87d54e;
+    --text-color-yellow: #000;
+    --decoration-color-yellow: #f8d147;
+    --text-color-orange: #000;
+    --decoration-color-orange: #ee7830;
+    --text-color-pink: #000;
+    --decoration-color-pink: #ef879e;
+    --text-color-violet: #000;
+    --decoration-color-violet: #e743ff;
+    --text-color-black: #fff;
+    --decoration-color-black: #444;
 }
 
 body {

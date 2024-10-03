@@ -40,7 +40,16 @@ function generateRandomString(length) {
 function popupAction(testID, action) {
     var remarksSection = document.getElementById('remarks-section');
     if (!remarksSection.classList.contains('visible')) {
+        var toggleButton = document.getElementById('toggleRemarksBtn');
+        const formContainer = document.querySelector('.form-container');
+        const ww = window.innerWidth;
         remarksSection.classList.add('visible');
+        if (ww > 1050) {
+            const sw = 350 - (ww - 700) / 2;
+            const cw = ww - 1050;
+            formContainer.style.right = `${sw+cw/2}px`;
+        }
+        toggleButton.style.display = 'none';
     }
     var popup = document.querySelector('.popup');
     popup.style.display = 'none';
@@ -108,14 +117,14 @@ function addCommentBoxListeners() {
             const commentId = box.id;
             const targetContent = document.querySelector(`[data-comment-id='${commentId}']`);
             if (targetContent) {
-                targetContent.classList.add('add-border');
+                targetContent.style.cssText += " outline: 2px solid #1414ff;";
             }
         });
         box.addEventListener('mouseleave', function() {
             const commentId = box.id;
             const targetContent = document.querySelector(`[data-comment-id='${commentId}']`);
             if (targetContent) {
-                targetContent.classList.remove('add-border');
+                targetContent.style.outline = 'none';
             }
         });
     });
@@ -167,41 +176,135 @@ function handleCommentClick(commentBoxes) {
 }
 handleCommentClick(document.querySelectorAll('.comment-box'));
 
+function createColorBox(remark) {
+    const colorBox = document.querySelector('div.color-box');
+    colorBox.style.display = 'none';
+
+    let blueBox = document.createElement('div');
+    blueBox.classList.add('blue-box');
+    blueBox.style.backgroundColor = '#9da7fb';
+    colorBox.appendChild(blueBox);
+
+    let greenBox = document.createElement('div');
+    greenBox.classList.add('green-box');
+    greenBox.style.backgroundColor = '#87d54e';
+    colorBox.appendChild(greenBox);
+
+    let yellowBox = document.createElement('div');
+    yellowBox.classList.add('yellow-box');
+    yellowBox.style.backgroundColor = '#f8d147';
+    colorBox.appendChild(yellowBox);
+
+    let orangeBox = document.createElement('div');
+    orangeBox.classList.add('orange-box');
+    orangeBox.style.backgroundColor = '#ee7830';
+    colorBox.appendChild(orangeBox);
+
+    let pinkBox = document.createElement('div');
+    pinkBox.classList.add('pink-box');
+    pinkBox.style.backgroundColor = '#ef879e';
+    colorBox.appendChild(pinkBox);
+
+    let violetBox = document.createElement('div');
+    violetBox.classList.add('violet-box');
+    violetBox.style.backgroundColor = '#e743ff';
+    colorBox.appendChild(violetBox);
+    
+    let divs = colorBox.querySelectorAll('div');
+
+    divs.forEach(box => {
+        box.style.display = 'flex';
+        box.style.width = '24px';
+        box.style.height = '24px';
+    });
+}
+createColorBox();
+
+function displayColorBox(remark) {
+    const remarkContainer = remark.getBoundingClientRect();
+
+    const colorBox = document.querySelector('div.color-box');
+    colorBox.style.display = 'flex';
+    colorBox.style.position = 'absolute';
+    colorBox.style.left = `${remarkContainer.left}px`;
+    colorBox.style.top = `${remarkContainer.top - 43}px`;
+
+    const boxes = colorBox.querySelectorAll('div');
+    boxes.forEach(box => {
+        box.onclick = function() {changeColor(box, remark);};
+    });
+}
+
+function changeColor(box, remark) {
+    const pageTheme = localStorage.getItem('theme');
+    const colorBox = document.querySelector('div.color-box');
+    colorBox.style.display = 'none';
+    if(remark.classList.contains('highlight')) {
+        if (pageTheme === 'light') {
+            remark.style.color = "black";
+            remark.style.backgroundColor = box.style.backgroundColor;
+        } else {
+            remark.style.backgroundColor = "#0000";
+            remark.style.color = box.style.backgroundColor;
+        }
+    }
+    else {
+        remark.style.textDecorationColor = box.style.backgroundColor;
+    }
+    makeRemarkChanges(test_id, null, null, null);
+}
+
 function addRemarkListeners() {
     const remarkElements = document.querySelectorAll('.remark');
+    const colorBox = document.querySelector('div.color-box');
+    const documentHeader = document.querySelector('div.header');
     remarkElements.forEach(remark => {
         const commentId = remark.dataset.commentId;
         const targetContent = document.querySelector(`.comment-box[id='${commentId}']`);
         remark.addEventListener('mouseover', () => {
             const commentId = remark.dataset.commentId;
             remark.style.cursor = 'pointer';
-            remark.classList.add('add-border');
+            remark.style.cssText += " outline: 2px solid #1414ff;";
             if (targetContent) {
-                targetContent.classList.add('add-border');
+                targetContent.style.cssText += " outline: 2px solid #9595ff;";
             }
         });
 
         remark.addEventListener('mouseout', () => {
-            remark.classList.remove('add-border');
+            remark.style.outline = 'none';
             if (targetContent) {
-                targetContent.classList.remove('add-border');
+                targetContent.style.outline = 'none';
             }
         });
 
-        remark.addEventListener('click', () => {
+        remark.addEventListener('click', (event) => {
+            const ww = window.innerWidth;
             if (targetContent) {
                 const remarksSection = document.querySelector('#remarks-section');
+                var toggleButton = document.getElementById('toggleRemarksBtn');
+                const formContainer = document.querySelector('.form-container');
                 remarksSection.classList.add('visible');
-                // targetContent.focus();
-                const commentFrom = targetContent.querySelector('.comment-header .comment-from');
-                if (commentFrom.textContent.trim() === employee_name) {
-                    const addCommentBox2 = targetContent.querySelector('.add-comment-box-2');
-                    addCommentBox2.style.display = 'flex';
-                    targetContent.querySelector('.comment-content').style.display = 'none';
-                    const textarea = addCommentBox2.querySelector('.comment-content-input');
-                    textarea.focus();
-                    textarea.selectionStart = textarea.value.length;
-                    textarea.selectionEnd = textarea.value.length;
+                if (ww > 1050) {
+                    const sw = 350 - (ww - 700) / 2;
+                    const cw = ww - 1050;
+                    formContainer.style.right = `${sw+cw/2}px`;
+                }
+                toggleButton.style.display = 'none';
+                targetContent.style.border = "2px solid #1414ff";
+                targetContent.style.outline = "none";
+            }
+            if(ww > 1050){
+                setTimeout(() => {displayColorBox(remark);}, 300);
+            } else {displayColorBox(remark);}
+        });
+        document.addEventListener('click', (event) => {
+            if(!documentHeader.contains(event.target)) {
+                if (!remark.contains(event.target) && !targetContent.contains(event.target)) {
+                    targetContent.style.border = "none";
+                }
+                if (!colorBox.contains(event.target) && !(event.target.classList.contains('remark'))) {
+                    console.log('colorBox removed');
+                    colorBox.style.display = 'none';
                 }
             }
         });
