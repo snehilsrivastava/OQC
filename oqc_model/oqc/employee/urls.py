@@ -14,7 +14,6 @@ urlpatterns = [
     path('change_status_brand/<int:test_id>/<int:status>/', views.change_status_brand, name='change_status_brand'),
     path('', views.main_page, name='main_page'),
     path('employee_dashboard/', views.employee_dashboard, name='employee_dashboard'),
-    path('pdf_model_stage/<str:model_name>/<str:test_stage>/', views.pdf_model_stage, name='pdf_model_stage'),
     path('legal_dashboard/', views.legal_dashboard, name='legal_dashboard'),
     path('brand_dashboard/', views.brand_dashboard, name='brand_dashboard'),
     path('dashboard/', views.dashboard, name='dashboard'),

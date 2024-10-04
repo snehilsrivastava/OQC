@@ -46,7 +46,7 @@ span {
 }
 
 .page-break-indicator {
-    border-top: solid black;
+    border-top: solid var(--webkit-text-fill-color);
     width: 100%;
 }
 

@@ -12,7 +12,7 @@ from authapp.views import login_page
 import PyPDF2
 from io import BytesIO
 from django.contrib import messages
-from django.db.models import Min, Max, Case, When, DateField, Q
+from django.db.models import Min, Max, Case, When, DateField
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import json
@@ -175,63 +175,6 @@ def view_pdf(request, stage, product, test_name, model_name, serialno):
         'test': test_record,
     }
     return render(request, "view_pdf.html", context)
-
-@login_required
-def pdf_model_stage(request, model_name, test_stage):
-    if request.method == 'GET':
-        selected_test_records = TestRecord.objects.filter(ModelName=model_name, TestStage=test_stage)
-        selected_test_records = selected_test_records.exclude(L_status='Not Sent')
-        if not selected_test_records.exists():
-            raise Http404("No test records found")
-        pdf_list = []
-        cumul_page_count, cumul_page_count_list = 3, []
-        test_name_list = []
-        for i, test_record in enumerate(selected_test_records, start=1):
-            model_name = test_record.ModelName
-            test_name = test_record.TestName
-            Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name)
-            context = {
-                'test': test_record,
-                'TestProtocol': Test_protocol,
-            }
-            test_name_list.append(test_name)
-            cumul_page_count_list.append(cumul_page_count)
-            pdf_content, page_count = render_to_pdf('view_pdf.html', context, request)
-            pdf_list.append(BytesIO(pdf_content))
-            cumul_page_count += page_count
-
-        if len(pdf_list) > 1:  # No cover page or table of contents for one test
-            test_record = selected_test_records[0] # assuming all records are for same model
-            model_name = test_record.ModelName
-            MNF_detail = get_object_or_404(Model_MNF_detail, Indkal_model_no=model_name)
-            start_date = selected_test_records.aggregate(
-                min_date=Min(Case(
-                    When(verification=True, then='test_date'),
-                    default='test_start_date',
-                    output_field=DateField()
-                ))
-            )['min_date']
-            end_date = selected_test_records.aggregate(
-                max_date=Max(Case(
-                    When(verification=True, then='test_date'),
-                    default='test_end_date',
-                    output_field=DateField()
-                ))
-            )['max_date']
-            cover_context = {
-                'MNF_detail': MNF_detail,
-                'start_date': start_date,
-                'end_date': end_date,
-                'issue_date': date.today(),
-            }
-            pdf_list.insert(0, BytesIO(render_cover_to_pdf('pdf_cover.html', cover_context, request)))
-            context_list = [[a, b] for a, b in zip(test_name_list, cumul_page_count_list)]
-            pdf_list.insert(1, BytesIO(render_contents_to_pdf('pdf_contents.html', {'list': context_list}, request)))
-        merged_pdf = merge_pdfs(pdf_list)
-        response = HttpResponse(merged_pdf, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{test_record.ModelName}_{test_record.TestStage}.pdf"'
-        return response
-    return HttpResponse("Invalid request method.", status=405)
 
 def merge_pdfs(pdf_list):
     merger = PyPDF2.PdfMerger()
@@ -1604,9 +1547,3 @@ def reply_remark(request):
 
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
-
-def add_prod_to_users(product):
-    users_to_update = Employee.objects.filter(user_type__in=['owner', 'employee']).filter(~Q(product_type__has_key=product))
-    for user in users_to_update:
-        user.product_type[product] = False
-    Employee.objects.bulk_update(users_to_update, ['product_type'])
