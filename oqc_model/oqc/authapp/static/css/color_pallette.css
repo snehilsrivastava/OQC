@@ -51,6 +51,8 @@
     --decoration-color-violet: #e743ff00;
     --text-color-black: #000;
     --decoration-color-black: #ddd;
+    --rtf-icon-bg: #747474;
+    --rtf-icon-border: #878787;
 }
 
 :root[data-theme="light"] {
@@ -106,6 +108,8 @@
     --decoration-color-violet: #e743ff;
     --text-color-black: #fff;
     --decoration-color-black: #444;
+    --rtf-icon-bg: #c8cbce;
+    --rtf-icon-border: #a1a3a4;
 }
 
 body {

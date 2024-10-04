@@ -80,8 +80,12 @@ def report(request, stage, product, test_name, model_name, serialno):
     elif product == 'Mobile':
         models = get_object_or_404(Mobile, ModelName=model_name)
     if request.method == 'POST':
-        form = TestRecordForm(request.POST, instance=test_record)  
-        form.save()
+        inc_response = json.loads(request.body)
+        test_record.SerailNo = inc_response['SerialNo']
+        test_record.sample_quantiy = inc_response['sample_quantity']
+        test_record.result = inc_response['result']
+        test_record.additional_details = inc_response['additionalDetails']
+        test_record.save()
         context = {
             'test': test_record,
             'model': models,
@@ -90,15 +94,14 @@ def report(request, stage, product, test_name, model_name, serialno):
         test_record.html_content = loader.get_template('report_table.html').render(context)
         test_record.save()
         messages.success(request, 'Test record saved successfully.')
-        if user.user_type == 'owner':
-            return redirect('/dashboard/')
-        return redirect('/employee_dashboard/')
-    form = TestRecordForm(instance=test_record)
+        if user.is_superuser:
+            return JsonResponse({"url": '/dashboard/'})
+        return JsonResponse({"url": '/employee_dashboard/'})
     context = {
         'TestProtocol': Test_protocol,
         'model': models,
-        'form': form,
         'test_name': test_name,
+        'test': test_record
     }
     return render(request, "report.html", context)
 
@@ -157,7 +160,7 @@ def edit(request, stage, product, test_name, model_name, serialno):
         models = get_object_or_404(Mobile, ModelName=model_name)
     test_record = get_object_or_404(TestRecord, ProductType=product, TestStage=stage, SerailNo=serialno, TestName=test_name, ModelName=model_name)
     form = TestRecordForm(instance=test_record)
-    test_record.additional_details = test_record.additional_details.strip()
+    # test_record.additional_details = test_record.additional_details.strip()
     context = {
         'test': test_record,
         'TestProtocol': Test_protocol,
@@ -452,13 +455,13 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
     test_record = get_object_or_404(TestRecord, ProductType=product, SerailNo=serialno, ModelName=model_name, TestName=test_name, TestStage=stage)
     page_break = '''<hr style="border-top: solid black; width: 100%;">'''
-    soup = BeautifulSoup(test_record.additional_details, 'html.parser')
-    paragraphs = soup.find_all('p')
-    page_break_paragraphs = [p for p in paragraphs if p.text.strip().lower() == "pagebreak"]
-    for p in page_break_paragraphs:
-        p.string = ""
-        p.append(BeautifulSoup(page_break, 'html.parser'))
-    test_record.additional_details = str(soup)
+    # soup = BeautifulSoup(test_record.additional_details, 'html.parser')
+    # paragraphs = soup.find_all('p')
+    # page_break_paragraphs = [p for p in paragraphs if p.text.strip().lower() == "pagebreak"]
+    # for p in page_break_paragraphs:
+    #     p.string = ""
+    #     p.append(BeautifulSoup(page_break, 'html.parser'))
+    # test_record.additional_details = str(soup)
     remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
@@ -1520,6 +1523,7 @@ def make_remark_changes(request):
 
 @login_required
 def delete_remark(request):
+    user = Employee.objects.get(username=request.session['username'])
     if request.method == 'POST':
         inc_remark = json.loads(request.body)
         test_record = TestRecord.objects.get(pk=inc_remark["test_record_id"])
@@ -1541,7 +1545,7 @@ def delete_remark(request):
                 del remark[inc_remark["id"]]["reply"]["dates"][idx]
         test_record.remarks = json.dumps(remark)
         test_record.save()
-        employees = Employee.objects.filter(pk__in=to)
+        employees = Employee.objects.filter(pk__in=to).exclude(username=user.username)
         for employee in employees:
             notification = Notification.objects.get(employee=employee.username)
             for i in range(len(notification.notification)):
@@ -1582,7 +1586,7 @@ def reply_remark(request):
         test_record.remarks = json.dumps(remarks)
         test_record.save()
 
-        employees = Employee.objects.filter(pk__in = to)
+        employees = Employee.objects.filter(pk__in=to).exclude(username=user.username)
         for employee in employees:
             notification = Notification.objects.get(employee=employee.username)
             notification_dict = default_notification()

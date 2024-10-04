@@ -61,7 +61,7 @@
                 {% for rid, date, user, content in remark.reply_zipped %}
                 <div class="reply-box" id="{{ rid }}">
                     <div class="comment-header">
-                        <icon class="comment-icon">{{ employee.first_name.0 }}{{ employee.last_name.0 }}</icon>
+                        <icon class="comment-icon reply-comment-icon">{{ user }}</icon>
                         <div class="comment-from">{{ user }}</div>
                         <div class="comment-date">{{ date }}</div>
                         {% if forloop.counter == remark.reply_zipped|length %}

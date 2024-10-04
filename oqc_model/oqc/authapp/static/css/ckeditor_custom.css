@@ -1,0 +1,24 @@
+html.dark, body.dark {
+    background : #4c4c4c;
+    color: #fff;
+}
+html.light, body.light {
+    background : #f3f6fa;
+    color: #000;
+}
+
+.cke_editable {
+    font-size: 11px !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+body.light table {
+    border-color: black;
+}
+body.dark table {
+    border-color: white;
+}

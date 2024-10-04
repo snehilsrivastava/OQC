@@ -37,7 +37,7 @@ class TestRecord(models.Model):
     verification = models.BooleanField(default=False)
     sample_quantiy = models.IntegerField(default=0)
     result = RichTextUploadingField(default="", blank=True)
-    additional_details = RichTextUploadingField(default="", blank=True, config_name='full')
+    additional_details = ArrayField(RichTextUploadingField(default="", blank=True), default=list, blank=True)
     remarks = models.TextField(default=str, blank=True)
     status = models.CharField(max_length=50,default="Not Sent")
     L_status = models.CharField(max_length=50,default="Not Sent")

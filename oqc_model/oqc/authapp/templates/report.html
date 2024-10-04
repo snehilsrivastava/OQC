@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    {% load static%}
+    {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
     <title>Report Form</title>
@@ -10,6 +10,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/view_record.css' %}">
     <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <script src="{% static 'js/ckeditor/ckeditor/ckeditor.js' %}"></script>
+    <script src="{% static 'js/ckeditor/customConfig.js' %}"></script>
 </head>
 <body>
 {% if employee.is_superuser %}
@@ -17,9 +19,7 @@
 {% else %}
     {% include "header.html" %}
 {% endif %}
-<form class="mx-auto card p-3 shadow-lg form-container" method="post" action="{% url 'report' test.TestStage test.ProductType test.TestName test.ModelName test.SerailNo %}"  enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.media }}
+<div class="mx-auto card p-3 shadow-lg form-container">
     <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;'>{{TestProtocol.TestName}}</span></u></strong></p>
     <div style="margin: 6px;"></div>
     <table>
@@ -46,7 +46,7 @@
                         <strong><span class="row_header">Sample Quantity</span></strong>
                     </td>
                     <td colspan="4">
-                        <span>{{ form.sample_quantiy }}</span>
+                        <span><input type="number" id="sample_quantity" value="{{ test.sample_quantiy }}"></input></span>
                     </td>
                 </tr>
                 <tr>
@@ -54,7 +54,7 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="4">
-                        <span>{{ form.SerailNo }}</span>
+                        <span><input type="text" id="SerialNo" value="{{ test.SerailNo }}"></input></span>
                     </td>
                 </tr>
                 {% if test.verification %}
@@ -230,7 +230,7 @@
                         <strong><span class="row_header">Result &amp; Conclusion</span></strong>
                     </td>
                     <td colspan="4">
-                        <span>{{form.result}}</span>
+                        <span><textarea id="result">{{ test.result|safe }}</textarea></span>
                     </td>
                 </tr>
             {% elif test.ProductType == 'WM - FATL' %}
@@ -255,7 +255,7 @@
                         <strong><span class="row_header">Sample Quantity</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>{{ form.sample_quantiy }}</span>
+                        <span><input type="number" id="sample_quantity" value="{{test.sample_quantiy}}"></input></span>
                     </td>
                 </tr>
                 <tr>
@@ -263,7 +263,7 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>{{ form.SerailNo }}</span>
+                        <span><input type="text" id="SerialNo" value="{{test.SerailNo}}"></input></span>
                     </td>
                 </tr>
                 {% if test.verification %}
@@ -381,7 +381,7 @@
                         <strong><span class="row_header">Result &amp; Conclusion</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>{{form.result}}</span>
+                        <span><textarea id="result">{{test.result|safe}}</textarea></span>
                     </td>
                 </tr>
                 {% elif test.ProductType == 'Mobile' %}
@@ -406,7 +406,7 @@
                         <strong><span class="row_header">Sample Quantity</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>{{ form.sample_quantiy }}</span>
+                        <span><input type="number" id="sample_quantity" value="{{test.sample_quantiy}}"></input></span>
                     </td>
                 </tr>
                 <tr>
@@ -414,7 +414,7 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>{{ form.SerailNo }}</span>
+                        <span><input type="text" id="SerialNo" value="{{test.SerailNo}}"></input></span>
                     </td>
                 </tr>
                 {% if test.verification %}
@@ -556,30 +556,42 @@
                         <strong><span class="row_header">Result &amp; Conclusion</span></strong>
                     </td>
                     <td colspan="2">
-                        <span>{{form.result}}</span>
+                        <span><textarea id="result">{{test.result|safe}}</textarea></span>
                     </td>
                 </tr>
             {% endif %}
         </tbody>
     </table>
-<!-- <div style="margin: 20px;"></div> -->
-<hr class="page-break-indicator">
+    <hr class="page-break-indicator">
 
-<!-- this code doesnt work as additional_details isnt a string
- so if condition just defaults to True -->
-{% if test.additional_details != '' %}
-<div class="additional_details">{{ form.additional_details }}</div>
-{% else %}
-<button id="addPageButton" type="button" class="btn btn-primary custom-btn-small">Add page</button>
-<div class="additional_details" style="display: none;">{{ form.additional_details }}</div>
-{% endif %}
-<div style="margin: 10px;"></div>
-<button type="submit" class="btn btn-primary custom-btn-small">Submit</button>
-</form>
+    <div class="ckeditor-container">
+        {% for additional_detail in test.additional_details %}
+            <div class="additional_details">
+                <textarea class="rtf-editor" id="ckeditor_{{forloop.counter0}}">{{additional_detail | safe}}</textarea>
+            </div>
+            <hr class="page-break-indicator">
+        {% endfor %}
+    </div>
+
+    <div style="margin: 10px;"></div>
+    <button onclick="createNewRTF(this)" id="addPageButton" type="button" class="btn btn-primary custom-btn-small">Add page</button>
+    <div style="margin: 10px;"></div>
+    <button type="button" onclick="submitRecord(this)" class="btn btn-primary custom-btn-small">Submit</button>
+</div>
 
 <script src="{% static 'js/ckeditor/customImageInfo.js' %}"></script>
 <script src="{% static 'js/ckeditor/customImageUpload.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 <script>
+    const resultBox = document.querySelector("textarea#result");
+    const resultEditor = CKEDITOR.replace(resultBox, {customConfig: "{% static 'js/ckeditor/customConfig.js' %}", width: "520px", contentsCss: ["{% static 'css/ckeditor_custom.css' %", "{% static 'css/color_pallette.css' %}"]});
+    setTimeout(function(){
+        const footer = resultEditor.container.$.querySelector(".cke_bottom");
+        footer.style.display = "none";
+        setRtfStyle(resultEditor.container.$);
+    }, 100);
+    
+    var editor_count = 0;
     CKEDITOR.on('dialogDefinition', function (ev) {
         var dialogName = ev.data.name;
         var dialogDefinition = ev.data.definition;
@@ -593,14 +605,82 @@
         }
     });
 
-    const addPageButton = document.getElementById("addPageButton");
-    const additionalDetails = document.querySelector(".additional_details"); // Use querySelector for class
-
-    addPageButton.addEventListener("click", function() {
-        additionalDetails.style.display = "block";
-        addPageButton.style.display = "none";
+    document.addEventListener("DOMContentLoaded", function() {
+        let rtfEditors = document.querySelectorAll(".rtf-editor");
+        rtfEditors.forEach(rtfEditor => {
+            const new_editor = CKEDITOR.replace(`ckeditor_${editor_count}`, {customConfig: "{% static 'js/ckeditor/customConfig.js' %}", height: "700px", contentsCss: ["{% static 'css/ckeditor_custom.css' %", "{% static 'css/color_pallette.css' %}"]});
+            setTimeout(function(){addDeleteBtn(new_editor);}, 100);
+            editor_count++;
+        });
     });
+
+    function setRtfStyle(newEditor) {
+        const toolbar = newEditor.querySelector('.cke_top');
+        const img_icon = toolbar.querySelector('.cke_button__image_icon');
+        img_icon.outerHTML = '<svg class="rtf-icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0 0v-560 560Zm80-80h400q12 0 18-11t-2-21L586-459q-6-8-16-8t-16 8L450-320l-74-99q-6-8-16-8t-16 8l-80 107q-8 10-2 21t18 11Zm60-280q25 0 42.5-17.5T400-620q0-25-17.5-42.5T340-680q-25 0-42.5 17.5T280-620q0 25 17.5 42.5T340-560Z"/></svg>';
+        const table_icon = toolbar.querySelector('.cke_button__table_icon');
+        table_icon.outerHTML = '<svg class="rtf-icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200Zm80-400h560v-160H200v160Zm213 200h134v-120H413v120Zm0 200h134v-120H413v120ZM200-400h133v-120H200v120Zm427 0h133v-120H627v120ZM200-200h133v-120H200v120Zm427 0h133v-120H627v120Z"/></svg>';
+    }
+
+    function addDeleteBtn(new_editor) {
+        const newEditor = new_editor.container.$;
+        const toolbar = newEditor.querySelector('.cke_top');
+        setRtfStyle(newEditor);
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerHTML = '<svg class="rtf-icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>';
+        deleteBtn.classList.add('delete-rtf-btn');
+        deleteBtn.onclick = function() {deleteRTF(new_editor, newEditor);}
+        toolbar.appendChild(deleteBtn);
+        
+        const footer = newEditor.querySelector('.cke_bottom');
+        footer.style.display = "none";
+    }
+
+    function deleteRTF(new_editor, newEditor){
+        editor_count--;
+        const pElem = newEditor.parentElement;
+        pElem.nextElementSibling.remove();
+        pElem.remove();
+        new_editor.destroy();
+    }
+    
+    function createNewRTF(button) {
+        const ckeditorContainer = document.querySelector(".ckeditor-container");
+        let newField = document.createElement("div");
+        newField.innerHTML = `<textarea class='rtf-editor' id='ckeditor_${editor_count}'></textarea>`;
+        ckeditorContainer.appendChild(newField);
+        const hr = document.createElement("hr");
+        hr.classList.add("page-break-indicator");
+        ckeditorContainer.appendChild(hr);
+        const new_editor = CKEDITOR.replace(`ckeditor_${editor_count}`, {customConfig: "{% static 'js/ckeditor/customConfig.js' %}", height: "700px", contentsCss: ["{% static 'css/ckeditor_custom.css' %", "{% static 'css/color_pallette.css' %}"]});
+        setTimeout(function(){addDeleteBtn(new_editor);}, 100);
+        editor_count++;
+    }
+
+    function submitRecord(button) {
+        var additionalDetails = [];
+        for(const instance in CKEDITOR.instances) {
+            const data = CKEDITOR.instances[instance].getData();
+            additionalDetails.push(data);
+        }
+        const result = additionalDetails.shift();
+        const sample_quantity = document.getElementById("sample_quantity").value;
+        const SerialNo = document.getElementById("SerialNo").value;
+
+        fetch(`/report/{{test.TestStage}}/{{test.ProductType}}/{{test.TestName}}/{{test.ModelName}}/{{test.SerailNo}}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({sample_quantity, SerialNo, result, additionalDetails}),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.url) {
+                window.location.href = data.url;
+            }
+        })
+    }
 </script>
-<script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 </body>
 </html>
