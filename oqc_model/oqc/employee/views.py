@@ -1034,11 +1034,12 @@ def model_details_view(request):
     product_filter = request.GET.get('product_filter', '')
     model_filter = request.GET.get('model_filter', '')
     products = [k for k in user.product_type if user.product_type[k]]
-    if product_filter:
-        models = Model_MNF_detail.objects.filter(Product=product_filter).values_list('Indkal_model_no', flat=True).distinct()
+    user_models = Model_MNF_detail.objects.filter(Product__in=products)
+    if product_filter != '':
+        models = user_models.filter(Product=product_filter).values_list('Indkal_model_no', flat=True).distinct()
     else:
-        models = Model_MNF_detail.objects.filter(Product__in=products).values_list('Indkal_model_no', flat=True).distinct()
-    filtered_models = Model_MNF_detail.objects.all()
+        models = user_models.values_list('Indkal_model_no', flat=True).distinct()
+    filtered_models = user_models
     if product_filter:
         filtered_models = filtered_models.filter(Product=product_filter)
         if model_filter and not Model_MNF_detail.objects.filter(Product=product_filter, Indkal_model_no=model_filter).exists():
@@ -1188,11 +1189,12 @@ def test_details_view(request):
     product_filter = request.GET.get('product_filter', '')
     testname_filter = request.GET.get('testname_filter', '')
     products = [k for k in user.product_type if user.product_type[k]]
-    if product_filter:
-        testnames = Test_core_detail.objects.filter(ProductType=product_filter).values_list('TestName', flat=True).distinct()
+   user_tests = Test_core_detail.objects.filter(ProductType__in=products)
+    if product_filter!="":
+        testnames = user_tests.filter(ProductType=product_filter).values_list('TestName', flat=True).distinct()
     else:
-        testnames = Test_core_detail.objects.filter(ProductType__in=products).values_list('TestName', flat=True).distinct()
-    filtered_tests = Test_core_detail.objects.all()
+        testnames = user_tests.values_list('TestName', flat=True).distinct()
+    filtered_tests = user_tests
     if product_filter:
         filtered_tests = filtered_tests.filter(ProductType=product_filter)
         if testname_filter and not Test_core_detail.objects.filter(ProductType=product_filter, TestName=testname_filter).exists():
