@@ -153,6 +153,25 @@ function changeColorWithTheme() {
     }
 }
 
+function changeRtfTheme() {
+    const pageTheme = localStorage.getItem('theme');
+    for(const instance in CKEDITOR.instances) {
+        const editor = CKEDITOR.instances[instance].container.$;
+        const html_page = editor.querySelector('iframe').contentDocument.childNodes[1];
+        if(pageTheme === 'light') {
+            html_page.classList.remove('dark');
+            html_page.querySelector('body').classList.remove('dark');
+            html_page.classList.add('light');
+            html_page.querySelector('body').classList.add('light');
+        } else {
+            html_page.classList.remove('light');
+            html_page.querySelector('body').classList.remove('light');
+            html_page.classList.add('dark');
+            html_page.querySelector('body').classList.add('dark');
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Check local storage
     let localS = localStorage.getItem('theme'),
@@ -174,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Set the correct theme
     document.documentElement.setAttribute('data-theme', themeToSet);
+    setTimeout(function(){changeRtfTheme();}, 100);
 
     const checkbox = document.getElementById("theme-checkbox");
     if (themeToSet=="dark") {
@@ -189,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rootElem.setAttribute('data-theme', newTheme);
         localStorage.setItem("theme", newTheme);
         changeColorWithTheme();
+        changeRtfTheme();
     };
 
     // Add the event listener for the theme switcher

@@ -593,3 +593,12 @@ function hideDeleteButton() {
     });
 }
 hideDeleteButton();
+
+document.addEventListener('DOMContentLoaded', function() {
+    const replyCommentBoxes = document.querySelectorAll('.reply-comment-icon');
+    replyCommentBoxes.forEach(replyBox => {
+        const username = replyBox.textContent.trim();
+        const iconVal = username.split(' ')[0][0]+username.split(' ')[1][0];
+        replyBox.textContent = iconVal;
+    })
+});

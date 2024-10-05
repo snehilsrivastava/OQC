@@ -21,28 +21,96 @@ td {
 
 .additional_details {
     font-family: Arial;
-    font-size: 13px;
+    font-size: 11px;
 }
 
 p {
     font-family: Arial;
-    font-size: 13px;
+    font-size: 11px;
     margin: 0;
+}
+
+input {
+    background: var(--rtf-icon-bg);
+    border: 1px var(--stage-btn-bg) solid;
+    color: var(--webkit-text-fill-color);
+    border-radius: 2px;
+    &:focus-visible {
+        border-color: darken(var(--stage-btn-bg), 80%);
+        outline: none !important;
+    }
 }
 
 span {
     font-family: Arial;
-    font-size: 13px;
+    font-size: 11px;
     margin: 0;
 }
 
 .form-container {
     flex-direction: column;
-    width: 96%;
-    max-width: 700px;
+    width: 700px;
     margin-bottom: 15px;
     transition: right 0.3s ease;
     right: 0;
+}
+
+.rtf-icon {
+    fill: var(--webkit-text-fill-color);
+}
+
+.delete-rtf-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px !important;
+    &:hover {
+        background: var(--rtf-icon-bg);
+        border: 1px var(--rtf-icon-border) solid;
+        border-radius: 0px !important;
+        cursor: pointer !important;
+        & .rtf-icon {
+            fill: #ff1313;
+            &:hover{
+                cursor: pointer !important;
+            }
+        }
+    }
+}
+
+.cke_top {
+    background-color: var(--form-bg) !important;
+    padding: 0 !important;
+    height: 30px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+}
+
+.cke_toolbar, .cke_toolgroup {
+    height: 100% !important;
+}
+
+.cke_toolgroup {
+    margin: 0 !important;
+}
+
+.cke_button {
+    height: 100% !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    &:hover{
+        background: var(--rtf-icon-bg) !important; /*c8cbce*/ 
+        border: 1px var(--rtf-icon-border) solid !important; /*a1a3a4*/
+        cursor:  pointer !important;
+    }
+    & svg:hover {
+        cursor: pointer !important;
+    }
+    & svg path:hover {
+        cursor: pointer !important;
+    }
 }
 
 .page-break-indicator {
@@ -53,6 +121,7 @@ span {
 .custom-btn-small {
     padding: 5px 10px;
     font-size: 13px;
+    align-self: center;
 }
 
 .action-buttons {
