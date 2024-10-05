@@ -47,7 +47,8 @@
                 </div>
                 <div class="form-group">
                     <label>Test Name</label>
-                    <input type="text" class="form-control" id="TestName" name="TestName" required>
+                    <span class="input-warning-span"></span>
+                    <input oninput="validateInput(this)" type="text" class="form-control" id="TestName" name="TestName" required>
                 </div>
                 <div class="form-group">
                     <label>Test Stage</label>
@@ -73,5 +74,18 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
+    <script>
+        function validateInput(input) {
+            const warn_span = document.querySelector('.input-warning-span');
+            const submit_btn =document.querySelector('.btn-submit');
+            if (input.value.includes('/')){
+                warn_span.textContent = "Please enter a valid character. '/' is not allowed.";
+                submit_btn.disabled = true;
+            } else {
+                warn_span.textContent = "";
+                submit_btn.disabled = false;
+            }
+        }
+    </script>
 </body>
 </html>

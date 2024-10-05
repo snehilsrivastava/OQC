@@ -27,31 +27,36 @@
     <div class="content">
         <div style="padding: 10px 20px 0px 20px;">
             <h1>Test Details</h1>
-            <form method="GET">
-                <div class="inline">
-                    <label for="product_filter">Product:</label>
-                    <select class="filter-dropdown" name="product_filter" onchange="this.form.submit()">
-                        <option value="">All Products</option>
-                        {% for product in products %}
-                            <option value="{{ product }}" {% if product == request.GET.product_filter %}selected{% endif %}>
-                                {{ product }}
-                            </option>
-                        {% endfor %}
-                    </select>
+            <div>
+                <form method="GET">
+                    <div class="inline">
+                        <label for="product_filter">Product:</label>
+                        <select class="filter-dropdown" name="product_filter" onchange="this.form.submit()">
+                            <option value="">All Products</option>
+                            {% for product in products %}
+                                <option value="{{ product }}" {% if product == request.GET.product_filter %}selected{% endif %}>
+                                    {{ product }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="inline">
+                        <label for="testname_filter">Test Name:</label>
+                        <select class="filter-dropdown" name="testname_filter" onchange="this.form.submit()">
+                            <option value="">All Test Names</option>
+                            {% for testname in testnames %}
+                                <option value="{{ testname }}" {% if testname == request.GET.testname_filter %}selected{% endif %}>
+                                    {{ testname }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="clear-btn" name="clear_filters" value="true">Clear</button>
+                </form>
+                <div>
+                    <span class="filtered-test-count"></span>
                 </div>
-                <div class="inline">
-                    <label for="testname_filter">Test Name:</label>
-                    <select class="filter-dropdown" name="testname_filter" onchange="this.form.submit()">
-                        <option value="">All Test Names</option>
-                        {% for testname in testnames %}
-                            <option value="{{ testname }}" {% if testname == request.GET.testname_filter %}selected{% endif %}>
-                                {{ testname }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button type="submit" class="clear-btn" name="clear_filters" value="true">Clear</button>
-            </form>
+            </div>
         </div>
         <div class="table-containers">
             <table>
@@ -112,6 +117,13 @@
                 messageContainer.style.top = `-${messageContainer.offsetHeight}px`;
             }, 5000);
         }
+        const test_count = document.querySelector('tbody').querySelectorAll('tr').length;
+        const productFilterValue = document.querySelector('.filter-dropdown[name="product_filter"]').value;
+        // if (productFilterValue !== "") {
+        const filteredTestCount = document.querySelector('.filtered-test-count');
+        filteredTestCount.textContent = `${test_count} tests found`;
+        filteredTestCount.style.fontWeight = 'bold';
+        // }
     });
 </script>
 </body>

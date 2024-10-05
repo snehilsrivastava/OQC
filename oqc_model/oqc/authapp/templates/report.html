@@ -54,7 +54,8 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="4">
-                        <span><input type="text" id="SerialNo" value="{{ test.SerailNo }}"></input></span>
+                        <span class="input-warning-span"></span>
+                        <span><input oninput="validateInput(this)" type="text" id="SerialNo" value="{{ test.SerailNo }}"></input></span>
                     </td>
                 </tr>
                 {% if test.verification %}
@@ -263,7 +264,8 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="2">
-                        <span><input type="text" id="SerialNo" value="{{test.SerailNo}}"></input></span>
+                        <span class="input-warning-span"></span>
+                        <span><input oninput="validateInput(this)" type="text" id="SerialNo" value="{{test.SerailNo}}"></input></span>
                     </td>
                 </tr>
                 {% if test.verification %}
@@ -414,7 +416,8 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="2">
-                        <span><input type="text" id="SerialNo" value="{{test.SerailNo}}"></input></span>
+                        <span class="input-warning-span"></span>
+                        <span><input oninput="validateInput(this)" type="text" id="SerialNo" value="{{test.SerailNo}}"></input></span>
                     </td>
                 </tr>
                 {% if test.verification %}
@@ -576,13 +579,25 @@
     <div style="margin: 10px;"></div>
     <button onclick="createNewRTF(this)" id="addPageButton" type="button" class="btn btn-primary custom-btn-small">Add page</button>
     <div style="margin: 10px;"></div>
-    <button type="button" onclick="submitRecord(this)" class="btn btn-primary custom-btn-small">Submit</button>
+    <button type="button" onclick="submitRecord(this)" class="btn btn-primary custom-btn-small submit-btn">Submit</button>
 </div>
 
 <script src="{% static 'js/ckeditor/customImageInfo.js' %}"></script>
 <script src="{% static 'js/ckeditor/customImageUpload.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 <script>
+    function validateInput(input) {
+        const warn_span = document.querySelector('.input-warning-span');
+        const submit_btn =document.querySelector('.submit-btn');
+        if (input.value.includes('/')){
+            warn_span.textContent = "Please enter a valid character. '/' is not allowed.";
+            submit_btn.disabled = true;
+        } else {
+            warn_span.textContent = "";
+            submit_btn.disabled = false;
+        }
+    }
+
     const resultBox = document.querySelector("textarea#result");
     const resultEditor = CKEDITOR.replace(resultBox, {customConfig: "{% static 'js/ckeditor/customConfig.js' %}", width: "520px", contentsCss: ["{% static 'css/ckeditor_custom.css' %", "{% static 'css/color_pallette.css' %}"]});
     setTimeout(function(){
