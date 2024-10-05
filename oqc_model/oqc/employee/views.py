@@ -403,14 +403,6 @@ def view(request, stage, product, test_name, model_name, serialno):
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
     test_record = get_object_or_404(TestRecord, ProductType=product, ModelName=model_name, SerailNo=serialno , TestName=test_name, TestStage=stage)
-    page_break = '''<hr style="border-top: solid black; width: 100%;">'''
-    soup = BeautifulSoup(test_record.additional_details, 'html.parser')
-    paragraphs = soup.find_all('p')
-    page_break_paragraphs = [p for p in paragraphs if p.text.strip().lower() == "pagebreak"]
-    for p in page_break_paragraphs:
-        p.string = ""
-        p.append(BeautifulSoup(page_break, 'html.parser'))
-    test_record.additional_details = str(soup)
     remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
@@ -454,14 +446,6 @@ def owner_view(request, stage, product, test_name, model_name, serialno):
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
     test_record = get_object_or_404(TestRecord, ProductType=product, SerailNo=serialno, ModelName=model_name, TestName=test_name, TestStage=stage)
-    page_break = '''<hr style="border-top: solid black; width: 100%;">'''
-    # soup = BeautifulSoup(test_record.additional_details, 'html.parser')
-    # paragraphs = soup.find_all('p')
-    # page_break_paragraphs = [p for p in paragraphs if p.text.strip().lower() == "pagebreak"]
-    # for p in page_break_paragraphs:
-    #     p.string = ""
-    #     p.append(BeautifulSoup(page_break, 'html.parser'))
-    # test_record.additional_details = str(soup)
     remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
@@ -924,14 +908,6 @@ def legal_view(request, stage, product, test_name, model_name, serialno):
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
     test_record = get_object_or_404(TestRecord, ProductType=product, ModelName=model_name, SerailNo=serialno, TestStage=stage, TestName=test_name)
-    page_break = '''<hr style="border-top: solid black; width: 100%;">'''
-    soup = BeautifulSoup(test_record.additional_details, 'html.parser')
-    paragraphs = soup.find_all('p')
-    page_break_paragraphs = [p for p in paragraphs if p.text.strip().lower() == "pagebreak"]
-    for p in page_break_paragraphs:
-        p.string = ""
-        p.append(BeautifulSoup(page_break, 'html.parser'))
-    test_record.additional_details = str(soup)
     remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")
@@ -975,14 +951,6 @@ def brand_view(request, stage, product, test_name, model_name, serialno):
         return redirect('/access_denied/')
     Test_protocol = get_object_or_404(Test_core_detail, TestName=test_name, ProductType=product)
     test_record = get_object_or_404(TestRecord, ProductType=product, ModelName=model_name, SerailNo=serialno, TestStage=stage, TestName=test_name)
-    page_break = '''<hr style="border-top: solid black; width: 100%;">'''
-    soup = BeautifulSoup(test_record.additional_details, 'html.parser')
-    paragraphs = soup.find_all('p')
-    page_break_paragraphs = [p for p in paragraphs if p.text.strip().lower() == "pagebreak"]
-    for p in page_break_paragraphs:
-        p.string = ""
-        p.append(BeautifulSoup(page_break, 'html.parser'))
-    test_record.additional_details = str(soup)
     remarks = json.loads(test_record.remarks)
     for id, remark in remarks.items():
         remark_date = dt.strptime(remark["date"], "%Y-%m-%d %H:%M:%S")

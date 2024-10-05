@@ -24,7 +24,12 @@
         {{ test.html_content|safe }}
         <hr class="page-break-indicator">
 
-        <div class="additional_details">{{ test.additional_details|safe }}</div>
+        <div class="additional_details">
+            {% for additional_detail in test.additional_details %}
+                <div>{{additional_detail | safe}}</div>
+                <hr class="page-break-indicator">
+            {% endfor %}
+        </div>
 
         <div class="action-buttons">
             <a class="btn btn-primary" href="{% url 'dashboard' %}">Return</a>

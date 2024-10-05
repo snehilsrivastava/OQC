@@ -83,7 +83,8 @@ form.addEventListener('mouseup', function(event) {
     var selection = window.getSelection();
     var parentTag = findCommonParentTag(selection).tagName;
     let currSelected = selection.toString();
-    validTagList = ['TD', 'SPAN', 'P'];
+    console.log(parentTag);
+    validTagList = ['TD', 'SPAN', 'P', 'DIV', 'IMG'];
     if (currSelected !== '' && currSelected !== lastSelected && validTagList.includes(parentTag)) {
         lastSelected = currSelected;
         var popup = document.querySelector('.popup');
