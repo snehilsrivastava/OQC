@@ -1189,7 +1189,7 @@ def test_details_view(request):
     product_filter = request.GET.get('product_filter', '')
     testname_filter = request.GET.get('testname_filter', '')
     products = [k for k in user.product_type if user.product_type[k]]
-   user_tests = Test_core_detail.objects.filter(ProductType__in=products)
+    user_tests = Test_core_detail.objects.filter(ProductType__in=products)
     if product_filter!="":
         testnames = user_tests.filter(ProductType=product_filter).values_list('TestName', flat=True).distinct()
     else:
