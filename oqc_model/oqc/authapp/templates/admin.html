@@ -75,13 +75,13 @@
                     </tr>
                     {% endfor %}
                     {% else %}
-                    <tr><td style="border: none;">No unapproved users.</td></tr>
+                    <tr><td style="border: none; text-align: center;" colspan="4">No unapproved users.</td></tr>
                     {% endif %}
                 </tbody>
             </table>
         </div>
         <div class="table-container table-container-approved" id="approved">
-            <span class="caption">Approved User</span>
+            <span class="caption">Approved Users</span>
             {% if approved %}
             <table class="approved owner">
                 <caption class="owner-caption">Product Team</caption>

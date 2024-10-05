@@ -6,6 +6,9 @@ from authapp.models import Employee, Notification, default_notification
 from django.contrib import messages
 import json
 from datetime import datetime as dt
+from django.db.models import Q
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -444,6 +447,15 @@ def delete_reports(request, model_name):
         for recorded_test in recorded_tests:
             if recorded_test.TestName not in test_names:
                 recorded_test.delete()
+
+@receiver(post_save, sender=Product_List)
+def product_list_saved(sender, instance, created, **kwargs):
+    if created:
+        product = str(instance)
+        users_to_update = Employee.objects.filter(user_type__in=['owner', 'employee']).filter(~Q(product_type__has_key=product))
+        for user in users_to_update:
+            user.product_type[product] = False
+        Employee.objects.bulk_update(users_to_update, ['product_type'])
 
 # def get_summaries():
 #     allSummaries = []
