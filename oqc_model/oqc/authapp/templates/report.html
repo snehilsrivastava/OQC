@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     {% load static %}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes">
     <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
     <title>Report Form</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -54,7 +54,7 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="4">
-                        <span class="input-warning-span"></span>
+                        <span class="input-warning-span" style="display: none">Please enter a valid character. '/' is not allowed.</span>
                         <span><input oninput="validateInput(this)" type="text" id="SerialNo" value="{{ test.SerailNo }}"></input></span>
                     </td>
                 </tr>
@@ -264,7 +264,7 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="2">
-                        <span class="input-warning-span"></span>
+                        <span class="input-warning-span" style="display: none">Please enter a valid character. '/' is not allowed.</span>
                         <span><input oninput="validateInput(this)" type="text" id="SerialNo" value="{{test.SerailNo}}"></input></span>
                     </td>
                 </tr>
@@ -416,7 +416,7 @@
                         <strong><span class="row_header">Serial No.</span></strong>
                     </td>
                     <td colspan="2">
-                        <span class="input-warning-span"></span>
+                        <span class="input-warning-span" style="display: none">Please enter a valid character. '/' is not allowed.</span>
                         <span><input oninput="validateInput(this)" type="text" id="SerialNo" value="{{test.SerailNo}}"></input></span>
                     </td>
                 </tr>
@@ -590,12 +590,12 @@
         const warn_span = document.querySelector('.input-warning-span');
         const submit_btn =document.querySelector('.submit-btn');
         if (input.value.includes('/')){
-            warn_span.textContent = "Please enter a valid character. '/' is not allowed.";
-            submit_btn.disabled = true;
-        } else {
-            warn_span.textContent = "";
-            submit_btn.disabled = false;
-        }
+                warn_span.style.display = "unset";
+                submit_btn.disabled = true;
+            } else {
+                warn_span.style.display = "none";
+                submit_btn.disabled = false;
+            }
     }
 
     const resultBox = document.querySelector("textarea#result");

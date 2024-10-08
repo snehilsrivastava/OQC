@@ -50,6 +50,8 @@ span {
 .form-container {
     flex-direction: column;
     width: 700px;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
     margin-bottom: 15px;
     transition: right 0.3s ease;
     right: 0;
@@ -439,4 +441,27 @@ div.remark {
 
 .italics {
     font-style: italic;
+}
+.input-warning-span {
+    border: 3px solid #ffb900;
+    background: #ffcf50;
+    color: #111;
+    z-index: 10;
+    position: absolute;
+    top: 110px;
+    left: 100px;
+    border-radius: 8px;
+    padding: 0px 2px;
+    width: max-content;
+    &::before {
+        content: "";
+        position: absolute;
+        top: calc(100% - 5px);
+        left: 50%;
+        width: 10px;
+        height: 10px;
+        transform: rotate(45deg);
+        background-color: #ffb900;
+        z-index: -1;
+    }
 }

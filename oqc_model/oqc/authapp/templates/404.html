@@ -10,26 +10,29 @@
     {% load static%}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
-    <title>404</title>
+    <title>404 Page Not Found</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     
     <body>
         {% include "header_plain.html" %}
-        <h1>Page Not Found</h1>
-        <p>We could not find the page you were looking for.</p>
-        <br>
-        <span class="inline">Click here to return to 
-        {% if employee.user_type == 'owner' %}
-            <a href="{% url 'dashboard' %}">dashboard</a>
-        {% elif employee.user_type == 'brand' %}
-            <a href="{% url 'brand_dashboard' %}">dashboard</a>
-        {% elif employee.user_type == 'legal' %}
-            <a href="{% url 'legal_dashboard' %}">dashboard</a>
-        {% elif employee.user_type == 'employee' %}
-            <a href="{% url 'employee_dashboard' %}">dashboard</a>
-        {% endif %}
-        </span>
+        <div style="margin: 52px 25px;">
+            <h1>Page Not Found</h1>
+            <p>We could not find the page you were looking for.</p>
+            <br>
+            <span class="inline">Click here to return to 
+            {% if employee.user_type == 'owner' %}
+                <a href="{% url 'dashboard' %}">dashboard</a>
+            {% elif employee.user_type == 'brand' %}
+                <a href="{% url 'brand_dashboard' %}">dashboard</a>
+            {% elif employee.user_type == 'legal' %}
+                <a href="{% url 'legal_dashboard' %}">dashboard</a>
+            {% elif employee.user_type == 'employee' %}
+                <a href="{% url 'employee_dashboard' %}">dashboard</a>
+            {% endif %}
+            </span>
+        </div>
 
     <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
     </body>
