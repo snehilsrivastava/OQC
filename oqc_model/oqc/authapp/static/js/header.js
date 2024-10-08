@@ -193,7 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Set the correct theme
     document.documentElement.setAttribute('data-theme', themeToSet);
-    setTimeout(function(){changeRtfTheme();}, 100);
+    if(window.location.href.includes('/edit/')) {
+        setTimeout(function(){changeRtfTheme();}, 100);
+    }
 
     const checkbox = document.getElementById("theme-checkbox");
     if (themeToSet=="dark") {

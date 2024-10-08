@@ -91,13 +91,123 @@
                 {% endfor %}
             </span>
         {% endif %}
-        <span class="heading">
-            <h1 class="headding">Dashboard</h1>
-            <button class="action-button" onclick="toggleFilter()">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/>
-                </svg>Filter
-            </button>
-        </span>
+        <div class="sub-header">
+            <span class="heading">
+                <h1 class="headding">Dashboard</h1>
+                <div class="filter-buttons">
+                    <button class="action-button" onclick="deactivateFilter()">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+                            <path d="m569-492-51-52 125-152H366l-72-72h450q14.89 0 21.45 13.5Q772-741 763-729L569-492Zm-41 162v114q0 10.2-6.88 17.1-6.89 6.9-17.06 6.9h-47.88Q446-192 439-198.9t-7-17.1v-210L115.03-742.97Q104-754 104-768.67q0-14.66 11-25.33 10.67-11 25.33-11 14.67 0 25.77 11.1l627.8 627.8Q805-155 805-141q0 14-11 25.48Q783-105 768.5-105T743-116L528-330Zm-10-214Z"/>
+                        </svg>Clear Filter
+                    </button>
+                    <button class="action-button" onclick="toggleFilter()">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+                            <path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42t36.5-22h560q26 0 36.5 22t-4.5 42L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Zm0 0Z"/>
+                        </svg>Filter
+                    </button>
+                </div>
+            </span>
+            <div class="summary">
+                <div class="scrollcontainer">
+                    {% for sum in summary_data %}
+                    <div class="card" onclick="fetchModelRow(this)">
+                        <div class="card-meta">
+                            <span class="card-product">{{sum.Meta.0}}</span>
+                            <span class="card-model">{{sum.Meta.1}}</span>
+                        </div>
+                        <div class="card-details">
+                            Model Details
+                        </div>
+                        <div class="card-dates">
+                            {% for stage, stageData in sum.Stage_wise.items %}
+                                {% if stageData.TimeLine.0 and stageData.TimeLine.1 %}
+                                    <div class="card-date">{{stage}}: {{stageData.TimeLine.0}} - {{stageData.TimeLine.1}}</div>
+                                {% elif stageData.TimeLine.0 %}
+                                    <div class="card-date">{{stage}}: {{stageData.TimeLine.0}} - NA</div>
+                                {% elif stageData.TimeLine.1 %}
+                                    <div class="card-date">{{stage}}: NA - {{stageData.TimeLine.1}}</div>
+                                {% else %}
+                                    <div class="card-date">{{stage}}: NA - NA</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="card-status">
+                            <table class="card-status-table">
+                                <colgroup>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th colspan="3">DVT</th>
+                                        <th></th>
+                                        <th colspan="3">PP</th>
+                                        <th></th>
+                                        <th colspan="3">MP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>PT</th>
+                                        <td>10</td>
+                                        <td>5</td>
+                                        <td>3</td>
+                                        <td></td>
+                                        <td>15</td>
+                                        <td>9</td>
+                                        <td>5</td>
+                                        <td></td>
+                                        <td>25</td>
+                                        <td>9</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <th>BT</th>
+                                        <td>10</td>
+                                        <td>5</td>
+                                        <td>3</td>
+                                        <td></td>
+                                        <td>15</td>
+                                        <td>9</td>
+                                        <td>5</td>
+                                        <td></td>
+                                        <td>25</td>
+                                        <td>9</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <th>LT</th>
+                                        <td>10</td>
+                                        <td>5</td>
+                                        <td>3</td>
+                                        <td></td>
+                                        <td>15</td>
+                                        <td>9</td>
+                                        <td>5</td>
+                                        <td></td>
+                                        <td>25</td>
+                                        <td>9</td>
+                                        <td>3</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
         <div class="table-containers">
             <table class="table main-table main-table-bl table-bordered">
                 <colgroup>
@@ -131,7 +241,7 @@
                         </button>
                     </td>
                     <td>{{ test.ProductType }}</td>
-                    <td><p class="model-name">{{ test.ModelName }}</p></td>
+                    <td><p class="model-name scrollable-text">{{ test.ModelName }}</p></td>
                     <td>
                         <div class="stage-btn">
                             <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'DVT')">DVT</button>
@@ -158,11 +268,12 @@
                                         <col>
                                         <col>
                                         <col>
+                                        <col>
                                     </colgroup>
                                     <thead>
                                         <tr>
                                             <th class="checkbox-cell">
-                                                <input type="checkbox" id="select-all-{{ forloop.counter }}">
+                                                <input type="checkbox" id="select-all-{{ forloop.counter }}" onchange="selectAllCheckboxes(this)">
                                             </th>
                                             <th>Test Name</th>
                                             <th>Stage</th>
@@ -180,10 +291,10 @@
                                             <td class="checkbox-cell">
                                                 <input type="checkbox" name="selected_tests" value="{{ subtest.id }}">
                                             </td>
-                                            <td><p class="test-name">{{ subtest.TestName }}</p></td>
+                                            <td><p class="test-name scrollable-text">{{ subtest.TestName }}</p></td>
                                             <td>{{ subtest.TestStage }}</td>
                                             <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
-                                            <td><p class="employee-name">{{ subtest.owner_name }}</p></td>
+                                            <td><p class="owner-name scrollable-text">{{ subtest.owner_name }}</p></td>
                                             <td>{{ subtest.SerailNo }}</td>
                                             <td>
                                                 <div class = "status-button">
@@ -219,38 +330,8 @@
 <script type="text/javascript" src="{% static 'js/dashboard.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/filter.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/scroll-summary.js' %}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Select all checkboxes when the "select-all" checkbox is clicked
-        document.querySelectorAll('[id^="select-all-"]').forEach(checkbox => {
-            checkbox.addEventListener('click', function(event) {
-                const table = event.target.closest('table'); // Find the closest table
-                const checkboxes = table.querySelectorAll('td input[type="checkbox"]'); // Get all checkboxes within the table
-                for (const checkbox of checkboxes) {
-                    checkbox.checked = event.target.checked;
-                }
-            });
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var messageContainer = document.querySelector('.message-container');
-        var timerBar = document.querySelector('.timer-bar');
-        var header = document.querySelector('.header');
-
-        if (messageContainer && timerBar && header) {
-            var headerRect = header.getBoundingClientRect();
-            var headerHeight = headerRect.height;
-            var headerTop = headerRect.top + window.scrollY;
-            messageContainer.style.top = `${headerTop + headerHeight}px`;
-            timerBar.style.width = '0%';
-
-            setTimeout(function() {
-                messageContainer.style.top = `-${messageContainer.offsetHeight}px`;
-            }, 5000);
-        }
-    });
-
     document.addEventListener("DOMContentLoaded", function() {
         populateModels({{models_list|safe}});
         populateTestName({{test|safe}});
