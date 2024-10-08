@@ -680,6 +680,7 @@ def dashboard(request):
         'status_color': status_color,
         'role_letter': role_letter,
         'summary_data': summary_,
+        'product_type': user_ProdType,
     }
     return render(request, 'dashboard_PO.html', context)
 
@@ -732,6 +733,7 @@ def employee_dashboard(request):
         'start_date': start_date,
         'end_date': end_date,
         'models_list': models_list,
+        'product_type': user_ProdType
     }
     return render(request, "dashboard_employee.html", context)
 
@@ -789,6 +791,7 @@ def legal_dashboard(request):
         'end_date': end_date,
         'models_list': models_list,
         'summary_data': summary_,
+        'product_type': products
     }
     return render(request, "dashboard_legal.html", context)
 
@@ -845,6 +848,7 @@ def brand_dashboard(request):
         'end_date': end_date,
         'models_list': models_list,
         'summary_data': summary_,
+        'product_type': products
     }
     return render(request, "dashboard_brand.html", context)
 

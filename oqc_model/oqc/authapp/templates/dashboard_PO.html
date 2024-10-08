@@ -395,8 +395,10 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        populateModels({{models_list|safe}});
-        populateTestName({{test|safe}});
+        const user_type = "{{ employee.user_type|safe }}";
+        const user_ProductType = "{{ product_type|safe }}";
+        populateModels({{models_list|safe}}, user_type, user_ProductType);
+        populateTestName({{test|safe}}, user_type, user_ProductType);
     });
 </script>
 </body>

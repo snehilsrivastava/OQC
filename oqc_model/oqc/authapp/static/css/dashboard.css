@@ -131,8 +131,17 @@
     .main-table colgroup :nth-child(1){
         width: 45px;
     }
+    .main-table colgroup :nth-child(2){
+        width: 440px;
+    }
+    .main-table colgroup :nth-child(3){
+        width: 440px;
+    }
+    .main-table colgroup :nth-child(4){
+        width: 190px;
+    }
     .main-table colgroup :nth-child(5){
-        width: 25vw;
+        width: 385px;
     }
     .main-table-bl colgroup :nth-child(2){
         width: 440px;
@@ -213,6 +222,9 @@
         width: 310px;
     }
     .test-name {
+        width: 400px;
+    }
+    .model-name {
         width: 400px;
     }
     .serial-no {
