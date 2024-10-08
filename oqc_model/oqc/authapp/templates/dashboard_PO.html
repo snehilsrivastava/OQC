@@ -262,7 +262,7 @@
                             </button>
                         </td>
                         <td>{{ test.ProductType }}</td>
-                        <td><p class="model-name">{{ test.ModelName }}</p></td>
+                        <td><p class="model-name scrollable-text">{{ test.ModelName }}</p></td>
                         <td>
                             <div class="stage-btn">
                                 <button class="stage-filter-btn" type="button" onclick="filterOnStage(this, 'DVT')">DVT</button>
@@ -347,10 +347,10 @@
                                                 <td class="checkbox-cell">
                                                     <input type="checkbox" name="selected_tests" value="{{ subtest.id }}">
                                                 </td>
-                                                <td><p class="test-name">{{ subtest.TestName }}</p></td>
+                                                <td><p class="test-name scrollable-text">{{ subtest.TestName }}</p></td>
                                                 <td>{{ subtest.TestStage }}</td>
                                                 <td>{{ subtest.test_end_date|date:'d/m/Y' }}</td>
-                                                <td>{{ subtest.SerailNo }}</td>
+                                                <td><p class="serial-no scrollable-text">{{ subtest.SerailNo }}</p></td>
                                                 <td> <span class="test-status">
                                                     <span class="letter">
                                                         <span class="color">
@@ -395,8 +395,10 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        populateModels({{models_list|safe}});
-        populateTestName({{test|safe}});
+        const user_type = "{{ employee.user_type|safe }}";
+        const user_ProductType = "{{ product_type|safe }}";
+        populateModels({{models_list|safe}}, user_type, user_ProductType);
+        populateTestName({{test|safe}}, user_type, user_ProductType);
     });
 </script>
 </body>

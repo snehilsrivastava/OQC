@@ -681,6 +681,7 @@ def dashboard(request):
         'status_color': status_color,
         'role_letter': role_letter,
         'summary_data': summary_,
+        'product_type': user_ProdType,
     }
     return render(request, 'dashboard_PO.html', context)
 
@@ -733,6 +734,7 @@ def employee_dashboard(request):
         'start_date': start_date,
         'end_date': end_date,
         'models_list': models_list,
+        'product_type': user_ProdType
     }
     return render(request, "dashboard_employee.html", context)
 
@@ -774,6 +776,7 @@ def legal_dashboard(request):
     models_list = json.dumps(list(Model_Test_Name_Details.objects.all().values()))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     products = list(Product_List.objects.values_list('Product', flat=True))
+    summary_ = summary(products)
     context = {
         'products': products,
         'test': test,
@@ -788,6 +791,8 @@ def legal_dashboard(request):
         'start_date': start_date,
         'end_date': end_date,
         'models_list': models_list,
+        'summary_data': summary_,
+        'product_type': products
     }
     return render(request, "dashboard_legal.html", context)
 
@@ -828,6 +833,7 @@ def brand_dashboard(request):
     models_list = json.dumps(list(Model_Test_Name_Details.objects.all().values()))
     test = json.dumps(list(TestRecord.objects.all().values()), cls=DjangoJSONEncoder)
     products = list(Product_List.objects.values_list('Product', flat=True))
+    summary_ = summary(products)
     context = {
         'products': products,
         'test': test,
@@ -842,6 +848,8 @@ def brand_dashboard(request):
         'start_date': start_date,
         'end_date': end_date,
         'models_list': models_list,
+        'summary_data': summary_,
+        'product_type': products
     }
     return render(request, "dashboard_brand.html", context)
 

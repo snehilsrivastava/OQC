@@ -23,10 +23,10 @@
         width: 45px;
     }
     .main-table colgroup :nth-child(2){
-        width: 120px;
+        width: 200px;
     }
     .main-table colgroup :nth-child(3){
-        width: 150px;
+        width: 200px;
     }
     .main-table colgroup :nth-child(4){
         width: 170px;
@@ -35,66 +35,89 @@
         width: 325px;
     }
     .main-table-bl colgroup :nth-child(2){
-        width: 150px;
+        width: 350px;
     }
     .main-table-bl colgroup :nth-child(3){
-        width: 220px;
+        width: 350px;
     }
     .main-table-bl colgroup :nth-child(4){
-        width: 100px;
+        width: 175px;
     }
     .main-table-bl colgroup :nth-child(5){
-        width: 190px;
+        width: 160px;
     }
+    /* ======================================= */
     .main-table-em colgroup :nth-child(1){
-        width: 120px;
+        width: 200px;
     }
     .main-table-em colgroup :nth-child(2){
-        width: 140px;
+        width: 200px;
     }
     .main-table-em colgroup :nth-child(3){
-        width: 137px;
+        width: 200px;
     }
     .main-table-em colgroup :nth-child(4){
-        width: 68px;
+        width: 80px;
     }
     .main-table-em colgroup :nth-child(5){
-        width: 111px;
+        width: 120px;
     }
     .main-table-em colgroup :nth-child(6){
-        width: 112px;
+        width: 120px;
     }
     .main-table-em colgroup :nth-child(7){
-        width: 167px;
+        width: 140px;
     }
+    /* ======================================= */
     .drop-table colgroup :nth-child(7){
-        /* width: max-content !important; */
-        white-space: nowrap !important;
-        overflow-wrap: normal !important;
+        width: 125px;
     }
-
-    .drop-table-bl colgroup :nth-child(6){
-        width: 119px !important;
+    .drop-table colgroup :nth-child(6){
+        width: 100px;
     }
-    
     .drop-table colgroup :nth-child(5){
-        width: 95px;
+        width: 200px;
     }
-    .employee-name {
-        width: 95px;
-        white-space: nowrap;
-        overflow-x: scroll !important;
-        -webkit-overflow-scrolling: touch;
+    .drop-table colgroup :nth-child(4){
+        width: 112px;
+    }
+    .drop-table colgroup :nth-child(3){
+        width: 70px;
+    }
+    .drop-table colgroup :nth-child(2){
+        width: 200px;
+    }
+    .drop-table-bl colgroup :nth-child(6){
+        width: 200px;
+    }
+    .drop-table-bl colgroup :nth-child(4){
+        width: 115px;
+    }
+    .drop-table-bl colgroup :nth-child(3){
+        width: 70px;
+    }
+    .drop-table-bl colgroup :nth-child(2){
+        width: 200px;
+    }
+    .owner-name {
+        width: 175px;
     }
     .test-name {
-        width: 109px;
-        overflow-x: scroll !important;
-        -webkit-overflow-scrolling: touch;
+        width: 175px;
     }
     .model-name {
-        width: 116px;
-        overflow-x: scroll !important;
-        -webkit-overflow-scrolling: touch;
+        width: 175px;
+    }
+    .main-table-bl .model-name{
+        width: 320px;
+    }
+    .main-table-em {
+        & .model-name, & .test-name {
+            width: 175px;
+        }
+    }
+    .serial-no {
+        width: 175px;
     }
     span.heading{
         width: 100% !important;
@@ -108,37 +131,131 @@
     .main-table colgroup :nth-child(1){
         width: 45px;
     }
+    .main-table colgroup :nth-child(2){
+        width: 440px;
+    }
+    .main-table colgroup :nth-child(3){
+        width: 440px;
+    }
+    .main-table colgroup :nth-child(4){
+        width: 190px;
+    }
     .main-table colgroup :nth-child(5){
-        width: 25vw;
+        width: 385px;
+    }
+    .main-table-bl colgroup :nth-child(2){
+        width: 440px;
+    }
+    .main-table-bl colgroup :nth-child(3){
+        width: 440px;
+    }
+    .main-table-bl colgroup :nth-child(4){
+        width: 190px;
+    }
+    .main-table-bl colgroup :nth-child(5){
+        width: 385px;
+    }
+    .main-table-em colgroup :nth-child(1){
+        width: 250px;
+    }
+    .main-table-em colgroup :nth-child(2){
+        width: 400px;
+    }
+    .main-table-em colgroup :nth-child(3){
+        width: 400px;
+    }
+    .main-table-em colgroup :nth-child(4){
+        width: 100px;
+    }
+    .main-table-em colgroup :nth-child(5){
+        width: 130px;
+    }
+    .main-table-em colgroup :nth-child(6){
+        width: 130px;
+    }
+    .main-table-em colgroup :nth-child(7){
+        width: 140px;
+    }
+    .drop-table:not(.drop-table-bl) colgroup :nth-child(2){
+        width: 440px;
     }
     .drop-table:not(.drop-table-bl) colgroup :nth-child(3){
-        width: 80px;
+        width: 100px;
     }
     .drop-table:not(.drop-table-bl) colgroup :nth-child(4){
-        width: 120px;
+        width: 130px;
+    }
+    .drop-table:not(.drop-table-bl) colgroup :nth-child(5){
+        width: 440px;
     }
     .drop-table:not(.drop-table-bl) colgroup :nth-child(6){
-        width: 120px;
+        width: 140px;
     }
     .drop-table:not(.drop-table-bl) colgroup :nth-child(7){
-        width: 119px;
+        width: 130px;
+    }
+    .drop-table-bl colgroup :nth-child(1){
+        width: 45px;
+    }
+    .drop-table-bl colgroup :nth-child(2){
+        width: 350px;
+    }
+    .drop-table-bl colgroup :nth-child(3){
+        width: 100px;
+    }
+    .drop-table-bl colgroup :nth-child(4){
+        width: 130px;
+    }
+    .drop-table-bl colgroup :nth-child(5){
+        width: 350px;
+    }
+    .drop-table-bl colgroup :nth-child(6){
+        width: 350px;
     }
     .drop-table-bl colgroup :nth-child(7){
-        width: 111px;
+        width: 130px;
     }
     .drop-table-bl colgroup :nth-child(8){
-        width: 82px;
+        width: 80px;
     }
-    td p.employee-name {
-        white-space: nowrap;
+    .owner-name {
+        width: 310px;
     }
-    .multiple-actions {
-        width: 100px !important;
-        display: flex;
-        gap: 5px;
+    .test-name {
+        width: 400px;
+    }
+    .model-name {
+        width: 400px;
+    }
+    .serial-no {
+        width: 400px;
+    }
+    .drop-table-bl  .test-name {
+        width: 310px;
+    }
+    .drop-table-bl  .serial-no {
+        width: 310px;
+    }
+    .drop-table-bl  .model-name {
+        width: 400px;
+    }
+    .main-table-em {
+        & .model-name, & .test-name {
+            width: 380px;
+        }
     }
 }
 
+.multiple-actions {
+    width: 100px !important;
+    display: flex;
+    gap: 5px;
+}
+.scrollable-text {
+    white-space: nowrap;
+    overflow-x: scroll !important;
+    -webkit-overflow-scrolling: touch;
+}
 body {
     overflow-x: hidden;
     margin: 0;

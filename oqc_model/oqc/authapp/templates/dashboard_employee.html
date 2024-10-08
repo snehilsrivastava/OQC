@@ -119,8 +119,8 @@
                     {% for test in completed_tests %}
                     <tr>
                         <td>{{ test.ProductType }}</td>
-                        <td><p class="model-name">{{ test.ModelName }}</p></td>
-                        <td><p class="test-name">{{ test.TestName }}</p></td>
+                        <td><p class="model-name scrollable-text">{{ test.ModelName }}</p></td>
+                        <td><p class="test-name scrollable-text">{{ test.TestName }}</p></td>
                         <td>{{ test.TestStage }}</td>
                         <td>{{ test.test_end_date|date:"d/m/Y" }}</td>
                         <td>
