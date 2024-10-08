@@ -1,4 +1,5 @@
 import os
+import boto3
 from datetime import date, datetime as dt
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, Http404
@@ -1219,7 +1220,7 @@ def ckeditor_image_upload(request):
         if request.FILES['ckeditor_image_upload'].content_type.startswith('image/'):
             file = request.FILES['ckeditor_image_upload']
             today = dt.now()
-            upload_dir = os.path.join('ckeditor', user, str(today.year), str(today.month), str(today.day))
+            upload_dir = os.path.join('media', 'ckeditor', user, str(today.year), str(today.month), str(today.day))
             os.makedirs(upload_dir, exist_ok=True)
             file_name = default_storage.save(os.path.join(upload_dir, file.name), ContentFile(file.read()))
             file_url = default_storage.url(file_name)
@@ -1233,28 +1234,53 @@ def ckeditor_image_upload(request):
 
 def server_media_browse(request):
     username = request.session['username']
-    user_dir = os.path.join(settings.MEDIA_ROOT, 'ckeditor', username)
-
-    # Filtering files by date (if date filter is applied)
     filter_date = request.GET.get('date')
     files = []
-    
-    for root, dirs, filenames in os.walk(user_dir):
-        for filename in filenames:
-            file_path = os.path.join(root, filename)
-            file_url = os.path.relpath(file_path, settings.MEDIA_ROOT)
-            file_stat = os.stat(file_path)
-            file_date = dt.fromtimestamp(file_stat.st_mtime)
-            
-            if filter_date and file_date.strftime('%Y-%m-%d') != filter_date:
-                continue
 
-            files.append({
-                'name': filename,
-                'url': file_url.replace('\\', '/'),
-                'date': file_date,
-                'size': file_stat.st_size / 1024,
-            })
+    if os.environ.get("db_type")=="LOCAL":
+        user_dir = os.path.join(settings.MEDIA_ROOT, 'ckeditor', username)
+
+        for root, dirs, filenames in os.walk(user_dir):
+            for filename in filenames:
+                file_path = os.path.join(root, filename)
+                file_url = os.path.relpath(file_path, settings.MEDIA_ROOT)
+                file_stat = os.stat(file_path)
+                file_date = dt.fromtimestamp(file_stat.st_mtime)
+                
+                if filter_date and file_date.strftime('%Y-%m-%d') != filter_date:
+                    continue
+
+                files.append({
+                    'name': filename,
+                    'url': file_url.replace('\\', '/'),
+                    'date': file_date,
+                    'size': file_stat.st_size / (1024**2),
+                })
+    else:
+        s3 = boto3.client('s3')
+        bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+        prefix = f'media/ckeditor/{username}'
+
+        paginator = s3.get_paginator('list_objects_v2')
+        pages = paginator.paginate(Bucket=bucket_name, Prefix=prefix)
+
+        for page in pages:
+            for obj in page.get('Contents', []):
+                file_name = obj['Key'].split('/')[-1]
+                file_path = obj['Key']
+                file_url = file_path.replace("media/", "")
+                file_date = obj['LastModified'].replace(tzinfo=None)
+                file_size = obj['Size'] / (1024**2)
+
+                if filter_date and file_date.strftime('%Y-%m-%d') != filter_date:
+                    continue
+
+                files.append({
+                    'name': file_name,
+                    'url': file_url,
+                    'date': file_date,
+                    'size': f'{file_size: .2f} MB',
+                })
     
     # Sorting files by date or name
     sort_by = 'date'  # Only sorting by date as per requirement

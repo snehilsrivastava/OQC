@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     {% load static %}
     <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <title>Media Browser</title>
     <link rel="stylesheet" href="{% static 'css/media_browser.css' %}">
     <script src="{% static 'js/ckeditor/customBrowser.js' %}"></script>
@@ -11,16 +12,26 @@
 <body>
     <h1>Media Browser</h1>
     <br>
+    {{pages|safe}}
     <div class="filter">
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" value="{{ filter_date }}">
-        &nbsp;
-        <input type="checkbox" id="sort_order" {% if order == 'asc' %}checked{% endif %}>
-        <label for="sort_order" id="sort_order_label">
-            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#1f2020">
-                <path d="M360-440q-17 0-28.5-11.5T320-480v-247l-75 75q-11 11-27.5 11T189-652q-12-12-12-28.5t12-28.5l143-143q6-6 13-8.5t15-2.5q8 0 15 2.5t13 8.5l144 144q12 12 11.5 28T531-652q-12 11-28 11.5T475-652l-75-75v247q0 17-11.5 28.5T360-440ZM600-97q-8 0-15-2.5t-13-8.5L428-252q-12-12-11.5-28t12.5-28q12-11 28-11.5t28 11.5l75 75v-247q0-17 11.5-28.5T600-520q17 0 28.5 11.5T640-480v247l75-75q11-11 27.5-11t28.5 11q12 12 12 28.5T771-251L628-108q-6 6-13 8.5T600-97Z"/>
-            </svg>
-        </label>
+        <div class="date-filter">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" value="{{ filter_date }}">
+            &nbsp;
+            <input type="checkbox" id="sort_order" {% if order == 'asc' %}checked{% endif %}>
+            <label for="sort_order" id="sort_order_label">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#1f2020">
+                    <path d="M360-440q-17 0-28.5-11.5T320-480v-247l-75 75q-11 11-27.5 11T189-652q-12-12-12-28.5t12-28.5l143-143q6-6 13-8.5t15-2.5q8 0 15 2.5t13 8.5l144 144q12 12 11.5 28T531-652q-12 11-28 11.5T475-652l-75-75v247q0 17-11.5 28.5T360-440ZM600-97q-8 0-15-2.5t-13-8.5L428-252q-12-12-11.5-28t12.5-28q12-11 28-11.5t28 11.5l75 75v-247q0-17 11.5-28.5T600-520q17 0 28.5 11.5T640-480v247l75-75q11-11 27.5-11t28.5 11q12 12 12 28.5T771-251L628-108q-6 6-13 8.5T600-97Z"/>
+                </svg>
+            </label>
+        </div>
+        <div class="name-filter">
+            <label for="search"></label>
+            <div class="form-group has-search">
+                <span class="fa fa-search form-control-feedback"></span>
+                <input oninput="searchImage(this)" type="text" class="form-control" placeholder="Search">
+            </div>
+        </div>
     </div>
     
     <div class="main-content">
@@ -34,7 +45,12 @@
                         <tr>
                     {% endif %}
                     <td>
-                        <img src="{{ MEDIA_URL }}{{ file.url }}" alt="{{ file.name }}" height="auto" width="100%" onclick="previewImg('{{ MEDIA_URL }}{{ file.url }}', '{{file.name}}')"/>
+                        <figure onclick="previewImg('{{ MEDIA_URL }}{{ file.url }}', '{{file.name}}')">
+                            <div>
+                                <img src="{{ MEDIA_URL }}{{ file.url }}" alt="{{ file.name }}" height="auto" width="100%"/>
+                            </div>
+                            <figcaption>{{file.name}}<br>{{file.size}}</figcaption>
+                        </figure>
                     </td>
                     {% if forloop.last %}
                         </tr>
@@ -44,7 +60,7 @@
         </div>
         <div class="right-half">
             <div class="image-container">
-                <img id="previewImg" src="{{ MEDIA_URL}}ckeditor/default.png" alt="default" height="auto" width="100%">
+                <img id="previewImg" src="{% static 'images/default.png' %}" alt="default" height="auto" width="100%">
             </div>
         </div>
     </div>

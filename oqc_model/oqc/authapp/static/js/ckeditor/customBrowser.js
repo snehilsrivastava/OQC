@@ -1,6 +1,16 @@
 let urlParams = new URLSearchParams(window.location.search);
 let CKEditorFuncNum = urlParams.get('CKEditorFuncNum');
 let selectedFile;
+
+function searchImage(input) {
+    const filename = input.value.toLowerCase();
+    const images = document.querySelectorAll('figure div img');
+    images.forEach(image => {
+        if(image.getAttribute('alt').toLowerCase().includes(filename)){image.parentElement.parentElement.style.display="flex";}
+        else{image.parentElement.parentElement.style.display = 'none';}
+    });
+}
+
 function selectFile() {
     if (selectedFile) {
         if (CKEditorFuncNum) {

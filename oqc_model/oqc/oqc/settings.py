@@ -16,7 +16,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-r8&=%bkyoroxzqd+rml6h&rmspq-h@!(k29%(%8cq)rw7a@ll)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if os.environ.get('db_type')=="SERVER":
+    DEBUG = False
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -145,9 +148,10 @@ if os.environ.get("db_type") == "SERVER":
     AWS_ACCESS_KEY_ID = os.environ.get("access_key_id")
     AWS_SECRET_ACCESS_KEY = os.environ.get("secret_access_key")
     AWS_S3_REGION_NAME = 'ap-south-1'
+    MEDIA_ROOT = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
 else:
     MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
