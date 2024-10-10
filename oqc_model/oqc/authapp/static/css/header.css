@@ -90,7 +90,7 @@ button {
 }
 
 .user-info {
-    transform: translate(15px, 3.5px);
+    transform: translate(12px, 3.5px);
     display: none;
     position: absolute;
     top: 50px;
@@ -179,7 +179,7 @@ button {
 }
 
 .notif-info {
-    transform: translate(15px, 3.5px);
+    transform: translate(2px, 3.5px);
     display: none;
     position: absolute;
     top: 50px;

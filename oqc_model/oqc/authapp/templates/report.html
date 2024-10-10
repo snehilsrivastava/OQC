@@ -19,7 +19,7 @@
 {% else %}
     {% include "header.html" %}
 {% endif %}
-<div class="mx-auto card p-3 shadow-lg form-container">
+<div class="mx-auto card p-3 shadow-lg form-container" style="margin-top: 13px;">
     <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;'>{{TestProtocol.TestName}}</span></u></strong></p>
     <div style="margin: 6px;"></div>
     <table>
@@ -46,7 +46,7 @@
                         <strong><span class="row_header">Sample Quantity</span></strong>
                     </td>
                     <td colspan="4">
-                        <span><input type="number" id="sample_quantity" value="{{ test.sample_quantiy }}"></input></span>
+                        <span><input type="number" id="sample_quantity" value="{{ test.sample_quantiy }}" min="0"></input></span>
                     </td>
                 </tr>
                 <tr>
@@ -256,7 +256,7 @@
                         <strong><span class="row_header">Sample Quantity</span></strong>
                     </td>
                     <td colspan="2">
-                        <span><input type="number" id="sample_quantity" value="{{test.sample_quantiy}}"></input></span>
+                        <span><input type="number" id="sample_quantity" value="{{test.sample_quantiy}}" min="0"></input></span>
                     </td>
                 </tr>
                 <tr>
@@ -408,7 +408,7 @@
                         <strong><span class="row_header">Sample Quantity</span></strong>
                     </td>
                     <td colspan="2">
-                        <span><input type="number" id="sample_quantity" value="{{test.sample_quantiy}}"></input></span>
+                        <span><input type="number" id="sample_quantity" value="{{test.sample_quantiy}}" min="0"></input></span>
                     </td>
                 </tr>
                 <tr>
@@ -599,12 +599,12 @@
     }
 
     const resultBox = document.querySelector("textarea#result");
-    const resultEditor = CKEDITOR.replace(resultBox, {customConfig: "{% static 'js/ckeditor/customConfig.js' %}", width: "520px", contentsCss: ["{% static 'css/ckeditor_custom.css' %", "{% static 'css/color_pallette.css' %}"]});
+    const resultEditor = CKEDITOR.replace(resultBox, {customConfig: "{% static 'js/ckeditor/customConfig.js' %}", width: "100%", contentsCss: ["{% static 'css/ckeditor_custom.css' %", "{% static 'css/color_pallette.css' %}"]});
     setTimeout(function(){
         const footer = resultEditor.container.$.querySelector(".cke_bottom");
         footer.style.display = "none";
         setRtfStyle(resultEditor.container.$);
-    }, 100);
+    }, 200);
     
     var editor_count = 0;
     CKEDITOR.on('dialogDefinition', function (ev) {
@@ -621,10 +621,17 @@
     });
 
     document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(function(){
+            const resultBox = document.querySelector("div#cke_result");
+            resultBox.style.border = 'none';
+            const resultTD = resultBox.parentElement.parentElement;
+            resultTD.style.padding = '0';
+        }, 200);
+
         let rtfEditors = document.querySelectorAll(".rtf-editor");
         rtfEditors.forEach(rtfEditor => {
             const new_editor = CKEDITOR.replace(`ckeditor_${editor_count}`, {customConfig: "{% static 'js/ckeditor/customConfig.js' %}", height: "700px", contentsCss: ["{% static 'css/ckeditor_custom.css' %", "{% static 'css/color_pallette.css' %}"]});
-            setTimeout(function(){addDeleteBtn(new_editor);}, 100);
+            setTimeout(function(){addDeleteBtn(new_editor);}, 200);
             editor_count++;
         });
     });
@@ -668,7 +675,7 @@
         hr.classList.add("page-break-indicator");
         ckeditorContainer.appendChild(hr);
         const new_editor = CKEDITOR.replace(`ckeditor_${editor_count}`, {customConfig: "{% static 'js/ckeditor/customConfig.js' %}", height: "700px", contentsCss: ["{% static 'css/ckeditor_custom.css' %", "{% static 'css/color_pallette.css' %}"]});
-        setTimeout(function(){addDeleteBtn(new_editor);}, 100);
+        setTimeout(function(){addDeleteBtn(new_editor);}, 0);
         editor_count++;
     }
 

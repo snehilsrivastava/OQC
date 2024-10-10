@@ -19,6 +19,7 @@ from django.core.files.base import ContentFile
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template import loader
+from PIL import Image, ImageOps
 
 def login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -1227,10 +1228,14 @@ def ckeditor_image_upload(request):
     if request.method == 'POST' and request.FILES:
         if request.FILES['ckeditor_image_upload'].content_type.startswith('image/'):
             file = request.FILES['ckeditor_image_upload']
+            image = ImageOps.exif_transpose(Image.open(file))
+            temp_image_io = BytesIO()
+            image.save(temp_image_io, format='JPEG', quality=50)
+            temp_image_io.seek(0)
             today = dt.now()
             upload_dir = os.path.join('media', 'ckeditor', user, str(today.year), str(today.month), str(today.day))
             os.makedirs(upload_dir, exist_ok=True)
-            file_name = default_storage.save(os.path.join(upload_dir, file.name), ContentFile(file.read()))
+            file_name = default_storage.save(os.path.join(upload_dir, file.name), ContentFile(temp_image_io.read()))
             file_url = default_storage.url(file_name)
             response = {
                 'uploaded': True,
@@ -1278,7 +1283,11 @@ def server_media_browse(request):
                 file_path = obj['Key']
                 file_url = file_path.replace("media/", "")
                 file_date = obj['LastModified'].replace(tzinfo=None)
-                file_size = obj['Size'] / (1024**2)
+                file_size = obj['Size']/1024
+                if file_size > 1024:
+                    file_size = f'{file_size/1024:.1f} MB'
+                else:
+                    file_size = f'{file_size:.1f} KB'
 
                 if filter_date and file_date.strftime('%Y-%m-%d') != filter_date:
                     continue
@@ -1287,7 +1296,7 @@ def server_media_browse(request):
                     'name': file_name,
                     'url': file_url,
                     'date': file_date,
-                    'size': f'{file_size: .2f} MB',
+                    'size': file_size,
                 })
     
     # Sorting files by date or name

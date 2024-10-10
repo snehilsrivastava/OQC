@@ -66,7 +66,6 @@ function callDjango(url, user_type, productTypes, username) {
     
         .then(response => {
             if (response.ok) {
-                console.log('Request was successful');
                 location.reload();
             }
             else {console.error('Request failed with status:', response.status);}

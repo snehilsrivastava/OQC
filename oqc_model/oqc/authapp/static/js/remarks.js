@@ -83,7 +83,6 @@ form.addEventListener('mouseup', function(event) {
     var selection = window.getSelection();
     var parentTag = findCommonParentTag(selection).tagName;
     let currSelected = selection.toString();
-    console.log(parentTag);
     validTagList = ['TD', 'SPAN', 'P', 'DIV', 'IMG'];
     if (currSelected !== '' && currSelected !== lastSelected && validTagList.includes(parentTag)) {
         lastSelected = currSelected;
@@ -304,7 +303,6 @@ function addRemarkListeners() {
                     targetContent.style.border = "none";
                 }
                 if (!colorBox.contains(event.target) && !(event.target.classList.contains('remark'))) {
-                    console.log('colorBox removed');
                     colorBox.style.display = 'none';
                 }
             }

@@ -47,7 +47,7 @@
                     <td>
                         <figure onclick="previewImg('{{ MEDIA_URL }}{{ file.url }}', '{{file.name}}')">
                             <div>
-                                <img src="{{ MEDIA_URL }}{{ file.url }}" alt="{{ file.name }}" height="auto" width="100%"/>
+                                <img src="{{ MEDIA_URL }}{{ file.url }}" alt="{{ file.name }}"/>
                             </div>
                             <figcaption>{{file.name}}<br>{{file.size}}</figcaption>
                         </figure>

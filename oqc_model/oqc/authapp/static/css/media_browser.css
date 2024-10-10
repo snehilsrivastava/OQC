@@ -82,10 +82,15 @@ figure {
         cursor: pointer;
     }
     & div {
-        height: calc(15vw - 33.6px);
+        height: calc(15vw - 34px);
         display: flex;
         flex-direction: column;
         justify-content: center;
+        & img {
+            object-fit: cover;
+            height: 100%;
+            width: 100%;
+        }
     }
     & figcaption {
         text-align: center;
