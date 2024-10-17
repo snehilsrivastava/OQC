@@ -67,12 +67,13 @@ function popupAction(testID, action) {
 }
 
 function findCommonParentTag(selection) {
-    let currentNode = selection.anchorNode;
+    let currentNode = selection.anchorNode.parentElement;
+    let foc = selection.toString().trim();
     while (currentNode) {
-        if (currentNode.contains(selection.focusNode)) {
-            return currentNode.parentElement;
+        if (currentNode.textContent.includes(foc)) {
+            return currentNode;
         }
-        currentNode = currentNode.parentNode;
+        currentNode = currentNode.parentElement;
     }
     return null;
 }
@@ -81,10 +82,13 @@ let lastSelected = '';
 const form = document.querySelector('form');
 form.addEventListener('mouseup', function(event) {
     var selection = window.getSelection();
-    var parentTag = findCommonParentTag(selection).tagName;
+    var parentTag = findCommonParentTag(selection);
+    if (parentTag === null) {
+        return;
+    }
     let currSelected = selection.toString();
-    validTagList = ['TD', 'SPAN', 'P', 'DIV', 'IMG'];
-    if (currSelected !== '' && currSelected !== lastSelected && validTagList.includes(parentTag)) {
+    validTagList = ['TD', 'SPAN', 'P', 'DIV', 'STRONG'];
+    if (currSelected !== '' && currSelected !== lastSelected && validTagList.includes(parentTag.tagName)) {
         lastSelected = currSelected;
         var popup = document.querySelector('.popup');
         popup.style.display = 'flex';
