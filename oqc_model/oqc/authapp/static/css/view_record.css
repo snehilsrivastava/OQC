@@ -235,26 +235,16 @@ span.close {
 
 .popup  {
     background-color: #2c4f7b !important;
-    gap: 10px;
-    padding: 3px;
     border-radius: 5px;
 }
 
 .popup button {
     height: auto;
-    padding: 0;
+    padding: 0 5px 3px 5px;
     background-color: #2c4f7b;
     &:hover {
         filter: contrast(1.5);
     }
-}
-
-.comment-btn {
-    margin-left: 3px;
-}
-
-.strikethrough-btn {
-    margin-right: 3px;
 }
 
 .add-comment-box {
