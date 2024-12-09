@@ -32,7 +32,6 @@
                 <h1>Update Test Details</h1>
             </div>
             <form action="{% url 'update_test_list_entry' %}" method="post">
-                {% csrf_token %}
                 <div class="form-group">
                     <label for="Product">Product</label>
                     <select class="form-control"  onchange="populateTestName()" id="Product" name="Product" required>

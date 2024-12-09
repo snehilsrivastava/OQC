@@ -17,7 +17,6 @@
 <body>
 {% include "header_plain.html" %}
     <form class="mx-auto card p-3 shadow-lg form-container" style="margin-top: 65px;">
-        {% csrf_token %}
         {{ form.media }}
         <p style='margin:0cm;text-align:center;vertical-align:baseline;'><strong><u><span style='font-size:24px;'>{{TestProtocol.TestName}}</span></u></strong></p>
         <div style="margin: 6px;"></div>

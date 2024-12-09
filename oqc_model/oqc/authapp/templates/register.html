@@ -26,7 +26,6 @@
 			</div>
             <div class="initial-view">
                 <form id="card-2" class="card-2" method="post" action="{% url 'send_otp' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
                     <div class="card-body border-0 no-background">
                         <div id="messages1">
                             <!-- div to be filled by JS don't remove -->
@@ -71,7 +70,6 @@
             </div>
             <div class="final-view">
                 <form id="card-2" class="card-2" method="post" action="{% url 'register' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
                     <div class="card-body border-0 no-background">
                         <div id="messages2">
                             <!-- div to be filled by JS don't remove -->

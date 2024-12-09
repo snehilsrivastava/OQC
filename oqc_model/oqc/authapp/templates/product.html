@@ -32,8 +32,6 @@
         <div class="form-container" style="margin-top: 25px;">
             <h1>Add New Report</h1>
             <form method="POST" name="product_form" action="{% url 'product' %}">
-                <!-- CSRF token -->
-                {% csrf_token %}
                 <div class="form-group">
                     <label for="ProductType">Product Type:</label>
                     <select class="form-control" id="ProductType" name="ProductType" required>

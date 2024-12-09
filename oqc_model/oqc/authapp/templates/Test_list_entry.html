@@ -33,7 +33,6 @@
             </div>
          
             <form action="{% url 'test_list_entry' %}" method="post">
-                {% csrf_token %}
                 <div class="form-group">
                     <label for="Product">Product</label>
                     <select name="Product" id="Product" class="form-control" required>

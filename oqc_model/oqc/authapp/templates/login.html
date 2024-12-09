@@ -21,8 +21,6 @@
 			</div>
 			<form id="card-2" class="card-2" method="post" action="{% url 'login_page' %}" enctype="multipart/form-data">
 
-				{% csrf_token %} <!-- CSRF token for security -->
-
 				<!-- Login heading -->
 				<!-- <h3 class="title">Log in</h3> -->
 				<!-- <hr> -->
@@ -57,7 +55,7 @@
 					<!-- Submit button -->
 					<button type="submit" class="btn btn-primary btn-fill">Sign In</button>
 					<!-- Forgot Password -->
-					<a class="forgot-password" href="/au/forgot_password">Forgot password?</a>
+					<a class="forgot-password" href="/au/forgot_password/">Forgot password?</a>
 					<!-- Link to registration page -->
 					<span class="no_wrap"><span>Don't have an account? <a href="/au/register/" class="sign-up">Sign Up</a> </span></span>
 				</div>

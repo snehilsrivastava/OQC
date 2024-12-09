@@ -100,7 +100,7 @@ def send_otp(request):
         if Employee.objects.filter(username=username).exists():
             messages.warning(request, "Username already exists")
             return JsonResponse({'redirect_url': '/au/login/'})
-        valid_domains = ['indkal.com', 'indkaltechno.onmicrosoft.com']
+        valid_domains = ['indkal.com', 'indkaltechno.onmicrosoft.com', '365.indkal.com']
         if username.split('@')[-1] not in valid_domains:
             return JsonResponse({'warning': True, 'message': 'Please enter a valid email address'})
         validity = validate_password(password)

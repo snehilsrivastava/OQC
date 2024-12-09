@@ -16,9 +16,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const formData = new FormData(initialForm);
         fetch("send_otp/", {
             method: 'POST',
-            headers: {
-                'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-            },
             body: formData,
         })
         .then(response => response.json())
@@ -67,9 +64,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const formData = new FormData(otpForm);
         fetch("verify_otp/", {
             method: 'POST',
-            headers: {
-                'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-            },
             body: formData,
         })
         .then(response => response.json())
@@ -118,9 +112,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const formData = new FormData(finalForm);
         fetch("update_password/", {
             method: 'POST',
-            headers: {
-                'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-            },
             body: formData,
         })
         .then(response => response.json())

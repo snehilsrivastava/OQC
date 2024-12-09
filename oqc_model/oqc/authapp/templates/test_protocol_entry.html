@@ -31,8 +31,6 @@
                 <h1>Test Protocols</h1>
             </div>
             <form action="{% url 'test_protocol_entry' test_name product %}" method="post">
-                {% csrf_token %}
-               
                 <div class="form-group">
                     <label >Test Objective</label>
                     <textarea class="form-control" id="Testobjective" name="Testobjective" required>{{ test_detail.Test_Objective }}</textarea>

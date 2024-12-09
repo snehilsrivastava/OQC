@@ -6,7 +6,6 @@
         </div>
 
         <form action="{% url 'Mobile' %}" method="post">
-            {% csrf_token %}
             <div class="form-group">
                 <label for="ModelName">Model Number</label>
                 <input type="text" class="form-control" id="ModelName" name="ModelName" value="{{ model }}" readonly>
