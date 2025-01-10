@@ -30,18 +30,20 @@ def product_form_view(request):
         test_stage = request.POST.get('TestStage')
         test_name = request.POST.get('TestName')
         serial_no = request.POST.get('SerailNo')
-        tested_by = request.POST.get('TestedBy')
         new_product_detail = TestRecord(
-            ProductType=product_type,
-            ModelName=model_name,
-            SerailNo=serial_no,
-            TestStage=test_stage,
-            TestName=test_name,
-            status = "Approved" if user.user_type == "owner" else "Not Sent",
-            verification = True if tested_by == 'ODM' else False,
+            ProductType = product_type,
+            ModelName = model_name,
+            SerailNo = serial_no,
+            TestStage = test_stage,
+            TestName = test_name,
+            status = "Waiting" if user.user_type == "owner" else "Not Sent",
+            verification = True,
+            remarks = "{}",
         )
+        if 'UploadReport' in request.FILES:
+            new_product_detail.pdf_file = request.FILES['UploadReport']
         new_product_detail.save()
-        return redirect(reverse('report', kwargs={'test_name': test_name, 'model_name': model_name, 'serialno': serial_no}))
+        return redirect(reverse('report', kwargs={'stage': test_stage, 'product': product_type, 'test_name': test_name, 'model_name': model_name, 'serialno': serial_no}))
 
     tv_models = list(TV.objects.values_list('ModelName', flat=True).distinct())
     ac_models = list(AC.objects.values_list('ModelName', flat=True).distinct())

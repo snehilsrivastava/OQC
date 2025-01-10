@@ -49,5 +49,6 @@ class TestRecord(models.Model):
     TestName  = models.CharField(max_length=80,default="None")
     owner_name = models.CharField(max_length=80, default = 'None')
     html_content = models.TextField(default="")
+    pdf_file = models.FileField(upload_to='pdfs/', blank=True, null=True)
     def __str__(self):
         return f"{self.ProductType} - {self.ModelName} - {self.TestName}"
