@@ -14,6 +14,8 @@
 <body>
     {% if employee.is_superuser %}
         {% include "header_PO.html" %}
+    {% elif employee.user_type == 'owner' %}
+        {% include "header_PO.html" %}
     {% else %}
         {% include "header.html" %}
     {% endif %}
@@ -31,7 +33,7 @@
     <div class="container">
         <div class="form-container" style="margin-top: 25px;">
             <h1>Add New Report</h1>
-            <form method="POST" name="product_form" action="{% url 'product' %}">
+            <form method="POST" name="product_form" action="{% url 'product' %}" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="ProductType">Product Type:</label>
                     <select class="form-control" id="ProductType" name="ProductType" required>
@@ -50,7 +52,6 @@
                         <option value="MP">MP</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="TestType">Test Name:</label>
                     <select class="form-control" id="TestName" name="TestName" required></select>
@@ -65,12 +66,16 @@
                         required
                     />
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="TestedBy">Tested By</label>
                     <select class="form-control" id="TestedBy" name="TestedBy" required>
                         <option value="TI" selected>Test Inspector</option>
                         <option value="ODM">ODM</option>
                     </select>
+                </div> -->
+                <div class="form-group">
+                    <label for="UploadReport">Upload PDF Report:</label>
+                    <input type="file" class="form-control" id="UploadReport" name="UploadReport" accept=".pdf" required />
                 </div>
                 <button type="submit" class="btn btn-primary btn-submit">Submit</button>
             </form>
