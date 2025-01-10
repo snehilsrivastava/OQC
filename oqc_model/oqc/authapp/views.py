@@ -279,7 +279,7 @@ def approveUser(request):
             <p>
                 Hi {user.first_name} {user.last_name},<br><br>
                 Your account has been approved for {userTypes[user.user_type]} access.<br><br>
-                Click <a href="http://protrackindkal.in/au/login" target="_blank">here</a> to go to login page.
+                Click <a href="http://protrackindkal.in/au/login/" target="_blank">here</a> to go to login page.
             </p>
         </body>
         </html>
@@ -320,7 +320,7 @@ def updateUser(request):
                 <p>
                     Hi {user.first_name} {user.last_name},<br><br>
                     Your account has been updated for {userTypes[user.user_type]} access.<br><br>
-                    Click <a href="http://protrackindkal.in/au/login" target="_blank">here</a> to go to login page.
+                    Click <a href="http://protrackindkal.in/au/login/" target="_blank">here</a> to go to login page.
                 </p>
             </body>
             </html>
@@ -382,7 +382,7 @@ def change_user_type(request, username, user_type):
         <p>
             Hi {change_user.first_name} {change_user.last_name},<br><br>
             Your account has been approved for {change_user.user_type} access.<br><br>
-            Click <a href="http://protrackindkal.in/au/login" target="_blank">here</a> to go to login page.
+            Click <a href="http://protrackindkal.in/au/login/" target="_blank">here</a> to go to login page.
         </p>
     </body>
     </html>

@@ -50,28 +50,25 @@ function get_new_data(button){
 }
 
 function callDjango(url, user_type, productTypes, username) {
-    if (['owner', 'employee'].includes(user_type) && productTypes.length === 0) {alert('Please select a Product Type before approving the user.');}
-    else {
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: username,
-                userType: user_type,
-                productTypes: productTypes
-            })
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: username,
+            userType: user_type,
+            productTypes: productTypes
         })
-    
-        .then(response => {
-            if (response.ok) {
-                location.reload();
-            }
-            else {console.error('Request failed with status:', response.status);}
-        })
-        .catch(error => {console.error('Error:', error);});
-    }
+    })
+
+    .then(response => {
+        if (response.ok) {
+            location.reload();
+        }
+        else {console.error('Request failed with status:', response.status);}
+    })
+    .catch(error => {console.error('Error:', error);});
 }
 
 function approveUser(button, username) {
