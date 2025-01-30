@@ -154,6 +154,9 @@ function changeColorWithTheme() {
 }
 
 function changeRtfTheme() {
+    if (typeof CKEDITOR == 'undefined') {
+        return;
+    }
     const pageTheme = localStorage.getItem('theme');
     for(const instance in CKEDITOR.instances) {
         const editor = CKEDITOR.instances[instance].container.$;

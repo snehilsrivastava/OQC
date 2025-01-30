@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    {% load dict_utils %}
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes">
+    <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
+    <title>Weekly Development Update</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/weekly_update.css' %}">
+</head>
+<body>
+    {% include "header_PO.html" %}
+    <div class="overlay" id="overlay" onclick="togglePopup()"></div>
+    <div id="popup" class="popup form-container">
+        <div class="form-header">
+            <h1>Add New Model</h1>
+        </div>
+        <form id="modelForm" action="{% url 'add_tracker_model' %}" method="POST">
+            <div class="form-group">
+                <label for="Product">Product</label>
+                <select class="form-control" id="Product" name="Product" required>
+                    <option value="" selected disabled hidden>Select the Product</option>
+                    {% for prod, boo in employee.product_type.items %}
+                        {% if boo %}
+                        <option value="{{prod}}">{{prod}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="modelName">Model Name</label>
+                <input type="text" class="form-control" id="modelName" name="modelName" required>
+            </div>
+            <button type="submit" id="modelFormSubmit">Submit</button>
+        </form>
+    </div>
+    <div class="content">
+        <div class="tabs">
+            {% for product in product_models.keys %}
+            <div class="tab" onclick="showModels('{{ product }}')">{{ product }}</div>
+            {% endfor %}
+        </div>
+        <div class="control-container">
+            <div class="search-container">
+                Search: <input type="text" id="searchInput">
+            </div>
+            <button id="newModelButton" onclick="togglePopup()">Add Model</button>
+        </div>
+        <div id="models-container">
+            {% for product, models in product_models.items %}
+            <div id="models-{{ product }}" class="model-table">
+                <ul>
+                    {% for model in models %}
+                    <li>
+                        <a href="javascript:void(0);" onclick="toggleTable({{ model.id }})">    
+                            <span class="chevron-icon right" style="transform: rotate(0deg)">&#9654;</span>{{ model.ModelName }}
+                        </a>
+                        <div id="model-table-{{ model.id }}" class="model-table">
+                            <table id="editableTable" class="{{ product }}">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th class="status-col">Status</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        {% for week in model.WeekData.keys %}
+                                        <th class="week-col">Week {{ week }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row_name, row_value in model.RowData.items %}
+                                    <tr>
+                                        <td class="row-name">{{ row_name }}</td>
+                                        <td class="editable">{{ row_value.status }}</td>
+                                        <td class="editable">{{ row_value.start_date }}</td>
+                                        <td class="editable">{{ row_value.end_date }}</td>
+                                        {% for week, week_data in model.WeekData.items %}
+                                        <td class="editable">{{ model.WeekData|dict_get:week|dict_get:row_name }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script type="text/javascript" src="{% static 'js/weekly_update.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
+    <script>
+        initializeDataTable({{ product_type|safe }});
+    </script>
+</body>

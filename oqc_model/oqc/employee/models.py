@@ -1,7 +1,7 @@
 from django.db import models
 import datetime
 from ckeditor_uploader.fields import RichTextUploadingField
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import ArrayField, HStoreField
 
 # Create your models here.
     
@@ -52,3 +52,11 @@ class TestRecord(models.Model):
     pdf_file = models.FileField(upload_to='pdfs/', blank=True, null=True)
     def __str__(self):
         return f"{self.ProductType} - {self.ModelName} - {self.TestName}"
+    
+class DevelopmentUpdate(models.Model):
+    ProductType = models.CharField(max_length=100,default = "None")
+    ModelName = models.CharField(max_length=100,default = "None")
+    RowData = HStoreField(null=True)
+    WeekData = HStoreField(null=True)
+    def __str__(self):
+        return f"{self.ProductType} - {self.ModelName}"
