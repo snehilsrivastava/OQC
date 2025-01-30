@@ -1601,7 +1601,7 @@ def weekly_update(request):
 
             ordered_row_data = OrderedDict()
             for key in ordered_keys:
-                ordered_row_data[key] = {"status": "", 'start_date': "", 'end_date': ""}
+                ordered_row_data[key] = {'status': "", 'start_date': "", 'end_date': "", 'remarks': ""}
             
             for key, json_string in row_data.items():
                 if key in ordered_row_data:
@@ -1610,7 +1610,7 @@ def weekly_update(request):
                         ordered_row_data[key] = details
                     except json.JSONDecodeError as e:
                         print(f"Error decoding JSON for product: {product}, key: {key} Error: {e} String: {json_string}")
-                        ordered_row_data[key] = {"status": "Error decoding JSON", 'start_date': "", 'end_date': ""}
+                        ordered_row_data[key] = {'status': "", 'start_date': "", 'end_date': "", 'remarks': ""}
             model.RowData = ordered_row_data
             
             week_data = {}
@@ -1643,27 +1643,27 @@ def add_tracker_model(request):
             ProductType = product,
         )
         new_development_update.RowData = {
-            "Product Feasibility (Comm/Tech)": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Supplier Assessment (Comm/Tech)": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "RFQ Preperation": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Preliminary Evaluation": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Product Specifications & ID Pictures": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Test Protocol Sign-off": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Licensee Requirements Sign-off": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "BOM": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Evaluation Plan (Comm & Tech)": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Localisation BOM": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Product Costing (NLC)": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Sampling": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "SW. Development": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "HW. Development": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Product Validation": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Product Compliance": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Brand Approval Documents Submission": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "BOM Release": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "SOP Release": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Pilot Trial": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
-            "Batch Inspection": json.dumps({'status': '', 'start_date': '', 'end_date': ''}),
+            "Product Feasibility (Comm/Tech)": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Supplier Assessment (Comm/Tech)": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "RFQ Preperation": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Preliminary Evaluation": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Product Specifications & ID Pictures": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Test Protocol Sign-off": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Licensee Requirements Sign-off": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "BOM": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Evaluation Plan (Comm & Tech)": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Localisation BOM": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Product Costing (NLC)": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Sampling": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "SW. Development": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "HW. Development": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Product Validation": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Product Compliance": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Brand Approval Documents Submission": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "BOM Release": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "SOP Release": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Pilot Trial": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
+            "Batch Inspection": json.dumps({'status': '', 'start_date': '', 'end_date': '', 'remarks': ''}),
         }
         
         week_num = datetime.datetime.now().strftime("%V")
@@ -1709,13 +1709,16 @@ def update_cell(request):
             development_update.WeekData[week_num] = json.dumps(week_data)
         elif col == 'Status':
             row_data = json.loads(development_update.RowData[row])
-            development_update.RowData[row] = json.dumps({'status': value, 'start_date': row_data['start_date'], 'end_date': row_data['end_date']})
+            development_update.RowData[row] = json.dumps({'status': value, 'start_date': row_data['start_date'], 'end_date': row_data['end_date'], 'remarks': row_data['remarks']})
         elif col == 'Start Date':
             row_data = json.loads(development_update.RowData[row])
-            development_update.RowData[row] = json.dumps({'status': row_data['status'], 'start_date': value, 'end_date': row_data['end_date']})
+            development_update.RowData[row] = json.dumps({'status': row_data['status'], 'start_date': value, 'end_date': row_data['end_date'], 'remarks': row_data['remarks']})
         elif col == 'End Date':
             row_data = json.loads(development_update.RowData[row])
-            development_update.RowData[row] = json.dumps({'status': row_data['status'], 'start_date': row_data['start_date'], 'end_date': value})
+            development_update.RowData[row] = json.dumps({'status': row_data['status'], 'start_date': row_data['start_date'], 'end_date': value, 'remarks': row_data['remarks']})
+        elif col == 'Remarks':
+            row_data = json.loads(development_update.RowData[row])
+            development_update.RowData[row] = json.dumps({'status': row_data['status'], 'start_date': row_data['start_date'], 'end_date': row_data['end_date'], 'remarks': value})
         development_update.save()
         return HttpResponse(json.dumps({'status': 'success'}))
     return HttpResponse(json.dumps({'status': 'error'}))

@@ -43,7 +43,7 @@
     display: block;
 }
 
-.model-table {
+.model-table.tracker {
     display: none;
 }
 
@@ -98,7 +98,7 @@ div.content {
     margin-right: 6px;
 }
 
-table {
+table.tracker {
     table-layout: fixed;
     width: auto !important;
     margin: 10px 15px !important;
@@ -117,7 +117,7 @@ th, td {
     word-break: break-all;
 }
 
-table th:nth-child(1) {
+table.tracker th:nth-child(1) {
     width: 230px !important;
 }
 
@@ -129,12 +129,16 @@ th.status-col {
     word-break: break-all;
 }
 
-table th:nth-child(3){
+table.tracker th:nth-child(3){
     width: 100px !important;
 }
 
-table th:nth-child(4) {
+table.tracker th:nth-child(4) {
     width: 100px !important;
+}
+
+table.tracker th:nth-child(5) {
+    width: 200px !important;
 }
 
 th.week-col {
@@ -144,7 +148,7 @@ th.week-col {
 td {
     padding: 2px 5px !important;
     word-wrap: break-word;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 td.row-name {
@@ -171,4 +175,32 @@ td textarea {
     resize: none;
     overflow: hidden;
     line-height: 1.5;
+}
+
+input.date-input {
+    background-color: var(--form-field-bg) !important;
+    color: var(--color) !important;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+#ui-datepicker-div {
+    span, th, td {
+        word-break: normal;
+    }
+    table {
+        width: 100% !important;
+        td {
+            padding: 1px !important;
+            a {
+                text-align: center !important;
+            }
+        }
+    }
 }

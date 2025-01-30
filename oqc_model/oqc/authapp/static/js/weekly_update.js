@@ -77,6 +77,28 @@ function initializeDataTable(products) {
             ordering: false,
             info: false,
         });
+
+        $('table').each(function () {
+            const $table = $(this);
+            const tableClasses = $table.attr('class').split(' ');
+            if (!tableClasses.some(className => products.includes(className))) {
+                $table.find('input.date-input').each(function () {
+                    const $input = $(this);
+                    const dateValue = $input.val();
+
+                    if (dateValue) {
+                        const date = new Date(dateValue);
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const year = date.getFullYear();
+                        const formattedDate = `${day}/${month}/${year}`;
+                        $input.replaceWith(formattedDate);
+                    } else {
+                        $input.replaceWith("");
+                    }
+                });
+            }
+        });
     
         $('table').on('click', 'td.editable', function (event) {
             const $table = $(this).closest('table');
@@ -135,3 +157,45 @@ function initializeDataTable(products) {
         });
     });
 }
+
+function updateDate(input) {
+    const $input = $(input);
+    const newValue = $input.val();
+    const $cell = $input.closest('td');
+    const row = $cell.closest('tr');
+    const firstCellText = row.find('td:first-child').text();
+    const $table = $cell.closest('table');
+    const headerText = $table.find('th').eq($cell.index()).text();
+    const product = $('div.tab.active').text();
+    const model = $cell.closest('li').find('a').text().trim();
+    $.ajax({
+        url: '/update_cell/',
+        type: 'POST',
+        data: {
+            row: firstCellText,
+            col: headerText,
+            value: newValue,
+            product: product,
+            model: model,
+        }
+    });
+}
+
+$(function () {
+    $('.date-input').on('change', function () {
+        updateDate(this);
+    });
+    $('.date-input').each(function () {
+        const $input = $(this);
+        $input.datepicker({
+            showOn: "focus",
+            buttonImage: "",
+            buttonText: "",
+            dateFormat: "dd/mm/yy",
+            onSelect: function (dateText) {
+                $(this).val(dateText);
+                $(this).trigger('change');
+            }
+        });
+    });
+});

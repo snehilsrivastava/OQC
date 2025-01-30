@@ -16,9 +16,12 @@
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/form.css' %}">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/weekly_update.css' %}">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
     {% include "header_PO.html" %}
@@ -68,13 +71,14 @@
                             <span class="chevron-icon right" style="transform: rotate(0deg)">&#9654;</span>{{ model.ModelName }}
                         </a>
                         <div id="model-table-{{ model.id }}" class="model-table">
-                            <table id="editableTable" class="{{ product }}">
+                            <table id="editableTable" class="tracker {{ product }}">
                                 <thead>
                                     <tr>
                                         <th></th>
                                         <th class="status-col">Status</th>
                                         <th>Start Date</th>
                                         <th>End Date</th>
+                                        <th>Remarks</th>
                                         {% for week in model.WeekData.keys %}
                                         <th class="week-col">Week {{ week }}</th>
                                         {% endfor %}
@@ -85,8 +89,9 @@
                                     <tr>
                                         <td class="row-name">{{ row_name }}</td>
                                         <td class="editable">{{ row_value.status }}</td>
-                                        <td class="editable">{{ row_value.start_date }}</td>
-                                        <td class="editable">{{ row_value.end_date }}</td>
+                                        <td><input type="text" class="date-input" value="{{ row_value.start_date }}"></td>
+                                        <td><input type="text" class="date-input" value="{{ row_value.end_date }}"></td>
+                                        <td class="editable">{{ row_value.remarks }}</td>
                                         {% for week, week_data in model.WeekData.items %}
                                         <td class="editable">{{ model.WeekData|dict_get:week|dict_get:row_name }}</td>
                                         {% endfor %}
