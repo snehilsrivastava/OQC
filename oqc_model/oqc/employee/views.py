@@ -200,7 +200,6 @@ def handle_selected_tests(request, product, model, action):
         return redirect('/access_denied/')
     if request.method == 'POST':
         selected_test_ids = request.POST.getlist('selected_tests')
-        print(selected_test_ids)
         selected_test_records = TestRecord.objects.filter(pk__in=selected_test_ids, ProductType=product, ModelName=model)
         if action == 'generate_pdf':
             if not selected_test_records.exists():
@@ -1609,7 +1608,6 @@ def weekly_update(request):
                         details = json.loads(json_string)
                         ordered_row_data[key] = details
                     except json.JSONDecodeError as e:
-                        print(f"Error decoding JSON for product: {product}, key: {key} Error: {e} String: {json_string}")
                         ordered_row_data[key] = {'status': "", 'start_date': "", 'end_date': "", 'remarks': ""}
             model.RowData = ordered_row_data
             
@@ -1618,7 +1616,6 @@ def weekly_update(request):
                 try:
                     week_data[week] = json.loads(week_data_str)
                 except json.JSONDecodeError as e:
-                    print(f"Error decoding JSON for WeekData: {week} Error: {e}")
                     week_data[week] = {}
             model.WeekData = week_data
             processed_models.append(model)                

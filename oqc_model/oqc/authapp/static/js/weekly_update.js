@@ -80,30 +80,20 @@ function initializeDataTable(products) {
 
         $('table').each(function () {
             const $table = $(this);
-            const tableClasses = $table.attr('class').split(' ');
-            if (!tableClasses.some(className => products.includes(className))) {
+            const product = $table.data('product');
+            if (!products.includes(product)) {
                 $table.find('input.date-input').each(function () {
                     const $input = $(this);
                     const dateValue = $input.val();
-
-                    if (dateValue) {
-                        const date = new Date(dateValue);
-                        const day = String(date.getDate()).padStart(2, '0');
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const year = date.getFullYear();
-                        const formattedDate = `${day}/${month}/${year}`;
-                        $input.replaceWith(formattedDate);
-                    } else {
-                        $input.replaceWith("");
-                    }
+                    $input.replaceWith(dateValue);
                 });
             }
         });
     
         $('table').on('click', 'td.editable', function (event) {
             const $table = $(this).closest('table');
-            const tableClasses = $table.attr('class').split(' ');
-            if (tableClasses.some(className => products.includes(className))) {
+            const product = $table.data('product');
+            if (products.includes(product)) {
                 $(this).addClass('selected');
                 $(this).siblings().removeClass('selected');
                 $(this).parent().siblings().find('td').removeClass('selected');
@@ -112,8 +102,8 @@ function initializeDataTable(products) {
     
         $('table').on('dblclick', 'td.editable', function () {
             const $table = $(this).closest('table');
-            const tableClasses = $table.attr('class').split(' ');
-            if (tableClasses.some(className => products.includes(className))) {
+            const product = $table.data('product');
+            if (products.includes(product)) {
                 const $cell = $(this);
                 const originalValue = $cell.html().replace(/<br\s*\/?>/g, '\n');
                 const $textarea = $('<textarea>' + originalValue + '</textarea>');
