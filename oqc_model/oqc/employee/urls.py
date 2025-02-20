@@ -51,6 +51,9 @@ urlpatterns = [
     path('weekly_update/', views.weekly_update, name='weekly_update'),
     path('add_tracker_model/', views.add_tracker_model, name='add_tracker_model'),
     path('update_cell/', views.update_cell, name='update_cell'),
+    path('product_tracker/', views.product_tracker, name='product_tracker'),
+    path('add_tracker_series/', views.add_tracker_series, name='add_tracker_series'),
+    path('update_tracker/', views.update_tracker, name='update_tracker'),
 ]
 
 from django.conf import settings

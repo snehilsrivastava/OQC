@@ -53,6 +53,7 @@
     --decoration-color-black: #ddd;
     --rtf-icon-bg: #747474;
     --rtf-icon-border: #878787;
+    --ht-foreground-color: #c7c7c7;
 }
 
 :root[data-theme="light"] {
@@ -110,6 +111,7 @@
     --decoration-color-black: #444;
     --rtf-icon-bg: #c8cbce;
     --rtf-icon-border: #a1a3a4;
+    --ht-foreground-color: #222;
 }
 
 body {

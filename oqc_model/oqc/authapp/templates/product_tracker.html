@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    {% load dict_utils %}
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes">
+    <link rel="shortcut icon" href="{% static 'icons/webpage.png' %}">
+    <title>Product Tracker</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product_tracker.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/handsontable/styles/handsontable.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/handsontable/styles/ht-theme-main.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+</head>
+<body>
+    {% include "header_PO.html" %}
+    <div class="overlay" id="overlay" onclick="togglePopup()"></div>
+    <div id="popup" class="popup form-container">
+        <div class="form-header">
+            <h1>Add New Model</h1>
+        </div>
+        <form id="seriesForm" action="{% url 'add_tracker_series' %}" method="POST">
+            <div class="form-group">
+                <label for="Product">Product</label>
+                <select class="form-control" id="Product" name="Product" required>
+                    <option value="" selected disabled hidden>Select the Product</option>
+                    {% for prod, boo in employee.product_type.items %}
+                    {% if boo %}
+                    <option value="{{prod}}">{{prod}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="seriesName">Series Name</label>
+                <input type="text" class="form-control" id="seriesName" name="seriesName" required>
+            </div>
+            <button type="submit" id="seriesFormSubmit">Submit</button>
+        </form>
+    </div>
+    <div class="content">
+        <div class="tabs">
+            {% for product in product_series.keys %}
+            <div class="tab" onclick="showSeries('{{ product }}')">{{ product }}</div>
+            {% endfor %}
+        </div>
+        <div class="control-container">
+            <div class="search-container">
+                Search: <input type="text" id="searchInput">
+            </div>
+            <div class="view-edit-toggle">
+                <input type="checkbox" class="view-edit-checkbox" id="view-edit-checkbox">
+                <label for="view-edit-checkbox" class="view-edit-label">
+                    <i class="fas fa-pencil-alt"></i>
+                    <i class="fas fa-eye"></i>
+                    <span class="view-edit-ball"></span>
+                </label>
+            </div>
+            <button id="newSeriesButton" onclick="togglePopup()">Add Series</button>
+        </div>
+        <div id="series-container">
+            {% for product, series in product_series.items %}
+            <div id="series-{{ product }}" class="series-table">
+                {% for serie in series %}
+                <a class="serie-click" href="javascript:void(0);" onclick="toggleTable({{ serie.id }})">
+                    <span class="chevron-icon right" style="transform: rotate(90deg) translateX(10%) translateY(0%)">&#9654;</span>{{ serie.SeriesName }}
+                </a>
+                <div id="serie-table-{{ serie.id }}" class="serie-table"></div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+    const hotInstances = {};
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkbox = document.getElementById('view-edit-checkbox');
+        {% for product, series in product_series.items %}
+            {% for serie in series %}
+                var tableContainer = document.getElementById('serie-table-{{ serie.id }}');
+                var hotData = {{ serie.Data|safe }};
+                var hot = new Handsontable(tableContainer, {
+                    data: hotData,
+                    rowHeaders: true,
+                    nestedRows: true,
+                    manualColumnResize: true,
+                    manualRowMove: true,
+                    fixedColumnsStart: 1,
+                    colWidths: [300, 120, 95, 95, 95, 95],
+                    // stretchH: 'last',
+                    preventOverflow: 'horizontal',
+                    nestedHeaders: [
+                        ['', '', { label: 'Planned Date', colspan: 2 }, { label: 'Actual Date', colspan: 2 }],
+                        ['', 'STATUS', 'Start', 'End', 'Start', 'End', 'Remarks']
+                    ],
+                    hiddenColumns: {
+                        columns: [2, 3, 4, 5],
+                    },
+                    columns: [
+                        { 
+                            data: 'task',
+                        },
+                        { 
+                            data: 'status',
+                            className: 'htCenter',
+                            readOnly: true,
+                        },
+                        { 
+                            data: 'start_exp',
+                            type: 'date',
+                            correctFormat: true,
+                        },
+                        {
+                            data: 'end_exp',
+                            type: 'date',
+                            correctFormat: true,
+                        },
+                        {
+                            data: 'start_act',
+                            type: 'date',
+                            correctFormat: true,
+                        },
+                        {
+                            data: 'end_act',
+                            type: 'date',
+                            correctFormat: true,
+                        },
+                        { 
+                            data: 'remarks',
+                        },
+                    ],
+                    contextMenu: false,
+                    licenseKey: 'non-commercial-and-evaluation',
+                    
+                    afterChange: function(changes, source) {
+                        if (source === 'edit') {
+                            changes.forEach(([row, prop, oldValue, newValue]) => {
+                                if (prop === 'start_act' || prop === 'start_exp' || prop === 'end_act' || prop === 'end_exp') {
+                                    updateStatus(hotInstances[{{ serie.id }}], hotData);
+                                    addGanttClasses(hotInstances[{{ serie.id }}]);
+                                }
+                            });
+                        }
+                        if (source === 'edit' || source === 'CopyPaste.paste' || source === 'autofill') {
+                            changes.forEach(([row, prop, oldValue, newValue]) => {
+                                if (oldValue !== newValue) {
+                                    let filteredHotData = removeChildren(hotInstances[{{ serie.id }}].getSourceData());
+                                    updateTableData(filteredHotData, {{ serie.id }});
+                                }
+                            });
+                        }
+                    },
+                    afterRemoveRow: function(index, amount) {
+                        updateTableData(removeChildren(hotInstances[{{ serie.id }}].getSourceData()), {{ serie.id }});
+                    },
+                    afterCreateRow: function(index, amount) {
+                        updateTableData(removeChildren(hotInstances[{{ serie.id }}].getSourceData()), {{ serie.id }});
+                    },
+                    afterRowMove: function(from, to) {
+                        updateTableData(removeChildren(hotInstances[{{ serie.id }}].getSourceData()), {{ serie.id }});
+                    },
+                    afterUndo: function() {
+                        updateTableData(removeChildren(hotInstances[{{ serie.id }}].getSourceData()), {{ serie.id }});
+                    },
+                    afterRedo: function() {
+                        updateTableData(removeChildren(hotInstances[{{ serie.id }}].getSourceData()), {{ serie.id }});
+                    },
+                    afterDetachChild: function() {
+                        updateTableData(removeChildren(hotInstances[{{ serie.id }}].getSourceData()), {{ serie.id }});
+                    },
+                    afterAddChild: function() {
+                        updateTableData(removeChildren(hotInstances[{{ serie.id }}].getSourceData()), {{ serie.id }});
+                    }
+                });
+                hot.updateSettings({
+                    cells: (row, col) => {
+                        const cellProperties = {};
+                        if (col === 0) {
+                            cellProperties.readOnly = !checkbox.checked;
+                        }
+                        return cellProperties;
+                    }
+                });
+                addWeeks(hot);
+                updateStatus(hot, hotData);
+                addGanttClasses(hot);
+                applyParentChildFormatting(hot, hotData);
+                hotInstances[{{ serie.id }}] = hot;
+            {% endfor %}
+        {% endfor %}
+    });
+    </script>
+    <script type="text/javascript" src="{% static 'js/product_tracker.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
+</body>

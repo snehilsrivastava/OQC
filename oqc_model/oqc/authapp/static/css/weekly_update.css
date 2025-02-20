@@ -105,12 +105,12 @@ table.tracker {
     border-collapse: collapse !important;
 }
 
-th {
+table.tracker th {
     text-align: center !important;
     border-bottom: 1px solid var(--webkit-text-fill-color) !important;
 }
 
-th, td {
+table.tracker th, table.tracker td {
     overflow: hidden;
     word-wrap: break-word;
     overflow-wrap: break-word;

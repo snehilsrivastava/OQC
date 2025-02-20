@@ -1623,9 +1623,8 @@ def weekly_update(request):
     user = Employee.objects.get(username=request.session['username'])
     user_ProdType = [k for k in user.product_type if user.product_type[k]]
     context = {
-        "product_type": user_ProdType,
-        "products": products,
-        "product_models": product_models,
+        'product_type': user_ProdType,
+        'product_models': product_models,
     }
     return render(request, "weekly_update.html", context=context)
 
@@ -1719,3 +1718,174 @@ def update_cell(request):
         development_update.save()
         return HttpResponse(json.dumps({'status': 'success'}))
     return HttpResponse(json.dumps({'status': 'error'}))
+
+@login_required
+def product_tracker(request):
+    products = list(Product_List.objects.values_list('Product', flat=True))
+    product_series = {}
+    for product in products:
+        series = ProductTracker.objects.filter(Product=product)
+        product_series[product] = series
+    context = {
+        'product_series': product_series,
+    }
+    return render(request, "product_tracker.html", context=context)
+
+def add_tracker_series(request):
+    if request.method == "POST":
+        product = request.POST.get("Product")
+        series = request.POST.get("seriesName")
+        new_product_tracker = ProductTracker.objects.create(
+            Product = product,
+            SeriesName = series
+        )
+        new_product_tracker.Data = [
+            {
+                "task": "Business requirement + Product Ask",
+                "__children": [
+                    {
+                        "task": "Product road map (PRM)",
+                        "__children": [
+                            { "task": "Product landscaping (Comm + Tech)" },
+                            { "task": "ODM Landscaping" },
+                            { "task": "Market Study" },
+                            { "task": "Product insights" },
+                            { "task": "Preliminary evaluation" },
+                            { "task": "Projected timelines" },
+                            { "task": "PRM Review"},
+                        ]
+                    }
+                ]
+            },
+            {
+                "task": "Business case sign off",
+            },
+            {
+                "task": "Supply Agreement sign off",
+                "__children": [
+                    {
+                        "task": "Purchase Order Release",
+                        "__children": [
+                            { "task": "RFQ Product costing (NLC)" },
+                            { "task": "Quantity planning" },
+                            { "task": "Vendor Onboarding" },
+                            { "task": "Spare parts planning" },
+                            { "task": "PO release" },
+                        ]
+                    },
+                    {
+                        "task": "Product Development",
+                        "__children": [
+                            { "task": "Exclusive Part Development" },
+                            { "task": "Packaging & Printing Development" },
+                            { "task": "SW development" },
+                        ]
+                    },
+                    {
+                        "task": "Sampling",
+                        "__children": [
+                            { "task": "Compliance" },
+                            { "task": "Mktg." },
+                            { "task": "Validation" },
+                            { "task": "Service" },
+                        ]
+                    },
+                    {
+                        "task": "Product Validation / DVT",
+                        "__children": [
+                            { "task": "Testing" },
+                            { "task": "Report Aprovals / Submissions" },
+                        ]
+                    },
+                    {
+                        "task": "Product Complliance",
+                        "__children": [
+                            { "task": "Testing" },
+                            { "task": "Report Submission" },
+                            { "task": "Certification" },
+                        ]
+                    }
+                ]
+            },
+            {
+                "task": "Brand Approval - DVT",
+            },
+            {
+                "task": "Material Readiness / ETA",
+                "__children": [
+                    {
+                        "task": "Pilot production / PVT",
+                        "__children": [
+                            { "task": "Testing" },
+                            { "task": "Certification" },
+                        ]
+                    }
+                ]
+            },
+            {
+                "task": "Brand Aproval - PP",
+            },
+            {
+                "task": "Mass Production plan / readiness",
+                "__children": [
+                    {
+                        "task": "1st MP testing",
+                        "__children": [
+                            { "task": "Testing" },
+                            { "task": "Report Aprovals / Submissions" },
+                        ]
+                    },
+                ]
+            },
+            {
+                "task": "Brand Aproval - Dispatch",
+                "__children": [
+                    {
+                        "task": "Product monitoring",
+                        "__children": [
+                            { "task": "FFRRR" },
+                            { "task": "PDI Review" },
+                        ]
+                    },
+                    {
+                         "task": "Cost innovations - Engineering changes",
+                        "__children": [
+                            { "task": "Proposal (Comm + Tech)" },
+                            { "task": "Approval" },
+                            { "task": "ECN release" },
+                            { "task": "Monitoring" },
+                        ]
+                    },
+                ]
+            },
+        ]
+        new_product_tracker.save()
+    return redirect('/product_tracker/')
+
+def process_data(data):
+    if isinstance(data, list):
+        for item in data:
+            process_data(item)
+    elif isinstance(data, dict):
+        for key, value in data.items():
+            if key == "__children":
+                if value is None:
+                    print("cleaned list")
+                    data[key] = []
+                else:
+                    process_data(data[key])
+            elif value is None:
+                print("cleaned key")
+                data[key] = ""
+    return data
+
+def update_tracker(request):
+    if request.method == 'POST':
+        inc_data = json.loads(request.body)
+        data = inc_data['data']
+        id = inc_data['id']
+        print(data)
+        product_tracker = ProductTracker.objects.get(id=id)
+        product_tracker.Data = process_data(data)
+        product_tracker.save()
+    return JsonResponse({'success': True})
